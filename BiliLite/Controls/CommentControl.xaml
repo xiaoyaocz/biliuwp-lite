@@ -1,0 +1,360 @@
+﻿<UserControl
+    x:Class="BiliLite.Controls.CommentControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+     xmlns:fa="using:FontAwesome5"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:convert="using:BiliLite.Converters"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style TargetType="ListViewItem" x:Key="commentStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
+            <Setter Property="BorderBrush" Value="#33808080"></Setter>
+            <Setter Property="Padding" Value="4"></Setter>
+        </Style>
+        <Style x:Name="btn_Style1" TargetType="Button">
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Background" Value="#FFF9F9F9"></Setter>
+            <Setter Property="Foreground" Value="Black"></Setter>
+        </Style>
+        <Style TargetType="ListViewItem" x:Key="replyStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
+            <Setter Property="BorderBrush" Value="#33808080"></Setter>
+            <Setter Property="Padding" Value="0"></Setter>
+        </Style>
+        <convert:ColorSelecteConvert x:Key="colorSelct" ></convert:ColorSelecteConvert>
+        <Flyout x:Key="EmojiFlyout" x:Name="EmojiFlyout">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType="FlyoutPresenter">
+                    <Setter Property="ScrollViewer.ZoomMode" Value="Enabled"/>
+                    <Setter Property="Background" Value="#FFF9F9F9"/>
+                    <Setter Property="MinHeight" Value="300"/>
+                    <Setter Property="MinWidth" Value="300"/>
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(⌒▽⌒)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（￣▽￣）</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(=・ω・=)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(｀・ω・´)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(〜￣△￣)〜</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(･∀･)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(°∀°)ﾉ</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(｡･ω･｡)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(●￣(ｴ)￣●)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">ε=ε=(ノ≧∇≦)ノ</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（#-_-)┯━┯</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">_(:3」∠)_</Button>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(￣3￣)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">╮(￣▽￣)╭</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">( ´_ゝ｀)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">←_←</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">→_→</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(&lt; _&lt; )</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(&gt; _&lt; )</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(´･_･`)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(-_-#)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（￣へ￣）</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(笑)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(汗)</Button>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">("▔□▔)/</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(ﾟДﾟ≡ﾟдﾟ)!?</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">Σ(ﾟдﾟ;)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">Σ( ￣□￣||)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(´；ω；`)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（/TДT)/</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(^・ω・^ )</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(￣ε(#￣) Σ</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">ヽ(`Д´)ﾉ</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(╯°口°)╯(┴—┴</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(泣)</Button>
+                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(苦笑)</Button>
+                </StackPanel>
+            </Grid>
+        </Flyout>
+
+        <Flyout  x:Key="FaceFlyout" x:Name="FaceFlyout">
+            <Grid Width="320">
+                <Pivot x:Name="pivot_face">
+                    <Pivot.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontSize="18" Text="{Binding pname}"></TextBlock>
+                        </DataTemplate>
+                    </Pivot.HeaderTemplate>
+                    <Pivot.ItemTemplate>
+                        <DataTemplate>
+                            <GridView  ItemsSource="{Binding emojis}" SelectionMode="None" IsItemClickEnabled="True" MaxHeight="300" ItemClick="GridView_ItemClick">
+                                <!--<GridView.ItemContainerStyle>
+                                                -->
+                                <!--<Style TargetType="GridViewItem">
+                                                    <Setter Property="Margin" Value="5"></Setter>
+                                                </Style>-->
+                                <!--
+                                            </GridView.ItemContainerStyle>-->
+                                <GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel >
+                                            <Image Source="{Binding url}" Width="56" Margin="5 0"></Image>
+                                            <TextBlock HorizontalAlignment="Center" Text="{Binding vname}"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+
+                            </GridView>
+                        </DataTemplate>
+                    </Pivot.ItemTemplate>
+                </Pivot>
+            </Grid>
+        </Flyout>
+
+        <MenuFlyout x:Key="menu">
+            <MenuFlyoutItem  Click="btn_DeleteComment_Click" Visibility="{Binding showDelete}">删除</MenuFlyoutItem>
+            <MenuFlyoutItem>举报</MenuFlyoutItem>
+        </MenuFlyout>
+        <DataTemplate x:Key="commentTemplate" x:DataType="local:CommentModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <HyperlinkButton  Click="btn_User_Click" Tag="{x:Bind mid}" Padding="0" Margin="0" Grid.RowSpan="2">
+                    <Grid>
+                        <Ellipse Width="36" Height="36" Margin="12">
+                            <Ellipse.Fill>
+                                <ImageBrush Stretch="UniformToFill" ImageSource="{x:Bind Path=member.avatar}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Image Width="56"  Height="56" Source="{x:Bind Path=member.pendant_str}"></Image>
+                        <Image Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="8" Height="16" Source="{x:Bind Path=member.Verify}"></Image>
+                    </Grid>
+                </HyperlinkButton>
+
+                <StackPanel Orientation="Horizontal" Margin="4 0" Grid.Column="1" >
+                    <TextBlock VerticalAlignment="Center" Visibility="{x:Bind showTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
+                    <TextBlock  Text="{x:Bind Path=member.uname}" 
+                                Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
+                    <Image Height="12" Margin="8 0" Source="{Binding Path=member.LV}"></Image>
+
+                </StackPanel>
+                <AppBarButton Grid.Column="1" Height="36" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More" Grid.RowSpan="2" Width="48" ></AppBarButton>
+                <TextBlock Grid.Column="1" Grid.Row="1"  FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top"><!--#<Run Text="{Binding Path=floor}"></Run>--> <Run Text="{x:Bind Path=time}"></Run> <Run Text="{x:Bind Path=content.plat_str}"></Run></TextBlock>
+
+                <ContentControl  Grid.Row="2" Grid.Column="1" Margin="4 0" Content="{x:Bind Path=content.text}">
+
+                </ContentControl>
+
+                <StackPanel Orientation="Horizontal" Margin="0 8 0 0" Grid.Column="1" Grid.Row="3">
+
+                    <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
+                            <TextBlock  Margin="4 0" Text="{x:Bind like_str,Mode=OneWay}"></TextBlock>
+                        </StackPanel>
+                    </HyperlinkButton>
+                    <HyperlinkButton  Click="btn_ShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:FontAwesome Icon="Regular_Comment" FontSize="14"></fa:FontAwesome>
+                            <TextBlock Margin="4 0" Text="{x:Bind rcount_str,Mode=OneWay}"></TextBlock>
+                        </StackPanel>
+                    </HyperlinkButton>
+                    <HyperlinkButton Visibility="{x:Bind showReplyBtn,Mode=OneWay}" Click="btn_ShowReplyBtn_Click" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="4 0">回复</TextBlock>
+                        </StackPanel>
+                    </HyperlinkButton>
+                    <HyperlinkButton Click="btn_DonotLike_Click" Visibility="Collapsed" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon VerticalAlignment="Center" FontSize="14" FontFamily="Segoe MDL2 Assets" Glyph="&#xE19E;" />
+                            <TextBlock ></TextBlock>
+                        </StackPanel>
+                    </HyperlinkButton>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="4" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
+
+                    <StackPanel  Visibility="{x:Bind Path=showReplyBox,Mode=OneWay}" Margin="0 0 0 4">
+                        <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
+                        <Grid Margin="0 4 0 0">
+                            <StackPanel Orientation="Horizontal">
+                                <Button FontSize="12" Padding="4" Visibility="Collapsed" Foreground="White" Background="{ThemeResource HighLightColor}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xE775;" />
+                                        <TextBlock Margin="4 0 0 0">颜文字</TextBlock>
+                                    </StackPanel>
+                                </Button>
+                                <Button Flyout="{StaticResource EmojiFlyout}" FontSize="12" Padding="4" Margin="4 0" Foreground="White" Background="{ThemeResource HighLightColor}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xE170;" />
+                                        <TextBlock Margin="4 0 0 0">表情</TextBlock>
+                                    </StackPanel>
+
+                                </Button>
+                            </StackPanel>
+
+                            <Button x:Name="btn_SendReply" Click="btn_SendReply_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
+                        </Grid>
+                    </StackPanel>
+
+
+                    <ListView  ItemsSource="{x:Bind Path=replies,Mode=OneWay}" ItemContainerStyle="{StaticResource replyStyle}"  SelectionMode="None" IsItemClickEnabled="False" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <HyperlinkButton Foreground="{Binding Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="btn_User_Click">
+                                        <StackPanel Orientation="Horizontal"  >
+                                            <TextBlock  Text="{Binding Path=member.uname}"  VerticalAlignment="Center"></TextBlock>
+                                            <Image Height="12" Margin="8 0" Source="{Binding Path=member.LV}"></Image>
+                                        </StackPanel>
+                                    </HyperlinkButton>
+
+                                    <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
+                                    <ContentControl Content="{Binding Path=content.text}">
+
+                                    </ContentControl>
+
+                                    <Grid>
+                                        <StackPanel Margin="0 4" Orientation="Horizontal">
+                                            <TextBlock FontSize="14" Margin="0 0 8 0" IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center" Text="{Binding Path=time}"></TextBlock>
+                                            <HyperlinkButton  Click="btn_Like_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
+                                                    <TextBlock  Margin="4 0" Text="{Binding Path=like_str}"></TextBlock>
+                                                </StackPanel>
+                                            </HyperlinkButton>
+
+                                            <HyperlinkButton Click="btn_ShowReplyBtn_Click" Margin="8 0" Foreground="Gray">
+                                                <StackPanel Orientation="Horizontal">
+
+                                                    <TextBlock  Margin="4 0">回复</TextBlock>
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 4" HorizontalAlignment="Right">
+                                            <HyperlinkButton Visibility="{Binding showDelete}" Click="btn_DeleteComment_Click" Foreground="Gray" >
+                                                <StackPanel Orientation="Horizontal">
+
+                                                    <TextBlock  Margin="4 0">删除</TextBlock>
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                            <HyperlinkButton Foreground="Gray" >
+                                                <StackPanel Orientation="Horizontal">
+
+                                                    <TextBlock  Margin="4 0">举报</TextBlock>
+                                                </StackPanel>
+                                            </HyperlinkButton>
+
+                                        </StackPanel>
+
+
+
+                                    </Grid>
+
+                                    <StackPanel Background="#19AAAAAA" Padding="4 8" Visibility="{Binding showReplyBox}">
+                                        <TextBox TextWrapping="Wrap" MaxLength="233" BorderThickness="0" AcceptsReturn="True" Text="{Binding Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="{Binding replyAt}">
+
+                                        </TextBox>
+                                        <Grid Margin="0 4 0 0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button FontSize="12" Padding="4" Visibility="Collapsed" Foreground="White" Background="{ThemeResource HighLightColor}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xE775;" />
+                                                        <TextBlock Margin="4 0 0 0">颜文字</TextBlock>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button  Flyout="{StaticResource EmojiFlyout}" FontSize="12" Padding="4" Margin="4 0" Foreground="White" Background="{ThemeResource HighLightColor}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xE170;" />
+                                                        <TextBlock Margin="4 0 0 0">表情</TextBlock>
+                                                    </StackPanel>
+                                                </Button>
+                                            </StackPanel>
+                                            <Button x:Name="btn_ReplyAt" Click="btn_ReplyAt_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+
+                        </ListView.ItemTemplate>
+
+                    </ListView>
+                    <ProgressBar   Visibility="{x:Bind Path=showLoading,Mode=OneWay}" IsIndeterminate="True" ></ProgressBar>
+                    <StackPanel HorizontalAlignment="Center" >
+
+                        <HyperlinkButton HorizontalAlignment="Center"  FontSize="14" Click="btn_LoadMoreReply_Click" Visibility="{Binding showReplyMore}" >
+                            <TextBlock>查看更多回复</TextBlock>
+                        </HyperlinkButton>
+                        <HyperlinkButton HorizontalAlignment="Center" FontSize="14" Click="btn_ShowComment_Click"  >
+                            <TextBlock>收起回复</TextBlock>
+                        </HyperlinkButton>
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+    </UserControl.Resources>
+    <Grid>
+        <ListView x:Name="ls_new"
+                  Padding="0 0 12 0"
+                          ItemTemplate="{StaticResource commentTemplate}" 
+                          ItemContainerStyle="{StaticResource commentStyle}"  
+                          SelectionMode="None" IsItemClickEnabled="False" 
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.Header>
+                <Grid>
+                    <Grid x:Name="hot">
+                        <TextBlock Margin="12 8" FontSize="18">热门评论</TextBlock>
+                        <HyperlinkButton x:Name="btn_NewSort" Margin="8" Padding="0" VerticalAlignment="Center"  Click="btn_NewSort_Click"  HorizontalAlignment="Right">
+                            <TextBlock>按最新排序</TextBlock>
+                        </HyperlinkButton>
+                    </Grid>
+                    <Grid x:Name="_new">
+                        <TextBlock Margin="12 8" FontSize="18">最新评论</TextBlock>
+                        <HyperlinkButton x:Name="btn_HotSort"  Margin="8" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Right"  Click="btn_HotSort_Click" >
+                            <TextBlock>按热门排序</TextBlock>
+                        </HyperlinkButton>
+                    </Grid>
+                </Grid>
+            </ListView.Header>
+            <ListView.Footer>
+                <StackPanel>
+                    <ProgressBar    x:Name="pr_load" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
+                    <HyperlinkButton x:Name="btn_LoadMore" Click="btn_LoadMore_Click" HorizontalAlignment="Center">
+                        <TextBlock>加载更多</TextBlock>
+                    </HyperlinkButton>
+                    <TextBlock x:Name="noRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
+                    <TextBlock x:Name="closeRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
+                </StackPanel>
+            </ListView.Footer>
+        </ListView>
+        <local:RoundButton  VerticalAlignment="Bottom" Background="{ThemeResource HighLightColor}" Padding="12" Margin="16" HorizontalAlignment="Right">
+            <fa:FontAwesome Icon="Regular_CommentAlt" Foreground="White"></fa:FontAwesome>
+        </local:RoundButton>
+    </Grid>
+
+</UserControl>

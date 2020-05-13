@@ -1,0 +1,1517 @@
+﻿using BiliLite.Api;
+using BiliLite.Api.Live;
+using BiliLite.Helpers;
+using BiliLite.Models;
+using BiliLite.Modules.Live;
+using BiliLite.Modules.LiveRoomDetailModels;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows.Input;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
+using static BiliLite.Modules.Live.LiveDanmaku;
+
+namespace BiliLite.Modules
+{
+    public class LiveRoomVM : IModules, IDisposable
+    {
+        public LiveRoomAnchorLotteryVM anchorLotteryVM;
+        readonly LiveRoomAPI liveRoomAPI;
+        readonly PlayerAPI PlayerAPI;
+        readonly Live.LiveDanmaku liveDanmaku;
+        public event EventHandler<LiveRoomPlayUrlModel> ChangedPlayUrl;
+        public event EventHandler<LiveRoomEndAnchorLotteryInfoModel> LotteryEnd;
+        public event EventHandler<string> AddNewDanmu;
+
+        readonly Timer timer;
+        readonly Timer timer_box;
+        readonly Timer timer_auto_hide_gift;
+        public LiveRoomVM()
+        {
+            liveRoomAPI = new LiveRoomAPI();
+            PlayerAPI = new PlayerAPI();
+            liveDanmaku = new Live.LiveDanmaku();
+            anchorLotteryVM = new LiveRoomAnchorLotteryVM();
+            MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
+            MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
+            Logined = SettingHelper.Account.Logined;
+            Messages = new ObservableCollection<DanmuMsgModel>();
+            GiftMessage = new ObservableCollection<GiftMsgModel>();
+            Guards = new ObservableCollection<LiveGuardRankItem>();
+            timer = new Timer(1000);
+            timer_box = new Timer(1000);
+            timer_auto_hide_gift = new Timer(1000);
+            timer.Elapsed += Timer_Elapsed;
+            timer_box.Elapsed += Timer_box_Elapsed;
+            timer_auto_hide_gift.Elapsed += Timer_auto_hide_gift_Elapsed;
+            liveDanmaku.NewMessage += LiveDanmaku_NewMessage;
+            LoadMoreGuardCommand = new RelayCommand(LoadMoreGuardList);
+
+        }
+        public ICommand LoadMoreGuardCommand { get; private set; }
+
+        private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (GiftMessage != null && GiftMessage.Count != 0)
+                {
+                    if (hide_gift_flag >= 5)
+                    {
+                        ShowGiftMessage = false;
+                        GiftMessage.Clear();
+                    }
+                    else
+                    {
+                        hide_gift_flag++;
+                    }
+                }
+            });
+        }
+
+        private void MessageCenter_LogoutedEvent(object sender, EventArgs e)
+        {
+            Logined = false;
+            timer_box.Stop();
+            ShowBox = false;
+            OpenBox = false;
+        }
+
+        private async void MessageCenter_LoginedEvent(object sender, object e)
+        {
+            Logined = true;
+            //TODO 加载背包和余额
+            await LoadWalletInfo();
+            await GetFreeSilverTime();
+        }
+
+        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                if (LiveInfo == null && !Liveing)
+                {
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        LiveTime = "";
+                    });
+                    return;
+                }
+                var start_time = Utils.TimestampToDatetime(LiveInfo.room_info.live_start_time);
+                var ts = DateTime.Now - start_time;
+
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    LiveTime = ts.ToString(@"hh\:mm\:ss");
+                });
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        public static List<LiveTitleModel> Titles { get; set; }
+
+        private bool _logined = false;
+        public bool Logined
+        {
+            get { return _logined; }
+            set { _logined = value; DoPropertyChanged("Logined"); }
+        }
+        /// <summary>
+        /// 直播ID
+        /// </summary>
+        public int RoomID { get; set; }
+
+        public ObservableCollection<DanmuMsgModel> Messages { get; set; }
+        public ObservableCollection<GiftMsgModel> GiftMessage { get; set; }
+        public bool ReceiveWelcomeMsg { get; set; } = true;
+        public bool ReceiveLotteryMsg { get; set; } = true;
+        public bool ReceiveGiftMsg { get; set; } = true;
+        private int hide_gift_flag = 1;
+        private bool _show_gift_message = false;
+        public bool ShowGiftMessage
+        {
+            get { return _show_gift_message; }
+            set { _show_gift_message = value; DoPropertyChanged("ShowGiftMessage"); }
+        }
+
+        private async void LiveDanmaku_NewMessage(object sender, Live.LiveDanmuModel e)
+        {
+            try
+            {
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    switch (e.type)
+                    {
+                        case LiveDanmuTypes.Viewer:
+                            Online = e.viewer;
+                            break;
+                        case LiveDanmuTypes.Danmu:
+                            var m = e.value as DanmuMsgModel;
+                            m.uname_color = new SolidColorBrush(Colors.Gray);
+                            if (m.medalColor != null && m.medalColor != "")
+                            {
+                                m.ul_color = new SolidColorBrush(Utils.ToColor(m.ulColor));
+                            }
+                            else
+                            {
+                                m.ul_color = new SolidColorBrush(Colors.Gray);
+                            }
+                            if (m.medalColor != null && m.medalColor != "")
+                            {
+                                m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
+                            }
+
+                            if (Messages.Count >= CleanCount)
+                            {
+                                Messages.Clear();
+                            }
+                            Messages.Add(m);
+                            AddNewDanmu?.Invoke(this, m.text);
+                            break;
+                        case LiveDanmuTypes.Gift:
+                            {
+                                if (!ReceiveGiftMsg)
+                                {
+                                    return;
+                                }
+                                if (GiftMessage.Count >= 2)
+                                {
+                                    GiftMessage.RemoveAt(0);
+                                }
+                                ShowGiftMessage = true;
+                                hide_gift_flag = 1;
+                                var info = e.value as GiftMsgModel;
+                                info.gif = Gifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? "ms-appx:///Assets/Thumbnails/transparent.png";
+                                GiftMessage.Add(info);
+                                if (!timer_auto_hide_gift.Enabled)
+                                {
+                                    timer_auto_hide_gift.Start();
+                                }
+                            }
+                            break;
+                        case LiveDanmuTypes.Welcome:
+                            {
+                                var info = e.value as WelcomeMsgModel;
+                                if (ReceiveWelcomeMsg)
+                                {
+                                    Messages.Add(new DanmuMsgModel()
+                                    {
+                                        isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
+                                        isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
+                                        hasUL = Visibility.Collapsed,
+                                        username = info.uname,
+                                        uname_color = new SolidColorBrush(Colors.HotPink),
+                                        text = " 进入直播间"
+                                    });
+                                }
+                            }
+                            break;
+                        case LiveDanmuTypes.SystemMsg:
+                            break;
+                        case LiveDanmuTypes.ANCHOR_LOT_START:
+                            {
+                                if (ReceiveLotteryMsg)
+                                {
+                                    var info = e.value.ToString();
+                                    anchorLotteryVM.SetLotteryInfo(JsonConvert.DeserializeObject<LiveRoomAnchorLotteryInfoModel>(info));
+                                }
+                            }
+                            break;
+                        case LiveDanmuTypes.ANCHOR_LOT_AWARD:
+                            {
+                                if (ReceiveLotteryMsg)
+                                {
+                                    var info = JsonConvert.DeserializeObject<LiveRoomEndAnchorLotteryInfoModel>(e.value.ToString());
+                                    LotteryEnd?.Invoke(this, info);
+                                }
+
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("接收直播弹幕出错", LogType.ERROR, ex);
+            }
+
+        }
+
+        private int _online = 0;
+        /// <summary>
+        /// 人气值
+        /// </summary>
+        public int Online
+        {
+            get { return _online; }
+            set { _online = value; DoPropertyChanged("Online"); }
+        }
+
+        private bool _loading = true;
+        public bool Loading
+        {
+            get { return _loading; }
+            set { _loading = value; DoPropertyChanged("Loading"); }
+        }
+
+        private bool _attention = false;
+        public bool Attention
+        {
+            get { return _attention; }
+            set { _attention = value; DoPropertyChanged("Attention"); }
+        }
+
+        private List<LiveRoomRankVM> ranks;
+        public List<LiveRoomRankVM> Ranks
+        {
+            get { return ranks; }
+            set { ranks = value; DoPropertyChanged("Ranks"); }
+        }
+
+        private LiveRoomRankVM _selectRank;
+        public LiveRoomRankVM SelectRank
+        {
+            get { return _selectRank; }
+            set { _selectRank = value; }
+        }
+
+        public ObservableCollection<LiveGuardRankItem> Guards { get; set; }
+
+
+        private LiveRoomWebUrlQualityDescriptionItemModel _current_qn;
+        public LiveRoomWebUrlQualityDescriptionItemModel current_qn
+        {
+            get { return _current_qn; }
+            set { _current_qn = value; }
+        }
+
+        private List<LiveRoomWebUrlQualityDescriptionItemModel> _qualites;
+        public List<LiveRoomWebUrlQualityDescriptionItemModel> qualites
+        {
+            get { return _qualites; }
+            set { _qualites = value; DoPropertyChanged("qualites"); }
+        }
+
+        private List<LiveGiftItem> _gifts;
+        public List<LiveGiftItem> Gifts
+        {
+            get { return _gifts; }
+            set { _gifts = value; DoPropertyChanged("Gifts"); }
+        }
+
+        private List<LiveBagGiftItem> _bag;
+        public List<LiveBagGiftItem> Bag
+        {
+            get { return _bag; }
+            set { _bag = value; DoPropertyChanged("Bag"); }
+        }
+
+        public List<LiveRoomWebUrlDurlItemModel> urls { get; set; }
+        private LiveWalletInfo _wallet;
+
+        public LiveWalletInfo WalletInfo
+        {
+            get { return _wallet; }
+            set { _wallet = value; DoPropertyChanged("WalletInfo"); }
+        }
+
+
+        private LiveInfoModel _LiveInfo;
+        public LiveInfoModel LiveInfo
+        {
+            get { return _LiveInfo; }
+            set { _LiveInfo = value; DoPropertyChanged("LiveInfo"); }
+        }
+        private LiveAnchorProfile _profile;
+        public LiveAnchorProfile Profile
+        {
+            get { return _profile; }
+            set { _profile = value; DoPropertyChanged("Profile"); }
+        }
+
+        private bool _liveing = true;
+        public bool Liveing
+        {
+            get { return _liveing; }
+            set { _liveing = value; DoPropertyChanged("Liveing"); }
+        }
+
+        private string _live_time = "";
+        public string LiveTime
+        {
+            get { return _live_time; }
+            set { _live_time = value; DoPropertyChanged("LiveTime"); }
+        }
+        public int CleanCount { get; set; } = 200;
+        /// <summary>
+        /// 读取直播头衔
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetTitles()
+        {
+            try
+            {
+                if (Titles != null)
+                {
+                    return;
+                }
+                var results = await liveRoomAPI.LiveTitles().Request();
+                if (results.status)
+                {
+                    var data = await results.GetData<List<LiveTitleModel>>();
+                    if (data.success)
+                    {
+                        Titles = data.data;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("读取直播头衔失败", LogType.FATAL, ex);
+            }
+        }
+        /// <summary>
+        /// 读取直播播放地址
+        /// </summary>
+        /// <param name="roomid"></param>
+        /// <param name="qn"></param>
+        /// <returns></returns>
+        public async Task GetPlayUrl(int roomid, int qn = 0)
+        {
+            try
+            {
+                Loading = true;
+                var results = await PlayerAPI.LivePlayUrl(roomid.ToString(), qn).Request();
+                if (results.status)
+                {
+                    var data = await results.GetJson<ApiDataModel<LiveRoomPlayUrlModel>>();
+                    if (data.success)
+                    {
+                        int i = 1;
+                        foreach (var item in data.data.durl)
+                        {
+                            item.name = "线路" + i;
+                            i++;
+                        }
+                        if (qualites == null)
+                        {
+                            qualites = data.data.quality_description;
+                        }
+                        current_qn = data.data.quality_description.FirstOrDefault(x => x.qn == data.data.current_qn);
+                        urls = data.data.durl;
+                        ChangedPlayUrl?.Invoke(this, data.data);
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(results.message);
+
+                }
+            }
+            catch (Exception)
+            {
+                Utils.ShowMessageToast("读取播放地址失败");
+            }
+            finally
+            {
+                Loading = false;
+            }
+        }
+        /// <summary>
+        /// 读取直播间详细信息
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task LoadLiveRoomDetail(string id)
+        {
+            try
+            {
+                if (liveDanmaku != null)
+                {
+                    liveDanmaku.Dispose();
+                }
+                Loading = true;
+                var result = await liveRoomAPI.LiveRoomInfo(id).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<LiveInfoModel>();
+                    if (data.success)
+                    {
+                        RoomID = data.data.room_info.room_id;
+                        Online = data.data.room_info.online;
+                        Liveing = data.data.room_info.live_status == 1;
+                        LiveInfo = data.data;
+                        if (Ranks == null)
+                        {
+                            Ranks = new List<LiveRoomRankVM>() {
+                                new LiveRoomRankVM(RoomID,data.data.room_info.uid,"金瓜子榜","gold-rank"),
+                                new LiveRoomRankVM(RoomID,data.data.room_info.uid,"今日礼物榜","today-rank"),
+                                new LiveRoomRankVM(RoomID,data.data.room_info.uid,"七日礼物榜","seven-rank"),
+                                new LiveRoomRankVM(RoomID,data.data.room_info.uid,"粉丝榜","fans"),
+                            };
+                            SelectRank = Ranks[0];
+                            DoPropertyChanged("SelectRank");
+                        }
+
+
+                        await LoadAnchorProfile();
+                        if (Liveing)
+                        {
+                            timer.Start();
+                            await GetPlayUrl(RoomID, 0);
+                            GetFreeSilverTime(); 
+                            if (ReceiveLotteryMsg)
+                            {
+                                anchorLotteryVM.LoadLotteryInfo(RoomID);
+                            }
+                        }
+                        await GetRoomGiftList();
+                        await LoadWalletInfo();
+                        if (Titles == null)
+                        {
+                            await GetTitles();
+                        }
+                        liveDanmaku.Start(data.data.room_info.room_id, SettingHelper.GetValue<int>(SettingHelper.Account.USER_ID, 0));
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("加载直播间失败:" + data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var result = HandelError<object>(ex);
+                Utils.ShowMessageToast(ex.Message);
+            }
+            finally
+            {
+                Loading = false;
+            }
+        }
+        /// <summary>
+        /// 读取钱包信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadWalletInfo()
+        {
+            try
+            {
+                if (!Logined)
+                {
+                    return;
+                }
+                var result = await liveRoomAPI.MyWallet().Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<LiveWalletInfo>();
+                    if (data.success)
+                    {
+                        WalletInfo = data.data;
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("读取钱包失败:" + data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var result = HandelError<object>(ex);
+                Utils.ShowMessageToast(ex.Message);
+            }
+        }
+        /// <summary>
+        /// 读取主播资料
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadAnchorProfile()
+        {
+            try
+            {
+                var result = await liveRoomAPI.AnchorProfile(LiveInfo.room_info.uid).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<LiveAnchorProfile>();
+                    if (data.success)
+                    {
+                        Profile = data.data;
+                        Attention = Profile.relation_status == 2;
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("读取主播信息失败:" + data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var result = HandelError<object>(ex);
+                Utils.ShowMessageToast(ex.Message);
+            }
+        }
+        /// <summary>
+        /// 读取直播间可用礼物列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetRoomGiftList()
+        {
+            try
+            {
+                var result = await liveRoomAPI.GiftList(LiveInfo.room_info.area_id, LiveInfo.room_info.parent_area_id, RoomID).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        var list = JsonConvert.DeserializeObject<List<LiveGiftItem>>(data.data["list"].ToString());
+
+                        var result_room = await liveRoomAPI.RoomGifts(LiveInfo.room_info.area_id, LiveInfo.room_info.parent_area_id, RoomID).Request();
+                        if (result_room.status)
+                        {
+                            var data_room = await result_room.GetData<JObject>();
+                            var list_room = JsonConvert.DeserializeObject<List<LiveRoomGiftItem>>(data_room.data["list"].ToString());
+                            List<LiveGiftItem> ls = new List<LiveGiftItem>() {
+                               list.FirstOrDefault(x=>x.id==1)
+                            };
+                            foreach (var item in list_room)
+                            {
+                                ls.Add(list.FirstOrDefault(x => x.id == item.gift_id));
+                            }
+                            Gifts = ls;
+                        }
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("读取礼物信息失败");
+                LogHelper.Log("读取礼物信息失败", LogType.ERROR, ex);
+            }
+        }
+
+        public int GuardPage { get; set; } = 1;
+        private bool _loadingGuard = true;
+        public bool LoadingGuard
+        {
+            get { return _loadingGuard; }
+            set { _loadingGuard = value; DoPropertyChanged("LoadingGuard"); }
+        }
+        private bool _moreGuard = false;
+        public bool LoadMoreGuard
+        {
+            get { return _moreGuard; }
+            set { _moreGuard = value; DoPropertyChanged("LoadMoreGuard"); }
+        }
+        /// <summary>
+        /// 读取舰队信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task GetGuardList()
+        {
+            try
+            {
+                LoadingGuard = true;
+                LoadMoreGuard = false;
+                var result = await liveRoomAPI.GuardList(LiveInfo.room_info.uid, RoomID, GuardPage).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        var top3 = JsonConvert.DeserializeObject<List<LiveGuardRankItem>>(data.data["top3"].ToString());
+                        if (Guards.Count == 0 && top3 != null && top3.Count != 0)
+                        {
+                            foreach (var item in top3)
+                            {
+                                Guards.Add(item);
+                            }
+                        }
+                        var list = JsonConvert.DeserializeObject<List<LiveGuardRankItem>>(data.data["list"].ToString());
+                        if (list != null && list.Count != 0)
+                        {
+                            foreach (var item in list)
+                            {
+                                Guards.Add(item);
+                            }
+                        }
+                        if (GuardPage >= data.data["info"]["page"].ToInt32())
+                        {
+                            LoadMoreGuard = false;
+                        }
+                        else
+                        {
+                            LoadMoreGuard = true;
+                            GuardPage++;
+                        }
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("读取舰队失败");
+                LogHelper.Log("读取舰队失败", LogType.ERROR, ex);
+            }
+            finally
+            {
+                LoadingGuard = false;
+            }
+        }
+        /// <summary>
+        /// 加载更多舰队信息
+        /// </summary>
+        public async void LoadMoreGuardList()
+        {
+            if (LoadingGuard)
+            {
+                return;
+            }
+            await GetGuardList();
+        }
+
+
+        private bool _showbox = false;
+        public bool ShowBox
+        {
+            get { return _showbox; }
+            set { _showbox = value; DoPropertyChanged("ShowBox"); }
+        }
+        private bool _box_is_open = false;
+        public bool OpenBox
+        {
+            get { return _box_is_open; }
+            set { _box_is_open = value; DoPropertyChanged("OpenBox"); }
+        }
+
+        private string _box_time = "--:--";
+        public string BoxTime
+        {
+            get { return _box_time; }
+            set { _box_time = value; DoPropertyChanged("BoxTime"); }
+        }
+
+        public DateTime freeSilverTime { get; set; }
+        public bool AutoReceiveFreeSilver { get; set; }
+
+
+        public async Task GetFreeSilverTime()
+        {
+            try
+            {
+                if (!SettingHelper.Account.Logined)
+                {
+                    ShowBox = false;
+                    OpenBox = false;
+                    return;
+                }
+                OpenBox = false;
+                var result = await liveRoomAPI.FreeSilverTime().Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        ShowBox = true;
+                        freeSilverTime = Utils.TimestampToDatetime(Convert.ToInt64(data.data["time_end"].ToString()));
+                        timer_box.Start();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
+                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+            }
+        }
+
+        public async Task GetFreeSilver()
+        {
+            try
+            {
+                if (!SettingHelper.Account.Logined)
+                {
+                    return;
+                }
+                var result = await liveRoomAPI.GetFreeSilver().Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        Utils.ShowMessageToast("宝箱领取成功,瓜子+" + data.data["awardSilver"]);
+                        GetFreeSilverTime();
+                        LoadWalletInfo();
+                    }
+                    else
+                    {
+                        GetFreeSilverTime();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
+                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+            }
+        }
+
+        private async void Timer_box_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+             {
+                 if (DateTime.Now >= freeSilverTime)
+                 {
+                     ShowBox = false;
+                     OpenBox = true;
+                     timer_box.Stop();
+                     if (AutoReceiveFreeSilver)
+                     {
+                         await GetFreeSilver();
+                     }
+                 }
+                 else
+                 {
+                     OpenBox = false;
+                     BoxTime = (freeSilverTime - DateTime.Now).ToString(@"mm\:ss");
+                 }
+             });
+        }
+        public async Task SendGift(LiveGiftItem liveGiftItem)
+        {
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            try
+            {
+                var result = await liveRoomAPI.SendGift(LiveInfo.room_info.uid, liveGiftItem.id, liveGiftItem.num, RoomID, liveGiftItem.coin_type, liveGiftItem.price).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<object>();
+                    if (data.success)
+                    {
+                        LoadWalletInfo();
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                Utils.ShowMessageToast("赠送礼物出现错误");
+            }
+
+        }
+
+
+
+
+        public async Task<bool> SendDanmu(string text)
+        {
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return false;
+            }
+            try
+            {
+                var result = await liveRoomAPI.SendDanmu(text, RoomID).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<object>();
+                    if (data.success)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                        return false;
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                Utils.ShowMessageToast("赠送礼物出现错误");
+                return false;
+            }
+
+        }
+
+        public void Dispose()
+        {
+            if (liveDanmaku != null)
+            {
+                liveDanmaku.Dispose();
+            }
+            if (timer != null)
+            {
+                timer.Stop();
+            }
+            if (timer_box != null)
+            {
+                timer_box.Stop();
+            }
+            if (timer_auto_hide_gift != null)
+            {
+                timer_auto_hide_gift.Stop();
+            }
+            if (anchorLotteryVM != null)
+            {
+                anchorLotteryVM.timer.Stop();
+                anchorLotteryVM = null;
+            }
+        }
+
+        public void SetDelay(int ms)
+        {
+            if (liveDanmaku != null)
+            {
+                liveDanmaku.delay = ms;
+            }
+        }
+    }
+
+    public class LiveRoomRankVM : IModules
+    {
+        readonly LiveRoomAPI liveRoomAPI;
+        public LiveRoomRankVM(int roomid, int uid, string title, string type)
+        {
+            liveRoomAPI = new LiveRoomAPI();
+            RankType = type;
+            Title = title;
+            RoomID = roomid;
+            Uid = uid;
+            LoadMoreCommand = new RelayCommand(LaodMore);
+            Items = new ObservableCollection<LiveRoomRankItemModel>();
+        }
+        public ICommand LoadMoreCommand { get; private set; }
+        public int RoomID { get; set; }
+        public int Uid { get; set; }
+        public string Title { get; set; }
+        public string RankType { get; set; }
+        private bool _loading = false;
+        public bool Loading
+        {
+            get { return _loading; }
+            set { _loading = value; DoPropertyChanged("Loading"); }
+        }
+
+        public ObservableCollection<LiveRoomRankItemModel> Items { get; set; }
+        public int Page { get; set; } = 1;
+
+        private bool _canLoadMore = false;
+
+        public bool CanLoadMore
+        {
+            get { return _canLoadMore; }
+            set { _canLoadMore = value; DoPropertyChanged("CanLoadMore"); }
+        }
+        public int Next { get; set; } = 0;
+
+        public async Task LoadData()
+        {
+            try
+            {
+                Loading = true;
+                CanLoadMore = false;
+                var api = liveRoomAPI.FansList(Uid, RoomID, Page);
+                if (RankType != "fans")
+                {
+                    api = liveRoomAPI.RoomRankList(Uid, RoomID, RankType, Next);
+                }
+                var result = await api.Request();
+                if (result.status)
+                {
+                    var data = result.GetJObject();
+                    if (data["code"].ToInt32() == 0)
+                    {
+                        var list = JsonConvert.DeserializeObject<List<LiveRoomRankItemModel>>(data["data"]["list"].ToString());
+                        if (list != null)
+                        {
+                            foreach (var item in list)
+                            {
+                                Items.Add(item);
+                            }
+                        }
+
+                        if (RankType != "fans")
+                        {
+                            Next = data["data"]["next_offset"].ToInt32();
+                            CanLoadMore = Next != 0;
+                        }
+                        else
+                        {
+                            var total = data["data"]["total_page"].ToInt32();
+                            if (Page < total)
+                            {
+                                CanLoadMore = true;
+                                Page++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data["message"].ToString());
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
+                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+            }
+            finally
+            {
+                Loading = false;
+            }
+        }
+
+
+        public async void LaodMore()
+        {
+            if (Loading)
+            {
+                return;
+            }
+            await LoadData();
+        }
+    }
+
+    public class LiveRoomAnchorLotteryVM : IModules
+    {
+        readonly Api.Live.LiveRoomAPI liveRoomAPI;
+        public LiveRoomAnchorLotteryVM()
+        {
+            liveRoomAPI = new LiveRoomAPI();
+            timer = new Timer(1000);
+            timer.Elapsed += Timer_Elapsed;
+        }
+
+        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (LotteryInfo != null)
+                {
+                    if (LotteryInfo.time <= 0)
+                    {
+                        End = false;
+                        timer.Stop();
+                        DownTime = "已开奖";
+                        Show = false;
+                        LotteryInfo = null;
+                        return;
+                    }
+                    var time = TimeSpan.FromSeconds(LotteryInfo.time);
+                    DownTime = time.ToString(@"mm\:ss");
+                    LotteryInfo.time--;
+                }
+            });
+        }
+
+
+
+        public Timer timer;
+        private LiveRoomAnchorLotteryInfoModel _LotteryInfo;
+        public LiveRoomAnchorLotteryInfoModel LotteryInfo
+        {
+            get { return _LotteryInfo; }
+            set { _LotteryInfo = value; DoPropertyChanged("LotteryInfo"); }
+        }
+
+
+
+        private string _downTime = "--:--";
+        public string DownTime
+        {
+            get { return _downTime; }
+            set { _downTime = value; DoPropertyChanged("DownTime"); }
+        }
+
+        private bool _end = false;
+        public bool End
+        {
+            get { return _end; }
+            set { _end = value; DoPropertyChanged("End"); }
+        }
+
+        private bool _show = false;
+        public bool Show
+        {
+            get { return _show; }
+            set { _show = value; DoPropertyChanged("Show"); }
+        }
+
+        public async Task LoadLotteryInfo(int roomId)
+        {
+            try
+            {
+                var result = await liveRoomAPI.RoomLotteryInfo(roomId).Request();
+                if (result.status)
+                {
+                    var obj = await result.GetData<JObject>();
+                    if (obj.success)
+                    {
+                        var data = JsonConvert.DeserializeObject<LiveRoomAnchorLotteryInfoModel>(obj.data["anchor"].ToString());
+                        if (data != null)
+                        {
+                            LotteryInfo = data;
+                            Show = true;
+                            timer.Start();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("加载主播抽奖信息失败", LogType.ERROR, ex);
+            }
+        }
+
+        public void SetLotteryInfo(LiveRoomAnchorLotteryInfoModel info)
+        {
+            LotteryInfo = info;
+            Show = true;
+            timer.Start();
+        }
+
+
+    }
+
+
+    public class LiveRoomPlayUrlModel
+    {
+        public int current_qn { get; set; }
+        public List<LiveRoomWebUrlQualityDescriptionItemModel> quality_description { get; set; }
+        public List<LiveRoomWebUrlDurlItemModel> durl { get; set; }
+    }
+    public class LiveRoomWebUrlQualityDescriptionItemModel
+    {
+        public int qn { get; set; }
+        public string desc { get; set; }
+    }
+    public class LiveRoomWebUrlDurlItemModel
+    {
+        public string name { get; set; }
+        public string url { get; set; }
+        public int length { get; set; }
+        public int order { get; set; }
+        public int stream_type { get; set; }
+        public int ptag { get; set; }
+    }
+
+    namespace LiveRoomDetailModels
+    {
+        public class LiveTitleModel
+        {
+            public string id { get; set; }
+            public string title { get; set; }
+            public string img { get; set; }
+        }
+
+        public class LiveInfoModel
+        {
+            public LiveRoomInfoModel room_info { get; set; }
+            public LiveRoomGuardInfoModel guard_info { get; set; }
+            public LiveAnchorInfoModel anchor_info { get; set; }
+        }
+        public class LiveRoomGuardInfoModel
+        {
+            public int count { get; set; }
+            public int achievement_level { get; set; }
+        }
+        public class LiveRoomInfoPendantsFrameModel
+        {
+            public string name { get; set; }
+            public int position { get; set; }
+            public string value { get; set; }
+            public string desc { get; set; }
+        }
+
+        public class LiveRoomInfoPendantsModel
+        {
+            public LiveRoomInfoPendantsFrameModel frame { get; set; }
+            public object badge { get; set; }
+        }
+
+        public class LiveRoomInfoModel
+        {
+            public int uid { get; set; }
+            public int room_id { get; set; }
+            public int short_id { get; set; }
+            public string title { get; set; }
+            public string cover { get; set; }
+            public string tags { get; set; }
+            public string background { get; set; }
+            public string description { get; set; }
+            public int online { get; set; }
+            public int live_status { get; set; }
+            public long live_start_time { get; set; }
+            public int live_screen_type { get; set; }
+            public int lock_status { get; set; }
+            public int lock_time { get; set; }
+            public int hidden_status { get; set; }
+            public int hidden_time { get; set; }
+            public int area_id { get; set; }
+            public string area_name { get; set; }
+            public int parent_area_id { get; set; }
+            public string parent_area_name { get; set; }
+            public string keyframe { get; set; }
+            public int special_type { get; set; }
+            public string up_session { get; set; }
+            public int pk_status { get; set; }
+            public LiveRoomInfoPendantsModel pendants { get; set; }
+            public int on_voice_join { get; set; }
+            public int tv_screen_on { get; set; }
+        }
+
+
+
+        public class LiveAnchorInfoOfficialInfoModel
+        {
+            public int role { get; set; }
+            public string title { get; set; }
+            public string desc { get; set; }
+        }
+
+        public class LiveAnchorInfoBaseInfoModel
+        {
+            public string uname { get; set; }
+            public string face { get; set; }
+            public string gender { get; set; }
+            public LiveAnchorInfoOfficialInfoModel official_info { get; set; }
+        }
+
+        public class LiveAnchorInfoLiveInfoModel
+        {
+            public int level { get; set; }
+            public int level_color { get; set; }
+        }
+
+        public class LiveAnchorInfoRelationInfoModel
+        {
+            public int attention { get; set; }
+        }
+
+        public class LiveAnchorInfoModel
+        {
+            public LiveAnchorInfoBaseInfoModel base_info { get; set; }
+            public LiveAnchorInfoLiveInfoModel live_info { get; set; }
+            public LiveAnchorInfoRelationInfoModel relation_info { get; set; }
+        }
+
+
+
+        public class LiveGiftItemCountMap
+        {
+            public int num { get; set; }
+            public string text { get; set; }
+        }
+
+        public class LiveGiftItem
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+            public int price { get; set; }
+            public int type { get; set; }
+            public string coin_type { get; set; }
+            public bool is_gold
+            {
+                get
+                {
+                    return coin_type == "gold";
+                }
+            }
+            public int bag_gift { get; set; }
+            public int effect { get; set; }
+            public string corner_mark { get; set; }
+            public bool show_corner_mark { get { return !string.IsNullOrEmpty(corner_mark); } }
+            public string corner_background { get; set; }
+            public int broadcast { get; set; }
+            public int draw { get; set; }
+            public int stay_time { get; set; }
+            public int animation_frame_num { get; set; }
+            public string desc { get; set; }
+            public string rule { get; set; }
+            public string rights { get; set; }
+            public int privilege_required { get; set; }
+            public List<LiveGiftItemCountMap> count_map { get; set; }
+            public string img_basic { get; set; }
+            public string img_dynamic { get; set; }
+            public string frame_animation { get; set; }
+            public string gif { get; set; }
+            public string webp { get; set; }
+            public string full_sc_web { get; set; }
+            public string full_sc_horizontal { get; set; }
+            public string full_sc_vertical { get; set; }
+            public string full_sc_horizontal_svga { get; set; }
+            public string full_sc_vertical_svga { get; set; }
+            public string bullet_head { get; set; }
+            public string bullet_tail { get; set; }
+            public int limit_interval { get; set; }
+            public int bind_ruid { get; set; }
+            public int bind_roomid { get; set; }
+            public int bag_coin_type { get; set; }
+            public int broadcast_id { get; set; }
+            public int draw_id { get; set; }
+            public int gift_type { get; set; }
+            public int weight { get; set; }
+            public int max_send_limit { get; set; }
+            public int combo_resources_id { get; set; }
+            public int goods_id { get; set; }
+
+            public int num { get; set; } = 1;
+        }
+        public class LiveRoomGiftItem
+        {
+            public int position { get; set; }
+            public int gift_id { get; set; }
+            public int id { get; set; }
+            public int plan_id { get; set; }
+        }
+        public class LiveWalletInfo
+        {
+            public int gold { get; set; }
+            public int silver { get; set; }
+        }
+
+
+        public class LiveBagGiftItem
+        {
+            public long bag_id { get; set; }
+            public long expire_at { get; set; }
+            public int gift_id { get; set; }
+            public string gift_name { get; set; }
+            public string corner_mark { get; set; }
+            public int gift_type { get; set; }
+            public int type { get; set; }
+            public int gift_num { get; set; }
+        }
+
+
+
+        public class LiveAnchorProfileGloryInfo
+        {
+            public string gid { get; set; }
+            public string name { get; set; }
+            public string activity_name { get; set; }
+            public string activity_date { get; set; }
+            public string pic_url { get; set; }
+            public string jump_url { get; set; }
+        }
+
+        public class LiveAnchorProfilePkInfo
+        {
+            public int season_id { get; set; }
+            public string season_name { get; set; }
+            public string season_date_start { get; set; }
+            public string season_date_end { get; set; }
+            public string pk_rank_name { get; set; }
+            public string first_pic_url { get; set; }
+            public int pk_rank_star { get; set; }
+            public string second_rank_icon { get; set; }
+            public string rank_info_url_app { get; set; }
+        }
+
+        public class LiveAnchorProfile
+        {
+            public int uid { get; set; }
+            public string uname { get; set; }
+            public string face { get; set; }
+            public int verify_type { get; set; }
+            public string verify
+            {
+                get
+                {
+                    switch (verify_type)
+                    {
+                        case 0:
+                            return "ms-appx:///Assets/Icon/verify0.png";
+                        case 1:
+                            return "ms-appx:///Assets/Icon/verify1.png";
+                        default:
+                            return "ms-appx:///Assets/MiniIcon/transparent.png";
+                    }
+                }
+            }
+            public string desc { get; set; }
+            public int level { get; set; }
+            public int level_color { get; set; }
+            public int main_vip { get; set; }
+            public int uname_color { get; set; }
+            public int room_id { get; set; }
+            public string area_name { get; set; }
+            public string pendant { get; set; }
+            public int pendant_from { get; set; }
+            public List<LiveAnchorProfileGloryInfo> glory_info { get; set; }
+            public List<LiveAnchorProfilePkInfo> pk_info { get; set; }
+            public string season_info_url { get; set; }
+            public int follow_num { get; set; }
+            public bool is_fans { get; set; }
+            public int relation_status { get; set; }
+        }
+
+        public class LiveGuardRankItem
+        {
+            public string username { get; set; }
+            public int uid { get; set; }
+            public int ruid { get; set; }
+            public string face { get; set; }
+            public int guard_level { get; set; }
+            public string rank_img
+            {
+                get
+                {
+                    return "ms-appx:///Assets/Live/ic_live_guard_" + guard_level + ".png";
+                }
+            }
+        }
+
+
+        public class LiveRoomRankItemModel
+        {
+            public int rank { get; set; }
+            public int uid { get; set; }
+            public string uname { get; set; }
+            public string face { get; set; }
+            public int score { get; set; }
+            public string icon { get; set; } = "ms-appx:///Assets/Thumbnails/transparent.png";
+            public bool show_right
+            {
+                get
+                {
+                    return score != 0;
+                }
+            }
+
+
+            public string medal_name { get; set; }
+            public string level { get; set; }
+            public string color { get; set; }
+
+            public bool show_medal
+            {
+                get
+                {
+                    return !string.IsNullOrEmpty(medal_name);
+                }
+            }
+        }
+
+
+        public class LiveRoomAnchorLotteryInfoModel
+        {
+            public string asset_icon { get; set; }
+            public string award_image { get; set; }
+            public string award_name { get; set; }
+            public int award_num { get; set; }
+            public int cur_gift_num { get; set; }
+            public long current_time { get; set; }
+            public string danmu { get; set; }
+            public int gift_id { get; set; }
+
+            public bool show_gift
+            {
+                get
+                {
+                    return gift_id != 0;
+                }
+            }
+
+            public string gift_name { get; set; }
+            public int gift_num { get; set; }
+            public int gift_price { get; set; }
+            public int goaway_time { get; set; }
+            public int id { get; set; }
+            public int join_type { get; set; }
+            public int lot_status { get; set; }
+            public int max_time { get; set; }
+            public string require_text { get; set; }
+            public int require_type { get; set; }
+            public int require_value { get; set; }
+            public int room_id { get; set; }
+            public int send_gift_ensure { get; set; }
+            public int show_panel { get; set; }
+            public int status { get; set; }
+            public int time { get; set; }
+            public string url { get; set; }
+            public string web_url { get; set; }
+        }
+
+        public class LiveRoomEndAnchorLotteryInfoModel
+        {
+            public int id { get; set; }
+            public int lot_status { get; set; }
+            public string award_image { get; set; }
+            public string award_name { get; set; }
+            public int award_num { get; set; }
+            public string url { get; set; }
+            public string web_url { get; set; }
+            public List<LiveRoomEndAnchorLotteryInfoUserModel> award_users { get; set; }
+        }
+        public class LiveRoomEndAnchorLotteryInfoUserModel
+        {
+            public int uid { get; set; }
+            public int level { get; set; }
+            public string uname { get; set; }
+            public string face { get; set; }
+
+        }
+
+    }
+
+}

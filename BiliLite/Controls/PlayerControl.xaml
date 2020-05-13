@@ -1,0 +1,711 @@
+﻿<UserControl
+    x:Class="BiliLite.Controls.PlayerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:convert="using:BiliLite.Converters"
+    xmlns:danmaku="using:NSDanmaku.Controls"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    xmlns:fa="using:FontAwesome5"
+    d:DesignHeight="800"
+    d:DesignWidth="1000">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="HyperlinkButtonForegroundPointerOver" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
+        <Style TargetType="ComboBox" x:Key="PlayerComboBoxStyle">
+            <Setter Property="Padding" Value="8,0" />
+            <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
+            <Setter Property="Foreground" Value="{ThemeResource ComboBoxForeground}" />
+            <Setter Property="Background" Value="{ThemeResource ComboBoxBackground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource ComboBoxBorderThemeThickness}" />
+            <Setter Property="TabNavigation" Value="Once" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True" />
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <CarouselPanel />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid x:Name="LayoutRoot">
+                            <Grid.Resources>
+                                <Storyboard x:Key="OverlayOpeningAnimation">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
+                                        <SplineDoubleKeyFrame KeyTime="0:0:0.383" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                                <Storyboard x:Key="OverlayClosingAnimation">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                                        <SplineDoubleKeyFrame KeyTime="0:0:0.216" KeySpline="0.1,0.9 0.2,1.0" Value="0.0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </Grid.Resources>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0" />
+                            </Grid.ColumnDefinitions>
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+
+                                    <VisualState x:Name="PointerOver">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HighLightColor}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Disabled">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Background" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBorderBrushDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxForegroundDisabled}}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused">
+
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="HighlightBackground"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="1"
+                                            Duration="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HighlightBackground" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxBackgroundBorderBrushFocused}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundFocused}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxForegroundFocused}}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundFocused}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="FocusedPressed">
+
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="HighlightBackground"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="1"
+                                            Duration="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxForegroundFocusedPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextBlock" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxPlaceHolderForegroundFocusedPressed}}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DropDownGlyph" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxDropDownGlyphForegroundFocusedPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unfocused" />
+                                    <VisualState x:Name="PointerFocused" />
+                                    <VisualState x:Name="FocusedDropDown">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PopupBorder" Storyboard.TargetProperty="Visibility" Duration="0">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DropDownStates">
+                                    <VisualState x:Name="Opened">
+
+                                        <Storyboard>
+                                            <SplitOpenThemeAnimation OpenedTargetName="PopupBorder"
+                                        ClosedTargetName="ContentPresenter"
+                                        OffsetFromCenter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOffset}"
+                                        OpenedLength="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOpenedHeight}" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Closed">
+
+                                        <Storyboard>
+                                            <SplitCloseThemeAnimation OpenedTargetName="PopupBorder"
+                                        ClosedTargetName="ContentPresenter"
+                                        OffsetFromCenter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOffset}"
+                                        OpenedLength="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOpenedHeight}" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="HeaderContentPresenter"
+                            x:DeferLoadStrategy="Lazy"
+                            Margin="{ThemeResource ComboBoxHeaderThemeMargin}"
+                            FlowDirection="{TemplateBinding FlowDirection}"
+                            FontWeight="{ThemeResource ComboBoxHeaderThemeFontWeight}"
+                            Visibility="Collapsed"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}" />
+                            <Border x:Name="Background"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
+                            <Border x:Name="HighlightBackground"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Background="{ThemeResource ComboBoxBackgroundUnfocused}"
+                            BorderBrush="{ThemeResource ComboBoxBackgroundBorderBrushUnfocused}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Opacity="0" />
+                            <ContentPresenter x:Name="ContentPresenter"
+                            Grid.Row="1"
+                          
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <TextBlock x:Name="PlaceholderTextBlock"
+                                Text="{TemplateBinding PlaceholderText}"
+                                Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxPlaceHolderForeground}}" />
+                            </ContentPresenter>
+                            <FontIcon x:Name="DropDownGlyph"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            IsHitTestVisible="False"
+                            Margin="0,10,10,10"
+                            Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="12"
+                            Glyph="&#xE0E5;"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            AutomationProperties.AccessibilityView="Raw" />
+                            <Popup x:Name="Popup">
+                                <Border x:Name="PopupBorder"
+                                Background="{ThemeResource ComboBoxDropDownBackground}"
+                                BorderBrush="{ThemeResource ComboBoxDropDownBorderBrush}"
+                                BorderThickness="{ThemeResource ComboBoxDropdownBorderThickness}"
+                                Margin="0,-1,0,-1"
+                                HorizontalAlignment="Stretch">
+                                    <ScrollViewer x:Name="ScrollViewer"
+                                    Foreground="{ThemeResource ComboBoxDropDownForeground}"
+                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownContentMinWidth}"
+                                    VerticalSnapPointsType="OptionalSingle"
+                                    VerticalSnapPointsAlignment="Near"
+                                    HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                    IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                    IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                    IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                    BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                    ZoomMode="Disabled"
+                                    AutomationProperties.AccessibilityView="Raw">
+                                        <ItemsPresenter Margin="{ThemeResource ComboBoxDropdownContentMargin}" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <convert:ProgressToTimeConverter x:Key="progress"></convert:ProgressToTimeConverter>
+        <convert:ColorConvert x:Key="color"></convert:ColorConvert>
+        <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="Transparent"></SolidColorBrush>
+        <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="Transparent"></SolidColorBrush>
+        <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
+    </UserControl.Resources>
+    <Grid Background="Black">
+      
+     
+        <SplitView x:Name="SplitView"  PanePlacement="Right" PaneBackground="#C8000000">
+            <SplitView.Pane>
+                <Grid x:Name="Setting">
+                    <Pivot x:Name="SettingPivot" RequestedTheme="Dark">
+                        <PivotItem >
+                            <PivotItem.Header>
+                                <TextBlock Foreground="White" FontSize="18">选集</TextBlock>
+                            </PivotItem.Header>
+                            <ListView Margin="0 4" x:Name="EpisodeList" SelectionChanged="EpisodeList_SelectionChanged" DisplayMemberPath="title" >
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Foreground" Value="White"></Setter>
+                                        <Setter Property="Margin" Value="0 4"></Setter>
+                                        <Setter Property="BorderThickness" Value="1"></Setter>
+                                        <Setter Property="BorderBrush" Value="#33808080"></Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </PivotItem>
+                        <PivotItem Foreground="White">
+                            <PivotItem.Header>
+                                <TextBlock Foreground="White" FontSize="18">弹幕</TextBlock>
+                            </PivotItem.Header>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel >
+                                    <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                        <Button x:Name="DanmuSettingUpdateDanmaku" Click="DanmuSettingUpdateDanmaku_Click" Grid.Column="1" Foreground="White" >更新弹幕</Button>
+                                        <TextBlock VerticalAlignment="Center" Margin="8 0 0 0">弹幕数量:<Run x:Name="TxtDanmuCount"/></TextBlock>
+                                    </StackPanel>
+                                    <Grid Margin="0 8 0 0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <ToggleSwitch x:Name="DanmuSettingHideTop" Foreground="White"  >
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White" >隐藏顶部弹幕</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                        <ToggleSwitch x:Name="DanmuSettingHideBottom" Grid.Column="1" Foreground="White"  >
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White">隐藏底部弹幕</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                    </Grid>
+                                    <Grid Margin="0 8 0 0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <ToggleSwitch x:Name="DanmuSettingHideRoll" Foreground="White"  >
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White" >隐藏滚动弹幕</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                        <!--<ToggleSwitch Grid.Column="1" Foreground="White" >
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White">隐藏高级弹幕</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>-->
+                                    </Grid>
+                                    <TextBlock Margin="0 4 0 0">弹幕缩放 <Run Text="{x:Bind Path=DanmuControl.sizeZoom,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider x:Name="DanmuSettingFontZoom" Value="{x:Bind Path=DanmuControl.sizeZoom,Mode=TwoWay}" Minimum="0.1" Maximum="2" StepFrequency="0.05"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕速度 <Run Text="{x:Bind Path=DanmuControl.speed,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider x:Name="DanmuSettingSpeed" Value="{x:Bind Path=DanmuControl.speed,Mode=TwoWay}" Minimum="1" Maximum="25" StepFrequency="1"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕透明度 <Run Text="{x:Bind Path=DanmuControl.Opacity,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider  x:Name="DanmuSettingOpacity" Value="{x:Bind Path=DanmuControl.Opacity,Mode=TwoWay}" Minimum="0.1" Maximum="1" StepFrequency="0.1"></Slider>
+                                    <Grid Margin="0 4 0 0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="1" >
+                                            <TextBlock  Margin="0 4">弹幕样式</TextBlock>
+                                            <ComboBox  x:Name="DanmuSettingStyle" Foreground="White" SelectedIndex="{x:Bind Path=DanmuControl.BorderStyle,Mode=TwoWay}">
+                                                <ComboBox.Items>
+                                                    <ComboBoxItem>重叠</ComboBoxItem>
+                                                    <ComboBoxItem>无边</ComboBoxItem>
+                                                    <ComboBoxItem>阴影</ComboBoxItem>
+                                                    <ComboBoxItem>描边</ComboBoxItem>
+                                                </ComboBox.Items>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <ToggleSwitch x:Name="DanmuSettingBold" Foreground="White" Margin="0 4 0 0"  IsOn="{x:Bind Path=DanmuControl.bold,Mode=TwoWay}">
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White" >字体加粗</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                    </Grid>
+                                    <Grid Margin="0 8 0 0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <ToggleSwitch  x:Name="DanmuSettingMerge" Foreground="White"  >
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White" >合并重复弹幕</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                        <ToggleSwitch x:Name="DanmuSettingDotHideSubtitle" Grid.Column="1" Foreground="White"  IsOn="{x:Bind Path=DanmuControl.notHideSubtitle,Mode=TwoWay}">
+                                            <ToggleSwitch.Header>
+                                                <TextBlock  Foreground="White">半屏显示</TextBlock>
+                                            </ToggleSwitch.Header>
+                                        </ToggleSwitch>
+                                    </Grid>
+                                    <TextBlock Margin="0 8">关键词屏蔽</TextBlock>
+                                    <Grid >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox x:Name="DanmuSettingTxtWord" PlaceholderText="输入关键词"></TextBox>
+                                        <Button x:Name="DanmuSettingAddWord" Click="DanmuSettingAddWord_Click" Grid.Column="1" Foreground="White" Margin="8 0 0 0">添加</Button>
+                                        <Button x:Name="DanmuSettingSyncWords" Click="DanmuSettingSyncWords_Click"  Grid.Column="2" Foreground="White" Margin="8 0 0 0">同步</Button>
+                                    </Grid>
+                                    <ItemsControl Margin="0 8 0 0" x:Name="DanmuSettingWords" >
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <toolkit:WrapPanel VerticalSpacing="4" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <HyperlinkButton Margin="0 0 8 0" Foreground="White">
+                                                    <Border CornerRadius="4" Padding="8 4" Background="Gray">
+                                                        <TextBlock FontSize="12" Text="{Binding}" ></TextBlock>
+                                                    </Border>
+                                                </HyperlinkButton>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </PivotItem>
+                        <PivotItem Foreground="White">
+                            <PivotItem.Header>
+                                <TextBlock Foreground="White" FontSize="18">播放</TextBlock>
+                            </PivotItem.Header>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <TextBlock Margin="0 8" >优先选择视频类型</TextBlock>
+                                    <ComboBox x:Name="PlayerSettingMode">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem>FLV</ComboBoxItem>
+                                            <ComboBoxItem>MP4</ComboBoxItem>
+                                            <ComboBoxItem>MP4-HEVC</ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                    <ToggleSwitch x:Name="PlayerSettingUseOtherSite" Margin="0 8"  Foreground="White" >
+                                        <ToggleSwitch.Header>
+                                            <TextBlock  Foreground="White">使用外站视频替换无法播放的视频</TextBlock>
+                                        </ToggleSwitch.Header>
+                                    </ToggleSwitch>
+
+                                    <TextBlock Margin="0 8" >播放模式</TextBlock>
+                                    <ComboBox x:Name="PlayerSettingPlayMode">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem>顺序播放</ComboBoxItem>
+                                            <ComboBoxItem>单集循环</ComboBoxItem>
+                                            <ComboBoxItem>列表循环</ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                    <TextBlock Margin="0 8" >画面尺寸</TextBlock>
+                                    <ComboBox x:Name="PlayerSettingRatio">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem>默认</ComboBoxItem>
+                                            <ComboBoxItem>填充</ComboBoxItem>
+                                            <ComboBoxItem>16:9</ComboBoxItem>
+                                            <ComboBoxItem>4:3</ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </PivotItem>
+                        <PivotItem  Foreground="White">
+                            <PivotItem.Header>
+                                <TextBlock Foreground="White" FontSize="18">字幕</TextBlock>
+                            </PivotItem.Header>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                   
+                                    <TextBlock Margin="0 8">字幕颜色</TextBlock>
+                                    <ComboBox SelectedIndex="1" x:Name="SubtitleSettingColor">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem Tag="#FFFFFF">白色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#bfbfbf">灰色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#40a9ff">蓝色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#ff7a45">橙色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#9254de">紫色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#f5222d">红色</ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                    <TextBlock Margin="0 8">字幕大小</TextBlock>
+                                    <Slider x:Name="SubtitleSettingSize" Value="25" Minimum="4" Maximum="48" StepFrequency="1"></Slider>
+                                    <TextBlock Margin="0 8">透明度</TextBlock>
+                                    <Slider x:Name="SubtitleSettingOpacity" Value="20" Minimum="0.1"  Maximum="1" StepFrequency="0.1"></Slider>
+                                    <TextBlock Margin="0 8">底部距离</TextBlock>
+                                    <Slider x:Name="SubtitleSettingBottom" Value="20" Minimum="4" Maximum="200" StepFrequency="4"></Slider>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </PivotItem>
+                    </Pivot>
+                </Grid>
+            </SplitView.Pane>
+            <Grid  PointerMoved="Grid_PointerMoved"   DoubleTapped="Grid_DoubleTapped" PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
+                <Grid.ContextFlyout>
+                    <Flyout>
+                        <TextBlock TextWrapping="Wrap" x:Name="txtInfo" ></TextBlock>
+                    </Flyout>
+                </Grid.ContextFlyout>
+                <!--播放器-->
+                <local:Player x:Name="Player" Tapped="Grid_Tapped" PlayStateChanged="Player_PlayStateChanged" PlayBufferStart="Player_PlayBufferStart" PlayBuffering="Player_PlayBuffering" PlayBufferEnd="Player_PlayBufferEnd" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
+                <!--字幕-->
+                <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24" Background="#7F000000">
+                    <TextBlock x:Name="TxtSubtitle" TextWrapping="Wrap" FontSize="{Binding ElementName=SubtitleSettingSize,Path=Value,Mode=OneWay}" Foreground="White"></TextBlock>
+                </Border>
+                <!--弹幕-->
+                <Grid >
+                    <danmaku:Danmaku x:Name="DanmuControl"/>
+                </Grid>
+                <Border x:Name="ToolTip" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="8" Padding="16" Background="#CCFFFFFF">
+                    <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="20" Text=""></TextBlock>
+                </Border>
+                <Grid>
+                    <StackPanel VerticalAlignment="Center" Visibility="Collapsed" x:Name="GridBuffering">
+                        <ProgressRing IsActive="True" Width="36" Height="36" Foreground="{ThemeResource HighLightColor}"></ProgressRing>
+                        <TextBlock Foreground="White" Margin="0 8" TextAlignment="Center" x:Name="TxtBuffering" Text="缓冲中..."></TextBlock>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center" x:Name="VideoLoading">
+                        <ProgressRing IsActive="True" Width="36" Height="36" Foreground="{ThemeResource HighLightColor}"></ProgressRing>
+                        <TextBlock Foreground="White" Margin="0 8" TextAlignment="Center" Text="视频加载中"></TextBlock>
+                    </StackPanel>
+                </Grid>
+             
+                <Grid x:Name="control">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition  Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                   
+                    <Grid Height="48">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#C8000000"/>
+                                <GradientStop Color="#00000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis">第一集</TextBlock>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                           
+                            <Button x:Name="TopBtnSettingDanmaku" Click="TopBtnSettingDanmaku_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_setting.png" ></Image>
+                               
+                            </Button>
+                            <Button x:Name="TopBtnScreenshot" Click="TopBtnScreenshot_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_screenshot.png" ></Image>
+                            </Button>
+                            <Button x:Name="TopBtnMore" Click="TopBtnMore_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_more.png" ></Image>
+                            </Button>
+                        </StackPanel>
+
+
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#00000000"/>
+                                <GradientStop Color="#C8000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Slider Margin="8 0" 
+                                x:Name="BottomProgress" 
+                                Value="{Binding ElementName=Player,Path=Position,Mode=TwoWay}"
+                                Maximum="{Binding ElementName=Player,Path=Duration,Mode=OneWay}"
+                                Foreground="{ThemeResource HighLightColor}"
+                                ThumbToolTipValueConverter="{StaticResource progress}" ></Slider>
+                        <Grid Grid.Row="1" Padding="4 8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <HyperlinkButton x:Name="BottomBtnPause" Click="BottomBtnPause_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Pause"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <HyperlinkButton x:Name="BottomBtnPlay" Click="BottomBtnPlay_Click" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Play"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" x:Name="BottomBtnLoading" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48"></ProgressRing>
+                                <HyperlinkButton x:Name="BottomBtnNext" Click="BottomBtnNext_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_StepForward" FontSize="18"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <TextBlock x:Name="BottomTextPostion" VerticalAlignment="Center" Foreground="White" Margin="8 0" FontSize="18"><Run Text="{Binding ElementName=Player,Path=Position,Mode=OneWay,Converter={StaticResource progress}}"/> / <Run Text="{Binding ElementName=Player,Path=Duration,Mode=OneWay,Converter={StaticResource progress}}"/></TextBlock>
+                                <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
+                                </Button>
+                                <Button x:Name="BottomBtnSelctSubtitle" Visibility="Collapsed" Foreground="White" Background="Transparent" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_ClosedCaptioning" FontSize="20"></fa:FontAwesome>
+                                </Button>
+                                <Button x:Name="TopBtnCloseDanmaku" Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
+                                </Button>
+                               
+                                <!--<HyperlinkButton x:Name="BottomBtnSendDanmaku" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Comments" FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>-->
+                            </StackPanel>
+                            <Grid  x:Name="BottomBtnSendDanmakuWide"  Grid.Column="1" Margin="12 0" MaxWidth="400">
+                                <TextBox x:Name="SendDanmakuTextBox" TabIndex="999" KeyDown="SendDanmakuTextBox_KeyDown" Padding="40 8 56 8" BorderThickness="0"  Foreground="White" Background="#66FFFFFF"  VerticalAlignment="Center" PlaceholderText="发个友善的弹幕见证当下"></TextBox>
+                                <Button Width="40" Background="Transparent" >
+                                    <fa:FontAwesome Icon="Solid_Palette" Foreground="#FFC7C5C5" FontSize="18" ></fa:FontAwesome>
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <StackPanel>
+                                                <TextBlock Margin="0 0 0 8">弹幕模式</TextBlock>
+                                                <ComboBox x:Name="SendDanmakuMode"  SelectedIndex="0" HorizontalAlignment="Stretch" PlaceholderText="选择弹幕模式"  >
+                                                    <ComboBoxItem>滚动</ComboBoxItem>
+                                                    <ComboBoxItem>顶部</ComboBoxItem>
+                                                    <ComboBoxItem>底部</ComboBoxItem>
+                                                </ComboBox>
+                                                <TextBlock Margin="0 8">弹幕颜色</TextBlock>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox x:Name="SendDanmakuColorText" PlaceholderText="#FFFFFF" MaxLength="7" Text="#FFFFFF"></TextBox>
+                                                    <Border x:Name="SendDanmakuColorBorder" CornerRadius="4" Width="64" Margin="4 0 0 0" Grid.Column="1"  Background="{Binding ElementName=SendDanmakuColorText,Path=Text,Converter={StaticResource color},Mode=OneWay}"></Border>
+                                                </Grid>
+                                                <GridView MaxWidth="240"  Margin="-4 4 -4 0" ItemsSource="{x:Bind Path=playerHelper.DefaultDanmakuColors}" ItemClick="GridViewSelectColor_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
+                                                    <GridView.ItemTemplate>
+                                                        <DataTemplate x:DataType="x:String">
+                                                            <Border CornerRadius="4" Width="24" Height="24" Background="{x:Bind Converter={StaticResource color}}"></Border>
+                                                        </DataTemplate>
+                                                    </GridView.ItemTemplate>
+                                                    <GridView.ItemContainerStyle>
+                                                        <Style TargetType="GridViewItem">
+                                                            <Setter Property="MinHeight" Value="24" />
+                                                            <Setter Property="Margin" Value="4 4" />
+                                                            <Setter Property="BorderThickness" Value="0" />
+                                                            <Setter Property="MinWidth" Value="0" />
+                                                        </Style>
+                                                    </GridView.ItemContainerStyle>
+                                                </GridView>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button x:Name="SendDanmakuButton" Click="SendDanmakuButton_Click" BorderThickness="0"  Background="Gray" VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="35" Width="56" Foreground="White" Opacity="0.8">发送</Button>
+                            </Grid>
+                        
+                            <!--<HyperlinkButton x:Name="BottomBtnSendDanmakuWide" Click="BottomBtnSendDanmakuWide_Click" ToolTipService.ToolTip="发送弹幕" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MaxWidth="400" Margin="12 0" Grid.Column="1" >
+                                <Border Background="#99808080" CornerRadius="16" Padding="16 8">
+                                    <TextBlock >快发条弹幕吧~</TextBlock>
+                                </Border>
+                            </HyperlinkButton>-->
+                            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                                <Button x:Name="BottomBtnVolume" Background="Transparent" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome x:Name="BottomBtnVolumeIcon" Icon="Solid_VolumeUp"  FontSize="20"></fa:FontAwesome>
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <StackPanel>
+                                                <TextBlock>音量</TextBlock>
+                                                <Slider x:Name="SliderVolume" Value="{x:Bind Path=Player.Volume,Mode=TwoWay}" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+
+                                <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="quality_description" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+
+                                </ComboBox>
+                                <ComboBox x:Name="BottomCBSpeed" SelectionChanged="BottomCBSpeed_SelectionChanged" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem Content="2.0x" ></ComboBoxItem>
+                                        <ComboBoxItem Content="1.5x" ></ComboBoxItem>
+                                        <ComboBoxItem Content="1.25x" ></ComboBoxItem>
+                                        <ComboBoxItem Content="1.0x" IsSelected="True"></ComboBoxItem>
+                                        <ComboBoxItem Content="0.75x" ></ComboBoxItem>
+                                        <ComboBoxItem Content="0.5x" ></ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
+
+                                <Button x:Name="BottomBtnList" Click="BottomBtnList_Click" Visibility="{x:Bind ShowPlaylistButton,Mode=OneWay}" ToolTipService.ToolTip="选集" Background="Transparent" Foreground="White" Padding="12" Height="48">
+                                    <TextBlock VerticalAlignment="Center" FontSize="18">选集</TextBlock>
+                                </Button>
+                                <HyperlinkButton x:Name="BottomBtnFullWindows" Click="BottomBtnFullWindows_Click"  ToolTipService.ToolTip="铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Regular_WindowMaximize"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <HyperlinkButton x:Name="BottomBtnExitFullWindows" Click="BottomBtnExitFullWindows_Click" Visibility="Collapsed" ToolTipService.ToolTip="取消铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Columns"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <HyperlinkButton x:Name="BottomBtnFull" Click="BottomBtnFull_Click" ToolTipService.ToolTip="全屏" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Expand"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                                <HyperlinkButton x:Name="BottomBtnExitFull" Click="BottomBtnExitFull_Click" ToolTipService.ToolTip="退出全屏" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Compress"  FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Button x:Name="BtnFoucs" Width="0" Height="0" Background="Transparent" BorderThickness="0"></Button>
+            </Grid>
+        </SplitView>
+    </Grid>
+   
+  
+</UserControl>
