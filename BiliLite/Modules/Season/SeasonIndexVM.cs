@@ -174,19 +174,26 @@ namespace BiliLite.Modules
                     var data = results.GetJObject();
                     if (data["code"].ToInt32() == 0)
                     {
-                        var items = JsonConvert.DeserializeObject<ObservableCollection<SeasonIndexResultItemModel>>(data["data"]["list"].ToString());
-                        if (Page == 1)
+                        var items = JsonConvert.DeserializeObject<ObservableCollection<SeasonIndexResultItemModel>>(data["data"]["list"]?.ToString()??"[]");
+                        if (items!=null&& items.Count!=0)
                         {
-                            Result = items;
+                            if (Page == 1)
+                            {
+                                Result = items;
+                            }
+                            else
+                            {
+                                foreach (var item in items)
+                                {
+                                    Result.Add(item);
+                                }
+                            }
+                            Page++;
                         }
                         else
                         {
-                            foreach (var item in items)
-                            {
-                                Result.Add(item);
-                            }
+                            Utils.ShowMessageToast("加载完了");
                         }
-                        Page++;
                     }
                     else
                     {

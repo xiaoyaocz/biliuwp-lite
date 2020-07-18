@@ -20,8 +20,8 @@
     </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.7*"/>
-            <ColumnDefinition Width="0.3*" MaxWidth="400" x:Name="RightInfo"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition  MaxWidth="320" x:Name="RightInfo"/>
         </Grid.ColumnDefinitions>
         <Grid  Background="{ThemeResource NavigationViewTopPaneBackground}" x:Name="playerGrid" x:Load="{x:Bind Path=videoDetailVM.Loaded,Mode=OneWay}">
             <Grid.RowDefinitions>

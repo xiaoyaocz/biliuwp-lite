@@ -125,7 +125,7 @@ namespace BiliLite.Modules
                         var ls = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["new"].ToString());
                         if (next_id == "")
                         {
-                            var recommend = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["recommend"].ToString());
+                            var recommend = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["recommend"]?.ToString()??"[]");
                             foreach (var item in recommend)
                             {
                                 ls.Insert(0, item);

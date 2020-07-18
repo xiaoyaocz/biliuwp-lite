@@ -19,13 +19,16 @@
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
         <DataTemplate x:Key="HomeTemplate" x:DataType="modules:RegionDetailHomeVM">
             <Grid>
-                <toolkit:AdaptiveGridView 
+                <controls:MyAdaptiveGridView
                     OneRowModeEnabled="False"
                     StretchContentForSingleRow="False"
                    ItemsSource="{x:Bind Path=Videos,Mode=OneWay}"
                     ItemHeight="100" DesiredWidth="600" 
                     Padding="12 8"
                     ItemClick="AdaptiveGridView_ItemClick"
+                    LoadMoreCommand="{x:Bind Path=LoadMoreCommand,Mode=OneWay}"
+                    CanLoadMore="True"
+                    LoadMoreBottomOffset="0"
                     SelectionMode="None" IsItemClickEnabled="True">
                     <toolkit:AdaptiveGridView.Header>
                         <Grid Margin="4 0">
@@ -84,7 +87,7 @@
                             <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=Loading,Mode=OneWay}"></ProgressRing>
                         </StackPanel>
                     </toolkit:AdaptiveGridView.Footer>
-                </toolkit:AdaptiveGridView>
+                </controls:MyAdaptiveGridView>
                 
                 <controls:RoundButton  Command="{x:Bind Path=RefreshCommand}" Visibility="{x:Bind Path=Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
                     <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
@@ -93,13 +96,16 @@
         </DataTemplate>
         <DataTemplate x:Key="ChildTemplate" x:DataType="modules:RegionDetailChildVM">
             <Grid>
-                <toolkit:AdaptiveGridView 
+                <controls:MyAdaptiveGridView 
                     OneRowModeEnabled="False"
                     StretchContentForSingleRow="False"
                    ItemsSource="{x:Bind Path=Videos,Mode=OneWay}"
                     ItemHeight="100" DesiredWidth="600" 
                     Padding="12 8"
                     ItemClick="AdaptiveGridView_ItemClick"
+                    LoadMoreCommand="{x:Bind Path=LoadMoreCommand,Mode=OneWay}"
+                    CanLoadMore="True"
+                    LoadMoreBottomOffset="0"
                     SelectionMode="None" IsItemClickEnabled="True">
                     <toolkit:AdaptiveGridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
@@ -135,7 +141,7 @@
                             <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=Loading,Mode=OneWay}"></ProgressRing>
                         </StackPanel>
                     </toolkit:AdaptiveGridView.Footer>
-                </toolkit:AdaptiveGridView>
+                </controls:MyAdaptiveGridView>
 
                 <controls:RoundButton  Command="{x:Bind Path=RefreshCommand}" Visibility="{x:Bind Path=Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
                     <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>

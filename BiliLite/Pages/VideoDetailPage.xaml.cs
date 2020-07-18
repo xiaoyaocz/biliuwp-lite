@@ -113,7 +113,17 @@ namespace BiliLite.Pages
                         });
                         i++;
                     }
-                    player.InitializePlayInfo(playInfos,0);
+                    var index = 0;
+                    if (videoDetailVM.VideoInfo.history!=null)
+                    {
+                        var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
+                        if (history != null)
+                        {
+                            SettingHelper.SetValue<double>(history.cid,Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
+                            player.InitializePlayInfo(playInfos, videoDetailVM.VideoInfo.pages.IndexOf(history));
+                        }
+                    }
+                    player.InitializePlayInfo(playInfos, index);
                     comment.LoadComment(new LoadCommentInfo()
                     {
                         commentMode = Api.CommentApi.CommentType.Video,
@@ -285,7 +295,7 @@ namespace BiliLite.Pages
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(0.3, GridUnitType.Star);
+                RightInfo.Width = new GridLength(320, GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -299,7 +309,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                RightInfo.Width = new GridLength(0.3, GridUnitType.Star);
+                RightInfo.Width = new GridLength(320, GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }

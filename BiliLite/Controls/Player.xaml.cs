@@ -236,6 +236,11 @@ namespace BiliLite.Controls
                     {
                         PlayMediaOpened?.Invoke(this, new EventArgs());
                         Duration = _playerVideo.PlaybackSession.NaturalDuration.TotalSeconds;
+                        ////设置进度
+                        //if (positon != 0)
+                        //{
+                        //    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
+                        //}
                     });
                 });
                 
@@ -316,11 +321,7 @@ namespace BiliLite.Controls
                 _playerVideo.Volume = Volume;
                 //设置速率
                 _playerVideo.PlaybackSession.PlaybackRate = Rate;
-                //设置进度
-                if (positon != 0)
-                {
-                    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
-                }
+                
                 //绑定MediaPlayer
                 mediaPlayerVideo.SetMediaPlayer(_playerVideo);
 
@@ -490,11 +491,7 @@ namespace BiliLite.Controls
                 mediaPlayerAudio.SetMediaPlayer(_playerAudio);
                 //设置速率
                 _mediaTimelineController.ClockRate = Rate;
-                //设置进度
-                if (positon != 0)
-                {
-                    _mediaTimelineController.Position = TimeSpan.FromSeconds(positon);
-                }
+                
                 return new PlayerOpenResult()
                 {
                     result = true
@@ -626,11 +623,11 @@ namespace BiliLite.Controls
                 _playerVideo.Volume = Volume;
                 //设置速率
                 _playerVideo.PlaybackSession.PlaybackRate = Rate;
-                //设置进度
-                if (positon != 0)
-                {
-                    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
-                }
+                ////设置进度
+                //if (positon != 0)
+                //{
+                //    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
+                //}
                 //绑定MediaPlayer
                 mediaPlayerVideo.SetMediaPlayer(_playerVideo);
                 return new PlayerOpenResult()
@@ -762,10 +759,10 @@ namespace BiliLite.Controls
                 //设置速率
                 _playerVideo.PlaybackSession.PlaybackRate = Rate;
                 //设置进度
-                if (positon != 0)
-                {
-                    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
-                }
+                //if (positon != 0)
+                //{
+                //    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
+                //}
                 //绑定MediaPlayer
                 mediaPlayerVideo.SetMediaPlayer(_playerVideo);
                 return new PlayerOpenResult()
@@ -813,7 +810,7 @@ namespace BiliLite.Controls
                 _playerVideo.Source = MediaSource.CreateFromUri(mediaSource);
                 _playerVideo.MediaOpened += new TypedEventHandler<MediaPlayer, object>(async (e, arg) =>
                 {
-                    Opening = true;
+                    Opening = false;
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
                         PlayMediaOpened?.Invoke(this, new EventArgs());
@@ -897,10 +894,10 @@ namespace BiliLite.Controls
                 //设置速率
                 _playerVideo.PlaybackSession.PlaybackRate = Rate;
                 //设置进度
-                if (positon != 0)
-                {
-                    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
-                }
+                //if (positon != 0)
+                //{
+                //    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
+                //}
                 //绑定MediaPlayer
                 mediaPlayerVideo.SetMediaPlayer(_playerVideo);
 

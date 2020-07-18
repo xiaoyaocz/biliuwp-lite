@@ -336,7 +336,7 @@ namespace BiliLite.Controls
             var m = (sender as HyperlinkButton).DataContext as CommentModel;
             if (m.showReplies == Visibility.Collapsed)
             {
-                
+                ls_new.ScrollIntoView(m);
                 m.showReplies = Visibility.Visible;
                 m.showReplyBtn = Visibility.Collapsed;
                 m.showReplyBox = Visibility.Visible;
@@ -351,6 +351,7 @@ namespace BiliLite.Controls
             {
                 m.showReplyBtn = Visibility.Collapsed;
                 m.showReplies = Visibility.Collapsed;
+                ls_new.ScrollIntoView(m);
             }
         }
 

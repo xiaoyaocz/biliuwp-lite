@@ -61,7 +61,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = $"https://app.biliapi.net/x/v2/region/dynamic/child",
+                baseUrl = $"https://app.bilibili.com/x/v2/region/dynamic/child/list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false) + $"&rid={rid}&tag_id={tag_id}&pull=false&ctime={next}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);

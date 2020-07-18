@@ -356,6 +356,11 @@ namespace BiliLite.Controls
                 case Windows.System.VirtualKey.Escape:
                     IsFullScreen = false;
                     break;
+                case Windows.System.VirtualKey.F8:
+                case Windows.System.VirtualKey.T:
+                    //小窗播放
+                    MiniWidnows(!miniWin);
+                    break;
                 case Windows.System.VirtualKey.F12:
                 case Windows.System.VirtualKey.W:
                     IsFullWindow = !IsFullWindow;
@@ -485,12 +490,14 @@ namespace BiliLite.Controls
             DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
             DanmuSettingFontZoom.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
+                if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, DanmuSettingFontZoom.Value);
             });
             //弹幕速度
             DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
             DanmuSettingSpeed.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
+                if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.SPEED, DanmuSettingSpeed.Value);
             });
             //弹幕透明度
@@ -557,6 +564,13 @@ namespace BiliLite.Controls
             {
                 SettingHelper.SetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, PlayerSettingUseOtherSite.IsOn);
             });
+            //自动跳转
+            PlayerSettingAutoToPosition.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, true);
+            PlayerSettingAutoToPosition.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, PlayerSettingAutoToPosition.IsOn);
+            });
+
             //播放比例
             PlayerSettingRatio.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.RATIO, 0);
             Player.SetRatioMode(PlayerSettingRatio.SelectedIndex);
@@ -573,6 +587,7 @@ namespace BiliLite.Controls
             SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
             SubtitleSettingSize.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
+                if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, SubtitleSettingSize.Value);
             });
             //字幕颜色
@@ -744,7 +759,16 @@ namespace BiliLite.Controls
             {
                 Player._ffmpegConfig.FFmpegOptions["referer"] = "https://www.bilibili.com/bangumi/play/ep" + CurrentPlayItem.ep_id;
             }
-            _postion = 0;
+            if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, true))
+            {
+                _postion = SettingHelper.GetValue<double>(CurrentPlayItem.season_id != 0 ? "ep" + CurrentPlayItem.ep_id : CurrentPlayItem.cid, 0);
+                //减去两秒防止视频直接结束了
+                if (_postion >= 2) _postion-=2;
+            }
+            else
+            {
+                _postion = 0;
+            }
             await playerHelper.ReportHistory(CurrentPlayItem, 0);
             await SetDanmaku();
             await SetQuality();
@@ -1484,6 +1508,10 @@ namespace BiliLite.Controls
         {
             txtInfo.Text = Player.GetMediaInfo();
             VideoLoading.Visibility = Visibility.Collapsed;
+            if (_postion!=0)
+            {
+                Player.SetPosition(_postion);
+            }
         }
 
         private async void BottomBtnSendDanmakuWide_Click(object sender, RoutedEventArgs e)
@@ -1531,6 +1559,7 @@ namespace BiliLite.Controls
         {
             if (CurrentPlayItem != null)
             {
+                SettingHelper.SetValue<double>(CurrentPlayItem.season_id != 0 ? "ep"+CurrentPlayItem.ep_id : CurrentPlayItem.cid, Player.Position);
                 await playerHelper.ReportHistory(CurrentPlayItem, Convert.ToInt32(Player.Position));
             }
 
@@ -1605,6 +1634,56 @@ namespace BiliLite.Controls
             }
 
         }
+
+        bool miniWin = false;
+        private void BottomBtnExitMiniWindows_Click(object sender, RoutedEventArgs e)
+        {
+            
+            MiniWidnows(false);
+        }
+
+        private void BottomBtnMiniWindows_Click(object sender, RoutedEventArgs e)
+        {
+            MiniWidnows(true);
+        }
+       
+        private async void MiniWidnows(bool mini)
+        {
+            miniWin = mini;
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            FullWindowEvent?.Invoke(this, IsFullWindow);
+            if (mini)
+            {
+                IsFullWindow = true;
+                StandardControl.Visibility = Visibility.Collapsed;
+                MiniControl.Visibility = Visibility.Visible;
+                //处理CC字幕
+                if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                {
+                    this.Margin = new Thickness(0, -40, 0, 0);
+                    await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                    SubtitleSettingSize.Value = 14;
+
+                    DanmuControl.sizeZoom = 0.5;
+                    DanmuControl.speed = 6;
+                    DanmuControl.ClearAll();
+                }
+            }
+            else
+            {
+                this.Margin = new Thickness(0,0,0,0);
+                StandardControl.Visibility = Visibility.Visible;
+                MiniControl.Visibility = Visibility.Collapsed;
+                await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
+                DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
+                DanmuControl.ClearAll();
+                DanmuControl.Visibility= SettingHelper.GetValue<Visibility>(SettingHelper.VideoDanmaku.SHOW, Visibility.Visible);
+                SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
+            }
+            BtnFoucs.Focus(FocusState.Programmatic);
+        }
+
     }
     public class CompareDanmakuModel : IEqualityComparer<DanmakuModel>
     {

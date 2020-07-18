@@ -110,6 +110,7 @@ namespace BiliLite.Pages
                     if (string.IsNullOrEmpty( ep_id)&& seasonDetailVM.Detail.user_status.progress != null)
                     {
                         ep_id = seasonDetailVM.Detail.user_status.progress.last_ep_id.ToString();
+                        SettingHelper.SetValue<double>("ep"+ ep_id, Convert.ToDouble(seasonDetailVM.Detail.user_status.progress.last_time));
                     }
                     var selectItem = playInfos.FirstOrDefault(x => x.ep_id == ep_id);
                     if (selectItem != null)

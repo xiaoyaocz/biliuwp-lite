@@ -18,12 +18,12 @@ namespace BiliLite.Modules
         {
             account = new Account();
             HomeNavItems = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, GetAllNavItems());
-            var chanel=HomeNavItems.FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
-            if (chanel.Title=="频道")
-            {
-                chanel = GetAllNavItems().FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
-                SettingHelper.SetValue(SettingHelper.UI.HOEM_ORDER, HomeNavItems);
-            }
+            //var chanel=HomeNavItems.FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
+            //if (chanel.Title=="频道")
+            //{
+            //    chanel = GetAllNavItems().FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
+            //    SettingHelper.SetValue(SettingHelper.UI.HOEM_ORDER, HomeNavItems);
+            //}
          
             SelectItem = HomeNavItems.FirstOrDefault();
             if (SettingHelper.Account.Logined)
@@ -99,11 +99,17 @@ namespace BiliLite.Modules
             new HomeNavItem(){
                 Icon=FontAwesome5.EFontAwesomeIcon.Solid_Bars,
                 Page=typeof(Pages.Home.ChannelPage),
-                Title="频道",
+                Title="频道(不可用)",
                 NeedLogin=false,
                 Show=false
+            },
+            new HomeNavItem(){
+                Icon=FontAwesome5.EFontAwesomeIcon.Solid_Trophy,
+                Page=typeof(Pages.RankPage),
+                Title="排行榜",
+                NeedLogin=false,
+                Show=true
             }
-
         };
         }
 

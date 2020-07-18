@@ -145,6 +145,15 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.USE_OTHER_SITEVIDEO, swPlayerSettingUseOtherSite.IsOn);
                 });
             });
+
+            //自动跳转进度
+            swPlayerSettingAutoToPosition.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, true);
+            swPlayerSettingAutoToPosition.Loaded += new RoutedEventHandler((sender, e) => {
+                swPlayerSettingAutoToPosition.Toggled += new RoutedEventHandler((obj, args) => {
+                    SettingHelper.SetValue(SettingHelper.Player.AUTO_TO_POSITION, swPlayerSettingAutoToPosition.IsOn);
+                });
+            });
+
         }
        
         private void LoadDanmu()

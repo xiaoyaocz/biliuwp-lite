@@ -629,6 +629,8 @@ namespace BiliLite.Modules
             }
         }
 
+
+        public VideoDetailHistoryModel history { get; set; }
     } 
     public class VideoDetailRightsModel
     {
@@ -861,6 +863,13 @@ namespace BiliLite.Modules
             get { return _attention; }
             set { _attention = value; DoPropertyChanged("attention"); }
         }
+
+    }
+
+    public class VideoDetailHistoryModel
+    {
+        public string cid { get; set; }
+        public int progress { get; set; }
 
     }
 }

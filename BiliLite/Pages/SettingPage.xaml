@@ -165,6 +165,8 @@
                         <ToggleSwitch  x:Name="swAutoPlay"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">使用外站视频替换无法播放的视频</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">自动跳转至上次观看进度</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerSettingAutoToPosition" ></ToggleSwitch>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

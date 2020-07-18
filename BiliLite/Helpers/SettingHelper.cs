@@ -324,6 +324,12 @@ namespace BiliLite.Helpers
             /// 字幕底部距离
             /// </summary>
             public const string SUBTITLE_BOTTOM = "subtitleBottom";
+
+            /// <summary>
+            /// 自动跳转进度
+            /// </summary>
+            public const string AUTO_TO_POSITION = "PlayerAutoToPosition";
+
         }
 
     }

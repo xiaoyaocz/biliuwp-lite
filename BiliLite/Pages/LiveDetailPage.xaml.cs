@@ -714,5 +714,41 @@ namespace BiliLite.Pages
               
             }
         }
+
+        private void BottomBtnMiniWindows_Click(object sender, RoutedEventArgs e)
+        {
+            MiniWidnows(true);
+            
+        }
+
+        private void BottomBtnExitMiniWindows_Click(object sender, RoutedEventArgs e)
+        {
+            MiniWidnows(false);
+        }
+        private async void MiniWidnows(bool mini)
+        {
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            if (mini)
+            {
+                BottomBtnFullWindows_Click(this, null);
+                StandardControl.Visibility = Visibility.Collapsed;
+                MiniControl.Visibility = Visibility.Visible;
+                DanmuControl.Visibility = Visibility.Collapsed;
+                if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                {
+                    this.Margin = new Thickness(0, -40, 0, 0);
+                    await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+                }
+            }
+            else
+            {
+                BottomBtnExitFullWindows_Click(this, null);
+                this.Margin = new Thickness(0, 0, 0, 0);
+                StandardControl.Visibility = Visibility.Visible;
+                MiniControl.Visibility = Visibility.Collapsed;
+                await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+                DanmuControl.Visibility = SettingHelper.GetValue<Visibility>(SettingHelper.Live.SHOW, Visibility.Visible);
+            }
+        }
     }
 }

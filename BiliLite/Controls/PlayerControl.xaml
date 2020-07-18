@@ -441,7 +441,12 @@
                                             <TextBlock  Foreground="White">使用外站视频替换无法播放的视频</TextBlock>
                                         </ToggleSwitch.Header>
                                     </ToggleSwitch>
-
+                                    <ToggleSwitch x:Name="PlayerSettingAutoToPosition" Margin="0 8"  Foreground="White" >
+                                        <ToggleSwitch.Header>
+                                            <TextBlock  Foreground="White">自动跳转至上次观看进度</TextBlock>
+                                        </ToggleSwitch.Header>
+                                    </ToggleSwitch>
+                                    
                                     <TextBlock Margin="0 8" >播放模式</TextBlock>
                                     <ComboBox x:Name="PlayerSettingPlayMode">
                                         <ComboBox.Items>
@@ -523,186 +528,218 @@
                 </Grid>
              
                 <Grid x:Name="control">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition/>
-                        <RowDefinition  Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    
-                   
-                    <Grid Height="48">
-                        <Grid.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#C8000000"/>
-                                <GradientStop Color="#00000000" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Grid.Background>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis">第一集</TextBlock>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                           
-                            <Button x:Name="TopBtnSettingDanmaku" Click="TopBtnSettingDanmaku_Click" Background="Transparent" Padding="0" Width="48" Height="48">
-                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_setting.png" ></Image>
-                               
-                            </Button>
-                            <Button x:Name="TopBtnScreenshot" Click="TopBtnScreenshot_Click" Background="Transparent" Padding="0" Width="48" Height="48">
-                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_screenshot.png" ></Image>
-                            </Button>
-                            <Button x:Name="TopBtnMore" Click="TopBtnMore_Click" Background="Transparent" Padding="0" Width="48" Height="48">
-                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_more.png" ></Image>
-                            </Button>
-                        </StackPanel>
+                    <Grid x:Name="StandardControl">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                            <RowDefinition  Height="Auto"/>
+                        </Grid.RowDefinitions>
 
 
+                        <Grid Height="48">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#C8000000"/>
+                                    <GradientStop Color="#00000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis">第一集</TextBlock>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+
+                                <Button x:Name="TopBtnSettingDanmaku" Click="TopBtnSettingDanmaku_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_setting.png" ></Image>
+
+                                </Button>
+                                <Button x:Name="TopBtnScreenshot" Click="TopBtnScreenshot_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_screenshot.png" ></Image>
+                                </Button>
+                                <Button x:Name="TopBtnMore" Click="TopBtnMore_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_more.png" ></Image>
+                                </Button>
+                            </StackPanel>
+
+
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#00000000"/>
+                                    <GradientStop Color="#C8000000" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Slider Margin="8 0" 
+                                x:Name="BottomProgress" 
+                                Value="{Binding ElementName=Player,Path=Position,Mode=TwoWay}"
+                                Maximum="{Binding ElementName=Player,Path=Duration,Mode=OneWay}"
+                                Foreground="{ThemeResource HighLightColor}"
+                                ThumbToolTipValueConverter="{StaticResource progress}" ></Slider>
+                            <Grid Grid.Row="1" Padding="4 8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <HyperlinkButton x:Name="BottomBtnPause" Click="BottomBtnPause_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_Pause"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton x:Name="BottomBtnPlay" Click="BottomBtnPlay_Click" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_Play"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <ProgressRing IsActive="True" x:Name="BottomBtnLoading" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48"></ProgressRing>
+                                    <HyperlinkButton x:Name="BottomBtnNext" Click="BottomBtnNext_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_StepForward" FontSize="18"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <TextBlock x:Name="BottomTextPostion" VerticalAlignment="Center" Foreground="White" Margin="8 0" FontSize="18"><Run Text="{Binding ElementName=Player,Path=Position,Mode=OneWay,Converter={StaticResource progress}}"/> / <Run Text="{Binding ElementName=Player,Path=Duration,Mode=OneWay,Converter={StaticResource progress}}"/></TextBlock>
+                                    <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                        <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
+                                    </Button>
+                                    <Button x:Name="BottomBtnSelctSubtitle" Visibility="Collapsed" Foreground="White" Background="Transparent" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_ClosedCaptioning" FontSize="20"></fa:FontAwesome>
+                                    </Button>
+                                    <Button x:Name="TopBtnCloseDanmaku" Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                        <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
+                                    </Button>
+
+                                    <!--<HyperlinkButton x:Name="BottomBtnSendDanmaku" Foreground="White" Padding="8" Width="48" Height="48">
+                                    <fa:FontAwesome Icon="Solid_Comments" FontSize="20"></fa:FontAwesome>
+                                </HyperlinkButton>-->
+                                </StackPanel>
+                                <Grid  x:Name="BottomBtnSendDanmakuWide"  Grid.Column="1" Margin="12 0" MaxWidth="400">
+                                    <TextBox x:Name="SendDanmakuTextBox" TabIndex="999" KeyDown="SendDanmakuTextBox_KeyDown" Padding="40 8 56 8" BorderThickness="0"  Foreground="White" Background="#66FFFFFF"  VerticalAlignment="Center" PlaceholderText="发个友善的弹幕见证当下"></TextBox>
+                                    <Button Width="40" Background="Transparent" >
+                                        <fa:FontAwesome Icon="Solid_Palette" Foreground="#FFC7C5C5" FontSize="18" ></fa:FontAwesome>
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel>
+                                                    <TextBlock Margin="0 0 0 8">弹幕模式</TextBlock>
+                                                    <ComboBox x:Name="SendDanmakuMode"  SelectedIndex="0" HorizontalAlignment="Stretch" PlaceholderText="选择弹幕模式"  >
+                                                        <ComboBoxItem>滚动</ComboBoxItem>
+                                                        <ComboBoxItem>顶部</ComboBoxItem>
+                                                        <ComboBoxItem>底部</ComboBoxItem>
+                                                    </ComboBox>
+                                                    <TextBlock Margin="0 8">弹幕颜色</TextBlock>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBox x:Name="SendDanmakuColorText" PlaceholderText="#FFFFFF" MaxLength="7" Text="#FFFFFF"></TextBox>
+                                                        <Border x:Name="SendDanmakuColorBorder" CornerRadius="4" Width="64" Margin="4 0 0 0" Grid.Column="1"  Background="{Binding ElementName=SendDanmakuColorText,Path=Text,Converter={StaticResource color},Mode=OneWay}"></Border>
+                                                    </Grid>
+                                                    <GridView MaxWidth="240"  Margin="-4 4 -4 0" ItemsSource="{x:Bind Path=playerHelper.DefaultDanmakuColors}" ItemClick="GridViewSelectColor_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
+                                                        <GridView.ItemTemplate>
+                                                            <DataTemplate x:DataType="x:String">
+                                                                <Border CornerRadius="4" Width="24" Height="24" Background="{x:Bind Converter={StaticResource color}}"></Border>
+                                                            </DataTemplate>
+                                                        </GridView.ItemTemplate>
+                                                        <GridView.ItemContainerStyle>
+                                                            <Style TargetType="GridViewItem">
+                                                                <Setter Property="MinHeight" Value="24" />
+                                                                <Setter Property="Margin" Value="4 4" />
+                                                                <Setter Property="BorderThickness" Value="0" />
+                                                                <Setter Property="MinWidth" Value="0" />
+                                                            </Style>
+                                                        </GridView.ItemContainerStyle>
+                                                    </GridView>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                    <Button x:Name="SendDanmakuButton" Click="SendDanmakuButton_Click" BorderThickness="0"  Background="Gray" VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="35" Width="56" Foreground="White" Opacity="0.8">发送</Button>
+                                </Grid>
+
+                                <!--<HyperlinkButton x:Name="BottomBtnSendDanmakuWide" Click="BottomBtnSendDanmakuWide_Click" ToolTipService.ToolTip="发送弹幕" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MaxWidth="400" Margin="12 0" Grid.Column="1" >
+                                <Border Background="#99808080" CornerRadius="16" Padding="16 8">
+                                    <TextBlock >快发条弹幕吧~</TextBlock>
+                                </Border>
+                            </HyperlinkButton>-->
+                                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                                    <Button x:Name="BottomBtnVolume" Background="Transparent" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome x:Name="BottomBtnVolumeIcon" Icon="Solid_VolumeUp"  FontSize="20"></fa:FontAwesome>
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <StackPanel>
+                                                    <TextBlock>音量</TextBlock>
+                                                    <Slider x:Name="SliderVolume" Value="{x:Bind Path=Player.Volume,Mode=TwoWay}" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
+                                                </StackPanel>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+
+                                    <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="quality_description" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+
+                                    </ComboBox>
+                                    <ComboBox x:Name="BottomCBSpeed" SelectionChanged="BottomCBSpeed_SelectionChanged" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem Content="2.0x" ></ComboBoxItem>
+                                            <ComboBoxItem Content="1.5x" ></ComboBoxItem>
+                                            <ComboBoxItem Content="1.25x" ></ComboBoxItem>
+                                            <ComboBoxItem Content="1.0x" IsSelected="True"></ComboBoxItem>
+                                            <ComboBoxItem Content="0.75x" ></ComboBoxItem>
+                                            <ComboBoxItem Content="0.5x" ></ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+
+                                    <Button x:Name="BottomBtnList" Click="BottomBtnList_Click" Visibility="{x:Bind ShowPlaylistButton,Mode=OneWay}" ToolTipService.ToolTip="选集" Background="Transparent" Foreground="White" Padding="12" Height="48">
+                                        <TextBlock VerticalAlignment="Center" FontSize="18">选集</TextBlock>
+                                    </Button>
+                                    <HyperlinkButton x:Name="BottomBtnMiniWindows" Click="BottomBtnMiniWindows_Click"  ToolTipService.ToolTip="小窗置顶" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Regular_WindowRestore"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton x:Name="BottomBtnFullWindows" Click="BottomBtnFullWindows_Click"  ToolTipService.ToolTip="铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Regular_WindowMaximize"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton x:Name="BottomBtnExitFullWindows" Click="BottomBtnExitFullWindows_Click" Visibility="Collapsed" ToolTipService.ToolTip="取消铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_Columns"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton x:Name="BottomBtnFull" Click="BottomBtnFull_Click" ToolTipService.ToolTip="全屏" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_Expand"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton x:Name="BottomBtnExitFull" Click="BottomBtnExitFull_Click" ToolTipService.ToolTip="退出全屏" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
+                                        <fa:FontAwesome Icon="Solid_Compress"  FontSize="20"></fa:FontAwesome>
+                                    </HyperlinkButton>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid Grid.Row="2">
+                    <Grid x:Name="MiniControl" Visibility="Collapsed" VerticalAlignment="Bottom">
                         <Grid.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#00000000"/>
                                 <GradientStop Color="#C8000000" Offset="1"/>
                             </LinearGradientBrush>
                         </Grid.Background>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Slider Margin="8 0" 
-                                x:Name="BottomProgress" 
-                                Value="{Binding ElementName=Player,Path=Position,Mode=TwoWay}"
-                                Maximum="{Binding ElementName=Player,Path=Duration,Mode=OneWay}"
-                                Foreground="{ThemeResource HighLightColor}"
-                                ThumbToolTipValueConverter="{StaticResource progress}" ></Slider>
-                        <Grid Grid.Row="1" Padding="4 8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal">
-                                <HyperlinkButton x:Name="BottomBtnPause" Click="BottomBtnPause_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Pause"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <HyperlinkButton x:Name="BottomBtnPlay" Click="BottomBtnPlay_Click" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Play"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <ProgressRing IsActive="True" x:Name="BottomBtnLoading" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48"></ProgressRing>
-                                <HyperlinkButton x:Name="BottomBtnNext" Click="BottomBtnNext_Click" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_StepForward" FontSize="18"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <TextBlock x:Name="BottomTextPostion" VerticalAlignment="Center" Foreground="White" Margin="8 0" FontSize="18"><Run Text="{Binding ElementName=Player,Path=Position,Mode=OneWay,Converter={StaticResource progress}}"/> / <Run Text="{Binding ElementName=Player,Path=Duration,Mode=OneWay,Converter={StaticResource progress}}"/></TextBlock>
-                                <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
-                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
-                                </Button>
-                                <Button x:Name="BottomBtnSelctSubtitle" Visibility="Collapsed" Foreground="White" Background="Transparent" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_ClosedCaptioning" FontSize="20"></fa:FontAwesome>
-                                </Button>
-                                <Button x:Name="TopBtnCloseDanmaku" Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
-                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
-                                </Button>
-                               
-                                <!--<HyperlinkButton x:Name="BottomBtnSendDanmaku" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Comments" FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>-->
-                            </StackPanel>
-                            <Grid  x:Name="BottomBtnSendDanmakuWide"  Grid.Column="1" Margin="12 0" MaxWidth="400">
-                                <TextBox x:Name="SendDanmakuTextBox" TabIndex="999" KeyDown="SendDanmakuTextBox_KeyDown" Padding="40 8 56 8" BorderThickness="0"  Foreground="White" Background="#66FFFFFF"  VerticalAlignment="Center" PlaceholderText="发个友善的弹幕见证当下"></TextBox>
-                                <Button Width="40" Background="Transparent" >
-                                    <fa:FontAwesome Icon="Solid_Palette" Foreground="#FFC7C5C5" FontSize="18" ></fa:FontAwesome>
-                                    <Button.Flyout>
-                                        <Flyout>
-                                            <StackPanel>
-                                                <TextBlock Margin="0 0 0 8">弹幕模式</TextBlock>
-                                                <ComboBox x:Name="SendDanmakuMode"  SelectedIndex="0" HorizontalAlignment="Stretch" PlaceholderText="选择弹幕模式"  >
-                                                    <ComboBoxItem>滚动</ComboBoxItem>
-                                                    <ComboBoxItem>顶部</ComboBoxItem>
-                                                    <ComboBoxItem>底部</ComboBoxItem>
-                                                </ComboBox>
-                                                <TextBlock Margin="0 8">弹幕颜色</TextBlock>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBox x:Name="SendDanmakuColorText" PlaceholderText="#FFFFFF" MaxLength="7" Text="#FFFFFF"></TextBox>
-                                                    <Border x:Name="SendDanmakuColorBorder" CornerRadius="4" Width="64" Margin="4 0 0 0" Grid.Column="1"  Background="{Binding ElementName=SendDanmakuColorText,Path=Text,Converter={StaticResource color},Mode=OneWay}"></Border>
-                                                </Grid>
-                                                <GridView MaxWidth="240"  Margin="-4 4 -4 0" ItemsSource="{x:Bind Path=playerHelper.DefaultDanmakuColors}" ItemClick="GridViewSelectColor_ItemClick" SelectionMode="None" IsItemClickEnabled="True">
-                                                    <GridView.ItemTemplate>
-                                                        <DataTemplate x:DataType="x:String">
-                                                            <Border CornerRadius="4" Width="24" Height="24" Background="{x:Bind Converter={StaticResource color}}"></Border>
-                                                        </DataTemplate>
-                                                    </GridView.ItemTemplate>
-                                                    <GridView.ItemContainerStyle>
-                                                        <Style TargetType="GridViewItem">
-                                                            <Setter Property="MinHeight" Value="24" />
-                                                            <Setter Property="Margin" Value="4 4" />
-                                                            <Setter Property="BorderThickness" Value="0" />
-                                                            <Setter Property="MinWidth" Value="0" />
-                                                        </Style>
-                                                    </GridView.ItemContainerStyle>
-                                                </GridView>
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-                                <Button x:Name="SendDanmakuButton" Click="SendDanmakuButton_Click" BorderThickness="0"  Background="Gray" VerticalAlignment="Stretch" HorizontalAlignment="Right" Height="35" Width="56" Foreground="White" Opacity="0.8">发送</Button>
-                            </Grid>
-                        
-                            <!--<HyperlinkButton x:Name="BottomBtnSendDanmakuWide" Click="BottomBtnSendDanmakuWide_Click" ToolTipService.ToolTip="发送弹幕" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" MaxWidth="400" Margin="12 0" Grid.Column="1" >
-                                <Border Background="#99808080" CornerRadius="16" Padding="16 8">
-                                    <TextBlock >快发条弹幕吧~</TextBlock>
-                                </Border>
-                            </HyperlinkButton>-->
-                            <StackPanel Orientation="Horizontal" Grid.Column="2">
-                                <Button x:Name="BottomBtnVolume" Background="Transparent" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome x:Name="BottomBtnVolumeIcon" Icon="Solid_VolumeUp"  FontSize="20"></fa:FontAwesome>
-                                    <Button.Flyout>
-                                        <Flyout>
-                                            <StackPanel>
-                                                <TextBlock>音量</TextBlock>
-                                                <Slider x:Name="SliderVolume" Value="{x:Bind Path=Player.Volume,Mode=TwoWay}" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-
-                                <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="quality_description" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
-
-                                </ComboBox>
-                                <ComboBox x:Name="BottomCBSpeed" SelectionChanged="BottomCBSpeed_SelectionChanged" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
-                                    <ComboBox.Items>
-                                        <ComboBoxItem Content="2.0x" ></ComboBoxItem>
-                                        <ComboBoxItem Content="1.5x" ></ComboBoxItem>
-                                        <ComboBoxItem Content="1.25x" ></ComboBoxItem>
-                                        <ComboBoxItem Content="1.0x" IsSelected="True"></ComboBoxItem>
-                                        <ComboBoxItem Content="0.75x" ></ComboBoxItem>
-                                        <ComboBoxItem Content="0.5x" ></ComboBoxItem>
-                                    </ComboBox.Items>
-                                </ComboBox>
-
-                                <Button x:Name="BottomBtnList" Click="BottomBtnList_Click" Visibility="{x:Bind ShowPlaylistButton,Mode=OneWay}" ToolTipService.ToolTip="选集" Background="Transparent" Foreground="White" Padding="12" Height="48">
-                                    <TextBlock VerticalAlignment="Center" FontSize="18">选集</TextBlock>
-                                </Button>
-                                <HyperlinkButton x:Name="BottomBtnFullWindows" Click="BottomBtnFullWindows_Click"  ToolTipService.ToolTip="铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Regular_WindowMaximize"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <HyperlinkButton x:Name="BottomBtnExitFullWindows" Click="BottomBtnExitFullWindows_Click" Visibility="Collapsed" ToolTipService.ToolTip="取消铺满窗口" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Columns"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <HyperlinkButton x:Name="BottomBtnFull" Click="BottomBtnFull_Click" ToolTipService.ToolTip="全屏" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Expand"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                                <HyperlinkButton x:Name="BottomBtnExitFull" Click="BottomBtnExitFull_Click" ToolTipService.ToolTip="退出全屏" Visibility="Collapsed" Foreground="White" Padding="8" Width="48" Height="48">
-                                    <fa:FontAwesome Icon="Solid_Compress"  FontSize="20"></fa:FontAwesome>
-                                </HyperlinkButton>
-                            </StackPanel>
-                        </Grid>
+                        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+                            <HyperlinkButton  Click="BottomBtnPause_Click" Visibility="{Binding ElementName=BottomBtnPause,Path=Visibility,Mode=OneWay}" Foreground="White" Padding="8" Width="48" Height="48">
+                                <fa:FontAwesome Icon="Solid_Pause"  FontSize="20"></fa:FontAwesome>
+                            </HyperlinkButton>
+                            <HyperlinkButton  Click="BottomBtnPlay_Click" Visibility="{Binding ElementName=BottomBtnPlay,Path=Visibility,Mode=OneWay}" Foreground="White" Padding="8" Width="48" Height="48">
+                                <fa:FontAwesome Icon="Solid_Play"  FontSize="20"></fa:FontAwesome>
+                            </HyperlinkButton>
+                            <Button  Click="TopBtnOpenDanmaku_Click" ToolTipService.ToolTip="打开弹幕" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
+                            </Button>
+                            <Button  Click="TopBtnCloseDanmaku_Click" ToolTipService.ToolTip="关闭弹幕" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
+                            </Button>
+                            <HyperlinkButton x:Name="BottomBtnExitMiniWindows"  VerticalAlignment="Bottom" Click="BottomBtnExitMiniWindows_Click"  ToolTipService.ToolTip="退出小窗置顶" Foreground="White" Padding="8" Width="48" Height="48">
+                                <fa:FontAwesome Icon="Regular_WindowMaximize"  FontSize="20"></fa:FontAwesome>
+                            </HyperlinkButton>
+                        </StackPanel>
+                        <ProgressBar VerticalAlignment="Bottom" Foreground="White" Value="{Binding ElementName=BottomProgress,Path=Value,Mode=OneWay}" Maximum="{Binding ElementName=BottomProgress,Path=Maximum,Mode=OneWay}"></ProgressBar>
                     </Grid>
+                   
                 </Grid>
-                <Button x:Name="BtnFoucs" Width="0" Height="0" Background="Transparent" BorderThickness="0"></Button>
+                <Button x:Name="BtnFoucs" Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-8 -8 0 0" Background="Transparent" BorderThickness="0"></Button>
             </Grid>
         </SplitView>
     </Grid>

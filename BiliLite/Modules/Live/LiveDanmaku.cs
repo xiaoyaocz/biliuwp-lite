@@ -459,6 +459,7 @@ namespace BiliLite.Modules.Live
         {
             try
             {
+                if (_clientSocket == null) return;
                 var playload = Encoding.UTF8.GetBytes(body);
                 if (packetlength == 0)
                 {
