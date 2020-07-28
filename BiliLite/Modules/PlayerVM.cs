@@ -153,7 +153,7 @@ namespace BiliLite.Modules
                     if (video != null)
                     {
                         DashItemModel audio = null;
-                        var audios = data.data.dash.audio.OrderBy(x => x.bandwidth);
+                        var audios = data.data.dash.audio.Where(x=>x.mimeType== "audio/mp4" || x.mime_type== "audio/mp4").OrderBy(x => x.bandwidth);
                         if (qn > 64)
                         {
                             audio = audios.LastOrDefault();
