@@ -92,8 +92,8 @@ namespace BiliLite.Pages
                     {
                         playInfos.Add(new PlayInfo()
                         {
-                            avid = item.aid,
-                            cid = item.cid,
+                            avid = item.av_id,
+                            cid = item.danmaku,
                             duration = 0,
                             season_id= seasonDetailVM.Detail.season_id,
                             season_type= seasonDetailVM.Detail.type,
@@ -205,7 +205,7 @@ namespace BiliLite.Pages
             {
                 commentMode = Api.CommentApi.CommentType.Video,
                 conmmentSort = Api.CommentApi.ConmmentSort.Hot,
-                oid = seasonDetailVM.Detail.episodes[listEpisode.SelectedIndex].aid
+                oid = seasonDetailVM.Detail.episodes[listEpisode.SelectedIndex].av_id
             });
             changedFlag = false;
         }
@@ -223,7 +223,7 @@ namespace BiliLite.Pages
             {
                 commentMode = Api.CommentApi.CommentType.Video,
                 conmmentSort = Api.CommentApi.ConmmentSort.Hot,
-                oid = seasonDetailVM.Detail.episodes[listEpisode.SelectedIndex].aid
+                oid = seasonDetailVM.Detail.episodes[listEpisode.SelectedIndex].av_id
             });
             CreateQR();
         }
