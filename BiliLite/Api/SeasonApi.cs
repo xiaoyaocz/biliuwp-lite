@@ -20,16 +20,13 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel DetailBiliPlus(string season_id)
+        public ApiModel DetailWeb(string season_id)
         {
-            Dictionary<string, string> header =new Dictionary<string, string>();
-            header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36");
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = $"https://www.biliplus.com/api/bangumi",
-                parameter = $"season={season_id}",
-                headers = header
+                baseUrl = $"https://bangumi.bilibili.com/view/web_api/season",
+                parameter = $"season_id={season_id}"
             };
            
             return api;

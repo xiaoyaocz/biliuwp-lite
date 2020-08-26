@@ -57,7 +57,7 @@ namespace BiliLite.Modules
                     {
                         if (data.result.limit != null)
                         {
-                            var reulsts_web=await seasonApi.DetailBiliPlus(season_id).Request();
+                            var reulsts_web=await seasonApi.DetailWeb(season_id).Request();
                             if (reulsts_web.status)
                             {
                                 var data_2 = reulsts_web.GetJObject();
@@ -267,8 +267,8 @@ namespace BiliLite.Modules
     }
     public class SeasonDetailEpisodeModel
     {
-        public string av_id { get; set; }
-        public string danmaku { get; set; }
+        public string aid { get; set; }
+        public string cid { get; set; }
         public int badge_type { get; set; }
         public string badge { get; set; }
         public bool show_badge {
@@ -284,9 +284,9 @@ namespace BiliLite.Modules
         public int id
         {
             get {
-                if (_id == null && episode_id != null)
+                if (_id == null && ep_id != null)
                 {
-                    return episode_id.Value;
+                    return ep_id.Value;
                 }
                 return _id.Value; 
             }
@@ -337,7 +337,7 @@ namespace BiliLite.Modules
         }
 
 
-        public int? episode_id { get; set; }
+        public int? ep_id { get; set; }
         public int? episode_status { get; set; }
         public string index { get; set; }
         public string index_title { get; set; }
