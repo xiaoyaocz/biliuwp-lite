@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
+using BiliLite.Modules.Live.LiveCenter;
 using BiliLite.Pages.Live;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace BiliLite.Pages.Home
             if (SettingHelper.Account.Logined)
             {
                 liveVM.ShowFollows = true;
-                await liveVM.GetFollows();
+                await liveVM.liveAttentionVM.GetFollows();
             }
         }
 
@@ -166,6 +167,22 @@ namespace BiliLite.Pages.Home
                     parent_id = area.area_v2_parent_id,
                     area_id = area.area_v2_id
                 }
+            });
+        }
+
+        private async void btnOpenLiveCenter_Click(object sender, RoutedEventArgs e)
+        {
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                page = typeof(Live.LiveCenterPage),
+                title = "直播中心",
+
             });
         }
     }

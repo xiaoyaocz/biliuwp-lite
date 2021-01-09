@@ -79,5 +79,11 @@ namespace BiliLite.Pages.Home
                 });
             }
         }
+
+        private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as DynamicItemModel;
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.video.aid);
+        }
     }
 }

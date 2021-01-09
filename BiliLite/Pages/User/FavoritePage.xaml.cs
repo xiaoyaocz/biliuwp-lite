@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Dialogs;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,28 @@ namespace BiliLite.Pages.User
                 title = data.title,
                 parameters = data.id
             });
+        }
+
+        private async void btnCreateFavBox_Click(object sender, RoutedEventArgs e)
+        {
+            CreateFavFolderDialog createFavFolderDialog = new CreateFavFolderDialog();
+            await createFavFolderDialog.ShowAsync();
+            videoVM.Refresh();
+        }
+
+        private async void btnFavBoxEdit_Click(object sender, RoutedEventArgs e)
+        {
+           var data= (sender as MenuFlyoutItem).DataContext as FavoriteItemModel;
+            EditFavFolderDialog editFavFolderDialog = new EditFavFolderDialog(data.id, data.title,data.intro,data.privacy?false:true);
+            await editFavFolderDialog.ShowAsync();
+            videoVM.Refresh();
+        }
+
+        private async void btnFavBoxDel_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as FavoriteItemModel;
+            await videoVM.DelFavorite(data.id);
+            videoVM.Refresh();
         }
     }
 }

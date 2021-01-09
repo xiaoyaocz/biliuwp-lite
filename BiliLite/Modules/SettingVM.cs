@@ -66,6 +66,7 @@ namespace BiliLite.Modules
         /// 弹幕屏蔽关键词列表
         /// </summary>
         public ObservableCollection<string> ShieldWords { get; set; }
+        public ObservableCollection<string> LiveWords { get; set; }
         public ObservableCollection<string> ShieldUsers { get; set; }
         public ObservableCollection<string> ShieldRegulars { get; set; }
 
@@ -73,6 +74,7 @@ namespace BiliLite.Modules
 
         public void LoadShieldSetting()
         {
+            LiveWords= SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.Live.SHIELD_WORD, new ObservableCollection<string>() { });
             ShieldWords = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.VideoDanmaku.SHIELD_WORD, new ObservableCollection<string>() { });
 
             //正则关键词

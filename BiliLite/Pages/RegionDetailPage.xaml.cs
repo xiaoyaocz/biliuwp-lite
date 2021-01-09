@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
+using BiliLite.Pages.Bangumi;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -78,11 +79,36 @@ namespace BiliLite.Pages
 
         private void btnOpenRank_Click(object sender, RoutedEventArgs e)
         {
+            if (regionInfo.id == 13)
+            {
+                //打开番剧排行榜
+                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                {
+                    icon = Symbol.FourBars,
+                    page = typeof(SeasonRankPage),
+                    title = "热门榜单",
+                    parameters = AnimeType.bangumi
+                });
+                return;
+            }
+            if (regionInfo.id == 167)
+            {
+                //打开国创排行榜
+                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                {
+                    icon = Symbol.FourBars,
+                    page = typeof(SeasonRankPage),
+                    title = "热门榜单",
+                    parameters = AnimeType.guochuang
+                });
+                return;
+            } 
             MessageCenter.OpenNewWindow(this, new NavigationInfo()
             {
                 icon = Symbol.FourBars,
                 page = typeof(RankPage),
-                title = "排行榜"
+                title = "排行榜",
+                parameters= regionInfo.id
             });
         }
 
@@ -119,6 +145,13 @@ namespace BiliLite.Pages
         private async void BtnOpenBanner_Click(object sender, RoutedEventArgs e)
         {
            await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as RegionHomeBannerItemModel).uri);
+        }
+
+        private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as RegionVideoItemModel;
+
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.param);
         }
     }
     public class RegionDataTemplateSelector : DataTemplateSelector

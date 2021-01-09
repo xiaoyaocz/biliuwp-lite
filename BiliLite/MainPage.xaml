@@ -11,7 +11,7 @@
    xmlns:pages="using:BiliLite.Pages"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media" xmlns:controls="using:BiliLite.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-  
+
     <Grid>
         <winui:TabView x:Name="tabView"  VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Loaded="tabView_Loaded" IsAddTabButtonVisible="True" TabCloseRequested="TabView_TabCloseRequested" AddTabButtonClick="TabView_AddTabButtonClick">
             <winui:TabView.TabItems>
@@ -30,6 +30,8 @@
                 <Grid x:Name="CustomDragRegion" Background="Transparent" ></Grid>
             </winui:TabView.TabStripFooter>
         </winui:TabView>
-       
+        <Grid x:Name="gridViewer" Opacity="0" Visibility="Collapsed" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}" >
+            <controls:ImageViewerControl x:Name="imgViewer" CloseEvent="imgViewer_CloseEvent"></controls:ImageViewerControl>
+        </Grid>
     </Grid>
 </Page>

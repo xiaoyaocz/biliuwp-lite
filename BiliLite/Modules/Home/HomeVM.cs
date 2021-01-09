@@ -52,10 +52,17 @@ namespace BiliLite.Modules
                 NeedLogin=false,
                 Show=true
             },
+             new HomeNavItem(){
+                Icon=FontAwesome5.EFontAwesomeIcon.Solid_Heart,
+                Page=typeof(Pages.Home.UserDynamicPage),
+                Title="动态",
+                NeedLogin=true,
+                Show=false
+            },
             new HomeNavItem(){
                 Icon=FontAwesome5.EFontAwesomeIcon.Solid_Heart,
                 Page=typeof(Pages.Home.DynamicPage),
-                Title="动态",
+                Title="视频动态",
                 NeedLogin=true,
                 Show=false
             },
@@ -96,20 +103,28 @@ namespace BiliLite.Modules
                 NeedLogin=false,
                 Show=true
             },
-            new HomeNavItem(){
-                Icon=FontAwesome5.EFontAwesomeIcon.Solid_Bars,
-                Page=typeof(Pages.Home.ChannelPage),
-                Title="频道(不可用)",
-                NeedLogin=false,
-                Show=false
-            },
+            //new HomeNavItem(){
+            //    Icon=FontAwesome5.EFontAwesomeIcon.Solid_Bars,
+            //    Page=typeof(Pages.Home.ChannelPage),
+            //    Title="频道",
+            //    NeedLogin=false,
+            //    Show=true
+            //},
             new HomeNavItem(){
                 Icon=FontAwesome5.EFontAwesomeIcon.Solid_Trophy,
                 Page=typeof(Pages.RankPage),
                 Title="排行榜",
                 NeedLogin=false,
                 Show=true
-            }
+            },
+            //new HomeNavItem(){
+            //    Icon=FontAwesome5.EFontAwesomeIcon.Solid_Compass,
+            //    Page=typeof(Pages.Other.FindMorePage),
+            //    Title="发现",
+            //    NeedLogin=false,
+            //    Show=true
+            //},
+           
         };
         }
 

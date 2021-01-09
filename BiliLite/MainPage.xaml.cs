@@ -20,6 +20,7 @@ using BiliLite.Helpers;
 using System.Text;
 using Microsoft.Toolkit.Uwp.Helpers;
 using BiliLite.Controls;
+
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
 namespace BiliLite
@@ -27,7 +28,7 @@ namespace BiliLite
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
         public MainPage()
         {
@@ -35,13 +36,16 @@ namespace BiliLite
             // 处理标题栏
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+
             Window.Current.SetTitleBar(CustomDragRegion);
 
             //处理页面跳转
             MessageCenter.OpenNewWindowEvent += NavigationHelper_OpenNewWindowEvent;
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
+            MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             Window.Current.Content.PointerPressed += Content_PointerPressed;
         }
+
 
 
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -49,10 +53,19 @@ namespace BiliLite
             var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
             if (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
             {
+                //如果打开了图片浏览，则关闭图片浏览
+                if (gridViewer.Visibility == Visibility.Visible)
+                {
+                    imgViewer_CloseEvent(this, null);
+                    e.Handled = true;
+                    return;
+                }
+
+
                 //处理多标签
                 if (tabView.SelectedItem != tabView.TabItems[0])
                 {
-                    var frame= (tabView.SelectedItem as TabViewItem).Content as MyFrame;
+                    var frame = (tabView.SelectedItem as TabViewItem).Content as MyFrame;
                     if (frame.CanGoBack)
                     {
                         frame.Close();
@@ -69,13 +82,20 @@ namespace BiliLite
             }
         }
 
-     
+
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-           
-            //Utils.ShowMessageToast("有任何问题和建议请点击右上角的\"笑脸\"按钮哦");
+
+            if (e.NavigationMode == NavigationMode.New && e.Parameter != null&&!string.IsNullOrEmpty(e.Parameter.ToString()))
+            {
+                var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
+                if (!result)
+                {
+                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
+                }
+            }
 #if !DEBUG
             await Utils.CheckVersion();
 #endif
@@ -136,7 +156,7 @@ namespace BiliLite
 
         private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            var frame=(args.Tab as TabViewItem).Content as MyFrame;
+            var frame = (args.Tab as TabViewItem).Content as MyFrame;
             frame.Close();
             sender.TabItems.Remove(args.Tab);
             GC.Collect();
@@ -150,7 +170,20 @@ namespace BiliLite
 
             (tabView.TabItems[0] as TabViewItem).Content = frame;
         }
-
-
+        private async void MessageCenter_ViewImageEvent(object sender, ImageViewerParameter e)
+        {
+            gridViewer.Visibility = Visibility.Visible;
+            await gridViewer.FadeInAsync();
+            imgViewer.InitImage(e);
+        }
+        private async void imgViewer_CloseEvent(object sender, EventArgs e)
+        {
+            if (gridViewer.Visibility == Visibility.Visible)
+            {
+                imgViewer.ClearImage();
+                await gridViewer.FadeOutAsync();
+                gridViewer.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

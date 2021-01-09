@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Proto\Config\device.proto" />
+    <None Remove="Proto\Config\fawkesreq.proto" />
+    <None Remove="Proto\Config\locale.proto" />
+    <None Remove="Proto\Config\metadata.proto" />
+    <None Remove="Proto\Config\network.proto" />
+    <None Remove="Proto\Config\restriction.proto" />
+    <None Remove="Proto\Reply\PlayViewReply.proto" />
+    <None Remove="Proto\Request\PlayViewReq.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+    <PackageReference Include="Grpc" Version="2.34.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.34.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Proto\Config\device.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Config\fawkesreq.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Config\locale.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Config\metadata.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Config\network.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Config\restriction.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Reply\PlayViewReply.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Request\PlayViewReq.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+</Project>

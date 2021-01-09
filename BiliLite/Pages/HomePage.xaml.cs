@@ -26,6 +26,7 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        DownloadVM downloadVM;
         readonly HomeVM homeVM;
         readonly Account account;
         public HomePage()
@@ -36,6 +37,7 @@ namespace BiliLite.Pages
             MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
             homeVM = new HomeVM();
             account = new Account();
+            downloadVM = DownloadVM.Instance;
             this.DataContext = homeVM;
         }
         private void MessageCenter_LogoutedEvent(object sender, EventArgs e)
@@ -55,6 +57,11 @@ namespace BiliLite.Pages
                  CheckLoginStatus();
                 //await homeVM.LoginUserCard();
             }
+            if(SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false))
+            {
+                btnSponsor.Visibility = Visibility.Collapsed;
+            }
+           
         }
         private async void CheckLoginStatus()
         {
@@ -113,6 +120,7 @@ namespace BiliLite.Pages
         {
             var item = args.SelectedItem as HomeNavItem;
             frame.Navigate(item.Page, item.Parameters);
+            this.UpdateLayout();
         }
 
 
@@ -124,11 +132,18 @@ namespace BiliLite.Pages
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
             MessageCenter.SendLogout();
+            UserFlyout.Hide();
         }
 
         private void btnDownlaod_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ShowMessageToast("劳资还没写好￣へ￣");
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Download,
+                page = typeof(DownloadPage),
+                title = "下载",
+               
+            });
         }
 
         private async void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -173,9 +188,20 @@ namespace BiliLite.Pages
             });
         }
 
-        private void MenuMyLive_Click(object sender, RoutedEventArgs e)
+        private async void MenuMyLive_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ShowMessageToast("劳资还没写好￣へ￣");
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                page = typeof(Live.LiveCenterPage),
+                title = "直播中心",
+                
+            });
         }
 
         private void btnOpenFans_Click(object sender, RoutedEventArgs e)
@@ -189,23 +215,6 @@ namespace BiliLite.Pages
             });
         }
 
-        private void btnFeedback_Click(object sender, RoutedEventArgs e)
-        {
-            //MessageCenter.OpenNewWindow(this, new NavigationInfo()
-            //{
-            //    icon = Symbol.Emoji2,
-            //    page = typeof(WebPage),
-            //    title = "开发版",
-            //    parameters = "https://www.showdoc.cc/biliuwpdev"
-            //});
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
-            {
-                icon = Symbol.Help,
-                page = typeof(HelpPage),
-                title = "帮助",
-            });
-        }
-
         private void MenuHistory_Click(object sender, RoutedEventArgs e)
         {
             MessageCenter.OpenNewWindow(this, new NavigationInfo()
@@ -214,6 +223,70 @@ namespace BiliLite.Pages
                 page = typeof(User.HistoryPage),
                 title = "历史记录"
             });
+        }
+
+        private void MenuUserCenter_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                title = SettingHelper.Account.Profile.name,
+                page = typeof(UserInfoPage),
+                parameters = SettingHelper.Account.UserID
+            });
+        }
+
+        private void MenuMessage_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Message,
+                title = "消息中心",
+                page = typeof(WebPage),
+                parameters = $"https://message.bilibili.com/#whisper"
+            });
+        }
+
+        private async void MenuWatchlater_Click(object sender, RoutedEventArgs e)
+        {
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Play,
+                page = typeof(User.WatchlaterPage),
+                title = "稍后再看",
+
+            });
+        }
+
+        private async void btnSponsor_Click(object sender, RoutedEventArgs e)
+        {
+            var x = new ContentDialog() { 
+                Title="赞助作者"
+            };
+            ScrollViewer scrollViewer = new ScrollViewer();
+            StackPanel st = new StackPanel();
+           
+            st.Children.Add(new TextBlock()
+            {
+                TextWrapping = TextWrapping.Wrap,
+                IsTextSelectionEnabled = true,
+                Text = "\r\n如果觉得应用还不错，就请我喝杯咖啡吧!\r\n支付宝：2500655055@qq.com\r\n\r\n如果您不想显示此按钮，请到设置-个性化中设置"
+            });
+            st.Children.Add(new Image()
+            {
+                Width=280,
+                Source = new BitmapImage(new Uri("ms-appx:///Assets/zfb.jpg"))
+            });
+            scrollViewer.Content = st;
+            x.Content = scrollViewer;
+            x.PrimaryButtonText = "知道了";
+            x.IsPrimaryButtonEnabled = true;
+            await x.ShowAsync();
         }
     }
 

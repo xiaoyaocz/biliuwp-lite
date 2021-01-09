@@ -692,5 +692,39 @@
                 </Grid>
             </Grid>
         </SplitView>
+        <RichTextBlock>
+            <Paragraph>
+               
+            </Paragraph>
+        </RichTextBlock>
+        <GridView HorizontalAlignment="Center">
+            <GridViewItem Padding="0" Margin="12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <Grid Width="400">
+                    <Viewbox>
+                        <Grid>
+                            <Image Stretch="UniformToFill" Width="100" Height="33" Source="ms-appx:///Assets/4864bd526213c9e5238d41cd09e5f79eb18eb39c.png" ></Image>
+                            
+                        </Grid>
+                      
+                       
+                    </Viewbox>
+                    <TextBlock TextWrapping="Wrap" Margin="20" FontSize="24" VerticalAlignment="Center" TextAlignment="Center" Foreground="#0704ff">A 默不作声A 默不作声A 默不作声A 默不作声</TextBlock>
+                </Grid>
+            </GridViewItem>
+            <GridViewItem Padding="0" Margin="12" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                <Grid Width="400">
+                    <Viewbox>
+                        <Grid>
+                            <Image Stretch="UniformToFill" Width="100" Height="33" Source="ms-appx:///Assets/4864bd526213c9e5238d41cd09e5f79eb18eb39c.png" ></Image>
+
+                        </Grid>
+
+
+                    </Viewbox>
+                    <TextBlock TextWrapping="Wrap" Margin="20" FontSize="24" VerticalAlignment="Center" TextAlignment="Center" Foreground="#0704ff">A 默不作声A 默不作声A 默不作声A 默不作声</TextBlock>
+                </Grid>
+            </GridViewItem>
+            
+        </GridView>
     </Grid>
 </Page>

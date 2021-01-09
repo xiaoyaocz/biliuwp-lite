@@ -16,8 +16,60 @@
         <covert:ColorConvert x:Key="colorConvert"></covert:ColorConvert>
     </Page.Resources>
     <Grid>
-        <ScrollViewer x:Name="scrollViewer" ViewChanged="scrollViewer_ViewChanged" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="16 8">
+
+
+
+        <controls:MyAdaptiveGridView 
+                    ItemClick="gridHot_ItemClick"
+                    OneRowModeEnabled="False"
+                    Padding="8"
+                    StretchContentForSingleRow="False"
+                    ItemsSource="{x:Bind Path=hotVM.HotItems,Mode=OneWay}"
+                    ItemHeight="100" DesiredWidth="560" 
+                    LoadMoreBottomOffset="0"
+                    LoadMoreCommand="{x:Bind Path=hotVM.LoadMoreCommand}"
+                    CanLoadMore="True"
+                    Loading="{x:Bind Path=hotVM.Loading,Mode=OneWay}"
+                    SelectionMode="None" IsItemClickEnabled="True">
+            <toolkit:AdaptiveGridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="8"></Setter>
+                </Style>
+            </toolkit:AdaptiveGridView.ItemContainerStyle>
+
+            <toolkit:AdaptiveGridView.ItemTemplate>
+                <DataTemplate x:DataType="modules:HotDataItemModel">
+                    <Grid Background="#00FFFFFF">
+                        <Grid.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border Margin="4" CornerRadius="{StaticResource ImageCornerRadius}">
+                            <Grid >
+                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                <Border CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="4" Padding="4 2" Background="#99000000">
+                                    <TextBlock Foreground="White" FontSize="12" Text="{x:Bind cover_right_text_1}"></TextBlock>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="4 0 0 0" >
+                            <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                            <Border Margin="0 2 0 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
+                            </Border>
+                            <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_1}"></TextBlock>
+                            <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_2}"></TextBlock>
+                        </StackPanel>
+                        <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
+                    </Grid>
+                </DataTemplate>
+            </toolkit:AdaptiveGridView.ItemTemplate>
+            <controls:MyAdaptiveGridView.Header>
                 <GridView  ItemClick="gridTop_ItemClick" ItemsSource="{x:Bind Path=hotVM.TopItems,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="modules:HotTopItemModel">
@@ -30,55 +82,22 @@
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
                             <Setter Property="Width" Value="100"></Setter>
+                           
                         </Style>
                     </GridView.ItemContainerStyle>
                 </GridView>
-                <toolkit:AdaptiveGridView 
-                    ItemClick="gridHot_ItemClick"
-                    OneRowModeEnabled="False"
-                    StretchContentForSingleRow="False"
-                   ItemsSource="{x:Bind Path=hotVM.HotItems,Mode=OneWay}"
-                    ItemHeight="100" DesiredWidth="540" 
-                    SelectionMode="None" IsItemClickEnabled="True">
-                    <toolkit:AdaptiveGridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="Margin" Value="4"></Setter>
-                        </Style>
-                    </toolkit:AdaptiveGridView.ItemContainerStyle>
-                  
-                    <toolkit:AdaptiveGridView.ItemTemplate>
-                        <DataTemplate x:DataType="modules:HotDataItemModel">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="160"/>
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <Grid Margin="4">
-                                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
-                                    <Border CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="4" Padding="4 2" Background="#99000000">
-                                        <TextBlock Foreground="White" FontSize="12" Text="{x:Bind cover_right_text_1}"></TextBlock>
-                                    </Border>
-                                </Grid>
-                              
-                                <StackPanel Grid.Column="1" Margin="4 0 0 0" >
-                                    <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
-                                    <Border Margin="0 2 0 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
-                                    </Border>
-                                    <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_1}"></TextBlock>
-                                    <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_2}"></TextBlock>
-                                </StackPanel>
-                                <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
-                            </Grid>
-                        </DataTemplate>
-                    </toolkit:AdaptiveGridView.ItemTemplate>
-                </toolkit:AdaptiveGridView>
-                <HyperlinkButton  Command="{x:Bind Path=hotVM.LoadMoreCommand}" Visibility="{x:Bind Path=hotVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
-                    <TextBlock>加载更多</TextBlock>
-                </HyperlinkButton>
-                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=hotVM.Loading,Mode=OneWay}"></ProgressRing>
-            </StackPanel>
-        </ScrollViewer>
+            </controls:MyAdaptiveGridView.Header>
+            <controls:MyAdaptiveGridView.Footer>
+                <Grid>
+                    <HyperlinkButton  Command="{x:Bind Path=hotVM.LoadMoreCommand}" Visibility="{x:Bind Path=hotVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                        <TextBlock>加载更多</TextBlock>
+                    </HyperlinkButton>
+                    <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=hotVM.Loading,Mode=OneWay}"></ProgressRing>
+                </Grid>
+            </controls:MyAdaptiveGridView.Footer>
+        </controls:MyAdaptiveGridView>
+
+
         <controls:RoundButton  Command="{x:Bind Path=hotVM.RefreshCommand}" Visibility="{x:Bind Path=hotVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>

@@ -40,6 +40,7 @@
             LoadMoreCommand="{x:Bind Path=seasonIndexVM.LoadMoreCommand,Mode=OneWay}"
             CanLoadMore="True"
             ItemsSource="{x:Bind Path=seasonIndexVM.Result,Mode=OneWay}"
+            Loading="{x:Bind Path=seasonIndexVM.Loading,Mode=OneWay}"
            Padding="8"
             DesiredWidth="180"
             StretchContentForSingleRow="False"
@@ -55,24 +56,26 @@
                             <RowDefinition Height="24" />
                             <RowDefinition Height="24" />
                         </Grid.RowDefinitions>
-                        <Grid>
-                            <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
-                            <Grid VerticalAlignment="Bottom" Padding="8">
-                                <Grid.Background>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="#CC000005" Offset="0.993" />
-                                        <GradientStop Color="#00000000" Offset="0" />
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=order}" Visibility="{x:Bind Path=show_score,Converter={StaticResource display}}"></TextBlock>
-                                    <TextBlock FontSize="14" Foreground="Orange" FontWeight="Bold" Text="{x:Bind Path=order}" Visibility="{x:Bind Path=show_score}"></TextBlock>
-                                </StackPanel>
+                        <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                            <Grid>
+                                <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                                <Grid VerticalAlignment="Bottom" Padding="8">
+                                    <Grid.Background>
+                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                            <GradientStop Color="#CC000005" Offset="0.993" />
+                                            <GradientStop Color="#00000000" Offset="0" />
+                                        </LinearGradientBrush>
+                                    </Grid.Background>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=order}" Visibility="{x:Bind Path=show_score,Converter={StaticResource display}}"></TextBlock>
+                                        <TextBlock FontSize="14" Foreground="Orange" FontWeight="Bold" Text="{x:Bind Path=order}" Visibility="{x:Bind Path=show_score}"></TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                                <Border Visibility="{Binding show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                                </Border>
                             </Grid>
-                            <Border Visibility="{Binding show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
-                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
-                            </Border>
-                        </Grid>
+                        </Border>
                         <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
                         <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=index_show}"></TextBlock>
                     </Grid>

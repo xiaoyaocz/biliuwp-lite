@@ -9,7 +9,5 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <controls:MarkdownTextBlock x:Name="txtHelp" Padding="16" LinkClicked="txtHelp_LinkClicked" IsTextSelectionEnabled="True" ></controls:MarkdownTextBlock>
-    </ScrollViewer>
+   
 </Page>

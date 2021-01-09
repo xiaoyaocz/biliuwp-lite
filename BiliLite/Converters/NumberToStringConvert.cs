@@ -15,9 +15,14 @@ namespace BiliLite.Converters
             {
                 return "";
             }
+            
             if (value is int||value is long)
             {
                 var number = System.Convert.ToDouble(value);
+                if (parameter != null)
+                {
+                    return number.ToString(parameter.ToString());
+                }
                 if (number >= 10000)
                 {
                     return ((double)number / 10000).ToString("0.0") + "万";
@@ -26,6 +31,10 @@ namespace BiliLite.Converters
             if (value is double)
             {
                 var number = (double)value;
+                if (parameter != null)
+                {
+                    return number.ToString(parameter.ToString());
+                }
                 return number.ToString("0.00");
             }
             if (value is string)

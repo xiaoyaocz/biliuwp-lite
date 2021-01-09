@@ -9,8 +9,8 @@
 
   <Identity
     Name="5421.502643927C6AD"
-    Publisher="CN=43A199A3-3813-4434-830F-536BE5EFB42E"
-    Version="4.0.16.0" />
+    Publisher="CN=xiaoyaocz"
+    Version="4.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="5dafa284-d0d7-453e-b0d7-b691397a3959" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -33,10 +33,10 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="BiliLite.App">
       <uap:VisualElements
-        DisplayName="哔哩哔哩 测试版"
+        DisplayName="哔哩哔哩 UWP"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="哔哩哔哩 测试版" BackgroundColor="transparent">
+        Description="哔哩哔哩UWP V4" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="哔哩哔哩">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
@@ -46,6 +46,13 @@
         </uap:DefaultTile >
         <uap:SplashScreen Image="Assets\SplashScreen.png"  />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol" EntryPoint="BiliLite.App">
+          <uap:Protocol Name="bilibili">
+            <uap:DisplayName>哔哩哔哩 UWP</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

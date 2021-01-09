@@ -19,19 +19,24 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
         </Style>
         <DataTemplate x:Key="VideoDataTemplate" x:DataType="model:FavoriteInfoVideoItemModel">
-            <Grid>
+            <Grid Background="#00FFFFFF">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Grid.ContextFlyout>
+                <!--<Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="取消收藏"></MenuFlyoutItem>
+                        <MenuFlyoutItem  Text="取消收藏"></MenuFlyoutItem>
                     </MenuFlyout>
-                </Grid.ContextFlyout>
-                <Grid>
+                </Grid.ContextFlyout>-->
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
                     <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
-                </Grid>
+                </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                     <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" >UP:<Run Text="{x:Bind Path=upper.name}"/></TextBlock>
@@ -54,17 +59,36 @@
                 <TextBlock VerticalAlignment="Center" Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.title,Mode=OneWay}"></TextBlock>
                 <TextBlock Margin="0 4" Foreground="Gray" >创建者:<Run Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.upper.name,Mode=OneWay}"/>,共<Run Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.media_count,Mode=OneWay}"/>个视频</TextBlock>
             </StackPanel>
-            <StackPanel Grid.Column="1" Margin="12 0" VerticalAlignment="Center" Orientation="Horizontal">
-                <AutoSuggestBox Width="160" QueryIcon="Find" Margin="12 0" PlaceholderText="输入关键字" VerticalAlignment="Center"></AutoSuggestBox>
-                <AppBarButton Icon="OutlineStar" Width="40" Height="40"></AppBarButton>
-                <AppBarButton Icon="List" Width="40" Height="40"></AppBarButton>
+            <StackPanel  Visibility="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Mode=OneWay}" Grid.Column="1" Margin="12 0" VerticalAlignment="Center" Orientation="Horizontal">
+                <AutoSuggestBox x:Name="searchBox" Width="160" QueryIcon="Find" Margin="12 0" PlaceholderText="输入关键字" VerticalAlignment="Center" QuerySubmitted="AutoSuggestBox_QuerySubmitted"></AutoSuggestBox>
+                <AppBarButton x:Name="PlayAll" Click="PlayAll_Click" ToolTipService.ToolTip="播放全部" Icon="Play" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="收藏" 
+                              Visibility="{x:Bind Path=favoriteDetailVM.ShowCollect,Mode=OneWay}" 
+                              Command="{x:Bind Path=favoriteDetailVM.CollectCommand}"
+                              Icon="OutlineStar" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="取消收藏" 
+                              Visibility="{x:Bind Path=favoriteDetailVM.ShowCancelCollect,Mode=OneWay}" 
+                              Command="{x:Bind Path=favoriteDetailVM.CancelCollectCommand}"
+                              Icon="SolidStar" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="清除失效" Click="btnClean_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Icon="Delete" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="批量操作" Command="{x:Bind Path=favoriteDetailVM.SelectCommand}" CommandParameter="1" Icon="List" Width="40" Height="40"></AppBarButton>
             </StackPanel>
+            <StackPanel  Visibility="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Converter={StaticResource display},Mode=OneWay}" Grid.Column="1" Margin="12 0" VerticalAlignment="Center" Orientation="Horizontal">
+                <CheckBox Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked">全选/反选</CheckBox>
+                <Button x:Name="btnDelete" Click="btnDelete_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Margin="0 0 4 0">删除选中</Button>
+                <Button x:Name="btnMove" Click="btnMove_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Margin="4 0">移动到...</Button>
+                <Button x:Name="btnCopy" Click="btnCopy_Click"  Margin="4 0">复制到...</Button>
+                <AppBarButton ToolTipService.ToolTip="退出批量操作" Command="{x:Bind Path=favoriteDetailVM.SelectCommand}" Icon="Cancel" Width="40" Height="40"></AppBarButton>
+            </StackPanel>
+            
         </Grid>
+        
         <Grid Grid.Row="1">
-          
-            <toolkit:AdaptiveGridView SelectionMode="None" 
-                                          IsItemClickEnabled="True"
+
+            <toolkit:AdaptiveGridView SelectionMode="{x:Bind Path=favoriteDetailVM.SelectionMode,Mode=OneWay}" 
+                                          IsItemClickEnabled="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Mode=OneWay}"
                                           DesiredWidth="600"
+                                          x:Name="listView"
                                           ItemClick="Video_ItemClick"
                                           StretchContentForSingleRow="False"
                                           ItemContainerStyle="{StaticResource ItemStyle}"

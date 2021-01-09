@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI;
 using System.IO;
+using BiliLite.Dialogs;
+using Windows.UI.Popups;
 
 namespace BiliLite.Helpers
 {
@@ -92,9 +94,9 @@ namespace BiliLite.Helpers
             var result = CryptographicBuffer.EncodeToHexString(hashed);
             return result;
         }
-        public static void ShowMessageToast(string message)
+        public static void ShowMessageToast(string message,int seconds = 2)
         {
-            MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(2));
+            MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(seconds));
             ms.Show();
         }
         public static void ShowMessageToast(string message, List<MyUICommand> commands, int seconds = 15)
@@ -114,6 +116,24 @@ namespace BiliLite.Helpers
                 return 0;
             }
         }
+        public static string ToCountString(this object obj)
+        {
+            if (obj == null) return "0";
+            if (double.TryParse(obj.ToString(), out var number))
+            {
+               
+                if (number >= 10000)
+                {
+                    return ((double)number / 10000).ToString("0.0") + "万";
+                }
+                return obj.ToString();
+            }
+            else
+            {
+                return obj.ToString();
+            }
+        }
+
         /// <summary>
         /// 根据Epid取番剧ID
         /// </summary>
@@ -162,6 +182,16 @@ namespace BiliLite.Helpers
                 return false;
             }
         }
+
+        public async static Task<bool> ShowDialog(string title,string content)
+        {
+            MessageDialog messageDialog = new MessageDialog(content,title);
+            messageDialog.Commands.Add(new UICommand() { Label="确定",Id=true});
+            messageDialog.Commands.Add(new UICommand() { Label = "取消", Id = false });
+           var result= await messageDialog.ShowAsync();
+            return (bool)result.Id;
+        }
+
         public static string RegexMatch(string input, string regular)
         {
             var data = Regex.Match(input, regular);
@@ -220,7 +250,7 @@ namespace BiliLite.Helpers
             }
             else
             {
-                return dt.ToString("MM-dd");
+                return dt.ToString("yyyy-MM-dd HH:mm");
             }
         }
 

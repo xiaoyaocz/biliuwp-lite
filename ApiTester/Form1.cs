@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,8 +22,9 @@ namespace ApiTester
 
         private void btnSign_Click(object sender, EventArgs e)
         {
+
+             txtOut.Text= txtInput.Text+ GetSign(txtInput.Text);
           
-           txtOut.Text= txtInput.Text+ GetSign(txtInput.Text);
         }
         public  string GetSign(string url)
         {
@@ -54,8 +56,6 @@ namespace ApiTester
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var str = "ffffff";
-            var s = Convert.ToInt32(str,16);
         }
 
         private void btnEq_Click(object sender, EventArgs e)

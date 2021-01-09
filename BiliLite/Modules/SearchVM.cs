@@ -854,11 +854,11 @@ namespace BiliLite.Modules
                 switch (official_verify.type)
                 {
                     case 0:
-                        return "ms-appx:///Assets/Icon/verify0.png";
+                        return AppHelper.VERIFY_PERSONAL_IMAGE;
                     case 1:
-                        return "ms-appx:///Assets/Icon/verify1.png";
+                        return AppHelper.VERIFY_OGANIZATION_IMAGE;
                     default:
-                        return "ms-appx:///Assets/MiniIcon/transparent.png";
+                        return AppHelper.TRANSPARENT_IMAGE;
                 }
             }
         }

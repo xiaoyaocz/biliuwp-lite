@@ -41,12 +41,14 @@
                         <MenuFlyoutItem Command="{x:Bind CancelFollowCommand}" CommandParameter="{x:Bind}">取消收藏</MenuFlyoutItem>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
-                <Grid>
-                    <toolkit:ImageEx IsCacheEnabled="True" Height="140" Width="105" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
-                    <Border Visibility="{x:Bind show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
-                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="会员专享"></TextBlock>
-                    </Border>
-                </Grid>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <Grid>
+                        <toolkit:ImageEx IsCacheEnabled="True" Height="140" Width="105" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
+                        <Border Visibility="{x:Bind show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="会员专享"></TextBlock>
+                        </Border>
+                    </Grid>
+                </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock MaxLines="2" Margin="0 4" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                     <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Text="{x:Bind Path=new_ep.index_show}"></TextBlock>
@@ -60,11 +62,16 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="btnFavBoxEdit" Click="btnFavBoxEdit_Click">编辑</MenuFlyoutItem>
+                        <MenuFlyoutItem x:Name="btnFavBoxDel" Click="btnFavBoxDel_Click">删除</MenuFlyoutItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde1x1.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
 
-                <Grid>
-                    <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
-
-                </Grid>
+                </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                     <TextBlock Margin="0 4" FontSize="14" Foreground="Gray">共<Run Text="{x:Bind Path=media_count}"/>个视频</TextBlock>
@@ -102,6 +109,9 @@
                                 <toolkit:AdaptiveGridView.Header>
                                     <Grid Margin="12 8 0 0">
                                         <TextBlock FontSize="18" FontWeight="Bold">我的创建</TextBlock>
+                                        <HyperlinkButton x:Name="btnCreateFavBox" Click="btnCreateFavBox_Click" Margin="12 0" HorizontalAlignment="Right">
+                                            <TextBlock>创建收藏夹</TextBlock>
+                                        </HyperlinkButton>
                                     </Grid>
                                 </toolkit:AdaptiveGridView.Header>
 
@@ -172,11 +182,11 @@
                                               Background="Transparent" 
                                               Margin="0 0 8 0">看过</ToggleButton>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
                                     <HyperlinkButton Margin="8 0 0 0" >
                                         <TextBlock>管理</TextBlock>
                                     </HyperlinkButton>
-                                </StackPanel>
+                                </StackPanel>-->
                                 <StackPanel Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
                                     <CheckBox MinWidth="64">全选</CheckBox>
                                     <HyperlinkButton Margin="8 0 0 0">
@@ -244,11 +254,11 @@
                                               Background="Transparent" 
                                               Margin="0 0 8 0">看过</ToggleButton>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
                                     <HyperlinkButton Margin="8 0 0 0" >
                                         <TextBlock>管理</TextBlock>
                                     </HyperlinkButton>
-                                </StackPanel>
+                                </StackPanel>-->
                                 <StackPanel Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
                                     <CheckBox MinWidth="64">全选</CheckBox>
                                     <HyperlinkButton Margin="8 0 0 0">

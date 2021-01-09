@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Controls;
+using BiliLite.Helpers;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -33,10 +34,17 @@ namespace BiliLite.Pages
         }
         private void WebPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if((this.Parent as Frame).Parent is TabViewItem)
+            if (this.Parent is MyFrame)
             {
-                ((this.Parent as Frame).Parent as TabViewItem).CloseRequested += WebPage_CloseRequested;
+                (this.Parent as MyFrame).ClosedPage -= WebPage_ClosedPage;
+                (this.Parent as MyFrame).ClosedPage += WebPage_ClosedPage;
             }
+        }
+
+        private void WebPage_ClosedPage(object sender, EventArgs e)
+        {
+            webView.NavigateToString("");
+            webView = null;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -55,10 +63,6 @@ namespace BiliLite.Pages
            
         }
        
-        private void WebPage_CloseRequested(TabViewItem sender, TabViewTabCloseRequestedEventArgs args)
-        {
-            webView.NavigateToString("");
-        }
 
      
         private void btnForword_Click(object sender, RoutedEventArgs e)
@@ -82,7 +86,7 @@ namespace BiliLite.Pages
             }
         }
 
-        private void webView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        private async void webView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             if(this.Parent != null)
             {
@@ -97,6 +101,16 @@ namespace BiliLite.Pages
                 {
                     MessageCenter.ChangeTitle(webView.DocumentTitle);
                 }
+            }
+            try
+            {
+               await webView?.InvokeScriptAsync("eval", new List<string>() {
+                    "$('.h5-download-bar').hide()"
+                });
+            }
+            catch (Exception)
+            {
+                
             }
         }
 
@@ -149,6 +163,11 @@ namespace BiliLite.Pages
                 }
             }
 
+        }
+
+        private void btnInfo_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.ShowMessageToast("虽然看起来像个浏览器，但这完全这不是个浏览器啊！ ╰（‵□′）╯" );
         }
     }
 }

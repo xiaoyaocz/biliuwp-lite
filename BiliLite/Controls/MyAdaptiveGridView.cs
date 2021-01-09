@@ -1,6 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,16 +35,50 @@ namespace BiliLite.Controls
 
 
 
+
+
+
+        public bool Loading
+        {
+            get { return (bool)GetValue(LoadingProperty); }
+            set { SetValue(LoadingProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Loading.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LoadingProperty =
+            DependencyProperty.Register("Loading", typeof(bool), typeof(MyAdaptiveGridView), new PropertyMetadata(true));
+
+
+
+
+
         ScrollViewer scrollViewer;
         protected override void OnApplyTemplate()
         {
             scrollViewer=GetTemplateChild("ScrollViewer") as ScrollViewer;
             scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
-            
+            this.RegisterPropertyChangedCallback(LoadingProperty, new DependencyPropertyChangedCallback((obj,e)=> {
+                if( !Loading)
+                {
+                    if (scrollViewer.ScrollableHeight == 0)
+                    {
+                        LoadMoreCommand?.Execute(null);
+                    }
+                }
+            }));
+           
             base.OnApplyTemplate();
         }
 
-       
+        private void MyAdaptiveGridView_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            
+            Debug.WriteLine("内容变更");
+            if (scrollViewer.ScrollableHeight == 0)
+            {
+                LoadMoreCommand?.Execute(null);
+            }
+        }
 
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {

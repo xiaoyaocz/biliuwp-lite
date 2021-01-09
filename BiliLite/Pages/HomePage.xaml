@@ -9,13 +9,21 @@
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:fa="using:FontAwesome5"
     xmlns:pages="using:BiliLite.Pages.Home"
-    xmlns:modules="using:BiliLite.Modules"
+    xmlns:modules="using:BiliLite.Modules" xmlns:converters="using:BiliLite.Converters"
     NavigationCacheMode="Required"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <converters:CountDisplayConvert x:Name="countDisplayConvert"></converters:CountDisplayConvert>
+    </Page.Resources>
 
     <Grid >
-        <winui:NavigationView  x:Name="navView" SelectedItem="{x:Bind Path=homeVM.SelectItem,Mode=TwoWay}" MenuItemsSource="{x:Bind Path=homeVM.HomeNavItems,Mode=OneWay}" SelectionChanged="navView_SelectionChanged" IsSettingsVisible="False"  PaneDisplayMode="Top"  IsBackButtonVisible="Collapsed" >
+        <winui:NavigationView  x:Name="navView" 
+                               SelectedItem="{x:Bind Path=homeVM.SelectItem,Mode=TwoWay}" 
+                               MenuItemsSource="{x:Bind Path=homeVM.HomeNavItems,Mode=OneWay}" 
+                               SelectionChanged="navView_SelectionChanged" 
+                               IsSettingsVisible="False"  
+                               PaneDisplayMode="Top"  
+                               IsBackButtonVisible="Collapsed" >
             <winui:NavigationView.AutoSuggestBox>
                 <AutoSuggestBox x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" MinWidth="140" PlaceholderText="你想找什么呢?" QueryIcon="Find"></AutoSuggestBox>
             </winui:NavigationView.AutoSuggestBox>
@@ -28,7 +36,7 @@
                             </Ellipse.Fill>
                         </Ellipse>
                         <Button.Flyout>
-                            <Flyout>
+                            <Flyout x:Name="UserFlyout">
                                 <StackPanel Width="240">
                                     <Grid>
                                         <Ellipse Width="48" Height="48">
@@ -79,16 +87,22 @@
                                             </StackPanel>
                                         </HyperlinkButton>
                                     </Grid>
-                                    <Button x:Name="MenuUserCenter"  Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuUserCenter" Click="MenuUserCenter_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
                                             <fa:FontAwesome Icon="Regular_User" Width="24" FontSize="16"></fa:FontAwesome>
                                             <TextBlock Margin="12 0">个人中心</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuMessage"  Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuMessage" Click="MenuMessage_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
                                             <fa:FontAwesome Icon="Regular_Envelope" Width="24" FontSize="16"></fa:FontAwesome>
                                             <TextBlock Margin="12 0">我的消息</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="MenuWatchlater" Click="MenuWatchlater_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                        <StackPanel Orientation="Horizontal">
+                                            <fa:FontAwesome Icon="Regular_PlayCircle" Width="24" FontSize="16"></fa:FontAwesome>
+                                            <TextBlock Margin="12 0">稍后再看</TextBlock>
                                         </StackPanel>
                                     </Button>
                                     <Button x:Name="MenuMyFollow" Click="MenuMyFollow_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
@@ -121,8 +135,17 @@
                         </Button.Flyout>
                     </Button>
                     <AppBarButton x:Name="btnLogin" Visibility="{x:Bind Path=homeVM.IsLogin,Converter={StaticResource display},Mode=OneWay}" Click="btnLogin_Click" Height="48" Width="48" Icon="Contact" ></AppBarButton>
-                    <AppBarButton x:Name="btnDownlaod" Width="48" Height="48" Icon="Download" Click="btnDownlaod_Click"></AppBarButton>
-                    <AppBarButton x:Name="btnFeedback" Height="48" Click="btnFeedback_Click" Width="48" Icon="Emoji2" ></AppBarButton>
+                    <Grid>
+                        <AppBarButton x:Name="btnDownlaod" Width="48" Height="48" Icon="Download" Click="btnDownlaod_Click"></AppBarButton>
+                        <Border Visibility="{x:Bind Path=downloadVM.Downloadings.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="4" CornerRadius="24" Width="14" Height="14" Background="Red" VerticalAlignment="Top" HorizontalAlignment="Right">
+                            <TextBlock  FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Text="{x:Bind Path=downloadVM.Downloadings.Count,Mode=OneWay}"></TextBlock>
+                        </Border>
+                    </Grid>
+                    <AppBarButton x:Name="btnSponsor" Height="48" Click="btnSponsor_Click" Width="48" >
+                        <AppBarButton.Icon>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE006;" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
                     <AppBarButton x:Name="btnSetting" Height="48" Click="btnSetting_Click" Width="48" Icon="Setting" ></AppBarButton>
                 </StackPanel>
             </winui:NavigationView.PaneFooter>

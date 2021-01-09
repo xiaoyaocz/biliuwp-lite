@@ -27,23 +27,13 @@ namespace BiliLite.Pages
         {
             this.InitializeComponent();
         }
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            try
-            {
-                txtHelp.Text = await FileIO.ReadTextAsync(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Text/help.md")));
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+          
             
         }
 
-        private async void txtHelp_LinkClicked(object sender, Microsoft.Toolkit.Uwp.UI.Controls.LinkClickedEventArgs e)
-        {
-           await Windows.System.Launcher.LaunchUriAsync(new Uri(e.Link));
-        }
+       
     }
 }

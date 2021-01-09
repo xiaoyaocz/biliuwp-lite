@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Modules.Live.LiveCenter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,9 +17,11 @@ namespace BiliLite.Modules
     public class LiveVM : IModules
     {
         readonly Api.Home.LiveAPI liveAPI;
+        public readonly LiveAttentionVM liveAttentionVM;
         public LiveVM()
         {
             liveAPI = new Api.Home.LiveAPI();
+            liveAttentionVM = new LiveAttentionVM();
         }
         private bool _showFollows = false;
         public bool ShowFollows
@@ -55,16 +58,16 @@ namespace BiliLite.Modules
             set { _areas = value; DoPropertyChanged("Areas"); }
         }
 
-        private ObservableCollection<LiveFollowAnchorModel> _Follow;
+        //private ObservableCollection<LiveFollowAnchorModel> _Follow;
 
-        public ObservableCollection<LiveFollowAnchorModel> Follow
-        {
-            get { return _Follow; }
-            set { _Follow = value; DoPropertyChanged("Follow"); }
-        }
+        //public ObservableCollection<LiveFollowAnchorModel> Follow
+        //{
+        //    get { return _Follow; }
+        //    set { _Follow = value; DoPropertyChanged("Follow"); }
+        //}
 
-        private ObservableCollection<LiveHomeItemsModel> _items;
-        public ObservableCollection<LiveHomeItemsModel> Items
+        private List<LiveHomeItemsModel> _items;
+        public List<LiveHomeItemsModel> Items
         {
             get { return _items; }
             set { _items = value; DoPropertyChanged("Items"); }
@@ -83,7 +86,10 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        Banners = await Utils.DeserializeJson<ObservableCollection<LiveHomeBannerModel>>(data.data["banner"][0]["list"].ToString());
+                        if (data.data["banner"].Count() > 0)
+                        {
+                            Banners = await Utils.DeserializeJson<ObservableCollection<LiveHomeBannerModel>>(data.data["banner"][0]["list"].ToString());
+                        }
                         Areas = await Utils.DeserializeJson<ObservableCollection<LiveHomeAreaModel>>(data.data["area_entrance_v2"][0]["list"].ToString());
                         await GetLiveHomeItems();
                     }
@@ -120,7 +126,9 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        Items = await Utils.DeserializeJson<ObservableCollection<LiveHomeItemsModel>>(data.data["room_list"].ToString());
+                        var items = await Utils.DeserializeJson<List<LiveHomeItemsModel>>(data.data["room_list"].ToString());
+
+                        Items = items.Where(x => x.list != null && x.list.Count > 0).ToList();
                     }
                     else
                     {
@@ -144,43 +152,6 @@ namespace BiliLite.Modules
             }
         }
 
-        public async Task GetFollows()
-        {
-            try
-            {
-                LoadingFollow = true;
-                var results = await liveAPI.FollowLive().Request();
-                if (results.status)
-                {
-                    var data = await results.GetJson<ApiDataModel<JObject>>();
-                    if (data.success)
-                    {
-                        if (data.data["rooms"] != null)
-                        {
-                            Follow = await data.data["rooms"].ToString().DeserializeJson<ObservableCollection<LiveFollowAnchorModel>>();
-                        }
-                    }
-                    else
-                    {
-                        Utils.ShowMessageToast(data.message);
-                    }
-                }
-                else
-                {
-                    Utils.ShowMessageToast(results.message);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
-            }
-            finally
-            {
-                LoadingFollow = false;
-            }
-        }
 
 
     }
@@ -254,45 +225,7 @@ namespace BiliLite.Modules
         public string link { get; set; }
     }
 
-    public class LiveFollowAnchorModel
-    {
-        public int roomid { get; set; }
-        public string uid { get; set; }
-        public string uname { get; set; }
-        public string face { get; set; }
-        public string title { get; set; }
-        public string live_tag_name { get; set; }
-        public int online { get; set; }
-        public string area_name { get; set; }
-        public string area_v2_name { get; set; }
-        public string area_v2_parent_name { get; set; }
-        public long live_time { get; set; }
-        public string cover { get; set; }
-        public string pendent_ru { get; set; }
-        public string pendent_ru_color { get; set; }
-        public string pendent_ru_pic { get; set; }
-        public BitmapImage pendent_pic
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(pendent_ru_pic))
-                {
-                    return new BitmapImage();
-                }
-                else
-                {
-                    return new BitmapImage(new Uri(pendent_ru_pic));
-                }
-            }
-        }
-        public bool show_pendent
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(pendent_ru);
-            }
-        }
-    }
+
 
 
     public class LivePendentItemModel

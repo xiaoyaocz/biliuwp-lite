@@ -92,96 +92,25 @@ namespace BiliLite.Api.User
             return api;
         }
 
+        
         /// <summary>
-        /// 我的收藏夹/收藏的收藏夹
+        /// 关注
         /// </summary>
+        /// <param name="mid">用户ID</param>
+        /// <param name="mode">1为关注，2为取消关注</param>
         /// <returns></returns>
-        public ApiModel MyFavorite()
+        public ApiModel Attention(string mid, string mode)
         {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.GET,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/base/space",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.Profile.mid}"
-            };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
-            return api;
-        }
-
-        /// <summary>
-        /// 我创建的收藏夹
-        /// </summary>
-        /// <returns></returns>
-        public ApiModel MyCreatedFavorite(string aid)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.GET,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/base/created",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingHelper.Account.Profile.mid}&type=2&pn=1&ps=100"
-            };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
-            return api;
-        }
-
-        /// <summary>
-        /// 添加到收藏夹
-        /// </summary>
-        /// <returns></returns>
-        public ApiModel AddFavorite(List<string> fav_ids,string avid)
-        {
-            var ids = "";
-            foreach (var item in fav_ids)
-            {
-                ids += item + ",";
-            }
-            ids = Uri.EscapeDataString(ids.TrimEnd(','));
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.POST,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/coll/resource/deal",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&add_media_ids={ids}&rid={avid}&type=2"
+                baseUrl = $"https://api.bilibili.com/x/relation/modify",
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&act={mode}&fid={mid}&re_src=32"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 
-
-        /// <summary>
-        /// 创建收藏夹
-        /// </summary>
-        /// <returns></returns>
-        public ApiModel CreateFavorite(string title, bool privacy)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.POST,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/base/add",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"privacy={(privacy?1:0)}&title={Uri.EscapeDataString(title)}"
-            };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
-            return api;
-        }
-
-
-        /// <summary>
-        /// 收藏夹信息，不含视频
-        /// </summary>
-        /// <returns></returns>
-        public ApiModel FavoriteInfo(string fid,string keyword,int page=1)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.GET,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/base/detail",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingHelper.Account.Profile.mid}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
-            };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
-            return api;
-        }
-
-
-       
 
     }
 }

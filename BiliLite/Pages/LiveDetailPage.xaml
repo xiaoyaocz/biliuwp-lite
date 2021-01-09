@@ -323,6 +323,7 @@
         </DataTemplate>
     </Page.Resources>
     <Grid>
+        <Button x:Name="BtnFoucs" Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-8 -8 0 0" Background="Transparent" BorderThickness="0"></Button>
         <Grid x:Name="detail" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -349,6 +350,9 @@
                         <ProgressRing IsActive="True" Width="56" Height="56"></ProgressRing>
                         <TextBlock x:Name="PlayerLoadText" TextAlignment="Center" Margin="0 8" Foreground="Gray">加载中</TextBlock>
                     </StackPanel>
+                    <Border x:Name="ToolTip" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="8" Padding="16" Background="#CCFFFFFF">
+                        <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="20" Text=""></TextBlock>
+                    </Border>
                     <Grid x:Name="control">
                         <Grid x:Name="StandardControl">
                             <Grid.RowDefinitions>
@@ -412,10 +416,10 @@
                                                                     <ColumnDefinition Width="Auto"/>
                                                                 </Grid.ColumnDefinitions>
                                                                 <TextBox x:Name="DanmuSettingTxtWord" PlaceholderText="输入关键词"></TextBox>
-                                                                <Button x:Name="DanmuSettingAddWord" Grid.Column="1"  Margin="8 0 0 0">添加</Button>
-                                                                <Button x:Name="DanmuSettingSyncWords"   Grid.Column="2"  Margin="8 0 0 0">同步</Button>
+                                                                <Button x:Name="DanmuSettingAddWord" Click="DanmuSettingAddWord_Click" Grid.Column="1"  Margin="8 0 0 0">添加</Button>
+                                                                <Button x:Name="DanmuSettingSyncWords" Visibility="Collapsed"  Grid.Column="2"  Margin="8 0 0 0">同步</Button>
                                                             </Grid>
-                                                            <ItemsControl Margin="0 8 0 0" x:Name="DanmuSettingWords" >
+                                                            <ItemsControl Margin="0 8 0 0" x:Name="DanmuSettingWords" ItemsSource="{x:Bind Path=settingVM.LiveWords,Mode=OneWay}">
                                                                 <ItemsControl.ItemsPanel>
                                                                     <ItemsPanelTemplate>
                                                                         <toolkit:WrapPanel VerticalSpacing="4" />
@@ -423,9 +427,9 @@
                                                                 </ItemsControl.ItemsPanel>
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <HyperlinkButton Margin="0 0 8 0" >
+                                                                        <HyperlinkButton Margin="0 0 8 0" Click="btnRemoveWords_Click">
                                                                             <Border CornerRadius="4" Padding="8 4" Background="Gray">
-                                                                                <TextBlock FontSize="12" Text="{Binding}" ></TextBlock>
+                                                                                <TextBlock FontSize="12" Foreground="white" Text="{Binding}" ></TextBlock>
                                                                             </Border>
                                                                         </HyperlinkButton>
                                                                     </DataTemplate>

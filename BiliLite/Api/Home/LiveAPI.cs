@@ -29,17 +29,7 @@ namespace BiliLite.Api.Home
             };
             return api;
         }
-        public ApiModel FollowLive()
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.GET,
-                baseUrl = "https://api.live.bilibili.com/xlive/app-interface/v1/relation/liveAnchor",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ "&qn=0&sortRule=0&filterRule=0",
-            };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
-            return api;
-        }
+        
 
     }
 }

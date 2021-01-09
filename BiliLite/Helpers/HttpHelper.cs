@@ -32,6 +32,7 @@ namespace BiliLite.Helpers
             try
             {
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
+               
                 fiter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
                 using (var client = new HttpClient(fiter))
                 {
@@ -42,7 +43,7 @@ namespace BiliLite.Helpers
                             client.DefaultRequestHeaders.Add(item.Key, item.Value);
                         }
                     }
-
+                   
                     var response = await client.GetAsync(new Uri(url));
                     if (!response.IsSuccessStatusCode)
                     {
@@ -118,7 +119,44 @@ namespace BiliLite.Helpers
 
 
         }
+        /// <summary>
+        /// 发送一个GET请求
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="headers"></param>
+        /// <param name="cookie"></param>
+        /// <returns></returns>
+        public async static Task<IBuffer> GetBuffer(string url, IDictionary<string, string> headers = null)
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    if (headers != null)
+                    {
+                        foreach (var item in headers)
+                        {
+                            client.DefaultRequestHeaders.Add(item.Key, item.Value);
+                        }
+                    }
 
+                    var response = await client.GetAsync(new Uri(url));
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsBufferAsync();
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("GET请求Stream失败" + url, LogType.ERROR, ex);
+                return null;
+
+            }
+
+
+
+        }
         /// <summary>
         /// 发送一个GET请求
         /// </summary>

@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
       xmlns:model="using:BiliLite.Modules" 
+      xmlns:live="using:BiliLite.Modules.Live.LiveCenter" 
       xmlns:controls="using:BiliLite.Controls" 
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
       xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
@@ -21,7 +22,9 @@
                         <controls:Carousel.ContentTemplate>
                             <DataTemplate>
                                 <HyperlinkButton Margin="4 0" Padding="0" Click="BannerItem_Click">
-                                    <toolkit:ImageEx IsCacheEnabled="True"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Source="{Binding Path=pic,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                    <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <toolkit:ImageEx IsCacheEnabled="True"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Source="{Binding Path=pic,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                    </Border>
                                 </HyperlinkButton>
                             </DataTemplate>
                         </controls:Carousel.ContentTemplate>
@@ -50,7 +53,7 @@
                     <StackPanel Margin="0 8 0 0" Visibility="{x:Bind Path=liveVM.ShowFollows,Mode=OneWay}">
                         <Grid>
                             <TextBlock FontSize="18" FontWeight="Bold">关注的直播</TextBlock>
-                            <HyperlinkButton HorizontalAlignment="Right" Margin="8 -4 0 0">
+                            <HyperlinkButton Click="btnOpenLiveCenter_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
                                 <TextBlock>查看全部</TextBlock>
                             </HyperlinkButton>
                         </Grid>
@@ -58,7 +61,7 @@
                             MoveOffset="600" 
                             AlwayShowButton="False" 
                             ItemClick="FollowLive_ItemClick"
-                            ItemsSource="{x:Bind Path=liveVM.Follow,Mode=OneWay}" 
+                            ItemsSource="{x:Bind Path=liveVM.liveAttentionVM.Follow,Mode=OneWay}" 
                             SelectionMode="None" 
                             Margin="-4 0 0 0"
                             ScrollViewer.HorizontalScrollMode="Enabled"
@@ -79,37 +82,39 @@
                                 </ItemsPanelTemplate>
                             </GridView.ItemsPanel>
                             <GridView.ItemTemplate>
-                                <DataTemplate x:DataType="model:LiveFollowAnchorModel">
+                                <DataTemplate x:DataType="live:LiveFollowAnchorModel">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition />
                                             <RowDefinition Height="24" />
                                             <RowDefinition Height="24" />
                                         </Grid.RowDefinitions>
-                                        <Grid>
-                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
-                                            <Grid VerticalAlignment="Bottom" Padding="8">
-                                                <Grid.Background>
-                                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                                        <GradientStop Color="#CC000005" Offset="0.993" />
-                                                        <GradientStop Color="#00000000" Offset="0" />
-                                                    </LinearGradientBrush>
-                                                </Grid.Background>
-                                                <StackPanel>
-                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=uname}"></TextBlock>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                    <fa:FontAwesome Icon="Solid_UserFriends" Foreground="White" FontSize="12" Margin="0 0 8 0"></fa:FontAwesome>
-                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=online,Converter={StaticResource numberToStringConvert}}"></TextBlock>
-                                                </StackPanel>
-                                               
-                                            </Grid>
-                                            <Grid Visibility="{x:Bind Path=show_pendent}" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24">
-                                                <Image Source="{x:Bind Path=pendent_pic}"  Margin="-1 -1 0 0"></Image>
-                                                <TextBlock Margin="28 0 0 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Text="{x:Bind Path=pendent_ru}"></TextBlock>
-                                            </Grid>
+                                        <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                            <Grid>
+                                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
+                                                <Grid VerticalAlignment="Bottom" Padding="8">
+                                                    <Grid.Background>
+                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                            <GradientStop Color="#CC000005" Offset="0.993" />
+                                                            <GradientStop Color="#00000000" Offset="0" />
+                                                        </LinearGradientBrush>
+                                                    </Grid.Background>
+                                                    <StackPanel>
+                                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=uname}"></TextBlock>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <fa:FontAwesome Icon="Solid_UserFriends" Foreground="White" FontSize="12" Margin="0 0 8 0"></fa:FontAwesome>
+                                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=online,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                                    </StackPanel>
 
-                                        </Grid>
+                                                </Grid>
+                                                <Grid Visibility="{x:Bind Path=show_pendent}" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24">
+                                                    <Image Source="{x:Bind Path=pendent_pic}"  Margin="-1 -1 0 0"></Image>
+                                                    <TextBlock Margin="28 0 0 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Text="{x:Bind Path=pendent_ru}"></TextBlock>
+                                                </Grid>
+
+                                            </Grid>
+                                        </Border>
                                         <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
                                         <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=area_v2_name}"></TextBlock>
                                     </Grid>
@@ -165,29 +170,31 @@
                                                         <RowDefinition Height="24" />
                                                         <RowDefinition Height="24" />
                                                     </Grid.RowDefinitions>
-                                                    <Grid>
-                                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
-                                                        <Grid VerticalAlignment="Bottom" Padding="8">
-                                                            <Grid.Background>
-                                                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                                                    <GradientStop Color="#CC000005" Offset="0.993" />
-                                                                    <GradientStop Color="#00000000" Offset="0" />
-                                                                </LinearGradientBrush>
-                                                            </Grid.Background>
-                                                            <StackPanel>
-                                                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=uname}"></TextBlock>
-                                                            </StackPanel>
-                                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                                <fa:FontAwesome Icon="Solid_UserFriends" Foreground="White" FontSize="12" Margin="0 0 8 0"></fa:FontAwesome>
-                                                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=online,Converter={StaticResource numberToStringConvert}}"></TextBlock>
-                                                            </StackPanel>
+                                                    <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                                        <Grid>
+                                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
+                                                            <Grid VerticalAlignment="Bottom" Padding="8">
+                                                                <Grid.Background>
+                                                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                        <GradientStop Color="#CC000005" Offset="0.993" />
+                                                                        <GradientStop Color="#00000000" Offset="0" />
+                                                                    </LinearGradientBrush>
+                                                                </Grid.Background>
+                                                                <StackPanel>
+                                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=uname}"></TextBlock>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                                    <fa:FontAwesome Icon="Solid_UserFriends" Foreground="White" FontSize="12" Margin="0 0 8 0"></fa:FontAwesome>
+                                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=online,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                                                </StackPanel>
 
+                                                            </Grid>
+                                                            <Grid Visibility="{x:Bind Path=show_pendent}" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24">
+                                                                <Image Source="{x:Bind Path=pendent.bg_pic}"  Margin="-1 -1 0 0"></Image>
+                                                                <TextBlock Margin="28 0 0 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Text="{x:Bind Path=pendent.text}"></TextBlock>
+                                                            </Grid>
                                                         </Grid>
-                                                        <Grid Visibility="{x:Bind Path=show_pendent}" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24">
-                                                            <Image Source="{x:Bind Path=pendent.bg_pic}"  Margin="-1 -1 0 0"></Image>
-                                                            <TextBlock Margin="28 0 0 2" Foreground="White" FontSize="12" VerticalAlignment="Center" Text="{x:Bind Path=pendent.text}"></TextBlock>
-                                                        </Grid>
-                                                    </Grid>
+                                                    </Border>
                                                     <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
                                                     <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=area_v2_name}"></TextBlock>
                                                 </Grid>

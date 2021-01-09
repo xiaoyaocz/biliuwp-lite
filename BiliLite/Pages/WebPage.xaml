@@ -16,22 +16,29 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource NavigationViewTopPaneBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition  />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
                 <AppBarButton x:Name="btnBack"  Width="48" Click="btnBack_Click">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE0A6;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-               
-                <AppBarButton x:Name="btnRefresh"  Width="48" Icon="Refresh" Click="btnRefresh_Click"></AppBarButton>
-                <AppBarButton x:Name="btnForword"  Width="48" Click="btnForword_Click">
+               <AppBarButton x:Name="btnForword"  Width="48" Click="btnForword_Click">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE0AD;" />
                       
                     </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton x:Name="btnRefresh"  Width="48" Icon="Refresh" Click="btnRefresh_Click"></AppBarButton>
+                <AppBarButton x:Name="btnInfo" Visibility="Collapsed"  Width="48" Icon="Emoji2" Margin="24 0" Foreground="Transparent" Click="btnInfo_Click"></AppBarButton>
+                
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <AutoSuggestBox PlaceholderText="地址栏" Visibility="Collapsed" Grid.Column="1" VerticalAlignment="Center" QueryIcon="Go"></AutoSuggestBox>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                 <AppBarButton x:Name="btnShare" ToolTipService.ToolTip="分享" Width="48" Click="btnShare_Click">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;" />

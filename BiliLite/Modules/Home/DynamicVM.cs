@@ -16,10 +16,10 @@ namespace BiliLite.Modules
 {
     public class DynamicVM : IModules
     {
-        readonly Api.Home.DynamicAPI dynamicAPI;
+        readonly Api.User.DynamicAPI dynamicAPI;
         public DynamicVM()
         {
-            dynamicAPI = new Api.Home.DynamicAPI();
+            dynamicAPI = new Api.User.DynamicAPI();
             dynamicItemDataTemplateSelector = new DynamicItemDataTemplateSelector();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
@@ -46,10 +46,10 @@ namespace BiliLite.Modules
             try
             {
                 Loading = true;
-                var api = dynamicAPI.NewDynamic();
+                var api = dynamicAPI.DyanmicNew(Api.User.DynamicAPI.UserDynamicType.Video);
                 if (idx != "")
                 {
-                    api = dynamicAPI.HistoryDynamic(idx);
+                    api = dynamicAPI.HistoryDynamic(idx, Api.User.DynamicAPI.UserDynamicType.Video);
                 }
                 var results = await api.Request();
                 if (results.status)
@@ -61,7 +61,6 @@ namespace BiliLite.Modules
                         if (Items == null)
                         {
                             Items = items;
-                            await GetDynamicItems(Items.LastOrDefault().desc.dynamic_id);
                         }
                         else
                         {
@@ -179,6 +178,7 @@ namespace BiliLite.Modules
         public string rid { get; set; }
         public int view { get; set; }
         public int like { get; set; }
+        public int comment { get; set; }
         public int is_liked { get; set; }
         public string dynamic_id_str { get; set; }
         public string dynamic_id { get; set; }

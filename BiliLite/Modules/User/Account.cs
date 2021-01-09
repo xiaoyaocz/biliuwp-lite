@@ -17,11 +17,13 @@ namespace BiliLite.Modules
 {
     public class Account
     {
+        private SettingVM settingVM;
         public AccountApi accountApi;
         string guid = "";
         public Account()
         {
             accountApi = new AccountApi();
+            settingVM = new SettingVM();
             guid = Guid.NewGuid().ToString();
         }
         private async Task<string> EncryptedPassword(string passWord)
@@ -74,6 +76,7 @@ namespace BiliLite.Modules
                     await accountApi.SSO(m.data.access_token).Request();
                     //读取个人资料
                     await GetProfile();
+                   
                     //发送登录成功事件
                     MessageCenter.SendLogined();
 
@@ -306,7 +309,7 @@ namespace BiliLite.Modules
                 data.pendant = space_obj["data"]["card"]["pendant"]["image"].ToString();
                 if (data.pendant == "")
                 {
-                    data.pendant = "ms-apps://Assets/Thumbnails/transparent.png";
+                    data.pendant = AppHelper.TRANSPARENT_IMAGE;
                 }
                 data.vip_type = mine_obj["data"]["vip_type"].ToInt32();
                 return data;

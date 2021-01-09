@@ -37,6 +37,7 @@
                     <Color x:Key="CardColor">#C8000000</Color>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+           
             <SolidColorBrush x:Key="DefaultTextColor" Color="{ThemeResource TextColor}"></SolidColorBrush>
             <SolidColorBrush x:Key="DefaultCardColor" Color="{ThemeResource CardColor}"></SolidColorBrush>
             <convert:NumberToStringConvert x:Key="numberToStringConvert"></convert:NumberToStringConvert>
@@ -307,6 +308,8 @@
             <convert:ImageCompressionConvert x:Key="imageConvert"></convert:ImageCompressionConvert>
             <convert:ImageSourceConvert x:Key="imageConvert2"></convert:ImageSourceConvert>
             <convert:DisplayConvert x:Key="display"></convert:DisplayConvert>
+            <FontFamily x:Key="VanFont">ms-appx:///Assets/Fonts/vanfont.otf#vanfont</FontFamily>
+            <CornerRadius x:Key="ImageCornerRadius">4</CornerRadius>
         </ResourceDictionary>
     </Application.Resources>
 

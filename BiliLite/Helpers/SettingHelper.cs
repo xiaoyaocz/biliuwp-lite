@@ -68,8 +68,42 @@ namespace BiliLite.Helpers
             /// <summary>
             /// 首页排序
             /// </summary>
-            public const string HOEM_ORDER = "homeOrder";
+            public const string HOEM_ORDER = "homePageOrder";
 
+            /// <summary>
+            /// 右侧详情宽度
+            /// </summary>
+            public const string RIGHT_DETAIL_WIDTH = "PlayerRightDetailWidth";
+
+            /// <summary>
+            /// 图片圆角半径
+            /// </summary>
+            public const string IMAGE_CORNER_RADIUS = "ImageCornerRadius";
+
+            /// <summary>
+            /// 视频详情显示封面
+            /// </summary>
+            public const string SHOW_DETAIL_COVER = "showDetailCover";
+            /// <summary>
+            /// 新窗口打开图片预览
+            /// </summary>
+            public const string NEW_WINDOW_PREVIEW_IMAGE = "newWindowPreviewImage";
+            /// <summary>
+            /// 动态显示样式
+            /// </summary>
+            public const string DYNAMIC_DISPLAY_MODE = "dynamicDiaplayMode";
+            /// <summary>
+            /// 首页推荐样式
+            /// </summary>
+            public const string RECMEND_DISPLAY_MODE = "recomendDiaplayMode";
+            /// <summary>
+            /// 动态显示样式
+            /// </summary>
+            public const string BACKGROUND_IMAGE = "BackgroundImage";
+            /// <summary>
+            /// 隐藏赞助按钮
+            /// </summary>
+            public const string HIDE_SPONSOR = "HideSponsor";
         }
         public class Account
         {
@@ -329,8 +363,46 @@ namespace BiliLite.Helpers
             /// 自动跳转进度
             /// </summary>
             public const string AUTO_TO_POSITION = "PlayerAutoToPosition";
-
+            
         }
 
+        public class Download
+        {
+            /// <summary>
+            /// 下载目录
+            /// </summary>
+            public const string DOWNLOAD_PATH = "downloadPath";
+            public const string DEFAULT_PATH = "视频库/哔哩哔哩下载";
+            /// <summary>
+            /// 旧版下载目录
+            /// </summary>
+            public const string OLD_DOWNLOAD_PATH = "downloadOldPath";
+            public const string DEFAULT_OLD_PATH = "视频库/BiliBiliDownload";
+            /// <summary>
+            /// 允许付费网络下载
+            /// </summary>
+            public const string ALLOW_COST_NETWORK = "allowCostNetwork";
+
+            /// <summary>
+            /// 并行下载
+            /// </summary>
+            public const string PARALLEL_DOWNLOAD = "parallelDownload";
+
+            /// <summary>
+            /// 并行下载
+            /// </summary>
+            public const string SEND_TOAST = "sendToast";
+
+            /// <summary>
+            /// 加载旧版下载视频
+            /// </summary>
+            public const string LOAD_OLD_DOWNLOAD = "loadOldDownload";
+
+            /// <summary>
+            /// 下载视频类型
+            /// </summary>
+            public const string DEFAULT_VIDEO_TYPE = "DownloadDefaultVideoType";
+
+        }
     }
 }

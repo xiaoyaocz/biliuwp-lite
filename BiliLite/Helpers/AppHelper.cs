@@ -11,6 +11,14 @@ namespace BiliLite.Helpers
 {
     public static class AppHelper
     {
+        
+        /// <summary>
+        /// 透明图片
+        /// </summary>
+        public const string TRANSPARENT_IMAGE = "ms-appx:///Assets/MiniIcon/transparent.png";
+        public const string VERIFY_PERSONAL_IMAGE = "ms-appx:///Assets/Icon/verify0.png";
+        public const string VERIFY_OGANIZATION_IMAGE = "ms-appx:///Assets/Icon/verify1.png";
+        public const string BACKGROUND_IAMGE_URL = "ms-appx:///Assets/Image/background.jpg";
         public static List<Modules.Home.RegionItem> Regions { get; set; }
         private static RegionAPI regionAPI=new RegionAPI();
         public async static Task<List<Modules.Home.RegionItem>> GetDefaultRegions()

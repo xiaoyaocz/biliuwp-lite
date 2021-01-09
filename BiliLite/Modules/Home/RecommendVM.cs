@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
+using BiliLite.Modules.User;
 
 namespace BiliLite.Modules
 {
@@ -71,11 +72,11 @@ namespace BiliLite.Modules
                             }
                             items.Remove(banner);
                         }
-                        for (int i = items.Count - 1; i >= 0; i--)
-                        {
-                            if (items[i].card_goto.Contains("ad_web"))
-                                items.Remove(items[i]);
-                        }
+                        //for (int i = items.Count - 1; i >= 0; i--)
+                        //{
+                        //    if (items[i].card_goto.Contains("ad_web"))
+                        //        items.Remove(items[i]);
+                        //}
                         if (Items == null)
                         {
                             Items = items;
@@ -144,10 +145,10 @@ namespace BiliLite.Modules
                     return;
                 }
                 var recommendItem = Items.FirstOrDefault(x => x.idx == idx);
-                var api = recommendAPI.Dislike(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, reason_id: itemReasons.id, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
+                var api = recommendAPI.Dislike(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, reason_id: itemReasons?.id??0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
                 if (threePointV2Item.type == "feedback")
                 {
-                    recommendAPI.Feedback(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, feedback_id: itemReasons.id, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
+                    recommendAPI.Feedback(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, feedback_id: itemReasons?.id??0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
                 }
                 var result = await api.Request();
                 if (result.status)

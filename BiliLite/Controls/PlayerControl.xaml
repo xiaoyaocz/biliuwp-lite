@@ -9,7 +9,7 @@
     xmlns:danmaku="using:NSDanmaku.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
-    xmlns:fa="using:FontAwesome5"
+    xmlns:fa="using:FontAwesome5" xmlns:player="using:BiliLite.Modules.Player"
     d:DesignHeight="800"
     d:DesignWidth="1000">
     <UserControl.Resources>
@@ -284,8 +284,8 @@
         <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
     </UserControl.Resources>
     <Grid Background="Black">
-      
-     
+
+
         <SplitView x:Name="SplitView"  PanePlacement="Right" PaneBackground="#C8000000">
             <SplitView.Pane>
                 <Grid x:Name="Setting">
@@ -294,16 +294,33 @@
                             <PivotItem.Header>
                                 <TextBlock Foreground="White" FontSize="18">选集</TextBlock>
                             </PivotItem.Header>
-                            <ListView Margin="0 4" x:Name="EpisodeList" SelectionChanged="EpisodeList_SelectionChanged" DisplayMemberPath="title" >
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem">
-                                        <Setter Property="Foreground" Value="White"></Setter>
-                                        <Setter Property="Margin" Value="0 4"></Setter>
-                                        <Setter Property="BorderThickness" Value="1"></Setter>
-                                        <Setter Property="BorderBrush" Value="#33808080"></Setter>
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                            </ListView>
+                            <Grid>
+                                <ListView Margin="0 4" x:Name="EpisodeList" SelectionChanged="EpisodeList_SelectionChanged" DisplayMemberPath="title" >
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="Foreground" Value="White"></Setter>
+                                            <Setter Property="Margin" Value="0 4"></Setter>
+                                            <Setter Property="BorderThickness" Value="1"></Setter>
+                                            <Setter Property="BorderBrush" Value="#33808080"></Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                                <ListView Margin="0 4" x:Name="NodeList" 
+                                          Visibility="Collapsed" 
+                                          ItemsSource="{Binding Path=List,Mode=OneWay}"
+                                          SelectedItem="{Binding Path=Select,Mode=OneWay}"
+                                          SelectionChanged="NodeList_SelectionChanged" 
+                                          DisplayMemberPath="title" >
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="Foreground" Value="White"></Setter>
+                                            <Setter Property="Margin" Value="0 4"></Setter>
+                                            <Setter Property="BorderThickness" Value="1"></Setter>
+                                            <Setter Property="BorderBrush" Value="#33808080"></Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                            </Grid>
                         </PivotItem>
                         <PivotItem Foreground="White">
                             <PivotItem.Header>
@@ -320,7 +337,7 @@
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        
+
                                         <ToggleSwitch x:Name="DanmuSettingHideTop" Foreground="White"  >
                                             <ToggleSwitch.Header>
                                                 <TextBlock  Foreground="White" >隐藏顶部弹幕</TextBlock>
@@ -386,7 +403,7 @@
                                                 <TextBlock  Foreground="White" >合并重复弹幕</TextBlock>
                                             </ToggleSwitch.Header>
                                         </ToggleSwitch>
-                                        <ToggleSwitch x:Name="DanmuSettingDotHideSubtitle" Grid.Column="1" Foreground="White"  IsOn="{x:Bind Path=DanmuControl.notHideSubtitle,Mode=TwoWay}">
+                                        <ToggleSwitch x:Name="DanmuSettingDotHideSubtitle" Grid.Column="1" Foreground="White" IsOn="{x:Bind Path=DanmuControl.notHideSubtitle,Mode=TwoWay}">
                                             <ToggleSwitch.Header>
                                                 <TextBlock  Foreground="White">半屏显示</TextBlock>
                                             </ToggleSwitch.Header>
@@ -446,7 +463,7 @@
                                             <TextBlock  Foreground="White">自动跳转至上次观看进度</TextBlock>
                                         </ToggleSwitch.Header>
                                     </ToggleSwitch>
-                                    
+
                                     <TextBlock Margin="0 8" >播放模式</TextBlock>
                                     <ComboBox x:Name="PlayerSettingPlayMode">
                                         <ComboBox.Items>
@@ -473,7 +490,7 @@
                             </PivotItem.Header>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
-                                   
+
                                     <TextBlock Margin="0 8">字幕颜色</TextBlock>
                                     <ComboBox SelectedIndex="1" x:Name="SubtitleSettingColor">
                                         <ComboBox.Items>
@@ -504,7 +521,7 @@
                     </Flyout>
                 </Grid.ContextFlyout>
                 <!--播放器-->
-                <local:Player x:Name="Player" Tapped="Grid_Tapped" PlayStateChanged="Player_PlayStateChanged" PlayBufferStart="Player_PlayBufferStart" PlayBuffering="Player_PlayBuffering" PlayBufferEnd="Player_PlayBufferEnd" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
+                <local:Player x:Name="Player" Tapped="Grid_Tapped" PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
                 <!--字幕-->
                 <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24" Background="#7F000000">
                     <TextBlock x:Name="TxtSubtitle" TextWrapping="Wrap" FontSize="{Binding ElementName=SubtitleSettingSize,Path=Value,Mode=OneWay}" Foreground="White"></TextBlock>
@@ -517,7 +534,7 @@
                     <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="20" Text=""></TextBlock>
                 </Border>
                 <Grid>
-                    <StackPanel VerticalAlignment="Center" Visibility="Collapsed" x:Name="GridBuffering">
+                    <StackPanel VerticalAlignment="Center" Visibility="{Binding ElementName=Player,Path=Buffering,Mode=OneWay}" x:Name="GridBuffering">
                         <ProgressRing IsActive="True" Width="36" Height="36" Foreground="{ThemeResource HighLightColor}"></ProgressRing>
                         <TextBlock Foreground="White" Margin="0 8" TextAlignment="Center" x:Name="TxtBuffering" Text="缓冲中..."></TextBlock>
                     </StackPanel>
@@ -526,7 +543,42 @@
                         <TextBlock Foreground="White" Margin="0 8" TextAlignment="Center" Text="视频加载中"></TextBlock>
                     </StackPanel>
                 </Grid>
-             
+                <ItemsControl x:Name="InteractionChoices" 
+                              ItemsSource="{Binding Path=Info.edges.questions,Mode=OneWay}"
+                              Visibility="Collapsed" VerticalAlignment="Bottom" Margin="0 0 0 80">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="player:InteractionEdgeInfoQuestionModel">
+                            <GridView HorizontalAlignment="Center"
+                                      SelectionMode="None"
+                                      x:Name="SelectChoice"
+                                      IsItemClickEnabled="True"
+                                      ItemClick="SelectChoice_ItemClick"
+                                      ItemsSource="{x:Bind Path=choices}">
+                                <GridView.ItemContainerStyle>
+                                    <Style TargetType="GridViewItem">
+                                        <Setter Property="Margin" Value="12"></Setter>
+                                        <Setter Property="Padding" Value="0"></Setter>
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                    </Style>
+                                </GridView.ItemContainerStyle>
+                                <GridView.ItemTemplate>
+                                    <DataTemplate x:DataType="player:InteractionEdgeInfoChoiceModel">
+                                        <Grid Width="240">
+                                            <Viewbox>
+                                                <Image Stretch="UniformToFill" Width="100" Height="33" Source="{x:Bind Path=cover}" ></Image>
+                                            </Viewbox>
+                                            <TextBlock TextWrapping="Wrap" Margin="12 8" FontSize="20" VerticalAlignment="Center" TextAlignment="Center" Foreground="{x:Bind Path=color}" Text="{x:Bind Path=option}"></TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+
+
+                            </GridView>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+               
                 <Grid x:Name="control">
                     <Grid x:Name="StandardControl">
                         <Grid.RowDefinitions>
@@ -599,12 +651,13 @@
                                         <fa:FontAwesome Icon="Solid_StepForward" FontSize="18"></fa:FontAwesome>
                                     </HyperlinkButton>
                                     <TextBlock x:Name="BottomTextPostion" VerticalAlignment="Center" Foreground="White" Margin="8 0" FontSize="18"><Run Text="{Binding ElementName=Player,Path=Position,Mode=OneWay,Converter={StaticResource progress}}"/> / <Run Text="{Binding ElementName=Player,Path=Duration,Mode=OneWay,Converter={StaticResource progress}}"/></TextBlock>
-                                    <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
-                                        <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
-                                    </Button>
                                     <Button x:Name="BottomBtnSelctSubtitle" Visibility="Collapsed" Foreground="White" Background="Transparent" Padding="8" Width="48" Height="48">
                                         <fa:FontAwesome Icon="Solid_ClosedCaptioning" FontSize="20"></fa:FontAwesome>
                                     </Button>
+                                    <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                        <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
+                                    </Button>
+                                   
                                     <Button x:Name="TopBtnCloseDanmaku" Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
                                         <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
                                     </Button>
@@ -692,6 +745,9 @@
                                     <Button x:Name="BottomBtnList" Click="BottomBtnList_Click" Visibility="{x:Bind ShowPlaylistButton,Mode=OneWay}" ToolTipService.ToolTip="选集" Background="Transparent" Foreground="White" Padding="12" Height="48">
                                         <TextBlock VerticalAlignment="Center" FontSize="18">选集</TextBlock>
                                     </Button>
+                                    <Button x:Name="BottomBtnNode" Click="BottomBtnNode_Click" Visibility="{x:Bind ShowPlayNodeButton,Mode=OneWay}" ToolTipService.ToolTip="选集" Background="Transparent" Foreground="White" Padding="12" Height="48">
+                                        <TextBlock VerticalAlignment="Center" FontSize="18">节点</TextBlock>
+                                    </Button>
                                     <HyperlinkButton x:Name="BottomBtnMiniWindows" Click="BottomBtnMiniWindows_Click"  ToolTipService.ToolTip="小窗置顶" Foreground="White" Padding="8" Width="48" Height="48">
                                         <fa:FontAwesome Icon="Regular_WindowRestore"  FontSize="20"></fa:FontAwesome>
                                     </HyperlinkButton>
@@ -737,12 +793,12 @@
                         </StackPanel>
                         <ProgressBar VerticalAlignment="Bottom" Foreground="White" Value="{Binding ElementName=BottomProgress,Path=Value,Mode=OneWay}" Maximum="{Binding ElementName=BottomProgress,Path=Maximum,Mode=OneWay}"></ProgressBar>
                     </Grid>
-                   
+
                 </Grid>
                 <Button x:Name="BtnFoucs" Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-8 -8 0 0" Background="Transparent" BorderThickness="0"></Button>
             </Grid>
         </SplitView>
     </Grid>
-   
-  
+
+
 </UserControl>

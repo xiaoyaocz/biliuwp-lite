@@ -13,11 +13,11 @@
       xmlns:fa="using:FontAwesome5" 
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid >
-        <Image Stretch="UniformToFill" Source="https://i0.hdslb.com/bfs/album/eb65ae5ee6f66b6381090f5bee4fe6cbabfd6d0d.png@1920w.jpg"></Image>
+    <Grid>
+        <Image x:Name="backgroundImage" Stretch="UniformToFill" ></Image>
         <StackPanel VerticalAlignment="Center" >
             <Grid Margin="24"  MaxWidth="540">
-                <AutoSuggestBox QueryIcon="Find" x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" PlaceholderText="你想找什么东西呢?" Background="{ThemeResource CardColor}"></AutoSuggestBox>
+                <AutoSuggestBox QueryIcon="Find" x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" PlaceholderText="输入关键词搜索或哔哩哔哩链接跳转" Background="{ThemeResource CardColor}"></AutoSuggestBox>
                
             </Grid>
             
@@ -35,7 +35,7 @@
                         </StackPanel>
                     </Border>
                 </HyperlinkButton>
-                <HyperlinkButton Foreground="{ThemeResource TextColor}" Margin="8">
+                <HyperlinkButton x:Name="BtnOpenLive" Click="BtnOpenLive_Click" Foreground="{ThemeResource TextColor}" Margin="8">
                     <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
                         <StackPanel VerticalAlignment="Center">
                             <fa:FontAwesome Icon="Solid_Fire"></fa:FontAwesome>
@@ -67,15 +67,15 @@
                         </StackPanel>
                     </Border>
                 </HyperlinkButton>
-                <HyperlinkButton Foreground="{ThemeResource TextColor}" Margin="8">
+                <HyperlinkButton x:Name="BtnOpenDownload" Click="BtnOpenDownload_Click" Foreground="{ThemeResource TextColor}" Margin="8">
                     <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
                         <StackPanel VerticalAlignment="Center">
-                            <fa:FontAwesome Icon="Solid_Flag"></fa:FontAwesome>
-                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">活动中心</TextBlock>
+                            <fa:FontAwesome Icon="Solid_CloudDownloadAlt"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">离线缓存</TextBlock>
                         </StackPanel>
                     </Border>
                 </HyperlinkButton>
-                <HyperlinkButton Foreground="{ThemeResource TextColor}" Margin="8">
+                <HyperlinkButton x:Name="BtnOpenHistory" Click="BtnOpenHistory_Click" Foreground="{ThemeResource TextColor}" Margin="8">
                     <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
                         <StackPanel VerticalAlignment="Center">
                             <fa:FontAwesome Icon="Solid_History"></fa:FontAwesome>
@@ -94,6 +94,17 @@
             </ItemsControl>
             
             </StackPanel>
-        <Image Width="48" Height="48" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12" Source="https://i0.hdslb.com/bfs/live/e9a7971219a6f6d9ad641dad5019a7ddcef40d47.gif"></Image>
+        <Button Background="Transparent" Visibility="Visible" HorizontalAlignment="Right" Height="48" Width="48" VerticalAlignment="Top" >
+            <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="Gray" Glyph="&#xE700;" />
+            <Button.Flyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="自定义背景" x:Name="btnSetBackground" Click="btnSetBackground_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="默认背景" x:Name="btnSetDefaultBackground" Click="btnSetDefaultBackground_Click"></MenuFlyoutItem>
+                    <!--TODO 自定义快捷入口-->
+                    <MenuFlyoutItem Text="自定义快捷入口" Visibility="Collapsed"></MenuFlyoutItem>
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+        <Image Width="48" Height="48" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12" Source="https://i0.hdslb.com/bfs/live/e9a7971219a6f6d9ad641dad5019a7ddcef40d47.gif"></Image>
     </Grid>
 </Page>

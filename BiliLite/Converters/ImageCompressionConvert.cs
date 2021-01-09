@@ -24,6 +24,7 @@ namespace BiliLite.Converters
             {
                 return value;
             }
+            if (parameter == null) return value;
             return value.ToString() + "@" + parameter.ToString() + ".jpg";
         }
 

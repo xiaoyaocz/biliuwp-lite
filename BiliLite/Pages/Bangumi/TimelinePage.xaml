@@ -69,21 +69,23 @@
                                         <RowDefinition Height="24"/>
                                         <RowDefinition Height="24"/>
                                     </Grid.RowDefinitions>
-                                    <Grid>
-                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
-                                        <Grid VerticalAlignment="Bottom" Padding="8">
-                                            <Grid.Background>
-                                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                                    <GradientStop Color="#CC000005" Offset="0.993"/>
-                                                    <GradientStop Color="#00000000" Offset="0"/>
-                                                </LinearGradientBrush>
-                                            </Grid.Background>
-                                            <StackPanel Orientation="Horizontal">
-                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE121;" FontSize="12" Foreground="White"/>
-                                                <TextBlock  FontSize="12" Foreground="White" Margin="8 0 0 0" Text="{x:Bind pub_time}"></TextBlock>
-                                            </StackPanel>
+                                    <Border  CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <Grid>
+                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                                            <Grid VerticalAlignment="Bottom" Padding="8">
+                                                <Grid.Background>
+                                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                        <GradientStop Color="#CC000005" Offset="0.993"/>
+                                                        <GradientStop Color="#00000000" Offset="0"/>
+                                                    </LinearGradientBrush>
+                                                </Grid.Background>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE121;" FontSize="12" Foreground="White"/>
+                                                    <TextBlock  FontSize="12" Foreground="White" Margin="8 0 0 0" Text="{x:Bind pub_time}"></TextBlock>
+                                                </StackPanel>
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
+                                    </Border>
                                     <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                                     <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind pub_index}"></TextBlock>
                                 </Grid>

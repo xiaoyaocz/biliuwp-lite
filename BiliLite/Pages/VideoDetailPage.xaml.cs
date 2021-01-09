@@ -20,14 +20,27 @@ using Windows.Media.Playback;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using BiliLite.Controls;
+using Windows.System;
+using BiliLite.Dialogs;
+using Microsoft.Toolkit.Uwp.Helpers;
+using System.Threading.Tasks;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
 namespace BiliLite.Pages
 {
-    /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
-    /// </summary>
+    public class VideoPlaylist
+    {
+        public int Index { get; set; }
+        public List<VideoPlaylistItem> Playlist { get; set; }
+    }
+    public class VideoPlaylistItem
+    {
+        public string ID { get; set; }
+        public string Author { get; set; }
+        public string Cover { get; set; }
+        public string Title { get; set; }
+    }
     public sealed partial class VideoDetailPage : Page
     {
         VideoDetailVM videoDetailVM;
@@ -42,16 +55,19 @@ namespace BiliLite.Pages
             this.DataContext = videoDetailVM;
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-         
+            this.RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+
         }
 
         private void VideoDetailPage_Loaded(object sender, RoutedEventArgs e)
         {
+
             if (this.Parent is MyFrame)
             {
                 (this.Parent as MyFrame).ClosedPage -= VideoDetailPage_ClosedPage;
                 (this.Parent as MyFrame).ClosedPage += VideoDetailPage_ClosedPage;
             }
+
         }
 
         private void VideoDetailPage_ClosedPage(object sender, EventArgs e)
@@ -65,76 +81,115 @@ namespace BiliLite.Pages
             request.Data.Properties.Title = videoDetailVM.VideoInfo.title;
             request.Data.SetWebLink(new Uri(videoDetailVM.VideoInfo.short_link));
         }
+        VideoPlaylist playlist;
+        bool flag = false;
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
             if (e.NavigationMode == NavigationMode.New)
             {
-                var id = e.Parameter.ToString();
-                if (int.TryParse(id,out var aid))
+                if (e.Parameter is VideoPlaylist)
                 {
-                    avid = id;
-                    is_bvid = false;
+                    playlist = e.Parameter as VideoPlaylist;
+
+                  
+                    var element = PlayListTpl.GetElement(new Windows.UI.Xaml.ElementFactoryGetArgs()) as PivotItem;
+                    element.DataContext = playlist;
+                 
+                    pivot.Items.Insert(0, element);
+                    pivot.SelectedIndex = 0;
+
+                    await InitializeVideo(playlist.Playlist[playlist.Index].ID);
                 }
                 else
                 {
-                    bvid = id;
-                    is_bvid = true;
+                    var id = e.Parameter.ToString();
+                    await InitializeVideo(id);
                 }
-                await videoDetailVM.LoadVideoDetail(id, is_bvid);
-                
-                if (videoDetailVM.VideoInfo != null)
-                {
-                    avid = videoDetailVM.VideoInfo.aid;
-                    ChangeTitle(videoDetailVM.VideoInfo.title);
-                    CreateQR();
-                    if (!string.IsNullOrEmpty(videoDetailVM.VideoInfo.redirect_url))
-                    {
-                        
-                        var result=await MessageCenter.HandelSeasonID(videoDetailVM.VideoInfo.redirect_url);
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            this.Frame.Navigate(typeof(SeasonDetailPage), result);
-                            return;
-                        }
-                    }
-                    List<PlayInfo> playInfos = new List<PlayInfo>();
-                    int i = 0;
-                    foreach (var item in videoDetailVM.VideoInfo.pages)
-                    {
-                        playInfos.Add(new PlayInfo() { 
-                            avid= videoDetailVM.VideoInfo.aid,
-                            cid=item.cid,
-                            duration=item.duration,
-                            is_interaction= videoDetailVM.VideoInfo.interaction!=null,
-                            order=i,
-                            play_mode= VideoPlayType.Video,
-                            title="P"+item.page+" "+item.part
-                        });
-                        i++;
-                    }
-                    var index = 0;
-                    if (videoDetailVM.VideoInfo.history!=null)
-                    {
-                        var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
-                        if (history != null)
-                        {
-                            SettingHelper.SetValue<double>(history.cid,Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
-                            player.InitializePlayInfo(playInfos, videoDetailVM.VideoInfo.pages.IndexOf(history));
-                        }
-                    }
-                    player.InitializePlayInfo(playInfos, index);
-                    comment.LoadComment(new LoadCommentInfo()
-                    {
-                        commentMode = Api.CommentApi.CommentType.Video,
-                        conmmentSort = Api.CommentApi.ConmmentSort.Hot,
-                        oid = videoDetailVM.VideoInfo.aid
-                    });
-                }
-            }
-            
-        }
 
+            }
+
+        }
+        private async Task InitializeVideo(string id)
+        {
+            if (flag) return;
+            flag = true;
+            if (int.TryParse(id, out var aid))
+            {
+                avid = id;
+                is_bvid = false;
+            }
+            else
+            {
+                bvid = id;
+                is_bvid = true;
+            }
+            await videoDetailVM.LoadVideoDetail(id, is_bvid);
+            if (this.VideoCover != null)
+            {
+                this.VideoCover.Visibility = SettingHelper.GetValue<bool>(SettingHelper.UI.SHOW_DETAIL_COVER, true) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            if (SettingHelper.GetValue<bool>("一键三连提示", true))
+            {
+                SettingHelper.SetValue("一键三连提示", false);
+                Utils.ShowMessageToast("右键或长按点赞按钮可以一键三连哦~", 5);
+            }
+            if (videoDetailVM.VideoInfo != null)
+            {
+                avid = videoDetailVM.VideoInfo.aid;
+                var desc = ControlHelper.StringToRichText(videoDetailVM.VideoInfo.desc, null);
+
+                contentDesc.Content = desc;
+                ChangeTitle(videoDetailVM.VideoInfo.title);
+                CreateQR();
+                if (!string.IsNullOrEmpty(videoDetailVM.VideoInfo.redirect_url))
+                {
+                    var result = await MessageCenter.HandelSeasonID(videoDetailVM.VideoInfo.redirect_url);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        this.Frame.Navigate(typeof(SeasonDetailPage), result);
+                        //从栈中移除当前页面的历史
+                        this.Frame.BackStack.Remove(this.Frame.BackStack.FirstOrDefault(x => x.SourcePageType == this.GetType()));
+                        return;
+                    }
+                }
+                List<PlayInfo> playInfos = new List<PlayInfo>();
+                int i = 0;
+                foreach (var item in videoDetailVM.VideoInfo.pages)
+                {
+                    playInfos.Add(new PlayInfo()
+                    {
+                        avid = videoDetailVM.VideoInfo.aid,
+                        cid = item.cid,
+                        duration = item.duration,
+                        is_interaction = videoDetailVM.VideoInfo.interaction != null,
+                        order = i,
+                        play_mode = VideoPlayType.Video,
+                        title = "P" + item.page + " " + item.part
+                    });
+                    i++;
+                }
+                var index = 0;
+                if (videoDetailVM.VideoInfo.history != null)
+                {
+                    var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
+                    if (history != null)
+                    {
+                        SettingHelper.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
+                        player.InitializePlayInfo(playInfos, videoDetailVM.VideoInfo.pages.IndexOf(history));
+                    }
+                }
+                player.InitializePlayInfo(playInfos, index);
+                comment.LoadComment(new LoadCommentInfo()
+                {
+                    commentMode = (int)Api.CommentApi.CommentType.Video,
+                    commentSort = Api.CommentApi.commentSort.Hot,
+                    oid = videoDetailVM.VideoInfo.aid
+                });
+            }
+            flag = false;
+        }
         private void CreateQR()
         {
             try
@@ -152,10 +207,10 @@ namespace BiliLite.Pages
             }
             catch (Exception ex)
             {
-                LogHelper.Log("创建二维码失败avid"+avid, LogType.ERROR, ex);
+                LogHelper.Log("创建二维码失败avid" + avid, LogType.ERROR, ex);
                 Utils.ShowMessageToast("创建二维码失败");
             }
-            
+
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -236,7 +291,7 @@ namespace BiliLite.Pages
             }
 
         }
-     
+
 
         private void listRelates_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -270,10 +325,10 @@ namespace BiliLite.Pages
             var item = (sender as HyperlinkButton).DataContext as VideoDetailTagModel;
             MessageCenter.OpenNewWindow(this, new NavigationInfo()
             {
-                icon = Symbol.Tag,
-                page = typeof(WebPage),
-                parameters = "https://www.bilibili.com/tag/" + item.tag_id,
-                title = item.tag_name
+                icon = Symbol.Find,
+                page = typeof(SearchPage),
+                parameters = item.tag_name,
+                title = "搜索:" + item.tag_name
             });
         }
 
@@ -282,7 +337,7 @@ namespace BiliLite.Pages
             DataTransferManager.ShowShareUI();
         }
 
-  
+
 
         private void PlayerControl_FullScreenEvent(object sender, bool e)
         {
@@ -295,7 +350,7 @@ namespace BiliLite.Pages
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(320, GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -309,7 +364,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                RightInfo.Width = new GridLength(320, GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -324,7 +379,7 @@ namespace BiliLite.Pages
 
         private void listEpisode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (changedFlag|| listEpisode.SelectedIndex == -1)
+            if (changedFlag || listEpisode.SelectedIndex == -1)
             {
                 return;
             }
@@ -333,8 +388,8 @@ namespace BiliLite.Pages
 
         private void btnOpenUser_Click(object sender, RoutedEventArgs e)
         {
-           var data= (sender as HyperlinkButton).DataContext;
-            if(data is VideoDetailStaffModel)
+            var data = (sender as HyperlinkButton).DataContext;
+            if (data is VideoDetailStaffModel)
             {
                 MessageCenter.OpenNewWindow(this, new NavigationInfo()
                 {
@@ -367,12 +422,110 @@ namespace BiliLite.Pages
         private void listAddFavorite_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as FavoriteItemModel;
-            videoDetailVM.DoFavorite(new List<string>() {item.id }, avid);
+            videoDetailVM.DoFavorite(new List<string>() { item.id }, avid);
         }
 
         private void BtnAddFavorite_Click(object sender, RoutedEventArgs e)
         {
-            videoDetailVM.DoFavorite(videoDetailVM.MyFavorite.Where(x=>x.is_fav).Select(x=>x.id).ToList(),avid);
+            videoDetailVM.DoFavorite(videoDetailVM.MyFavorite.Where(x => x.is_fav).Select(x => x.id).ToList(), avid);
+        }
+
+        private async void btnOpenWeb_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri(videoDetailVM.VideoInfo.short_link));
+        }
+
+        private void ImageEx_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (videoDetailVM.VideoInfo?.pic == null) return;
+            MessageCenter.OpenImageViewer(new List<string>() {
+                videoDetailVM.VideoInfo.pic
+            }, 0);
+        }
+
+        private async void btnCreateFavBox_Click(object sender, RoutedEventArgs e)
+        {
+            CreateFavFolderDialog createFavFolderDialog = new CreateFavFolderDialog();
+            await createFavFolderDialog.ShowAsync();
+            await videoDetailVM.LoadFavorite(videoDetailVM.VideoInfo.aid);
+        }
+
+        private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as VideoDetailRelatesModel;
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.aid);
+        }
+
+        private void BtnWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+            if (videoDetailVM == null || videoDetailVM.VideoInfo == null) return;
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(avid);
+        }
+
+        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            var liveView = sender as ListView;
+            if (liveView.SelectedItem == null ) return;
+            var item = liveView.SelectedItem as VideoPlaylistItem;
+           
+            playlist.Index = playlist.Playlist.IndexOf(item);
+            await InitializeVideo(item.ID);
+
+        }
+
+        private void player_AllMediaEndEvent(object sender, EventArgs e)
+        {
+
+            if(playlist==null||playlist.Index== playlist.Playlist.Count - 1)
+            {
+                Utils.ShowMessageToast("播放完毕");
+                return;
+            }
+            var listView= (pivot.Items[0] as PivotItem).Content as ListView;
+         
+            listView.SelectedIndex = playlist.Index + 1; 
+        }
+
+        private async void btnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            if (videoDetailVM.VideoInfo == null|| videoDetailVM.VideoInfo.pages==null || videoDetailVM.VideoInfo.pages.Count == 0) return;
+            var downloadItem = new DownloadItem() { 
+                Cover= videoDetailVM.VideoInfo.pic,
+                ID=videoDetailVM.VideoInfo.aid,
+                Episodes =new List<DownloadEpisodeItem>(),
+                Subtitle= videoDetailVM.VideoInfo.bvid,
+                Title=videoDetailVM.VideoInfo.title,
+                Type= DownloadType.Video
+            };
+            int i = 0;
+            foreach (var item in videoDetailVM.VideoInfo.pages)
+            {
+                //检查正在下载及下载完成是否存在此视频
+                int state = 0;
+                if (DownloadVM.Instance.Downloadings.FirstOrDefault(x=>x.EpisodeID==item.cid)!=null)
+                {
+                    state = 2;
+                }
+                if (DownloadVM.Instance.Downloadeds.FirstOrDefault(x => x.Epsidoes.FirstOrDefault(y=>y.CID==item.cid)!=null) != null)
+                {
+                    state = 3;
+                }
+                //如果正在下载state=2,下载完成state=3
+                downloadItem.Episodes.Add(new DownloadEpisodeItem() {
+                    AVID= videoDetailVM.VideoInfo.aid,
+                    BVID= videoDetailVM.VideoInfo.bvid,
+                    CID =item.cid,
+                    EpisodeID="",
+                    Index=i,
+                    Title= "P" + item.page + " " + item.part,
+                    State= state
+                });
+                i++;
+            }
+            
+            DownloadDialog downloadDialog = new DownloadDialog(downloadItem);
+            await downloadDialog.ShowAsync();
         }
     }
 }

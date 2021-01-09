@@ -1,5 +1,7 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Modules;
 using FFmpegInterop;
+using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +12,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -34,7 +37,9 @@ namespace BiliLite
         /// </summary>
         public App()
         {
+
             this.InitializeComponent();
+
             App.Current.UnhandledException += App_UnhandledException;
             FFmpegInteropLogging.SetLogLevel(LogLevel.Info);
             FFmpegInteropLogging.SetLogProvider(this);
@@ -81,10 +86,18 @@ namespace BiliLite
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+          
+            Navigation(e.Arguments,e.PrelaunchActivated);
+            
+        }
+
+
+        private async void Navigation(object arguments, bool prelaunch=false)
         {
             SYEngine.Core.Initialize();
-            await InitBili();
+            InitBili();
             Frame rootFrame = Window.Current.Content as Frame;
 
             // 不要在窗口已包含内容时重复应用程序初始化，
@@ -96,10 +109,7 @@ namespace BiliLite
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: 从之前挂起的应用程序加载状态
-                }
+                
                 //主题颜色
                 rootFrame.RequestedTheme = (ElementTheme)SettingHelper.GetValue<int>(SettingHelper.UI.THEME, 0);
 
@@ -107,23 +117,31 @@ namespace BiliLite
                 Window.Current.Content = rootFrame;
             }
 
-            if (e.PrelaunchActivated == false)
+            if (prelaunch == false)
             {
                 if (rootFrame.Content == null)
                 {
                     // 当导航堆栈尚未还原时，导航到第一页，
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
-                   
-                    var mode=SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0);
-                    if (mode==0)
+
+                    var mode = SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0);
+                    if (mode == 0)
                     {
-                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                        rootFrame.Navigate(typeof(MainPage), arguments);
                     }
                     else
                     {
-                        rootFrame.Navigate(typeof(NoTabMainPage), e.Arguments);
+                        rootFrame.Navigate(typeof(NoTabMainPage), arguments);
                     }
+                }
+                else
+                {
+                    if (arguments != null && !string.IsNullOrEmpty(arguments.ToString()))
+                    {
+                       await MessageCenter.HandelUrl(arguments.ToString());
+                    }
+                    
                 }
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
@@ -131,9 +149,23 @@ namespace BiliLite
             }
         }
 
-        private async System.Threading.Tasks.Task InitBili()
+        private async void InitBili()
         {
+            //首次运行设置首页的显示样式
+            if (SystemInformation.IsFirstRun)
+            {
+                var display = DisplayInformation.GetForCurrentView();
+                if (display.ScreenWidthInRawPixels >= 1920 && (display.ScreenWidthInRawPixels / display.ScreenHeightInRawPixels > 16 / 9))
+                {
+                    //如果屏幕分辨率大于16：9,设置为List
+                    SettingHelper.SetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 1);
+                }
+            }
+            //圆角
+            App.Current.Resources["ImageCornerRadius"] = new CornerRadius(SettingHelper.GetValue<double>(SettingHelper.UI.IMAGE_CORNER_RADIUS, 0));
             await AppHelper.SetRegions();
+            DownloadVM.Instance.LoadDownloading();
+            DownloadVM.Instance.LoadDownloaded();
         }
 
         /// <summary>
@@ -156,7 +188,6 @@ namespace BiliLite
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: 保存应用程序状态并停止任何后台活动
             deferral.Complete();
         }
 
@@ -167,5 +198,18 @@ namespace BiliLite
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+          
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+                Navigation(eventArgs.Uri.AbsoluteUri ,false);
+            }
+           
+        }
+
     }
 }

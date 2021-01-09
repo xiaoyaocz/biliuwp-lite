@@ -40,7 +40,9 @@
                                 <controls:Carousel.ContentTemplate>
                                     <DataTemplate>
                                         <HyperlinkButton  Click="BtnOpenBanner_Click" Margin="4 0" Padding="0">
-                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Source="{Binding Path=image,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                            <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Source="{Binding Path=image,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                            </Border>
                                         </HyperlinkButton>
                                     </DataTemplate>
                                 </controls:Carousel.ContentTemplate>
@@ -61,15 +63,21 @@
 
                     <toolkit:AdaptiveGridView.ItemTemplate>
                         <DataTemplate x:DataType="modules:RegionVideoItemModel">
-                            <Grid>
+                            <Grid Background="#00FFFFFF">
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="160"/>
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Grid >
-                                    <toolkit:ImageEx IsCacheEnabled="True" Height="120" Width="160" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
-                                </Grid>
-
+                                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                    <Grid >
+                                        <toolkit:ImageEx IsCacheEnabled="True" Height="120" Width="160" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                    </Grid>
+                                </Border>
                                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                                     <TextBlock MaxLines="2" TextWrapping="Wrap" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                                     <TextBlock Margin="0 1" FontSize="14" Foreground="Gray">播放:<Run Text="{x:Bind Path=play,Converter={StaticResource numberToStringConvert}}"></Run> 弹幕:<Run Text="{x:Bind Path=danmaku,Converter={StaticResource numberToStringConvert}}"></Run></TextBlock>
@@ -115,15 +123,21 @@
 
                     <toolkit:AdaptiveGridView.ItemTemplate>
                         <DataTemplate x:DataType="modules:RegionVideoItemModel">
-                            <Grid>
+                            <Grid Background="#00FFFFFF">
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="160"/>
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Grid >
-                                    <toolkit:ImageEx IsCacheEnabled="True" Height="120" Width="160" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
-                                </Grid>
-
+                                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                    <Grid >
+                                        <toolkit:ImageEx IsCacheEnabled="True" Height="120" Width="160" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                    </Grid>
+                                </Border>
                                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                                     <TextBlock MaxLines="2" TextWrapping="Wrap" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                                     <TextBlock Margin="0 1" FontSize="14" Foreground="Gray">播放:<Run Text="{x:Bind Path=play,Converter={StaticResource numberToStringConvert}}"></Run> 弹幕:<Run Text="{x:Bind Path=danmaku,Converter={StaticResource numberToStringConvert}}"></Run></TextBlock>

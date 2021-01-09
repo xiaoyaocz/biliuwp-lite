@@ -193,7 +193,7 @@ namespace BiliLite.Modules
         {
             regionAPI = new RegionAPI();
             Orders = new List<RegionChildOrderModel>() {
-                new RegionChildOrderModel("默认排序",""),
+                //new RegionChildOrderModel("默认排序",""),
                 new RegionChildOrderModel("最新视频","senddate"),
                 new RegionChildOrderModel("最多播放","view"),
                 new RegionChildOrderModel("评论最多","reply"),
@@ -274,7 +274,7 @@ namespace BiliLite.Modules
                         var ls = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["new"].ToString());
                         if (next_id == "")
                         {
-                            var tags = JsonConvert.DeserializeObject<List<RegionTagItemModel>>(data["data"]["top_tag"].ToString());
+                            var tags = JsonConvert.DeserializeObject<List<RegionTagItemModel>>(data["data"]["top_tag"]?.ToString()??"[]");
                             tags.Insert(0, new RegionTagItemModel()
                             {
                                 tid = 0,
@@ -295,7 +295,7 @@ namespace BiliLite.Modules
                                 Videos.Add(item);
                             }
                         }
-                        next_id = data["data"]["cbottom"].ToString();
+                        next_id = data["data"]["cbottom"]?.ToString()??"";
                     }
                     else
                     {

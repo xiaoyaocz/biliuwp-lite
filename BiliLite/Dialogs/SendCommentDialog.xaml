@@ -1,0 +1,61 @@
+﻿<ContentDialog
+    x:Class="BiliLite.Dialogs.SendCommentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="发表评论"
+    xmlns:modules="using:BiliLite.Modules"
+    PrimaryButtonText="发送"
+    SecondaryButtonText="取消"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    <ContentDialog.Resources>
+        <Flyout  x:Key="FaceFlyout" x:Name="FaceFlyout">
+            <Grid Width="320">
+                <Pivot x:Name="pivot_face" ItemsSource="{x:Bind Path=emoteVM.Packages,Mode=OneWay}">
+                    <Pivot.HeaderTemplate>
+                        <DataTemplate x:DataType="modules:EmotePackageModel">
+                            <TextBlock FontSize="18" Text="{x:Bind text}"></TextBlock>
+                        </DataTemplate>
+                    </Pivot.HeaderTemplate>
+                    <Pivot.ItemTemplate>
+                        <DataTemplate >
+                            <GridView  ItemsSource="{Binding Path=emote,Mode=OneWay}" MaxHeight="300" SelectionMode="None" IsItemClickEnabled="True"  ItemClick="GridView_ItemClick">
+                                <!--<GridView.ItemContainerStyle>
+                                                -->
+                                <!--<Style TargetType="GridViewItem">
+                                                    <Setter Property="Margin" Value="5"></Setter>
+                                                </Style>-->
+                                <!--
+                                            </GridView.ItemContainerStyle>-->
+                                <GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel >
+                                            <Image Visibility="{Binding Path=showImage}"  Source="{Binding url}" Width="36" Margin="4 0"></Image>
+                                            <TextBlock Width="90" TextAlignment="Center" Visibility="{Binding Path=showImage,Converter={StaticResource display}}" FontSize="12" HorizontalAlignment="Center" Text="{Binding text}"></TextBlock>
+
+
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+
+                            </GridView>
+                        </DataTemplate>
+                    </Pivot.ItemTemplate>
+                </Pivot>
+            </Grid>
+        </Flyout>
+    </ContentDialog.Resources>
+    <Grid>
+        <TextBox MinHeight="120" Padding="8 8 8 36" TextWrapping="Wrap" x:Name="txt_Comment" AcceptsReturn="True" PlaceholderText="说点什么吧..."></TextBox>
+        <Button x:Name="btnOpenFace" Click="btnOpenFace_Click" Width="36" VerticalAlignment="Bottom" Background="Transparent" Height="36"   Foreground="Gray">
+            <StackPanel Orientation="Horizontal">
+                <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="14"  Glyph="&#xE170;" />
+
+            </StackPanel>
+        </Button>
+    </Grid>
+</ContentDialog>

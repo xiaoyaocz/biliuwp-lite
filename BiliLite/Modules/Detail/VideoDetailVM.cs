@@ -14,18 +14,20 @@ namespace BiliLite.Modules
 {
     public class VideoDetailVM:IModules
     {
+        readonly Api.User.FavoriteApi favoriteAPI;
         readonly VideoAPI videoAPI;
         readonly PlayerAPI  PlayerAPI;
         readonly Api.User.FollowAPI followAPI;
         public VideoDetailVM()
         {
             videoAPI = new VideoAPI();
+            favoriteAPI = new Api.User.FavoriteApi();
             PlayerAPI = new PlayerAPI();
             followAPI = new Api.User.FollowAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LikeCommand = new RelayCommand(DoLike);
             DislikeCommand = new RelayCommand(DoDislike);
-
+            LaunchUrlCommand=new RelayCommand<object>(LaunchUrl);
             CoinCommand = new RelayCommand<string>(DoCoin);
             //FavoriteCommand = new RelayCommand<string>(DoFavorite);
             AttentionCommand = new RelayCommand(DoAttentionUP);
@@ -37,6 +39,17 @@ namespace BiliLite.Modules
         public ICommand CoinCommand { get; private set; }
         //public ICommand FavoriteCommand { get; private set; }
         public ICommand AttentionCommand { get; private set; }
+        public ICommand LaunchUrlCommand { get; private set; }
+
+        private async void LaunchUrl(object paramenter)
+        {
+
+            await MessageCenter.HandelUrl(paramenter.ToString());
+            return;
+
+
+        }
+
 
         private bool _loading = true;
         public bool Loading
@@ -94,7 +107,7 @@ namespace BiliLite.Modules
                 {
                     return;
                 }
-                var results = await followAPI.MyCreatedFavorite(avid).Request();
+                var results = await favoriteAPI.MyCreatedFavorite(avid).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -383,7 +396,7 @@ namespace BiliLite.Modules
             }
             try
             {
-                var results = await followAPI.AddFavorite(fav_ids, avid).Request();
+                var results = await favoriteAPI.AddFavorite(fav_ids, avid).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -629,7 +642,14 @@ namespace BiliLite.Modules
             }
         }
 
-
+        public string argue_msg { get; set; }
+        public bool showArgueMsg
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(argue_msg);
+            }
+        }
         public VideoDetailHistoryModel history { get; set; }
     } 
     public class VideoDetailRightsModel

@@ -29,8 +29,8 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = $"https://bangumi.bilibili.com/player/web_api/v2/playurl",
-                //baseUrl = $"https://api.bilibili.com/pgc/player/web/playurl",
+                //baseUrl = $"https://bangumi.bilibili.com/player/web_api/v2/playurl",
+                baseUrl = $"https://api.bilibili.com/pgc/player/web/playurl",
                 parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
@@ -44,12 +44,32 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
         }
-        public ApiModel SeasonPlayUrl23Moe(string animeid, string cid,string epid)
+        public ApiModel SeasonAdnroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = $"https://api.bilibili.com/x/player/playurl",
+                baseUrl = $"https://api.bilibili.com/pgc/player/web/playurl",
+                parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
+            };
+            if (SettingHelper.Account.Logined)
+            {
+                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}&mid={SettingHelper.Account.Profile.mid}";
+            }
+            if (dash)
+            {
+                api.parameter += "&fourk=1&fnver=0&fnval=16";
+            }
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
+            return api;
+        }
+
+        public ApiModel SeasonPlayUrl23Moe(int animeid, string cid,string epid)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"https://moe.nsapps.cn/api/v1/BiliAnimeUrl",
                 parameter = $"animeid={animeid}&cid={cid}&epid={epid}&rnd={Utils.GetTimestampS()}"
             };
             return api;
@@ -83,6 +103,25 @@ namespace BiliLite.Api
                 parameter =$"cid={cid}&qn={qn}&platform=web"
             };
             //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
+            return api;
+        }
+
+        /// <summary>
+        /// 互动视频信息
+        /// </summary>
+        /// <param name="aid"></param>
+        /// <param name="graph_version"></param>
+        /// <param name="edge_id"></param>
+        /// <returns></returns>
+        public ApiModel InteractionEdgeInfo(string aid,int graph_version,int edge_id=0)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"https://api.bilibili.com/x/stein/edgeinfo_v2",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}&graph_version={graph_version}&edge_id={edge_id}"
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -136,17 +175,13 @@ namespace BiliLite.Api
         /// <param name="aid">AV</param>
         /// <param name="cid">CID</param>
         /// <returns></returns>
-        public ApiModel GetPlayerInfo(string aid, string cid)
+        public ApiModel GetPlayerInfo(string aid, string cid,string bvid)
         {
-            var header = new Dictionary<string, string>();
-            header.Add("Referer",$"https://www.bilibili.com/video/av{aid}");
-            header.Add("user-agent", "Mozilla/5.0 BiliDroid/5.52.0 (bbcallen@gmail.com)");
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = "https://api.bilibili.com/x/player.so",
-                parameter = $"id=cid:{cid}&aid={aid}",
-                headers = header
+                baseUrl = "https://api.bilibili.com/x/player/v2",
+                parameter = $"cid={cid}&aid={aid}&bvid={bvid}",
             };
             return api;
         }

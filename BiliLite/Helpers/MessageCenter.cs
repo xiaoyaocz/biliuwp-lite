@@ -1,16 +1,25 @@
-﻿using BiliLite.Models;
+﻿using BiliLite.Controls;
+using BiliLite.Models;
 using BiliLite.Pages;
+using BiliLite.Pages.Other;
 using BiliLite.Pages.User;
+using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 
 namespace BiliLite.Helpers
 {
@@ -22,6 +31,7 @@ namespace BiliLite.Helpers
         public static event EventHandler<NavigationInfo> OpenNewWindowEvent;
         public static event EventHandler<string> ChangeTitleEvent;
         public static event EventHandler<object> LoginedEvent;
+        public static event EventHandler<ImageViewerParameter> ViewImageEvent;
         public static event EventHandler LogoutedEvent;
         public static void OpenNewWindow(object sender, NavigationInfo navigationInfo)
         {
@@ -34,9 +44,11 @@ namespace BiliLite.Helpers
         /// <summary>
         /// 发送登录完成事件
         /// </summary>
-        public static void SendLogined()
+        public async static void SendLogined()
         {
             LoginedEvent?.Invoke(null, null);
+            //同步弹幕屏蔽信息
+            await new Modules.SettingVM().SyncDanmuFilter();
         }
         /// <summary>
         /// 发送注销事件
@@ -252,7 +264,7 @@ namespace BiliLite.Helpers
                     title = "音乐",
                     parameters = "https://m.bilibili.com/audio/au" + music
                 });
-             
+
                 return true;
             }
             /*
@@ -290,9 +302,9 @@ namespace BiliLite.Helpers
                 OpenNewWindow(null, new NavigationInfo()
                 {
                     icon = Symbol.Comment,
-                    page = typeof(WebPage),
+                    page = typeof(DynamicDetailPage),
                     title = "动态",
-                    parameters = album.Length>12? "https://t.bilibili.com/"+ album : "http://h.bilibili.com/"+ album
+                    parameters = album
                 });
                 //InfoNavigateToEvent(typeof(DynamicInfoPage), album);
                 return true;
@@ -332,7 +344,7 @@ namespace BiliLite.Helpers
                     page = typeof(TagDetailPage),
                     title = "话题",
                     parameters = new object[] { "", topic }
-                }); 
+                });
                 return true;
             }
             var topic1 = Utils.RegexMatch(url + "/", @"tag/.*?/\?name=(.*?)/");
@@ -353,8 +365,23 @@ namespace BiliLite.Helpers
             /*
              * 播单
              * https://www.bilibili.com/playlist/detail/pl792
+             * https://www.bilibili.com/medialist/detail/ml159001856?type=1
              */
-             //TODO 播单
+            var medialist_id = Utils.RegexMatch(url, @"ml(\d+)");
+            if (!string.IsNullOrEmpty(medialist_id))
+            {
+                OpenNewWindow(null, new NavigationInfo()
+                {
+                    icon = Symbol.OutlineStar,
+                    page = typeof(FavoriteDetailPage),
+                    title = "收藏夹",
+                    parameters = medialist_id
+                });
+
+                return true;
+            }
+
+
 
             /*
              * 投稿
@@ -370,7 +397,7 @@ namespace BiliLite.Helpers
                     title = "投稿",
                     parameters = "https://member.bilibili.com/v2#/upload/video/frame"
                 });
-               
+
                 return true;
             }
 
@@ -400,14 +427,14 @@ namespace BiliLite.Helpers
                 {
                     icon = Symbol.World,
                     page = typeof(WebPage),
-                    title = "投稿",
+                    title = "赛事",
                     parameters = "https://www.bilibili.com/v/game/match"
                 });
                 return true;
             }
 
 
-            if (url.Contains("http://")||url.Contains("https://"))
+            if (url.Contains("http://") || url.Contains("https://"))
             {
                 OpenNewWindow(null, new NavigationInfo()
                 {
@@ -437,7 +464,44 @@ namespace BiliLite.Helpers
             }
             return "";
         }
-       
+
+        public static void OpenImageViewer(List<string> images, int index)
+        {
+            var par = new Controls.ImageViewerParameter()
+            {
+                Images = images,
+                Index = index
+            };
+            if (SettingHelper.GetValue<bool>(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false))
+            {
+                OpenWindow(typeof(ImageViewerPage), par);
+            }
+            else
+            {
+                ViewImageEvent?.Invoke(null, par);
+            }
+
+        }
+        public async static void OpenWindow(Type page, object par)
+        {
+            
+            CoreApplicationView newView = CoreApplication.CreateNewView();
+            int newViewId = 0;
+
+            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Frame frame = new Frame();
+                frame.Navigate(page, par);
+                Window.Current.Content = frame;
+                Window.Current.Activate();
+                newViewId = ApplicationView.GetForCurrentView().Id;
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(800, 800));
+            });
+            bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+
+
+
+        }
 
     }
 

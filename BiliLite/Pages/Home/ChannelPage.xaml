@@ -9,6 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <WebView x:Name="web"></WebView>
     </Grid>
 </Page>

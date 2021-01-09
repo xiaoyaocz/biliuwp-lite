@@ -13,6 +13,7 @@
     xmlns:model="using:BiliLite.Modules.User"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <convert:DatetimeConvert x:Key="datetime"/>
         <Style x:Key="ItemStyle" TargetType="GridViewItem">
             <Setter Property="Margin" Value="8"></Setter>
@@ -20,19 +21,19 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
         </Style>
         <DataTemplate x:Key="VideoDataTemplate" x:DataType="model:HistoryItemModel">
-            <Grid>
+            <Grid Background="#00FFFFFF">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="取消收藏"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="移除"></MenuFlyoutItem>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
-                <Grid>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
                     <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=pic,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
-                </Grid>
+                </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
                     <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" >UP:<Run Text="{x:Bind Path=owner.name}"/></TextBlock>
@@ -42,9 +43,18 @@
         </DataTemplate>
     </Page.Resources>
     <Grid>
-        <Grid >
-            
-            <toolkit:AdaptiveGridView SelectionMode="None" 
+        <Pivot >
+            <!--<Pivot.RightHeader>
+                <Grid Background="{ThemeResource TopPaneBackground}">
+                    <Button Margin="8 0">清空记录</Button>
+                </Grid>
+            </Pivot.RightHeader>-->
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">视频</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <toolkit:AdaptiveGridView SelectionMode="None" 
                                           IsItemClickEnabled="True"
                                           DesiredWidth="600"
                                           ItemClick="Video_ItemClick"
@@ -54,18 +64,24 @@
                                           ItemsSource="{x:Bind Path=historyVM.Videos,Mode=OneWay}"
                                           ItemHeight="80" Grid.ColumnSpan="2">
 
-                <toolkit:AdaptiveGridView.Footer>
-                    <StackPanel>
-                        <HyperlinkButton Command="{x:Bind Path=historyVM.LoadMoreCommand}" Visibility="{x:Bind Path=historyVM.ShowLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
-                            <TextBlock>加载更多</TextBlock>
-                        </HyperlinkButton>
-                        <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=historyVM.Loading,Mode=OneWay}"></ProgressRing>
-                    </StackPanel>
-                </toolkit:AdaptiveGridView.Footer>
-            </toolkit:AdaptiveGridView>
-            <TextBlock Visibility="{x:Bind Path=historyVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" >这里还什么都没有呢~</TextBlock>
-
-        </Grid>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+                                <HyperlinkButton Command="{x:Bind Path=historyVM.LoadMoreCommand}" Visibility="{x:Bind Path=historyVM.ShowLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                                    <TextBlock>加载更多</TextBlock>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=historyVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </toolkit:AdaptiveGridView>
+                    <TextBlock Visibility="{x:Bind Path=historyVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" >这里还什么都没有呢~</TextBlock>
+                </Grid>
+            </PivotItem>
+            <!--<PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">专栏</TextBlock>
+                </PivotItem.Header>
+            </PivotItem>-->
+        </Pivot>
         <controls:RoundButton Command="{x:Bind Path=historyVM.RefreshCommand}" Visibility="{x:Bind Path=historyVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>

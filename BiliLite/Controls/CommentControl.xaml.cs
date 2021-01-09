@@ -26,6 +26,7 @@ using BiliLite.Pages;
 using BiliLite.Api;
 using static BiliLite.Api.CommentApi;
 using BiliLite.Modules;
+using BiliLite.Dialogs;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -34,19 +35,22 @@ namespace BiliLite.Controls
     public sealed partial class CommentControl : UserControl
     {
         readonly CommentApi commentApi;
+        EmoteVM emoteVM;
         public CommentControl()
         {
             this.InitializeComponent();
             commentApi = new CommentApi();
+            emoteVM = new EmoteVM();
         }
 
         private void btn_User_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
-                icon= Symbol.Account,
-                title="用户信息",
-                page=typeof(UserInfoPage),
-                parameters= (sender as HyperlinkButton).Tag.ToString()
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                icon = Symbol.Account,
+                title = "用户信息",
+                page = typeof(UserInfoPage),
+                parameters = (sender as HyperlinkButton).Tag.ToString()
             });
         }
 
@@ -84,7 +88,7 @@ namespace BiliLite.Controls
         {
             if (!_loading)
             {
-               await GetComment();
+                await GetComment();
             }
         }
 
@@ -104,8 +108,8 @@ namespace BiliLite.Controls
         /// <param name="loadCommentInfo"></param>
         public async void LoadComment(LoadCommentInfo loadCommentInfo)
         {
-           
-            if (loadCommentInfo.conmmentSort == ConmmentSort.Hot)
+
+            if (loadCommentInfo.commentSort == commentSort.Hot)
             {
                 hot.Visibility = Visibility.Visible;
                 _new.Visibility = Visibility.Collapsed;
@@ -119,7 +123,7 @@ namespace BiliLite.Controls
             _loadCommentInfo = loadCommentInfo;
             _page = 1;
             await GetComment();
-
+            await emoteVM.GetEmote(EmoteBusiness.reply);
         }
 
         private async Task GetComment()
@@ -133,14 +137,14 @@ namespace BiliLite.Controls
             }
             try
             {
-               
+
                 btn_LoadMore.Visibility = Visibility.Collapsed;
                 _loading = true;
                 pr_load.Visibility = Visibility.Visible;
                 ObservableCollection<CommentModel> ls = new ObservableCollection<CommentModel>();
-               
-                
-                var re = await commentApi.Comment(_loadCommentInfo.oid, _loadCommentInfo.conmmentSort, _page, _loadCommentInfo.commentMode).Request();
+
+
+                var re = await commentApi.Comment(_loadCommentInfo.oid, _loadCommentInfo.commentSort, _page, _loadCommentInfo.commentMode).Request();
                 if (re.status)
                 {
                     dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
@@ -204,7 +208,7 @@ namespace BiliLite.Controls
                 {
                     Utils.ShowMessageToast("加载评论失败");
                 }
-               
+
             }
             catch (Exception)
             {
@@ -235,7 +239,7 @@ namespace BiliLite.Controls
                     dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
                     if (m.code == 0)
                     {
-                        if (m.data.replies!=null&&m.data.replies.Count != 0)
+                        if (m.data.replies != null && m.data.replies.Count != 0)
                         {
                             if (m.data.replies.Count >= 10)
                             {
@@ -275,7 +279,7 @@ namespace BiliLite.Controls
 
         private async void doLike(CommentModel data)
         {
-            if (!SettingHelper.Account.Logined  && !await Utils.ShowLoginDialog())
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
             {
                 Utils.ShowMessageToast("请登录后再执行操作");
                 return;
@@ -344,7 +348,7 @@ namespace BiliLite.Controls
                 m.loadpage = 1;
                 if (m.replies == null || m.replies.Count == 0)
                 {
-                   await GetReply(m);
+                    await GetReply(m);
                 }
             }
             else
@@ -391,13 +395,13 @@ namespace BiliLite.Controls
 
         private void btn_HotSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.conmmentSort = ConmmentSort.Hot;
+            _loadCommentInfo.commentSort = commentSort.Hot;
             LoadComment(_loadCommentInfo);
         }
 
         private void btn_NewSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.conmmentSort = ConmmentSort.New;
+            _loadCommentInfo.commentSort = commentSort.New;
             LoadComment(_loadCommentInfo);
         }
 
@@ -416,10 +420,7 @@ namespace BiliLite.Controls
         }
 
 
-        private void GridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
 
-        }
 
         private void btn_SendReply_Click(object sender, RoutedEventArgs e)
         {
@@ -570,7 +571,7 @@ namespace BiliLite.Controls
                 //content += "&sign=" + ApiHelper.GetSign(content);
 
                 //var re = await WebClientClass.PostResults(new Uri(url), content);
-                var re = await commentApi.DeleteComment(_loadCommentInfo.oid,m.rpid.ToString(), _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.DeleteComment(_loadCommentInfo.oid, m.rpid.ToString(), _loadCommentInfo.commentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -597,14 +598,29 @@ namespace BiliLite.Controls
 
 
         }
+        CommentModel selectComment;
+        private void btnFace_Click(object sender, RoutedEventArgs e)
+        {
+            selectComment = (sender as Button).DataContext as CommentModel;
+            FaceFlyout.ShowAt(sender as Button);
+        }
 
+        private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            selectComment.replyText += (e.ClickedItem as EmotePackageItemModel).text.ToString();
+        }
 
+        private async void btnOpenSendComment_Click(object sender, RoutedEventArgs e)
+        {
+            SendCommentDialog sendCommentDialog = new SendCommentDialog(_loadCommentInfo.oid, (CommentType)_loadCommentInfo.commentMode);
+            await sendCommentDialog.ShowAsync();
+        }
     }
 
     public class LoadCommentInfo
     {
-        public CommentType commentMode { get; set; }
-        public ConmmentSort conmmentSort { get; set; }
+        public int commentMode { get; set; }
+        public commentSort commentSort { get; set; }
         public string oid { get; set; }
     }
 
@@ -634,7 +650,7 @@ namespace BiliLite.Controls
 
         public CommentModel()
         {
-            ButtonCommand = new RelayCommand<object>(ButtonClick);
+            LaunchUrlCommand = new RelayCommand<object>(ButtonClick);
         }
 
         private int _action;//0未点赞,1已经点赞
@@ -832,7 +848,7 @@ namespace BiliLite.Controls
         {
             get
             {
-                if (SettingHelper.Account.Logined&& mid.ToString() == SettingHelper.Account.Profile.mid.ToString())
+                if (SettingHelper.Account.Logined && mid.ToString() == SettingHelper.Account.Profile.mid.ToString())
                 {
                     return Visibility.Visible;
                 }
@@ -880,21 +896,14 @@ namespace BiliLite.Controls
 
 
 
-        public RelayCommand<object> ButtonCommand { get; private set; }
+        public RelayCommand<object> LaunchUrlCommand { get; private set; }
 
-        private void ButtonClick(object paramenter)
+        private async void ButtonClick(object paramenter)
         {
-            if (paramenter.ToString().Contains("av"))
-            {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
-                {
-                    icon= Symbol.Play,
-                    page=typeof(VideoDetailPage),
-                    parameters= paramenter.ToString().Replace("av", ""),
-                    title="视频加载中..."
-                });
-            
-            }
+
+            await MessageCenter.HandelUrl(paramenter.ToString());
+            return;
+           
 
         }
 
@@ -926,69 +935,18 @@ namespace BiliLite.Controls
             }
         }
         public string device { get; set; }
-        public RichTextBlock text
+        public RichTextBlock text 
         {
             get
             {
-                try
-                {
-                    if (message != null)
-                    {
-                        string input = message;
-                        input = input.Replace("\r\n", "<LineBreak/>");
-                        input = input.Replace("\n", "<LineBreak/>");
-                        //替换表情
-                        MatchCollection mc = Regex.Matches(input, @"\[.*?\]");
-                        foreach (Match item in mc)
-                        {
-                            if (emote != null && emote.ContainsKey(item.Groups[0].Value))
-                            {
-                                var emoji = emote[item.Groups[0].Value];
-                                input = input.Replace(item.Groups[0].Value, string.Format(@"<InlineUIContainer><Border  Margin=""0 0 0 -4""><Image Source=""{0}"" Width=""{1}"" Height=""{1}"" /></Border></InlineUIContainer>", emoji["url"].ToString(), emoji["meta"]["size"].ToInt32() == 1 ? "20" : "36"));
-                            }
-                            //var emoji=  ApiHelper.emojis.Where(x => x.name == item.Groups[0].Value);
-                            //if (emoji!=null&&emoji.ToList().Count!=0)
-                            //{
-                            //    input = input.Replace(item.Groups[0].Value, string.Format(@"<InlineUIContainer><Border><Image Source=""{0}"" Width=""36"" Height=""36""/></Border></InlineUIContainer>", emoji.First().url));
-                            //}
-                        }
+                //var tx = new RichTextBlock();
+                //Paragraph paragraph = new Paragraph();
+                //Run run = new Run() { Text = message };
+                //paragraph.Inlines.Add(run);
+                //tx.Blocks.Add(paragraph);
+                //return tx;
 
-                        //替换av号
-                        MatchCollection videos = Regex.Matches(input, @"av(\d+)");
-                        foreach (Match item in videos)
-                        {
-                            var data = @"<InlineUIContainer><HyperlinkButton x:Name=""btn"" Command=""{Binding ButtonCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " + string.Format(@" Tag=""{0}""  CommandParameter=""{0}"" >{0}</HyperlinkButton></InlineUIContainer>", item.Groups[0].Value);
-                            input = input.Replace(item.Groups[0].Value, data);
-                        }
-
-
-
-
-                        //生成xaml
-                        var xaml = string.Format(@"<RichTextBlock HorizontalAlignment=""Stretch"" TextWrapping=""Wrap""  xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
-                                            xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml"" xmlns:d=""http://schemas.microsoft.com/expression/blend/2008""
-    xmlns:mc = ""http://schemas.openxmlformats.org/markup-compatibility/2006"" >
-                                          <Paragraph>{0}</Paragraph>
-                                      </RichTextBlock>", input);
-                        var p = (RichTextBlock)XamlReader.Load(xaml);
-                        return p;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                catch (Exception)
-                {
-                    var tx = new RichTextBlock();
-                    Paragraph paragraph = new Paragraph();
-                    Run run = new Run() { Text = message };
-                    paragraph.Inlines.Add(run);
-                    tx.Blocks.Add(paragraph);
-                    return tx;
-
-                }
-
+                return  ControlHelper.StringToRichText(message, emote);
             }
 
         }
@@ -1033,7 +991,7 @@ namespace BiliLite.Controls
                     case 6:
                         return "ms-appx:///Assets/Icon/lv6.png";
                     default:
-                        return "ms-appx:///Assets/MiniIcon/transparent.png";
+                        return AppHelper.TRANSPARENT_IMAGE;
                 }
             }
         }
@@ -1047,13 +1005,13 @@ namespace BiliLite.Controls
                 {
                     if (pendant.image == "")
                     {
-                        return "ms-appx:///Assets/MiniIcon/transparent.png";
+                        return AppHelper.TRANSPARENT_IMAGE;
                     }
                     return pendant.image;
                 }
                 else
                 {
-                    return "ms-appx:///Assets/MiniIcon/transparent.png";
+                    return AppHelper.TRANSPARENT_IMAGE;
                 }
             }
         }
@@ -1065,7 +1023,7 @@ namespace BiliLite.Controls
         public CommentMemberModel official_verify { get; set; }
         public int type { get; set; }
         public string desc { get; set; }
-        
+
         public string Verify
         {
             get
@@ -1077,11 +1035,11 @@ namespace BiliLite.Controls
                 switch (official_verify.type)
                 {
                     case 0:
-                        return "ms-appx:///Assets/Icon/verify0.png";
+                        return AppHelper.VERIFY_PERSONAL_IMAGE;
                     case 1:
-                        return "ms-appx:///Assets/Icon/verify1.png";
+                        return AppHelper.VERIFY_OGANIZATION_IMAGE;
                     default:
-                        return "ms-appx:///Assets/MiniIcon/transparent.png";
+                        return AppHelper.TRANSPARENT_IMAGE;
                 }
             }
         }

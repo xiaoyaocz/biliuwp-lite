@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Controls;
+using BiliLite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,13 +36,21 @@ namespace BiliLite
             frame.Navigated += Frame_Navigated;
             MessageCenter.OpenNewWindowEvent += NavigationHelper_OpenNewWindowEvent;
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
+            MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             Window.Current.Content.PointerPressed += Content_PointerPressed;
         }
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
             if (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
-            {
+            { 
+                //如果打开了图片浏览，则关闭图片浏览
+                if (gridViewer.Visibility == Visibility.Visible)
+                {
+                    imgViewer_CloseEvent(this, null);
+                    e.Handled = true;
+                    return;
+                }
                 //处理多标签
                 if (this.frame.CanGoBack)
                 {
@@ -73,7 +82,17 @@ namespace BiliLite
             base.OnNavigatedTo(e);
            
             frame.Navigate(typeof(Pages.HomePage));
+            if (e.NavigationMode == NavigationMode.New && e.Parameter != null && !string.IsNullOrEmpty(e.Parameter.ToString()))
+            {
+                var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
+                if (!result)
+                {
+                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
+                }
+            }
+#if !DEBUG
             await Utils.CheckVersion();
+#endif
         }
 
         private void MessageCenter_ChangeTitleEvent(object sender, string e)
@@ -107,9 +126,10 @@ namespace BiliLite
 
         private async void OpenNewWindow(NavigationInfo e)
         {
+
             CoreApplicationView newView = CoreApplication.CreateNewView();
             int newViewId = 0;
-            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+           await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 var res=App.Current.Resources;
                 Frame frame = new Frame();
@@ -120,6 +140,18 @@ namespace BiliLite
             });
             bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
         }
-
+        private void MessageCenter_ViewImageEvent(object sender, ImageViewerParameter e)
+        {
+            gridViewer.Visibility = Visibility.Visible;
+            imgViewer.InitImage(e);
+        }
+        private void imgViewer_CloseEvent(object sender, EventArgs e)
+        {
+            if (gridViewer.Visibility == Visibility.Visible)
+            {
+                imgViewer.ClearImage();
+                gridViewer.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

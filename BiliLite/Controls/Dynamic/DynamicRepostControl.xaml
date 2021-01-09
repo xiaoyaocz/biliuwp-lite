@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="BiliLite.Controls.DynamicRepostControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:dynamic="using:BiliLite.Controls.Dynamic"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+        <local:MyListView  SelectionMode="None"
+                           ItemsSource="{x:Bind Path=dynamicRepostVM.Items,Mode=OneWay}"
+                           CanLoadMore="{x:Bind Path=dynamicRepostVM.CanLoadMore,Mode=OneWay}"
+                           LoadMoreBottomOffset="0"
+                           LoadMoreCommand="{x:Bind Path=dynamicRepostVM.LoadMoreCommand}"
+                           IsItemClickEnabled="False">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="dynamic:DynamicItemDisplayModel">
+                    <StackPanel>
+                        <HyperlinkButton Command="{x:Bind Path=UserCommand,Mode=OneWay}" CommandParameter="{x:Bind Path=Mid,Mode=OneWay}" Padding="0" VerticalAlignment="Top" >
+                            <StackPanel Orientation="Horizontal" >
+                                <Ellipse Width="36" Height="36" Margin="0 0 8 0">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{x:Bind Path=Photo,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64w'}"></ImageBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <StackPanel VerticalAlignment="Center" >
+                                    <TextBlock Text="{x:Bind Path=UserName,Mode=OneWay}" Foreground="DeepPink"  Opacity=".8" Visibility="{x:Bind Path=IsYearVip,Mode=OneWay}"></TextBlock>
+                                    <TextBlock Text="{x:Bind Path=UserName,Mode=OneWay}" Foreground="{ThemeResource TextColor}" Visibility="{x:Bind Path=IsYearVip,Mode=OneWay,Converter={StaticResource display}}"></TextBlock>
+                                    <TextBlock Margin="0 4 0 0" FontSize="12" Foreground="Gray" ToolTipService.ToolTip="{x:Bind Path=Datetime,Mode=OneWay}" Text="{x:Bind Path=Time,Mode=OneWay}"></TextBlock>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <TextBlock Margin="0 8" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=ContentStr,Mode=OneWay}"></TextBlock>
+                        <Border BorderThickness="0 1 0 0" Margin="0 0 0 8" BorderBrush="Gray" Opacity=".2"></Border>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Grid>
+                    <HyperlinkButton Visibility="{x:Bind Path=dynamicRepostVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center"  Command="{x:Bind Path=dynamicRepostVM.LoadMoreCommand}">
+                        <TextBlock>加载更多</TextBlock>
+                    </HyperlinkButton>
+                    <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicRepostVM.Loading,Mode=OneWay}"></ProgressRing>
+                </Grid>
+            </ListView.Footer>
+        </local:MyListView>
+    </Grid>
+</UserControl>

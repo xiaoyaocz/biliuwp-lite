@@ -7,7 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:modules="using:BiliLite.Modules"
-    xmlns:covert="using:BiliLite.Converters"
+    xmlns:font="using:FontAwesome5"
+    xmlns:covert="using:BiliLite.Converters" xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
@@ -22,9 +23,9 @@
         <Pivot>
             <PivotItem Margin="0" >
                 <PivotItem.Header>
-                    <TextBlock FontSize="15">常规</TextBlock>
+                    <TextBlock FontSize="15">个性化</TextBlock>
                 </PivotItem.Header>
-                <ScrollViewer Padding="8" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel >
                         <StackPanel x:Name="Theme" Margin="0 0 0 8">
                             <TextBlock  Margin="0 8"  FontSize="16">主题</TextBlock>
@@ -62,7 +63,7 @@
                             <ComboBox x:Name="cbDisplayMode"  MinWidth="200">
                                 <ComboBox.Items>
                                     <ComboBoxItem>标签页</ComboBoxItem>
-                                    <ComboBoxItem>单窗口(测试)</ComboBoxItem>
+                                    <ComboBoxItem>单窗口</ComboBoxItem>
                                     <ComboBoxItem>多窗口(测试)</ComboBoxItem>
                                 </ComboBox.Items>
                             </ComboBox>
@@ -82,6 +83,7 @@
                             <TextBlock  Margin="0 8"  FontSize="16">加载原图</TextBlock>
                             <ToggleSwitch x:Name="swPictureQuality" Header="加载原图会影响加载速度及加大内存占用"></ToggleSwitch>
                         </StackPanel>
+                        <Button x:Name="btnCleanImageCache" Click="btnCleanImageCache_Click" Margin="0 0 0 8">清除图片缓存</Button>
                         <StackPanel x:Name="HomeCache" Margin="0 0 0 8">
                             <TextBlock  Margin="0 8"  FontSize="16">缓存首页</TextBlock>
                             <ToggleSwitch x:Name="swHomeCache" Header="关闭后每次切换首页会重新加载数据,但会减少内存占用"></ToggleSwitch>
@@ -94,7 +96,7 @@
                                     <Style TargetType="GridViewItem">
                                         <Setter Property="BorderBrush" Value="#cecece"></Setter>
                                         <Setter Property="Foreground" Value="{ThemeResource TextColor}"></Setter>
-                                        <Setter Property="MinWidth" Value="64"></Setter>
+                                        <Setter Property="Width" Value="100"></Setter>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                                         <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
                                         <Setter Property="BorderThickness" Value="1"></Setter>
@@ -102,13 +104,16 @@
                                 </GridView.ItemContainerStyle>
                                 <GridView.ItemTemplate>
                                     <DataTemplate x:DataType="modules:HomeNavItem">
-                                        <Grid>
+                                        <Grid Background="#00FFFFFF">
                                             <Grid.ContextFlyout>
                                                 <MenuFlyout>
                                                     <MenuFlyoutItem x:Name="menuRemoveHomeItem" Click="menuRemoveHomeItem_Click">移除</MenuFlyoutItem>
                                                 </MenuFlyout>
                                             </Grid.ContextFlyout>
-                                            <TextBlock Text="{x:Bind Title}" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                            <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <font:FontAwesome FontSize="14" VerticalAlignment="Bottom" Icon="{x:Bind Path=Icon}"></font:FontAwesome>
+                                                <TextBlock Margin="8 0 0 0" Text="{x:Bind Title}"></TextBlock>
+                                            </StackPanel>
                                         </Grid>
                                       
                                     </DataTemplate>
@@ -121,7 +126,7 @@
                                     <Style TargetType="GridViewItem">
                                         <Setter Property="BorderBrush" Value="#cecece"></Setter>
                                         <Setter Property="Foreground" Value="{ThemeResource TextColor}"></Setter>
-                                        <Setter Property="MinWidth" Value="64"></Setter>
+                                        <Setter Property="Width" Value="100"></Setter>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                                         <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
                                         <Setter Property="BorderThickness" Value="1"></Setter>
@@ -129,21 +134,63 @@
                                 </GridView.ItemContainerStyle>
                                 <GridView.ItemTemplate>
                                     <DataTemplate x:DataType="modules:HomeNavItem">
-                                        <TextBlock Text="{x:Bind Title}" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <font:FontAwesome FontSize="14" VerticalAlignment="Bottom" Icon="{x:Bind Path=Icon}"></font:FontAwesome>
+                                                <TextBlock Margin="8 0 0 0" Text="{x:Bind Title}"></TextBlock>
+                                            </StackPanel>
+                                        </Grid>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                             </GridView>
+                            <TextBlock  Margin="0 16 0 8" FontSize="16">右侧视频详情宽度(下次打开视频生效)</TextBlock>
+                            <controls:NumberBox x:Name="numRightWidth" Minimum="40" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="320" SpinButtonPlacementMode="Compact" SmallChange="20" ></controls:NumberBox>
+                            <TextBlock  Margin="0 0 0 8" FontSize="16">图片圆角半径(重启生效)</TextBlock>
+                            <controls:NumberBox x:Name="numImageCornerRadius" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
+                            <Border x:Name="ImageCornerRadiusExample" Width="120" Height="120" HorizontalAlignment="Left" Background="#99808080">
+                                <Image Source="/Assets/Image/background.jpg" Stretch="UniformToFill"></Image>
+                            </Border>
+                            <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">视频详情显示封面</TextBlock>
+                                <ToggleSwitch x:Name="swVideoDetailShowCover" ></ToggleSwitch>
+                            </StackPanel>
+                            <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">新窗口打开图片预览</TextBlock>
+                                <ToggleSwitch x:Name="swPreviewImageOpenNewWindow" ></ToggleSwitch>
+                            </StackPanel>
+                            <StackPanel Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8" FontSize="16">首页推荐显示方式</TextBlock>
+                                <ComboBox x:Name="cbRecommendDisplayMode" SelectedIndex="0" MinWidth="200">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem>网格</ComboBoxItem>
+                                        <ComboBoxItem>列表(宽屏)</ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">关注动态显示方式</TextBlock>
+                                <ComboBox x:Name="cbDynamicDisplayMode" SelectedIndex="0" MinWidth="200">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem>列表</ComboBoxItem>
+                                        <ComboBoxItem>瀑布流</ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">隐藏首页赞助按钮(重启生效)</TextBlock>
+                                <ToggleSwitch x:Name="swHideSponsor" ></ToggleSwitch>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
 
                 </ScrollViewer>
                 
             </PivotItem>
-            <PivotItem>
+            <PivotItem Margin="0">
                 <PivotItem.Header>
                     <TextBlock FontSize="15">播放</TextBlock>
                 </PivotItem.Header>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <TextBlock  Margin="0 16 0 8"  FontSize="16">优先视频类型</TextBlock>
                         <ComboBox x:Name="cbVideoType" SelectedIndex="0" MinWidth="200">
@@ -164,17 +211,18 @@
                         <TextBlock  Margin="0 16 0 8" FontSize="16">视频自动播放</TextBlock>
                         <ToggleSwitch  x:Name="swAutoPlay"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">使用外站视频替换无法播放的视频</TextBlock>
-                        <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ></ToggleSwitch>
+                        <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ToolTipService.ToolTip="打开后支持观看部分大陆无版权番剧"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动跳转至上次观看进度</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingAutoToPosition" ></ToggleSwitch>
+                        
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem>
+            <PivotItem Margin="0">
                 <PivotItem.Header>
                     <TextBlock FontSize="15">视频弹幕</TextBlock>
                 </PivotItem.Header>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">默认弹幕状态</TextBlock>
                         <ToggleSwitch x:Name="DanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
@@ -224,7 +272,7 @@
                             <TextBox x:Name="DanmuSettingTxtUser" PlaceholderText="请输入用户ID" Width="200"></TextBox>
                             <Button x:Name="DanmuSettingAddUser" Click="DanmuSettingAddUser_Click" Margin="4 0">添加</Button>
                         </StackPanel>
-                        <ListView x:Name="DanmuSettingListUsers" ItemContainerStyle="{StaticResource DanmuFilterStyle}" Margin="0 8 0 0" SelectionMode="None" IsItemClickEnabled="False" Width="320" Height="160" HorizontalAlignment="Left" Background="{ThemeResource TopPaneBackground}">
+                        <ListView x:Name="DanmuSettingListUsers"  ItemContainerStyle="{StaticResource DanmuFilterStyle}" Margin="0 8" SelectionMode="None" IsItemClickEnabled="False" Width="320" Height="160" HorizontalAlignment="Left" Background="{ThemeResource TopPaneBackground}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -242,29 +290,119 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem>
+            <PivotItem Margin="0">
                 <PivotItem.Header>
                     <TextBlock FontSize="15">直播弹幕</TextBlock>
                 </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">默认弹幕状态</TextBlock>
+                        <ToggleSwitch x:Name="LiveDanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
+                   
+                        <TextBlock  Margin="0 8 0 8" FontSize="16">关键词屏蔽</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="LiveDanmuSettingTxtWord" PlaceholderText="请输入关键词" Width="200"></TextBox>
+                            <Button x:Name="LiveDanmuSettingAddWord" Click="LiveDanmuSettingAddWord_Click" Margin="4 0">添加</Button>
+                        </StackPanel>
+                        <ListView x:Name="LiveDanmuSettingListWords" ItemContainerStyle="{StaticResource DanmuFilterStyle}" Margin="0 8 0 0" SelectionMode="None" IsItemClickEnabled="False" Width="320" Height="160" HorizontalAlignment="Left" Background="{ThemeResource TopPaneBackground}">
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding}"></TextBlock>
+                                        <AppBarButton Click="RemoveLiveDanmuWord_Click" Grid.Column="1" Height="40" Width="40" Icon="Delete"></AppBarButton>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
-            <PivotItem>
+            <PivotItem Margin="0">
                 <PivotItem.Header>
-                    <TextBlock FontSize="15">离线</TextBlock>
+                    <TextBlock FontSize="15">下载</TextBlock>
                 </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">下载存放目录</TextBlock>
+                        <Button x:Name="DownloadOpenPath" Padding="4" Background="Transparent">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Folder" Foreground="Orange" Margin="0 0 8 0"></SymbolIcon>
+                                <TextBlock Grid.Column="1" x:Name="txtDownloadPath" ></TextBlock>
+                            </Grid>
+                        </Button>
+                        <Button x:Name="DownloadChangePath" Margin="0 8">修改存放目录</Button>
+                        <TextBlock  Margin="0 8 0 4"  FontSize="16">旧版下载目录</TextBlock>
+                        <Button x:Name="DownloadOpenOldPath"  Padding="4" Background="Transparent">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Folder" Foreground="Orange" Margin="0 0 8 0"></SymbolIcon>
+                                <TextBlock x:Name="txtDownloadOldPath" Grid.Column="1" ></TextBlock>
+                            </Grid>
+                        </Button>
+                        <Button x:Name="DownloadChangeOldPath" Margin="0 8">导入旧版目录</Button>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">加载旧版下载的视频</TextBlock>
+                        <ToggleSwitch x:Name="swDownloadLoadOld"></ToggleSwitch>
+                        
+                        <TextBlock  Margin="0 8 0 4"  FontSize="16">优先下载视频类型</TextBlock>
+                        <TextBlock>当选择FLV时不支持4K视频下载，部分视频不支持M4S</TextBlock>
+                        <ComboBox x:Name="cbDownloadVideoType" Margin="0 8"  MinWidth="200">
+                            <ComboBox.Items>
+                                <ComboBoxItem>H264/FLV</ComboBoxItem>
+                                <ComboBoxItem>H264/M4S</ComboBoxItem>
+                                <ComboBoxItem>H265/M4S</ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">同时下载多个任务</TextBlock>
+                        <ToggleSwitch x:Name="swDownloadParallelDownload"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">允许使用流量下载</TextBlock>
+                        <ToggleSwitch  x:Name="swDownloadAllowCostNetwork"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">下载完成发送通知</TextBlock>
+                        <ToggleSwitch  x:Name="swDownloadSendToast"></ToggleSwitch>
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
-            <PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">帮助</TextBlock>
+                </PivotItem.Header>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <controls1:MarkdownTextBlock x:Name="txtHelp" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="16" LinkClicked="txtHelp_LinkClicked" IsTextSelectionEnabled="True" ></controls1:MarkdownTextBlock>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Margin="0">
                 <PivotItem.Header>
                     <TextBlock FontSize="15">关于</TextBlock>
                 </PivotItem.Header>
-                <ScrollViewer Padding="8" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel >
-                        <TextBlock  Margin="0 8"  FontSize="16">哔哩哔哩UWP 开发版</TextBlock>
+                        <TextBlock  Margin="0 8"  FontSize="16">哔哩哔哩 Lite</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" x:Name="version">版本 1.0.0</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">开发</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14">开发者 : xiaoyaocz</TextBlock>
-                        <TextBlock  Margin="0 0 0 8"  FontSize="14">LOGO绘制 : x¡aoyaomengo</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14">Logo绘制 : xiaoyaomengo</TextBlock>
+                        <TextBlock  Margin="0 8"  FontSize="16">反馈</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">Email : biliuwp@iill.moe</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">说明</TextBlock>
-                        <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">这还只是个粗糙的开发版,有任何建议及问题，请点击首页左上角的“笑脸”按钮</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">这是一个第三方客户端，应用所有数据来源均来自哔哩哔哩。</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">本程序仅供学习交流编程技术使用。</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">如果侵犯您的合法权益，请及时联系本人以第一时间删除。</TextBlock>
+                        <TextBlock  Margin="0 8"  FontSize="16">参考及引用</TextBlock>
+                        <HyperlinkButton NavigateUri="https://www.bilibili.com" >哔哩哔哩官网</HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://nsapps.cn/index.php/bilibili-privacy.html" >隐私策略</HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://nsapps.cn/index.php/bilibili-opensource.html">开源代码许可/项目引用</HyperlinkButton>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

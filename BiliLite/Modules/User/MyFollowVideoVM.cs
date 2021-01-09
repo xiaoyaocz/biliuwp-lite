@@ -14,10 +14,10 @@ namespace BiliLite.Modules
 {
     public class MyFollowVideoVM : IModules
     {
-        readonly Api.User.FollowAPI followAPI;
+        readonly Api.User.FavoriteApi  favoriteAPI;
         public MyFollowVideoVM()
         {
-            followAPI = new Api.User.FollowAPI();
+            favoriteAPI = new Api.User.FavoriteApi();
             RefreshCommand = new RelayCommand(Refresh);
         }
         private bool _loading = false;
@@ -46,7 +46,7 @@ namespace BiliLite.Modules
             {
                 Loading = true;
                
-                var results = await followAPI.MyFavorite().Request();
+                var results = await favoriteAPI.MyFavorite().Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JArray>>();
@@ -81,6 +81,35 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
+        public async Task<bool> DelFavorite(string id)
+        {
+            try
+            {
+                var results = await favoriteAPI.DelFavorite(id).Request();
+                if (results.status)
+                {
+                    var data = await results.GetJson<ApiDataModel<object>>();
+                    if (data.success)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(results.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var handel = HandelError<AnimeHomeModel>(ex);
+                Utils.ShowMessageToast(handel.message);
+            }
+            return false;
+        }
         public async void Refresh()
         {
             if (Loading)
@@ -101,10 +130,11 @@ namespace BiliLite.Modules
         {
             get
             {
-                return attr==2;
+                //attr单数为私密，双数为公开
+                return attr %2!=0;
             }
         }
-   
+        public string intro { get; set; }
         public string fid { get; set; }
         public string id { get; set; }
         public int like_state { get; set; }

@@ -35,7 +35,12 @@ namespace BiliLite.Pages
             base.OnNavigatedTo(e);
             if(e.NavigationMode== NavigationMode.New)
             {
-                await rankVM.LoadRankRegion();
+                var rid = 0;
+                if (e.Parameter != null)
+                {
+                    rid = e.Parameter.ToInt32();
+                }
+                await rankVM.LoadRankRegion(rid);
             }
         }
 
@@ -61,6 +66,12 @@ namespace BiliLite.Pages
                 title=item.title,
                 parameters=item.aid
             });
+        }
+
+        private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as RankItemModel;
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.aid);
         }
     }
 }

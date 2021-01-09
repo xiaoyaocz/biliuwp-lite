@@ -1,7 +1,9 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
+using BiliLite.Modules.User;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -50,13 +52,7 @@ namespace BiliLite.Pages.Home
         }
 
 
-        private void scrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-        {
-            if (scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight - 100)
-            {
-                 hotVM.LoadMore();
-            }
-        }
+       
 
         private async void gridHot_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -92,6 +88,12 @@ namespace BiliLite.Pages.Home
             {
                 await MessageCenter.HandelUrl(data.uri);
             }
+        }
+
+        private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
+        {
+           var data=( sender as MenuFlyoutItem).DataContext as HotDataItemModel;
+            WatchLaterVM.Instance.AddToWatchlater(data.param);
         }
     }
 }

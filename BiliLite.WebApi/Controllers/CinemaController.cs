@@ -51,10 +51,10 @@ namespace BiliLite.WebApi.Controllers
                     },
                 },
                 update=await GetTime(),
-                documentary =await GetHot(87),
-                movie = await GetHot(88),
-                tv = await GetHot(89),
-                variety= await GetHot(173)
+                movie = await GetHot(2),
+                documentary =await GetHot(3),
+                tv = await GetHot(5),
+                variety= await GetHot(7)
             };
             distributedCache.SetString("CinemaHome", JsonConvert.SerializeObject(datas), new DistributedCacheEntryOptions()
             {
@@ -152,24 +152,37 @@ namespace BiliLite.WebApi.Controllers
         /// 热门推荐
         /// </summary>
         /// <returns></returns>
-        private async Task<List<CinemaHotItem>> GetHot(int oid)
+        private async Task<List<CinemaSeasonItem>> GetHot(int oid)
         {
 
             try
             {
-                var key = "CinemaHot"+ oid;
+                var key = "CinemaHot" + oid;
                 var value = distributedCache.GetString(key);
                 if (value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<CinemaHotItem>>(value);
+                    return JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(value);
                 }
                 var http = client.CreateClient("http");
-                var results = await http.GetStringAsync(Utils.GetSign( $"https://api.bilibili.com/pgc/app/v2/page/exchange?appkey=1d8b6e7d45233436&build=5442100&mobi_app=android&platform=android&oid={oid}&ts={ Utils.GetTimestampS()}&type=1"));
+                var results = await http.GetStringAsync( $"https://api.bilibili.com/pgc/season/rank/web/list?day=3&season_type={oid}");
                 var obj = JObject.Parse(results);
-                List<CinemaHotItem> list = JsonConvert.DeserializeObject<List<CinemaHotItem>>(obj["result"].ToString());
-
-                if (list!=null&&list.Count != 0)
+                List<CinemaSeasonItem> list = JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(obj["data"]["list"].ToString());
+                list = list.Take(36).ToList();
+                foreach (var item in list)
                 {
+                    if (oid == 5 || oid == 7)
+                    {
+                        item.cover = item.new_ep.cover;
+                    }
+                    if (oid == 2)
+                    {
+                        item.desc = item.new_ep.index_show;
+                    }
+                    item.stat.follow_view = item.stat.follow.NumberToString()+"人追剧";
+                }
+                if (list != null && list.Count != 0)
+                {
+                    list = list.Take(36).ToList();
                     distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
                     {
                         AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
@@ -180,17 +193,17 @@ namespace BiliLite.WebApi.Controllers
             }
             catch (Exception)
             {
-                return new List<CinemaHotItem>();
+                return new List<CinemaSeasonItem>();
             }
 
 
         }
 
         /// <summary>
-        /// 热门推荐
+        /// 即将上线
         /// </summary>
         /// <returns></returns>
-        private async Task<List<CinemaHotItem>> GetTime()
+        private async Task<List<CinemaSeasonItem>> GetTime()
         {
 
             try
@@ -199,13 +212,17 @@ namespace BiliLite.WebApi.Controllers
                 var value = distributedCache.GetString(key);
                 if (value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<CinemaHotItem>>(value);
+                    return JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(value);
                 }
                 var http = client.CreateClient("http");
-                var results = await http.GetStringAsync(Utils.GetSign($"https://api.bilibili.com/pgc/app/v2/page/cinema/tab?appkey=1d8b6e7d45233436&build=5442100&mobi_app=android&platform=android&ts={ Utils.GetTimestampS()}"));
+                var results = await http.GetStringAsync($"https://api.bilibili.com/pgc/web/timeline/online?type=1");
                 var obj = JObject.Parse(results);
-                List<CinemaHotItem> list = JsonConvert.DeserializeObject<List<CinemaHotItem>>(obj["result"]["modules"].FirstOrDefault(x=>x["title"].ToString() == "即将开播")["items"].ToString());
-
+                List<CinemaSeasonItem> list = JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(obj["result"]["items"].ToString().Replace("follower", "follow"));
+                foreach (var item in list)
+                {
+                    item.hat = item.desc;
+                    item.stat.follow_view = item.stat.follow.NumberToString()+ "人追剧";
+                }
                 if (list != null && list.Count != 0)
                 {
                     distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
@@ -218,7 +235,7 @@ namespace BiliLite.WebApi.Controllers
             }
             catch (Exception)
             {
-                return new List<CinemaHotItem>();
+                return new List<CinemaSeasonItem>();
             }
 
 
@@ -229,26 +246,28 @@ namespace BiliLite.WebApi.Controllers
     {
         public List<BannerModel> banners { get; set; }
         public List<FallModel> falls { get; set; }
-        public List<CinemaHotItem> update { get; set; }
+        public List<CinemaSeasonItem> update { get; set; }
         /// <summary>
-        /// 记录片 87
+        /// 记录片 3
         /// </summary>
-        public List<CinemaHotItem> documentary { get; set; }
+        public List<CinemaSeasonItem> documentary { get; set; }
         /// <summary>
-        /// 电影 88
+        /// 电影 2
         /// </summary>
-        public List<CinemaHotItem> movie { get; set; }
+        public List<CinemaSeasonItem> movie { get; set; }
         /// <summary>
-        /// 电视剧 89
+        /// 电视剧 5
         /// </summary>
-        public List<CinemaHotItem> tv { get; set; }
+        public List<CinemaSeasonItem> tv { get; set; }
         /// <summary>
-        /// 综艺 173
+        /// 综艺 7
         /// </summary>
-        public List<CinemaHotItem> variety { get; set; }
+        public List<CinemaSeasonItem> variety { get; set; }
     }
 
-    public class CinemaHotItem
+
+
+    public class CinemaSeasonItem
     {
         public string hat { get; set; }
         public string cover { get; set; }
@@ -261,6 +280,7 @@ namespace BiliLite.WebApi.Controllers
         public int season_type { get; set; }
         public string type { get; set; }
         public int wid { get; set; }
+        public CinemaNewEPModel new_ep { get; set; }
         public CinemaStatModel stat { get; set; }
     }
     public class CinemaStatModel
@@ -269,6 +289,11 @@ namespace BiliLite.WebApi.Controllers
         public string follow_view { get; set; }
         public int follow { get; set; }
         public int danmaku { get; set; }
+    }
+    public class CinemaNewEPModel
+    {
+        public string cover { get; set; }
+        public string index_show { get; set; }
     }
 
 }

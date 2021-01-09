@@ -89,9 +89,9 @@ namespace BiliLite.Modules
         private async void MessageCenter_LoginedEvent(object sender, object e)
         {
             Logined = true;
-            //TODO 加载背包和余额
+            //TODO 加载背包
             await LoadWalletInfo();
-            await GetFreeSilverTime();
+            //await GetFreeSilverTime();
         }
 
         private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -192,7 +192,7 @@ namespace BiliLite.Modules
                                 ShowGiftMessage = true;
                                 hide_gift_flag = 1;
                                 var info = e.value as GiftMsgModel;
-                                info.gif = Gifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? "ms-appx:///Assets/Thumbnails/transparent.png";
+                                info.gif = Gifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
                                 GiftMessage.Add(info);
                                 if (!timer_auto_hide_gift.Enabled)
                                 {
@@ -476,7 +476,7 @@ namespace BiliLite.Modules
                         {
                             timer.Start();
                             await GetPlayUrl(RoomID, 0);
-                            GetFreeSilverTime(); 
+                            //GetFreeSilverTime(); 
                             if (ReceiveLotteryMsg)
                             {
                                 anchorLotteryVM.LoadLotteryInfo(RoomID);
@@ -774,7 +774,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         Utils.ShowMessageToast("宝箱领取成功,瓜子+" + data.data["awardSilver"]);
-                        GetFreeSilverTime();
+                        //GetFreeSilverTime();
                         LoadWalletInfo();
                     }
                     else
@@ -1380,11 +1380,11 @@ namespace BiliLite.Modules
                     switch (verify_type)
                     {
                         case 0:
-                            return "ms-appx:///Assets/Icon/verify0.png";
+                            return AppHelper.VERIFY_PERSONAL_IMAGE;
                         case 1:
-                            return "ms-appx:///Assets/Icon/verify1.png";
+                            return AppHelper.VERIFY_OGANIZATION_IMAGE;
                         default:
-                            return "ms-appx:///Assets/MiniIcon/transparent.png";
+                            return AppHelper.TRANSPARENT_IMAGE;
                     }
                 }
             }
@@ -1429,7 +1429,7 @@ namespace BiliLite.Modules
             public string uname { get; set; }
             public string face { get; set; }
             public int score { get; set; }
-            public string icon { get; set; } = "ms-appx:///Assets/Thumbnails/transparent.png";
+            public string icon { get; set; } = AppHelper.TRANSPARENT_IMAGE;
             public bool show_right
             {
                 get

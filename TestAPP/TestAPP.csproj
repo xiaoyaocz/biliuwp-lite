@@ -130,6 +130,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\4864bd526213c9e5238d41cd09e5f79eb18eb39c.png" />
+    <Content Include="Assets\63f40dfd5802d6ff7a4b47252ac78e4c2c616844.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
