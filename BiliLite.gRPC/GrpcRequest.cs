@@ -47,7 +47,7 @@ namespace BiliLite.gRPC
                 httpClient.DefaultRequestHeaders.Add("User-Agent", ua);
                 httpClient.DefaultRequestHeaders.Add("APP-KEY", "android");
                 httpClient.DefaultRequestHeaders.Add("x-bili-metadata-bin", config.GetMetadataBin());
-                httpClient.DefaultRequestHeaders.Add("authorization", "identify_v1 5a3e9e47e78a6f055a9d865c1ad4d2c1");
+                httpClient.DefaultRequestHeaders.Add("authorization", "identify_v1 "+access_key);
                 httpClient.DefaultRequestHeaders.Add("x-bili-device-bin", config.GetDeviceBin());
                 httpClient.DefaultRequestHeaders.Add("x-bili-network-bin", config.GetNetworkBin());
                 httpClient.DefaultRequestHeaders.Add("x-bili-restriction-bin", "");
