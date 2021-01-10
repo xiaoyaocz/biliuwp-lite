@@ -100,7 +100,15 @@ namespace BiliLite.Pages
                 cbDisplayMode.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
                     SettingHelper.SetValue(SettingHelper.UI.DISPLAY_MODE, cbDisplayMode.SelectedIndex);
-                    Utils.ShowMessageToast("重启生效");
+                    if (cbDisplayMode.SelectedIndex==2)
+                    {
+                        Utils.ShowMessageToast("多窗口模式正在开发测试阶段，可能会有一堆问题");
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("重启生效");
+                    }
+                    
                 });
             });
             //加载原图
@@ -176,6 +184,16 @@ namespace BiliLite.Pages
                 });
             });
             //动态显示
+            cbDetailDisplay.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
+            cbDetailDisplay.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                cbDetailDisplay.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.DETAIL_DISPLAY, cbDetailDisplay.SelectedIndex);
+                });
+            });
+
+            //动态显示
             cbDynamicDisplayMode.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0);
             cbDynamicDisplayMode.Loaded += new RoutedEventHandler((sender, e) =>
             {
@@ -210,6 +228,15 @@ namespace BiliLite.Pages
                 cbVideoType.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
                     SettingHelper.SetValue(SettingHelper.Player.DEFAULT_VIDEO_TYPE, cbVideoType.SelectedIndex);
+                });
+            });
+            //视频倍速
+            cbVideoSpeed.SelectedIndex = SettingHelper.Player.VideoSpeed.IndexOf(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+            cbVideoSpeed.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                cbVideoSpeed.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.DEFAULT_VIDEO_SPEED, SettingHelper.Player.VideoSpeed[cbVideoSpeed.SelectedIndex]);
                 });
             });
 
@@ -252,7 +279,25 @@ namespace BiliLite.Pages
                 });
             });
 
+            //自动跳转进度
+            swPlayerSettingAutoFullWindows.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+            swPlayerSettingAutoFullWindows.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swPlayerSettingAutoFullWindows.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.AUTO_FULL_WINDOW, swPlayerSettingAutoFullWindows.IsOn);
+                });
+            });
 
+            //双击全屏
+            swPlayerSettingDoubleClickFullScreen.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, false);
+            swPlayerSettingDoubleClickFullScreen.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swPlayerSettingDoubleClickFullScreen.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, swPlayerSettingDoubleClickFullScreen.IsOn);
+                });
+            });
         }
 
         private void LoadDanmu()
@@ -272,6 +317,16 @@ namespace BiliLite.Pages
 
             //用户
             DanmuSettingListUsers.ItemsSource = settingVM.ShieldUsers;
+
+            //弹幕顶部距离
+            numDanmakuTopMargin.Value = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.TOP_MARGIN, 320);
+            numDanmakuTopMargin.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                numDanmakuTopMargin.ValueChanged += new TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs>((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.VideoDanmaku.TOP_MARGIN, args.NewValue);
+                });
+            });
         }
         private void LoadLiveDanmu()
         {
@@ -313,6 +368,7 @@ namespace BiliLite.Pages
                 {
                     SettingHelper.SetValue(SettingHelper.Download.DOWNLOAD_PATH, folder.Path);
                     txtDownloadPath.Text = folder.Path;
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(folder);
                 }
             });
             //旧版下载目录
@@ -340,6 +396,7 @@ namespace BiliLite.Pages
                 {
                     SettingHelper.SetValue(SettingHelper.Download.OLD_DOWNLOAD_PATH, folder.Path);
                     txtDownloadOldPath.Text = folder.Path;
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(folder);
                 }
             });
 

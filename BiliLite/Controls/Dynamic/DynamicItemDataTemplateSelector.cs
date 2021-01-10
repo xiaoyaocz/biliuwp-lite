@@ -53,6 +53,7 @@ namespace BiliLite.Controls.Dynamic
                 case Dynamic.DynamicDisplayType.Live:
                 case Dynamic.DynamicDisplayType.LiveShare:
                 case Dynamic.DynamicDisplayType.MediaList:
+                case Dynamic.DynamicDisplayType.Cheese:
                     return OneRowTemplate;
                 case DynamicDisplayType.Miss:
                     return MissTemplate;

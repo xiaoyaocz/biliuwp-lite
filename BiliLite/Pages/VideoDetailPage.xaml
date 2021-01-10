@@ -183,6 +183,14 @@
                                 <fa:FontAwesome Icon="Solid_GlobeAsia"></fa:FontAwesome>
                             </AppBarButton.Icon>
                         </AppBarButton>
+                        <AppBarButton x:Name="btnRefresh" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
+                            <AppBarButton.Icon>
+                                <fa:FontAwesome Icon="Solid_Sync"></fa:FontAwesome>
+                            </AppBarButton.Icon>
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
                         <AppBarButton Label="稍后看" x:Name="BtnWatchLater" Click="BtnWatchLater_Click" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Regular_PlusSquare"></fa:FontAwesome>
@@ -294,7 +302,7 @@
 
 
                                 <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True">发布于 <Run Text="{x:Bind Path=videoDetailVM.VideoInfo.pubdate,Mode=OneWay,Converter={StaticResource datetime}}"/></TextBlock>
-                                <StackPanel x:Name="stDesc" MaxHeight="80"  Margin="0 8 0 0" >
+                                <StackPanel x:Name="stDesc" Margin="0 8 0 0" >
                                     <TextBlock x:Name="txtDesc" 
                                            Visibility="Collapsed" 
                                            RightTapped="txtDesc_RightTapped" 

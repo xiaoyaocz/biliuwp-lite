@@ -97,6 +97,10 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string RECMEND_DISPLAY_MODE = "recomendDiaplayMode";
             /// <summary>
+            /// 右侧选项卡
+            /// </summary>
+            public const string DETAIL_DISPLAY = "detailDisplay";
+            /// <summary>
             /// 动态显示样式
             /// </summary>
             public const string BACKGROUND_IMAGE = "BackgroundImage";
@@ -221,6 +225,11 @@ namespace BiliLite.Helpers
             /// 正则屏蔽 ObservableCollection<string>
             /// </summary>
             public const string SHIELD_REGULAR = "VideoDanmuShieldRegular";
+
+            /// <summary>
+            /// 顶部距离
+            /// </summary>
+            public const string TOP_MARGIN = "VideoDanmuTopMargin";
         }
         public class Live
         {
@@ -327,6 +336,12 @@ namespace BiliLite.Helpers
             /// 默认视频类型 int flv=0, dash=1,dash_hevc=2
             /// </summary>
             public const string DEFAULT_VIDEO_TYPE = "PlayerDefaultVideoType";
+            public static List<double> VideoSpeed =new List<double>() { 2.0d, 1.75d, 1.5d, 1.0d,0.75d,0.5d };
+
+            /// <summary>
+            /// 默认视频类型 int 1.0
+            /// </summary>
+            public const string DEFAULT_VIDEO_SPEED = "PlayerDefaultSpeed";
 
             /// <summary>
             /// 播放模式 int 0=顺序播放，1=单集循环，2=列表循环
@@ -363,7 +378,16 @@ namespace BiliLite.Helpers
             /// 自动跳转进度
             /// </summary>
             public const string AUTO_TO_POSITION = "PlayerAutoToPosition";
-            
+            /// <summary>
+            /// 自动铺满窗口
+            /// </summary>
+            public const string AUTO_FULL_WINDOW= "PlayerAutoToFullWindow";
+
+            /// <summary>
+            /// 双击全屏
+            /// </summary>
+            public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
+
         }
 
         public class Download

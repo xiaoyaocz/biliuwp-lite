@@ -1,4 +1,5 @@
 ﻿using BiliLite.Controls;
+using BiliLite.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,8 +35,8 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, -40, 0, 0);
-              
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
+
             }
             else
             {
@@ -55,7 +56,10 @@ namespace BiliLite.Pages
 
         private void LocalPlayerPage_ClosedPage(object sender, EventArgs e)
         {
+            Player_FullScreenEvent(this, false);
+            player.MiniWidnows(false);
             player?.Dispose();
+            
         }
 
         protected  override void OnNavigatedTo(NavigationEventArgs e)
@@ -69,8 +73,10 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
+            Player_FullScreenEvent(this, false);
+            player.MiniWidnows(false);
             player?.Dispose();
-          
+            
             base.OnNavigatingFrom(e);
         }
     }

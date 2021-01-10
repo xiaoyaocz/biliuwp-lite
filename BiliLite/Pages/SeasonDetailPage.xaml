@@ -83,6 +83,14 @@
                                 <fa:FontAwesome Icon="Solid_GlobeAsia"></fa:FontAwesome>
                             </AppBarButton.Icon>
                         </AppBarButton>
+                        <AppBarButton x:Name="btnRefresh" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
+                            <AppBarButton.Icon>
+                                <fa:FontAwesome Icon="Solid_Sync"></fa:FontAwesome>
+                            </AppBarButton.Icon>
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
                         <!--<AppBarButton Label="磁贴">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_Thumbtack"></fa:FontAwesome>

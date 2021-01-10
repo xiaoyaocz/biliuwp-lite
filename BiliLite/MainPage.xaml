@@ -30,6 +30,7 @@
                 <Grid x:Name="CustomDragRegion" Background="Transparent" ></Grid>
             </winui:TabView.TabStripFooter>
         </winui:TabView>
+        <Border x:Name="MiniWindowsTitleBar"  Visibility="Collapsed" Background="#00FFFFFF" Height="36" VerticalAlignment="Top"></Border>
         <Grid x:Name="gridViewer" Opacity="0" Visibility="Collapsed" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}" >
             <controls:ImageViewerControl x:Name="imgViewer" CloseEvent="imgViewer_CloseEvent"></controls:ImageViewerControl>
         </Grid>

@@ -37,7 +37,21 @@ namespace BiliLite
             MessageCenter.OpenNewWindowEvent += NavigationHelper_OpenNewWindowEvent;
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
+            MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
             Window.Current.Content.PointerPressed += Content_PointerPressed;
+        }
+        private void MessageCenter_MiniWindowEvent(object sender, bool e)
+        {
+            if (e)
+            {
+                MiniWindowsTitleBar.Visibility = Visibility.Visible;
+                Window.Current.SetTitleBar(MiniWindowsTitleBar);
+            }
+            else
+            {
+                MiniWindowsTitleBar.Visibility = Visibility.Collapsed;
+                Window.Current.SetTitleBar(TitleBar);
+            }
         }
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
@@ -137,6 +151,11 @@ namespace BiliLite
                 Window.Current.Content = frame;
                 Window.Current.Activate();
                 newViewId = ApplicationView.GetForCurrentView().Id;
+                ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
+                {
+                    frame.Navigate(typeof(Pages.BlankPage));
+                    CoreWindow.GetForCurrentThread().Close();
+                };
             });
             bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
         }

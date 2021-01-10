@@ -64,6 +64,10 @@ namespace BiliLite.Controls.Dynamic
         /// </summary>
         LiveShare,
         /// <summary>
+        /// 付费课程
+        /// </summary>
+        Cheese,
+        /// <summary>
         /// 播放列表(公开的收藏夹)
         /// </summary>
         MediaList,
@@ -115,6 +119,7 @@ namespace BiliLite.Controls.Dynamic
                 case 4101:
                     return DynamicDisplayType.Season;
                 case 2048:
+                case 2049:
                     return DynamicDisplayType.Web;
                 case 4308:
                     return DynamicDisplayType.Live;
@@ -122,6 +127,8 @@ namespace BiliLite.Controls.Dynamic
                     return DynamicDisplayType.LiveShare;
                 case 4300:
                     return DynamicDisplayType.MediaList;
+                case 4303:
+                    return DynamicDisplayType.Cheese;
                 default:
                     return DynamicDisplayType.Other;
             }
@@ -252,6 +259,19 @@ namespace BiliLite.Controls.Dynamic
                             Title = obj["title"].ToString(),
                         };
                         info.Url = "https://www.bilibili.com/medialist/detail/ml" + info.ID;
+                    }
+                    return info;
+                case DynamicDisplayType.Cheese:
+                    {
+                        info = new DynamicItemDisplayOneRowInfo()
+                        {
+                            Cover = obj["cover"].ToString() + "@412w_232h_1c.jpg",
+                            Subtitle = obj["subtitle"].ToString(),
+                            Tag = "付费课程",
+                            ID = obj["id"].ToString(),
+                            Title = obj["title"].ToString(),
+                        };
+                        info.Url = obj["url"].ToString();
                     }
                     return info;
                 default:

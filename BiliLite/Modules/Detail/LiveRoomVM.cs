@@ -47,6 +47,7 @@ namespace BiliLite.Modules
             Messages = new ObservableCollection<DanmuMsgModel>();
             GiftMessage = new ObservableCollection<GiftMsgModel>();
             Guards = new ObservableCollection<LiveGuardRankItem>();
+            BagGifts = new ObservableCollection<LiveGiftItem>();
             timer = new Timer(1000);
             timer_box = new Timer(1000);
             timer_auto_hide_gift = new Timer(1000);
@@ -55,10 +56,10 @@ namespace BiliLite.Modules
             timer_auto_hide_gift.Elapsed += Timer_auto_hide_gift_Elapsed;
             liveDanmaku.NewMessage += LiveDanmaku_NewMessage;
             LoadMoreGuardCommand = new RelayCommand(LoadMoreGuardList);
-
+            ShowBagCommand = new RelayCommand(SetShowBag);
         }
         public ICommand LoadMoreGuardCommand { get; private set; }
-
+        public ICommand ShowBagCommand { get; private set; }
         private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -134,6 +135,7 @@ namespace BiliLite.Modules
 
         public ObservableCollection<DanmuMsgModel> Messages { get; set; }
         public ObservableCollection<GiftMsgModel> GiftMessage { get; set; }
+        public ObservableCollection<LiveGiftItem> BagGifts { get; set; }
         public bool ReceiveWelcomeMsg { get; set; } = true;
         public bool ReceiveLotteryMsg { get; set; } = true;
         public bool ReceiveGiftMsg { get; set; } = true;
@@ -149,6 +151,7 @@ namespace BiliLite.Modules
         {
             try
             {
+                if (Messages == null) return;
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
                     switch (e.type)
@@ -171,7 +174,7 @@ namespace BiliLite.Modules
                             {
                                 m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
                             }
-
+                           
                             if (Messages.Count >= CleanCount)
                             {
                                 Messages.Clear();
@@ -273,6 +276,14 @@ namespace BiliLite.Modules
             get { return _attention; }
             set { _attention = value; DoPropertyChanged("Attention"); }
         }
+
+        private bool _ShowBag = false;
+        public bool ShowBag
+        {
+            get { return _ShowBag; }
+            set { _ShowBag = value; DoPropertyChanged("ShowBag"); }
+        }
+
 
         private List<LiveRoomRankVM> ranks;
         public List<LiveRoomRankVM> Ranks
@@ -483,6 +494,7 @@ namespace BiliLite.Modules
                             }
                         }
                         await GetRoomGiftList();
+                        await LoadBag();
                         await LoadWalletInfo();
                         if (Titles == null)
                         {
@@ -538,6 +550,63 @@ namespace BiliLite.Modules
                 else
                 {
                     Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var result = HandelError<object>(ex);
+                Utils.ShowMessageToast(ex.Message);
+            }
+        }
+        /// <summary>
+        /// 读取背包礼物
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadBag()
+        {
+            try
+            {
+                if (!Logined)
+                {
+                    return;
+                }
+                var result = await liveRoomAPI.GiftList(LiveInfo.room_info.area_id, LiveInfo.room_info.parent_area_id, RoomID).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        var list = JsonConvert.DeserializeObject<List<LiveGiftItem>>(data.data["list"].ToString());
+
+                        var bag_result = await liveRoomAPI.BagList(RoomID).Request();
+                        if (bag_result.status)
+                        {
+                            var bag_data = await bag_result.GetData<JObject>();
+                            if (bag_data.success)
+                            {
+                                BagGifts.Clear();
+                                var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"].ToString());
+                                foreach (var item in ls)
+                                {
+                                    var gift = list.FirstOrDefault(x => x.id == item.gift_id);
+                                    gift.max_send_limit = item.gift_num;
+                                    gift.corner_mark = item.corner_mark;
+                                    gift.bag_id = item.bag_id;
+                                    BagGifts.Add(gift);
+                                }
+                                //WalletInfo = data.data;
+                            }
+                            else
+                            {
+                                Utils.ShowMessageToast("读取背包失败:" + bag_data.message);
+                            }
+                        }
+                        else
+                        {
+                            Utils.ShowMessageToast(bag_result.message);
+                        }
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -845,9 +914,50 @@ namespace BiliLite.Modules
             }
 
         }
+        public async Task SendBagGift(LiveGiftItem liveGiftItem)
+        {
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            try
+            {
+                var result = await liveRoomAPI.SendBagGift(LiveInfo.room_info.uid, liveGiftItem.id, liveGiftItem.num, liveGiftItem.bag_id, RoomID).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<object>();
+                    if (data.success)
+                    {
+                        await LoadBag();
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                Utils.ShowMessageToast("赠送礼物出现错误");
+            }
 
+        }
 
-
+        private void SetShowBag()
+        {
+            if (!ShowBag && !SettingHelper.Account.Logined)
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            ShowBag = !ShowBag;
+        }
 
         public async Task<bool> SendDanmu(string text)
         {
@@ -910,6 +1020,13 @@ namespace BiliLite.Modules
                 anchorLotteryVM.timer.Stop();
                 anchorLotteryVM = null;
             }
+            liveDanmaku.NewMessage -= LiveDanmaku_NewMessage;
+            Messages?.Clear();
+            Messages = null;
+            GiftMessage?.Clear();
+            GiftMessage = null;
+            Guards?.Clear();
+            Guards = null;
         }
 
         public void SetDelay(int ms)
@@ -1265,6 +1382,7 @@ namespace BiliLite.Modules
         public class LiveGiftItem
         {
             public int id { get; set; }
+            public int bag_id { get; set; }
             public string name { get; set; }
             public int price { get; set; }
             public int type { get; set; }
@@ -1316,6 +1434,19 @@ namespace BiliLite.Modules
 
             public int num { get; set; } = 1;
         }
+        public class LiveBagGiftItem
+        {
+            public int bag_id { get; set; }
+            public string gift_name { get; set; }
+            public int gift_id { get; set; }
+            public int gift_type { get; set; }
+            public int gift_num { get; set; }
+            public int type { get; set; }
+            public string card_gif { get; set; }
+            public string corner_mark { get; set; }
+            public long expire_at { get; set; }
+            public string img { get; set; }
+        }
         public class LiveRoomGiftItem
         {
             public int position { get; set; }
@@ -1328,21 +1459,6 @@ namespace BiliLite.Modules
             public int gold { get; set; }
             public int silver { get; set; }
         }
-
-
-        public class LiveBagGiftItem
-        {
-            public long bag_id { get; set; }
-            public long expire_at { get; set; }
-            public int gift_id { get; set; }
-            public string gift_name { get; set; }
-            public string corner_mark { get; set; }
-            public int gift_type { get; set; }
-            public int type { get; set; }
-            public int gift_num { get; set; }
-        }
-
-
 
         public class LiveAnchorProfileGloryInfo
         {

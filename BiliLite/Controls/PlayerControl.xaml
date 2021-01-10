@@ -371,6 +371,8 @@
                                     <Slider x:Name="DanmuSettingSpeed" Value="{x:Bind Path=DanmuControl.speed,Mode=TwoWay}" Minimum="1" Maximum="25" StepFrequency="1"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕透明度 <Run Text="{x:Bind Path=DanmuControl.Opacity,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuSettingOpacity" Value="{x:Bind Path=DanmuControl.Opacity,Mode=TwoWay}" Minimum="0.1" Maximum="1" StepFrequency="0.1"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕顶部距离 <Run Text="{x:Bind Path=DanmuControl.Margin.Top,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider  x:Name="DanmuTopMargin" Value="0" Minimum="0" Maximum="200" StepFrequency="4"></Slider>
                                     <Grid Margin="0 4 0 0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -514,14 +516,24 @@
                     </Pivot>
                 </Grid>
             </SplitView.Pane>
-            <Grid  PointerMoved="Grid_PointerMoved"   DoubleTapped="Grid_DoubleTapped" PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
+            <Grid  PointerMoved="Grid_PointerMoved"   
+                   DoubleTapped="Grid_DoubleTapped" 
+                   PointerEntered="Grid_PointerEntered" 
+                   PointerExited="Grid_PointerExited"
+                   
+                   ManipulationMode="TranslateX,TranslateRailsX,TranslateY,TranslateRailsY"
+                   ManipulationCompleted="Grid_ManipulationCompleted"
+                   ManipulationDelta="Grid_ManipulationDelta"
+                   ManipulationStarted="Grid_ManipulationStarted">
                 <Grid.ContextFlyout>
                     <Flyout>
                         <TextBlock TextWrapping="Wrap" x:Name="txtInfo" ></TextBlock>
                     </Flyout>
                 </Grid.ContextFlyout>
                 <!--播放器-->
-                <local:Player x:Name="Player" Tapped="Grid_Tapped" PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
+                <local:Player x:Name="Player"  PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
+                <!--亮度-->
+                <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
                 <!--字幕-->
                 <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24" Background="#7F000000">
                     <TextBlock x:Name="TxtSubtitle" TextWrapping="Wrap" FontSize="{Binding ElementName=SubtitleSettingSize,Path=Value,Mode=OneWay}" Foreground="White"></TextBlock>
@@ -578,8 +590,8 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-               
-                <Grid x:Name="control">
+                
+                <Grid x:Name="control" >
                     <Grid x:Name="StandardControl">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -607,6 +619,9 @@
 
                                 </Button>
                                 <Button x:Name="TopBtnScreenshot" Click="TopBtnScreenshot_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Button.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="F10"></KeyboardAccelerator>
+                                    </Button.KeyboardAccelerators>
                                     <Image Width="28" Height="28" Source="/Assets/Icon/icon_screenshot.png" ></Image>
                                 </Button>
                                 <Button x:Name="TopBtnMore" Click="TopBtnMore_Click" Background="Transparent" Padding="0" Width="48" Height="48">
@@ -731,12 +746,12 @@
                                     <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="quality_description" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
 
                                     </ComboBox>
-                                    <ComboBox x:Name="BottomCBSpeed" SelectionChanged="BottomCBSpeed_SelectionChanged" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+                                    <ComboBox x:Name="BottomCBSpeed" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
                                         <ComboBox.Items>
                                             <ComboBoxItem Content="2.0x" ></ComboBoxItem>
                                             <ComboBoxItem Content="1.5x" ></ComboBoxItem>
                                             <ComboBoxItem Content="1.25x" ></ComboBoxItem>
-                                            <ComboBoxItem Content="1.0x" IsSelected="True"></ComboBoxItem>
+                                            <ComboBoxItem Content="1.0x" ></ComboBoxItem>
                                             <ComboBoxItem Content="0.75x" ></ComboBoxItem>
                                             <ComboBoxItem Content="0.5x" ></ComboBoxItem>
                                         </ComboBox.Items>

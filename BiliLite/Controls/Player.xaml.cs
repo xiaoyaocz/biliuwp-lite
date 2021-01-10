@@ -278,8 +278,9 @@ namespace BiliLite.Controls
                     Opening = false;
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        PlayMediaOpened?.Invoke(this, new EventArgs());
                         Duration = _playerVideo.PlaybackSession.NaturalDuration.TotalSeconds;
+                        PlayMediaOpened?.Invoke(this, new EventArgs());
+                       
                         ////设置进度
                         //if (positon != 0)
                         //{
@@ -428,8 +429,9 @@ namespace BiliLite.Controls
                     Opening = false;
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        PlayMediaOpened?.Invoke(this, new EventArgs());
                         Duration = _playerVideo.PlaybackSession.NaturalDuration.TotalSeconds;
+                        PlayMediaOpened?.Invoke(this, new EventArgs());
+                      
                         ////设置进度
                         //if (positon != 0)
                         //{
@@ -1142,8 +1144,9 @@ namespace BiliLite.Controls
                     Opening = false;
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        PlayMediaOpened?.Invoke(this, new EventArgs());
                         Duration = _playerVideo.PlaybackSession.NaturalDuration.TotalSeconds;
+                        PlayMediaOpened?.Invoke(this, new EventArgs());
+                       
                     });
                 });
                 //播放完成

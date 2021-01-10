@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -59,6 +60,8 @@ namespace BiliLite.Pages
 
         private void SeasonDetailPage_ClosedPage(object sender, EventArgs e)
         {
+            player.FullScreen(false);
+            player.MiniWidnows(false);
             player?.Dispose();
         }
 
@@ -75,7 +78,8 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-
+                player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is object[])
                 {
                     var pars = e.Parameter as object[];
@@ -87,22 +91,28 @@ namespace BiliLite.Pages
                     season_id = e.Parameter.ToString();
                 }
 
-                await seasonDetailVM.LoadSeasonDetail(season_id);
-
-                if (seasonDetailVM.Detail != null)
-                {
-                    ChangeTitle(seasonDetailVM.Detail.title);
-
-                    
-                    seasonReviewVM.MediaID=seasonDetailVM.Detail.media_id;
-
-                    InitializePlayInfo();
-                    CreateQR();
-                    
-                }
+                await InitSeasonDetail();
             }
 
         }
+
+        private async Task InitSeasonDetail()
+        {
+            await seasonDetailVM.LoadSeasonDetail(season_id);
+
+            if (seasonDetailVM.Detail != null)
+            {
+                ChangeTitle(seasonDetailVM.Detail.title);
+
+
+                seasonReviewVM.MediaID = seasonDetailVM.Detail.media_id;
+
+                InitializePlayInfo();
+                CreateQR();
+
+            }
+        }
+
         private void InitializePlayInfo()
         {
             if (seasonDetailVM.NothingPlay) return;
@@ -195,6 +205,8 @@ namespace BiliLite.Pages
             seasonDetailVM.Loading = true;
             seasonDetailVM.Detail = null;
             changedFlag = true;
+            player.FullScreen(false);
+            player.MiniWidnows(false);
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -223,7 +235,7 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, -40, 0, 0);
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
@@ -484,6 +496,12 @@ namespace BiliLite.Pages
 
             DownloadDialog downloadDialog = new DownloadDialog(downloadItem);
             await downloadDialog.ShowAsync();
+        }
+
+        private async void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            if (seasonDetailVM.Loading) return;
+            await InitSeasonDetail();
         }
     }
 }

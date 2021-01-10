@@ -339,8 +339,17 @@
                         <TextBlock x:Name="txtInfo" TextWrapping="Wrap" MaxWidth="400" IsTextSelectionEnabled="True"></TextBlock>
                     </Flyout>
                 </Grid.ContextFlyout>
-                <Grid Background="Black">
+                <Grid Background="Black" 
+                      PointerMoved="Grid_PointerMoved"   
+                   PointerEntered="Grid_PointerEntered" 
+                   PointerExited="Grid_PointerExited"
+                      ManipulationMode="TranslateY,TranslateRailsY"
+                   ManipulationCompleted="Grid_ManipulationCompleted"
+                   ManipulationDelta="Grid_ManipulationDelta"
+                   ManipulationStarted="Grid_ManipulationStarted">
                     <MediaPlayerElement x:Name="player" Tapped="Grid_Tapped"></MediaPlayerElement>
+                    <!--亮度-->
+                    <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
                     <!--弹幕-->
                     <Grid Tapped="Grid_Tapped">
                         <danmaku:Danmaku x:Name="DanmuControl"/>
@@ -467,6 +476,9 @@
                                         </HyperlinkButton>
                                         <HyperlinkButton x:Name="BottomBtnRefresh" Click="BottomBtnRefresh_Click" Foreground="White" Padding="8" Width="48" Height="48">
                                             <fa:FontAwesome Icon="Solid_SyncAlt"  FontSize="20"></fa:FontAwesome>
+                                            <HyperlinkButton.KeyboardAccelerators>
+                                                <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
+                                            </HyperlinkButton.KeyboardAccelerators>
                                         </HyperlinkButton>
                                         <TextBlock x:Name="BottomTextPostion" VerticalAlignment="Center" Foreground="White" Margin="8 0" FontSize="18" Text="{x:Bind Path=liveRoomVM.LiveTime,Mode=OneWay}"></TextBlock>
 
@@ -482,6 +494,8 @@
                                             <Button.Flyout>
                                                 <Flyout>
                                                     <StackPanel>
+                                                        <TextBlock Margin="0 4 0 0">弹幕顶部距离 <Run Text="{x:Bind Path=DanmuControl.Margin.Top,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                                        <Slider  x:Name="DanmuTopMargin" Value="0" Minimum="0" StepFrequency="4"></Slider>
                                                         <TextBlock Margin="0 4 0 0">弹幕缩放 <Run Text="{x:Bind Path=DanmuControl.sizeZoom,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                                         <Slider x:Name="DanmuSettingFontZoom" Value="{x:Bind Path=DanmuControl.sizeZoom,Mode=TwoWay}" Minimum="0.1" Maximum="2" StepFrequency="0.05"></Slider>
                                                         <TextBlock Margin="0 4 0 0">弹幕速度 <Run Text="{x:Bind Path=DanmuControl.speed,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
@@ -576,6 +590,12 @@
                                 <HyperlinkButton  Click="BottomBtnPlay_Click" Visibility="{Binding ElementName=BottomBtnPlay,Path=Visibility,Mode=OneWay}" Foreground="White" Padding="8" Width="48" Height="48">
                                     <fa:FontAwesome Icon="Solid_Play"  FontSize="20"></fa:FontAwesome>
                                 </HyperlinkButton>
+                                <Button Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
+                                </Button>
+                                <Button  Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
+                                </Button>
                                 <HyperlinkButton x:Name="BottomBtnExitMiniWindows"  VerticalAlignment="Bottom" Click="BottomBtnExitMiniWindows_Click"  ToolTipService.ToolTip="退出小窗置顶" Foreground="White" Padding="8" Width="48" Height="48">
                                     <fa:FontAwesome Icon="Regular_WindowMaximize"  FontSize="20"></fa:FontAwesome>
                                 </HyperlinkButton>
@@ -628,7 +648,9 @@
                     <Grid  HorizontalAlignment="Right" Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
+                           
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Margin="4" VerticalAlignment="Center" Visibility="{x:Bind Path=liveRoomVM.Logined,Mode=OneWay}">
                             <StackPanel Orientation="Horizontal">
@@ -641,8 +663,22 @@
                             </StackPanel>
 
                         </StackPanel>
-                        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" >
-                            <ItemsControl ItemsSource="{x:Bind Path=liveRoomVM.Gifts,Mode=OneWay}">
+                        <Button Grid.Column="2" Background="Transparent" Margin="4" Command="{x:Bind Path=liveRoomVM.ShowBagCommand}">
+                            <Grid>
+                                <StackPanel>
+                                    <Grid Width="32" Height="32">
+                                        <fa:FontAwesome Foreground="OrangeRed" Icon="Solid_Gift"></fa:FontAwesome>
+                                    </Grid>
+
+                                    <TextBlock Visibility="{x:Bind Path=liveRoomVM.ShowBag,Mode=OneWay,Converter={StaticResource display}}" TextAlignment="Center" FontSize="12" Margin="0 4 0 0" Text="我的礼物"></TextBlock>
+                                    <TextBlock Visibility="{x:Bind Path=liveRoomVM.ShowBag,Mode=OneWay}" TextAlignment="Center" FontSize="12" Margin="0 4 0 0" Text="礼物列表"></TextBlock>
+                                </StackPanel>
+
+                            </Grid>
+                        </Button>
+
+                        <ScrollViewer Grid.Column="1" Visibility="{x:Bind Path=liveRoomVM.ShowBag,Mode=OneWay,Converter={StaticResource display}}" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" >
+                            <ItemsControl  ItemsSource="{x:Bind Path=liveRoomVM.Gifts,Mode=OneWay}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
@@ -690,7 +726,57 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </ScrollViewer>
+                        <ScrollViewer Grid.Column="1" Visibility="{x:Bind Path=liveRoomVM.ShowBag,Mode=OneWay}" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" >
+                            <ItemsControl  ItemsSource="{x:Bind Path=liveRoomVM.BagGifts,Mode=OneWay}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="model:LiveGiftItem">
+                                        <Button Background="Transparent"  Margin="4">
+                                            <Grid>
+                                                <StackPanel>
+                                                    <Image Width="32" Height="32" Source="{x:Bind Path=img_basic,Converter={StaticResource imageConvert2},ConverterParameter='48h.png'}"></Image>
 
+                                                    <TextBlock TextAlignment="Center" FontSize="12" Margin="0 4 0 0" Text="{x:Bind Path=name}"></TextBlock>
+                                                </StackPanel>
+
+                                            </Grid>
+                                            <Button.Flyout>
+                                                <Flyout >
+                                                    <StackPanel>
+                                                        <StackPanel Orientation="Horizontal" >
+                                                            <Image Source="{x:Bind gif}" Width="56" Height="56"></Image>
+                                                            <StackPanel Margin="8 0 0 0" VerticalAlignment="Center">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{x:Bind name}" MaxWidth="200"></TextBlock>
+                                                                   
+                                                                    <TextBlock Margin="4 0 0 0"  Foreground="Gray">
+                                                                        拥有数量:
+                                                                        <Run Text="{x:Bind max_send_limit}"/>
+                                                                    </TextBlock>
+                                                                </StackPanel>
+
+                                                                <TextBlock Text="{x:Bind desc}" FontSize="12" Margin="0 4 0 0" MaxWidth="200" TextWrapping="Wrap" Foreground="Gray"></TextBlock>
+                                                                <TextBlock Text="{x:Bind rights}" FontSize="12" Margin="0 4 0 0" MaxWidth="200" TextWrapping="Wrap" Foreground="Gray"></TextBlock>
+                                                            </StackPanel>
+
+                                                        </StackPanel>
+                                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0 8 0 0">
+                                                            <muxc:NumberBox   Value="{x:Bind Path=num,Mode=TwoWay}" Maximum="{x:Bind Path=max_send_limit}"  SpinButtonPlacementMode="Inline" Minimum="1" SmallChange="1" />
+                                                            <Button  Click="btnSendBagGift_Click" VerticalAlignment="Center" Margin="8 4 0 0">赠送</Button>
+                                                        </StackPanel>
+                                                    </StackPanel>
+
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
 
                     </Grid>
                 </Grid>

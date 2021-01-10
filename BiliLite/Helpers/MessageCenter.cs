@@ -28,6 +28,7 @@ namespace BiliLite.Helpers
     /// </summary>
     public static class MessageCenter
     {
+        public static event EventHandler<bool> MiniWindowEvent;
         public static event EventHandler<NavigationInfo> OpenNewWindowEvent;
         public static event EventHandler<string> ChangeTitleEvent;
         public static event EventHandler<object> LoginedEvent;
@@ -36,6 +37,10 @@ namespace BiliLite.Helpers
         public static void OpenNewWindow(object sender, NavigationInfo navigationInfo)
         {
             OpenNewWindowEvent?.Invoke(sender, navigationInfo);
+        }
+        public static void SetMiniWindow (bool mini)
+        {
+            MiniWindowEvent?.Invoke(null, mini);
         }
         public static void ChangeTitle(string title)
         {
@@ -496,6 +501,11 @@ namespace BiliLite.Helpers
                 Window.Current.Activate();
                 newViewId = ApplicationView.GetForCurrentView().Id;
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(800, 800));
+                ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
+                {
+                    frame.Navigate(typeof(BlankPage));
+                    CoreWindow.GetForCurrentThread().Close();
+                };
             });
             bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
 

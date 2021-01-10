@@ -55,11 +55,13 @@ namespace BiliLite.Helpers
                         };
                     }
                     response.EnsureSuccessStatusCode();
+                    var buffer = await response.Content.ReadAsBufferAsync();
+                    var byteArray = buffer.ToArray();
                     HttpResults httpResults = new HttpResults()
                     {
                         code = (int)response.StatusCode,
                         status = response.StatusCode == HttpStatusCode.Ok,
-                        results = await response.Content.ReadAsStringAsync(),
+                        results = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length),
                         message = StatusCodeToMessage((int)response.StatusCode)
                     };
                     return httpResults;
@@ -230,12 +232,14 @@ namespace BiliLite.Helpers
                             message = StatusCodeToMessage((int)response.StatusCode)
                         };
                     }
-                    string result = await response.Content.ReadAsStringAsync();
+                    var buffer = await response.Content.ReadAsBufferAsync();
+                    var byteArray = buffer.ToArray();
+                 
                     HttpResults httpResults = new HttpResults()
                     {
                         code = (int)response.StatusCode,
                         status = response.StatusCode == HttpStatusCode.Ok,
-                        results = result,
+                        results = Encoding.UTF8.GetString(byteArray),
                         message = StatusCodeToMessage((int)response.StatusCode)
                     };
                     return httpResults;

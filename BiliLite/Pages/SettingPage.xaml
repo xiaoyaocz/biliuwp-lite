@@ -154,6 +154,15 @@
                                 <TextBlock  Margin="0 8"  FontSize="16">视频详情显示封面</TextBlock>
                                 <ToggleSwitch x:Name="swVideoDetailShowCover" ></ToggleSwitch>
                             </StackPanel>
+                            <StackPanel Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8" FontSize="16">详情页右侧默认选项卡</TextBlock>
+                                <ComboBox x:Name="cbDetailDisplay" MinWidth="200">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem>详情</ComboBoxItem>
+                                        <ComboBoxItem>评论</ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
+                            </StackPanel>
                             <StackPanel  Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8"  FontSize="16">新窗口打开图片预览</TextBlock>
                                 <ToggleSwitch x:Name="swPreviewImageOpenNewWindow" ></ToggleSwitch>
@@ -208,13 +217,27 @@
                             </Paragraph>
                         </RichTextBlock>
                         <ToggleSwitch x:Name="swHardwareDecode"></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">视频默认倍速</TextBlock>
+                        <ComboBox x:Name="cbVideoSpeed" SelectedIndex="0" MinWidth="200">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="2.0x" ></ComboBoxItem>
+                                <ComboBoxItem Content="1.5x" ></ComboBoxItem>
+                                <ComboBoxItem Content="1.25x" ></ComboBoxItem>
+                                <ComboBoxItem Content="1.0x"></ComboBoxItem>
+                                <ComboBoxItem Content="0.75x" ></ComboBoxItem>
+                                <ComboBoxItem Content="0.5x" ></ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">视频自动播放</TextBlock>
                         <ToggleSwitch  x:Name="swAutoPlay"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">使用外站视频替换无法播放的视频</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ToolTipService.ToolTip="打开后支持观看部分大陆无版权番剧"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动跳转至上次观看进度</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingAutoToPosition" ></ToggleSwitch>
-                        
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">进入播放自动铺满窗口</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerSettingAutoFullWindows" ></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">双击播放器全屏(默认双击暂停)</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerSettingDoubleClickFullScreen" ></ToggleSwitch>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -226,6 +249,9 @@
                     <StackPanel>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">默认弹幕状态</TextBlock>
                         <ToggleSwitch x:Name="DanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">弹幕顶部距离</TextBlock>
+                        <controls:NumberBox x:Name="numDanmakuTopMargin" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="4" ></controls:NumberBox>
+
                         <Button x:Name="DanmuSettingSyncWords" Click="DanmuSettingSyncWords_Click" Margin="0 16 0 0">同步弹幕屏蔽</Button>
                         <TextBlock  Margin="0 8 0 8" FontSize="16">关键词屏蔽</TextBlock>
                         <StackPanel Orientation="Horizontal">

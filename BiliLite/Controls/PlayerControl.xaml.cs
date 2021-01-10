@@ -215,7 +215,7 @@ namespace BiliLite.Controls
             runing = true;
             if (show)
             {
-                
+                showControlsFlag = 0;
                 control.Visibility = Visibility.Visible;
                 await control.FadeInAsync(400);
             }
@@ -514,6 +514,14 @@ namespace BiliLite.Controls
                 if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.SPEED, DanmuSettingSpeed.Value);
             });
+            //弹幕顶部距离
+            DanmuControl.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.TOP_MARGIN, 0), 0,0) ;
+            DanmuTopMargin.Value = DanmuControl.Margin.Top;
+            DanmuTopMargin.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.TOP_MARGIN, DanmuTopMargin.Value);
+                DanmuControl.Margin = new Thickness(0, DanmuTopMargin.Value, 0, 0);
+            });
             //弹幕透明度
             DanmuControl.Opacity = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.OPACITY, 1.0);
             DanmuSettingOpacity.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
@@ -594,6 +602,14 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<int>(SettingHelper.Player.RATIO, PlayerSettingRatio.SelectedIndex);
                 Player.SetRatioMode(PlayerSettingRatio.SelectedIndex);
             });
+            // 播放倍数
+            BottomCBSpeed.SelectedIndex = SettingHelper.Player.VideoSpeed.IndexOf(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+            Player.SetRate(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+            PlayerSettingRatio.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            {
+                Player.SetRate(SettingHelper.Player.VideoSpeed[BottomCBSpeed.SelectedIndex]);
+            });
+
             _autoPlay = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_PLAY, false);
         }
         private void LoadSutitleSetting()
@@ -658,7 +674,7 @@ namespace BiliLite.Controls
         {
             if (showControlsFlag != -1)
             {
-                if (showControlsFlag >= 3)
+                if (showControlsFlag >= 5)
                 {
                     var elent = FocusManager.GetFocusedElement();
                     if (!(elent is TextBox) && !(elent is AutoSuggestBox))
@@ -679,10 +695,11 @@ namespace BiliLite.Controls
             {
                 return;
             }
-            if (Player.PlayState != PlayState.Playing)
+            if (Player.PlayState != PlayState.Playing|| GridBuffering.Visibility== Visibility.Visible)
             {
                 return;
             }
+            
             if (DanmuControl.Visibility == Visibility.Collapsed)
             {
                 return;
@@ -725,6 +742,7 @@ namespace BiliLite.Controls
                                 DanmuControl.AddDanmu(item, false);
                             });
                         }
+                        data = null;
                     }
                 }
                 catch (Exception)
@@ -1006,7 +1024,7 @@ namespace BiliLite.Controls
                 BottomCBQuality.SelectedItem = info.data.current;
                 //SettingHelper.SetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, info.data.current.quality);
                 BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
-                ChangeQuality(info.data.current, _autoPlay);
+                ChangeQuality(info.data.current);
             }
             else
             {
@@ -1121,7 +1139,7 @@ namespace BiliLite.Controls
         }
 
         QualityWithPlayUrlInfo current_quality_info = null;
-        private async Task ChangeQuality(QualityWithPlayUrlInfo quality, bool autoplay)
+        private async Task ChangeQuality(QualityWithPlayUrlInfo quality)
         {
             VideoLoading.Visibility = Visibility.Visible;
             if (quality == null)
@@ -1186,10 +1204,7 @@ namespace BiliLite.Controls
                 //var text = $"AID:{CurrentPlayItem.avid}\r\nCID:{CurrentPlayItem.cid}\r\nSeasonID:{CurrentPlayItem.season_id}\r\n";
                 //txtInfo.Text = Player.MediaInfo;
                 VideoLoading.Visibility = Visibility.Collapsed;
-                if (autoplay)
-                {
-                    Player.Play();
-                }
+               
             }
             else
             {
@@ -1349,60 +1364,63 @@ namespace BiliLite.Controls
             DanmuControl.Visibility = Visibility.Collapsed;
             SettingHelper.SetValue<Visibility>(SettingHelper.VideoDanmaku.SHOW, DanmuControl.Visibility);
         }
+        #region 播放器手势
         int showControlsFlag = 0;
         private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            ShowControl(true);
-            //FadeIn.Begin();
-            //control.Visibility = Visibility.Visible;
+            //ShowControl(true);
+            ////FadeIn.Begin();
+            ////control.Visibility = Visibility.Visible;
             pointer_in_player = true;
-            showControlsFlag = 0;
+            //showControlsFlag = 0;
         }
       
         private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            showControlsFlag = 3;
+            //showControlsFlag = 3;
             pointer_in_player = false;
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
         }
 
         private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            showControlsFlag = 0;
-            ShowControl(true);
-            //control.Visibility = Visibility.Visible;
+            //showControlsFlag = 0;
+            //ShowControl(true);
+            ////control.Visibility = Visibility.Visible;
             if (Window.Current.CoreWindow.PointerCursor == null)
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             }
-            
+
         }
         bool tapFlag;
         private async void Grid_Tapped(object sender, TappedRoutedEventArgs e)
         {
             tapFlag = true;
             await Task.Delay(200);
-            if (tapFlag)
-            {
-                if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse&& !Player.Opening)
-                {
-                    if (Player.PlayState == PlayState.Pause || Player.PlayState == PlayState.End)
-                    {
-                        Player.Play();
-                    }
-                    else if (Player.PlayState == PlayState.Playing)
-                    {
-                        Player.Pause();
-                    }
-                }
+            //if (control.Visibility == Visibility.Visible)
+            //{
+            //    if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Mouse&& !Player.Opening)
+            //    {
+            //        if (Player.PlayState == PlayState.Pause || Player.PlayState == PlayState.End)
+            //        {
+            //            Player.Play();
+            //        }
+            //        else if (Player.PlayState == PlayState.Playing)
+            //        {
+            //            Player.Pause();
+            //        }
+            //    }
 
-            }
-
+            //}
+            if (!tapFlag) return;
+            ShowControl(control.Visibility == Visibility.Collapsed);
         }
         private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
             tapFlag = false;
-            if (e.PointerDeviceType == Windows.Devices.Input.PointerDeviceType.Touch)
+            var fullScreen = SettingHelper.GetValue<bool>(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, false);
+            if (!fullScreen)
             {
                 if (Player.PlayState == PlayState.Pause || Player.PlayState == PlayState.End)
                 {
@@ -1418,7 +1436,142 @@ namespace BiliLite.Controls
                 IsFullScreen = !IsFullScreen;
             }
         }
+        double ssValue = 0;
+        bool ManipulatingBrightness = false;
+        private void Grid_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            e.Handled = true;
+            //progress.Visibility = Visibility.Visible;
+            if (e.Delta.Translation.Y == 0)
+            {
+                //if (MTC.Video360)
+                //{
+                //    mediaPlayer.PlaybackSession.SphericalVideoProjection.ViewOrientation *= Quaternion.CreateFromYawPitchRoll(e.Delta.Translation.X > 0 ? -.01f : .01f, 0, 0);
+                //}
+                //else
+                //{
+                    HandleSlideProgressDelta(e.Delta.Translation.X);
+                //}
 
+            }
+            else
+            {
+                //if (MTC.Video360)
+                //{
+                //    mediaPlayer.PlaybackSession.SphericalVideoProjection.ViewOrientation *= Quaternion.CreateFromYawPitchRoll(0, 0, e.Delta.Translation.Y > 0 ? -.01f : .01f);
+                //}
+                //else
+                //{
+                    if (ManipulatingBrightness)
+                        HandleSlideBrightnessDelta(e.Delta.Translation.Y);
+                    else
+                        HandleSlideVolumeDelta(e.Delta.Translation.Y);
+                //}
+            }
+        }
+        private void HandleSlideProgressDelta(double delta)
+        {
+            if (Player.PlayState!=  PlayState.Playing&& Player.PlayState != PlayState.Pause)
+                return;
+
+            if (delta > 0)
+            {
+                double dd = delta / this.ActualWidth;
+                double d = dd * 90;
+                ssValue += d;
+                //slider.Value += d;
+            }
+            else
+            {
+                double dd = Math.Abs(delta) / this.ActualWidth;
+                double d = dd * 90;
+                ssValue -= d;
+                //slider.Value -= d;
+            }
+            var pos = Player.Position;
+            pos += ssValue;
+
+            if (pos < 0)
+                pos = 0;
+            else if (pos > Player.Duration)
+                pos = Player.Duration;
+            //txt_Post.Text = ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00") + "/" + mediaElement.MediaPlayer.PlaybackSession.NaturalDuration.TimeSpan.Hours.ToString("00") + ":" + mediaElement.MediaPlayer.PlaybackSession.NaturalDuration.TimeSpan.Minutes.ToString("00") + ":" + mediaElement.MediaPlayer.PlaybackSession.NaturalDuration.TimeSpan.Seconds.ToString("00");
+
+            TxtToolTip.Text =TimeSpan.FromSeconds(pos).ToString(@"hh\:mm\:ss");
+            //Utils.ShowMessageToast(ts.Hours.ToString("00") + ":" + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00"), 3000);
+        }
+
+        private void HandleSlideVolumeDelta(double delta)
+        {
+            if (delta > 0)
+            {
+                double dd = delta / (this.ActualHeight * 0.8);
+
+                //slider_V.Value -= d;
+                var volume = Player.Volume - dd;
+                Player.Volume= volume;
+
+            }
+            else
+            {
+                double dd = Math.Abs(delta) / (this.ActualHeight * 0.8);
+                var volume = Player.Volume + dd;
+                Player.Volume= volume;
+                //slider_V.Value += d;
+            }
+            TxtToolTip.Text = "音量:" + Player.Volume.ToString("P");
+            //Utils.ShowMessageToast("音量:" +  mediaElement.MediaPlayer.Volume.ToString("P"), 3000);
+        }
+        private void HandleSlideBrightnessDelta(double delta)
+        {
+            double dd = Math.Abs(delta) / (this.ActualHeight * 0.8);
+            if (delta > 0)
+            {
+                Brightness = Math.Min(Brightness + dd, 1);
+            }
+            else
+            {
+                Brightness = Math.Max(Brightness - dd, 0);
+            }
+            TxtToolTip.Text = "亮度:" + Math.Abs(Brightness - 1).ToString("P");
+        }
+        private void Grid_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            ssValue = 0;
+            TxtToolTip.Text = "";
+            ToolTip.Visibility = Visibility.Visible;
+
+            if (e.Position.X < this.ActualWidth / 2)
+                ManipulatingBrightness = true;
+            else
+                ManipulatingBrightness = false;
+            
+        }
+
+        double _brightness;
+        double Brightness
+        {
+            get => _brightness;
+            set
+            {
+                _brightness = value;
+                BrightnessShield.Opacity = value;
+                //}
+            }
+        }
+
+        private void Grid_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            e.Handled = true;
+
+            if (ssValue != 0)
+            {
+                Player.Position = Player.Position + ssValue;
+            }
+            ToolTip.Visibility = Visibility.Collapsed;
+        }
+#endregion 
         private void BottomBtnList_Click(object sender, RoutedEventArgs e)
         {
             NodeList.Visibility = Visibility.Collapsed;
@@ -1461,7 +1614,8 @@ namespace BiliLite.Controls
             _postion = Player.Position;
             var data = BottomCBQuality.SelectedItem as QualityWithPlayUrlInfo;
             SettingHelper.SetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, data.quality);
-            await ChangeQuality(data, Player.PlayState == PlayState.Playing);
+            _autoPlay = Player.PlayState == PlayState.Playing;
+            await ChangeQuality(data);
 
         }
 
@@ -1489,10 +1643,6 @@ namespace BiliLite.Controls
         }
     
 
-        private void BottomCBSpeed_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Player.SetRate(Convert.ToDouble((BottomCBSpeed.SelectedItem as ComboBoxItem).Content.ToString().Replace("x", "")));
-        }
 
         private void BottomBtnNext_Click(object sender, RoutedEventArgs e)
         {
@@ -1718,6 +1868,10 @@ namespace BiliLite.Controls
             {
                 Player.SetPosition(_postion);
             }
+            if (_autoPlay)
+            {
+                Player.Play();
+            }
         }
 
         private async void BottomBtnSendDanmakuWide_Click(object sender, RoutedEventArgs e)
@@ -1854,7 +2008,7 @@ namespace BiliLite.Controls
             MiniWidnows(true);
         }
        
-        private async void MiniWidnows(bool mini)
+        public async void MiniWidnows(bool mini)
         {
             miniWin = mini;
             ApplicationView view = ApplicationView.GetForCurrentView();
@@ -1889,6 +2043,7 @@ namespace BiliLite.Controls
                 SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
             }
             BtnFoucs.Focus(FocusState.Programmatic);
+            MessageCenter.SetMiniWindow(mini);
         }
 
        

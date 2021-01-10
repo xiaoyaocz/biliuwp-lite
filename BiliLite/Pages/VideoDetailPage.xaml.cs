@@ -72,7 +72,9 @@ namespace BiliLite.Pages
 
         private void VideoDetailPage_ClosedPage(object sender, EventArgs e)
         {
-            player?.Dispose();
+            player.FullScreen(false);
+            player.MiniWidnows(false);
+             player?.Dispose();
         }
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
@@ -83,12 +85,15 @@ namespace BiliLite.Pages
         }
         VideoPlaylist playlist;
         bool flag = false;
+        string _id = "";
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             if (e.NavigationMode == NavigationMode.New)
             {
+                player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is VideoPlaylist)
                 {
                     playlist = e.Parameter as VideoPlaylist;
@@ -99,7 +104,6 @@ namespace BiliLite.Pages
                  
                     pivot.Items.Insert(0, element);
                     pivot.SelectedIndex = 0;
-
                     await InitializeVideo(playlist.Playlist[playlist.Index].ID);
                 }
                 else
@@ -107,12 +111,13 @@ namespace BiliLite.Pages
                     var id = e.Parameter.ToString();
                     await InitializeVideo(id);
                 }
-
+               
             }
 
         }
         private async Task InitializeVideo(string id)
         {
+            _id = id;
             if (flag) return;
             flag = true;
             if (int.TryParse(id, out var aid))
@@ -220,6 +225,8 @@ namespace BiliLite.Pages
             videoDetailVM.Loading = true;
             videoDetailVM.VideoInfo = null;
             changedFlag = true;
+            player.FullScreen(false);
+            player.MiniWidnows(false);
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -343,7 +350,7 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, -40, 0, 0);
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
@@ -526,6 +533,12 @@ namespace BiliLite.Pages
             
             DownloadDialog downloadDialog = new DownloadDialog(downloadItem);
             await downloadDialog.ShowAsync();
+        }
+
+        private async void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            if (videoDetailVM.Loading) return;
+            await InitializeVideo(_id);
         }
     }
 }

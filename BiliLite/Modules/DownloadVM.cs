@@ -702,7 +702,7 @@ namespace BiliLite.Modules
                 catch (Exception)
                 {
                 }
-              
+
             }
         }
         public async void UpdateSetting()
