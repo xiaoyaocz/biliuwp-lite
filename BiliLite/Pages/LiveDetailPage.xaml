@@ -347,13 +347,14 @@
                    ManipulationCompleted="Grid_ManipulationCompleted"
                    ManipulationDelta="Grid_ManipulationDelta"
                    ManipulationStarted="Grid_ManipulationStarted">
-                    <MediaPlayerElement x:Name="player" Tapped="Grid_Tapped"></MediaPlayerElement>
-                    <!--亮度-->
-                    <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
+                    <MediaPlayerElement x:Name="player" ></MediaPlayerElement>
+                   
                     <!--弹幕-->
                     <Grid Tapped="Grid_Tapped">
                         <danmaku:Danmaku x:Name="DanmuControl"/>
                     </Grid>
+                    <!--亮度-->
+                    <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
                     <TextBlock Visibility="{x:Bind Path=liveRoomVM.Liveing,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Foreground="Gray">主播正在换女装</TextBlock>
                     <StackPanel x:Name="PlayerLoading" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <ProgressRing IsActive="True" Width="56" Height="56"></ProgressRing>

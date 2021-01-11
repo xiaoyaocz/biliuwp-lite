@@ -532,8 +532,7 @@
                 </Grid.ContextFlyout>
                 <!--播放器-->
                 <local:Player x:Name="Player"  PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
-                <!--亮度-->
-                <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
+               
                 <!--字幕-->
                 <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24" Background="#7F000000">
                     <TextBlock x:Name="TxtSubtitle" TextWrapping="Wrap" FontSize="{Binding ElementName=SubtitleSettingSize,Path=Value,Mode=OneWay}" Foreground="White"></TextBlock>
@@ -542,6 +541,8 @@
                 <Grid >
                     <danmaku:Danmaku x:Name="DanmuControl"/>
                 </Grid>
+                <!--亮度-->
+                <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
                 <Border x:Name="ToolTip" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="8" Padding="16" Background="#CCFFFFFF">
                     <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="20" Text=""></TextBlock>
                 </Border>
