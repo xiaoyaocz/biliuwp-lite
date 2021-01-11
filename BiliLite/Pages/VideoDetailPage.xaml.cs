@@ -79,9 +79,17 @@ namespace BiliLite.Pages
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
             DataRequest request = args.Request;
             request.Data.Properties.Title = videoDetailVM.VideoInfo.title;
-            request.Data.SetWebLink(new Uri(videoDetailVM.VideoInfo.short_link));
+            if (copyTitle)
+            {
+                request.Data.SetText($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
+            }
+            else
+            {
+                request.Data.SetWebLink(new Uri(videoDetailVM.VideoInfo.short_link));
+            }
         }
         VideoPlaylist playlist;
         bool flag = false;
@@ -341,7 +349,17 @@ namespace BiliLite.Pages
 
         private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            DataTransferManager.ShowShareUI();
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
+            if (copyTitle)
+            {
+                Utils.SetClipboard($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
+            }
+            else
+            {
+                Utils.SetClipboard(videoDetailVM.VideoInfo.short_link);
+            }
+            Utils.ShowMessageToast("已复制内容到剪切板");
+            //DataTransferManager.ShowShareUI();
         }
 
 

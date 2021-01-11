@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
@@ -51,6 +52,8 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Disabled;
             dispRequest = new DisplayRequest();
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             _config = new FFmpegInteropConfig();
             _config.FFmpegOptions.Add("rtsp_transport", "tcp");
             _config.FFmpegOptions.Add("user_agent", "Mozilla/5.0 BiliDroid/1.12.0 (bbcallen@gmail.com)");
@@ -79,6 +82,8 @@ namespace BiliLite.Pages
             this.Unloaded += LiveDetailPage_Unloaded;
             //TODO 快捷键
         }
+
+
 
         private void ControlTimer_Tick(object sender, object e)
         {
@@ -659,7 +664,7 @@ namespace BiliLite.Pages
             {
                 BottomBtnFull.Visibility = Visibility.Collapsed;
                 BottomBtnExitFull.Visibility = Visibility.Visible;
-                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE,0)==0? -40:-32, 0, 0);
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
                 //全屏
@@ -885,7 +890,7 @@ namespace BiliLite.Pages
                 BottomBtnFullWindows_Click(this, null);
                 StandardControl.Visibility = Visibility.Collapsed;
                 MiniControl.Visibility = Visibility.Visible;
-               
+
                 if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
                 {
                     //隐藏标题栏
@@ -1081,6 +1086,35 @@ namespace BiliLite.Pages
         {
             var giftInfo = (sender as Button).DataContext as LiveGiftItem;
             liveRoomVM.SendBagGift(giftInfo);
+        }
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
+            DataRequest request = args.Request;
+            request.Data.Properties.Title = liveRoomVM.LiveInfo.room_info.title;
+            if (copyTitle)
+            {
+                request.Data.SetText($"{liveRoomVM.LiveInfo.anchor_info.base_info.uname}的直播间\r\nhttps://live.bilibili.com/{liveRoomVM.RoomID}");
+            }
+            else
+            {
+                request.Data.SetWebLink(new Uri("https://live.bilibili.com/" + liveRoomVM.RoomID));
+            }
+        }
+        private void TopBtnShare_Click(object sender, RoutedEventArgs e)
+        {
+            if (liveRoomVM.LiveInfo == null) return;
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
+            if (copyTitle)
+            {
+                Utils.SetClipboard($"{liveRoomVM.LiveInfo.anchor_info.base_info.uname}的直播间\r\nhttps://live.bilibili.com/{liveRoomVM.RoomID}");
+            }
+            else
+            {
+                Utils.SetClipboard("https://live.bilibili.com/" + liveRoomVM.RoomID);
+            }
+            Utils.ShowMessageToast("已复制内容到剪切板");
+            //DataTransferManager.ShowShareUI();
         }
     }
 }

@@ -67,9 +67,17 @@ namespace BiliLite.Pages
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
             DataRequest request = args.Request;
             request.Data.Properties.Title = seasonDetailVM.Detail.title;
-            request.Data.SetWebLink(new Uri("http://b23.tv/ss" + season_id));
+            if (copyTitle)
+            {
+                request.Data.SetText($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
+            }
+            else
+            {
+                request.Data.SetWebLink(new Uri("http://b23.tv/ss" + season_id));
+            }
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -226,7 +234,17 @@ namespace BiliLite.Pages
 
         private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            DataTransferManager.ShowShareUI();
+            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
+            if (copyTitle)
+            {
+                Utils.SetClipboard($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
+            }
+            else
+            {
+                Utils.SetClipboard("http://b23.tv/ss" + season_id);
+            }
+            Utils.ShowMessageToast("已复制内容到剪切板");
+            //DataTransferManager.ShowShareUI();
         }
 
 

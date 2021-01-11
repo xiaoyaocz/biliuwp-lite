@@ -105,6 +105,10 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string BACKGROUND_IMAGE = "BackgroundImage";
             /// <summary>
+            /// 分享复制标题
+            /// </summary>
+            public const string COPY_TITLE = "CopyTitle";
+            /// <summary>
             /// 隐藏赞助按钮
             /// </summary>
             public const string HIDE_SPONSOR = "HideSponsor";

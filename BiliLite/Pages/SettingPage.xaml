@@ -186,6 +186,10 @@
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">分享时复制标题</TextBlock>
+                                <ToggleSwitch x:Name="swCopyTitle" ></ToggleSwitch>
+                            </StackPanel>
+                            <StackPanel  Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8"  FontSize="16">隐藏首页赞助按钮(重启生效)</TextBlock>
                                 <ToggleSwitch x:Name="swHideSponsor" ></ToggleSwitch>
                             </StackPanel>

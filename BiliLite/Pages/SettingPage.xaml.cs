@@ -174,7 +174,16 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, swPreviewImageOpenNewWindow.IsOn);
                 });
             });
-            //新窗口浏览图片
+            //隐藏赞助图标
+            swCopyTitle.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
+            swCopyTitle.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swCopyTitle.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.COPY_TITLE, swCopyTitle.IsOn);
+                });
+            });
+            //隐藏赞助图标
             swHideSponsor.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false);
             swHideSponsor.Loaded += new RoutedEventHandler((sender, e) =>
             {
@@ -319,7 +328,7 @@ namespace BiliLite.Pages
             DanmuSettingListUsers.ItemsSource = settingVM.ShieldUsers;
 
             //弹幕顶部距离
-            numDanmakuTopMargin.Value = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.TOP_MARGIN, 320);
+            numDanmakuTopMargin.Value = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.TOP_MARGIN, 0);
             numDanmakuTopMargin.Loaded += new RoutedEventHandler((sender, e) =>
             {
                 numDanmakuTopMargin.ValueChanged += new TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs>((obj, args) =>
