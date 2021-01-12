@@ -605,7 +605,7 @@ namespace BiliLite.Controls
             // 播放倍数
             BottomCBSpeed.SelectedIndex = SettingHelper.Player.VideoSpeed.IndexOf(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
             Player.SetRate(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
-            PlayerSettingRatio.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            BottomCBSpeed.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
                 Player.SetRate(SettingHelper.Player.VideoSpeed[BottomCBSpeed.SelectedIndex]);
             });
@@ -650,6 +650,7 @@ namespace BiliLite.Controls
         {
             //保持屏幕常亮
             dispRequest.RequestActive();
+            
             PlayInfos = playInfos;
             EpisodeList.ItemsSource = PlayInfos;
             if (PlayInfos.Count > 1)
@@ -664,7 +665,6 @@ namespace BiliLite.Controls
             {
                 ShowPlaylistButton = false;
             }
-
             EpisodeList.SelectedIndex = index;
 
            
@@ -758,7 +758,10 @@ namespace BiliLite.Controls
             {
                 return;
             }
-            
+            //清空字幕
+            subtitles = null;
+            subtitleTimer?.Stop();
+            subtitleTimer = null;
             Player.ClosePlay();
             if (index >= PlayInfos.Count)
             {

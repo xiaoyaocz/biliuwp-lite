@@ -67,17 +67,9 @@ namespace BiliLite.Pages
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
             DataRequest request = args.Request;
             request.Data.Properties.Title = seasonDetailVM.Detail.title;
-            if (copyTitle)
-            {
-                request.Data.SetText($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
-            }
-            else
-            {
-                request.Data.SetWebLink(new Uri("http://b23.tv/ss" + season_id));
-            }
+            request.Data.SetWebLink(new Uri("http://b23.tv/ss" + season_id));
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -86,7 +78,14 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                {
+                    player.IsFullScreen = true;
+                }
+                else
+                {
+                    player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                }
                 pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is object[])
                 {
@@ -231,23 +230,23 @@ namespace BiliLite.Pages
                 MessageCenter.ChangeTitle(title);
             }
         }
-
         private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
-            if (copyTitle)
-            {
-                Utils.SetClipboard($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
-            }
-            else
-            {
-                Utils.SetClipboard("http://b23.tv/ss" + season_id);
-            }
+            DataTransferManager.ShowShareUI();
+        }
+        private void btnShareCopy_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
             Utils.ShowMessageToast("已复制内容到剪切板");
-            //DataTransferManager.ShowShareUI();
         }
 
+        private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard("http://b23.tv/ss" + season_id);
+            Utils.ShowMessageToast("已复制链接到剪切板");
+        }
 
+       
 
         private void PlayerControl_FullScreenEvent(object sender, bool e)
         {

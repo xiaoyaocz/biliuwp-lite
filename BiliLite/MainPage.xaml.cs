@@ -44,7 +44,7 @@ namespace BiliLite
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
-            Window.Current.Content.PointerPressed += Content_PointerPressed;
+           // Window.Current.Content.PointerPressed += Content_PointerPressed;
         }
 
         private void MessageCenter_MiniWindowEvent(object sender, bool e)
@@ -60,11 +60,55 @@ namespace BiliLite
                 Window.Current.SetTitleBar(CustomDragRegion);
             }
         }
+        
+      
 
+
+
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.NavigationMode == NavigationMode.New && e.Parameter != null&&!string.IsNullOrEmpty(e.Parameter.ToString()))
+            {
+                var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
+                if (!result)
+                {
+                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
+                }
+            }
+//#if !DEBUG
+            await Utils.CheckVersion();
+//#endif
+        }
+        private void MessageCenter_ChangeTitleEvent(object sender, string e)
+        {
+            (tabView.SelectedItem as TabViewItem).Header = e;
+        }
+
+        private void NavigationHelper_OpenNewWindowEvent(object sender, NavigationInfo e)
+        {
+            var item = new TabViewItem()
+            {
+                Header = e.title,
+                IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = e.icon }
+            };
+            var frame = new MyFrame();
+            //注册鼠标点击事件
+            frame.PointerPressed += Content_PointerPressed;
+            frame.Navigate(e.page, e.parameters);
+            item.Content = frame;
+           
+            tabView.TabItems.Add(item);
+            tabView.SelectedItem = item;
+            item.UpdateLayout();
+        }
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+
             var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
-            if (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
+
+            if (SettingHelper.GetValue<bool>(SettingHelper.UI.MOUSE_BACK, true) && (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed))
             {
                 //如果打开了图片浏览，则关闭图片浏览
                 if (gridViewer.Visibility == Visibility.Visible)
@@ -73,7 +117,6 @@ namespace BiliLite
                     e.Handled = true;
                     return;
                 }
-
 
                 //处理多标签
                 if (tabView.SelectedItem != tabView.TabItems[0])
@@ -94,49 +137,6 @@ namespace BiliLite
 
             }
         }
-
-
-
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            if (e.NavigationMode == NavigationMode.New && e.Parameter != null&&!string.IsNullOrEmpty(e.Parameter.ToString()))
-            {
-                var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
-                if (!result)
-                {
-                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
-                }
-            }
-#if !DEBUG
-            await Utils.CheckVersion();
-#endif
-        }
-        private void MessageCenter_ChangeTitleEvent(object sender, string e)
-        {
-            (tabView.SelectedItem as TabViewItem).Header = e;
-        }
-
-        private void NavigationHelper_OpenNewWindowEvent(object sender, NavigationInfo e)
-        {
-            var item = new TabViewItem()
-            {
-                Header = e.title,
-                IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = e.icon }
-            };
-
-            var frame = new MyFrame();
-
-            frame.Navigate(e.page, e.parameters);
-            item.Content = frame;
-
-            tabView.TabItems.Add(item);
-            tabView.SelectedItem = item;
-            item.UpdateLayout();
-        }
-
-
 
         /// <summary>
         /// 处理标题栏
@@ -165,16 +165,20 @@ namespace BiliLite
                 page = typeof(BlankPage),
                 title = "新建页面"
             });
+           
         }
 
         private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            var frame = (args.Tab as TabViewItem).Content as MyFrame;
+            ClosePage(args.Tab);
+        }
+        private void ClosePage(TabViewItem tabItem)
+        {
+            var frame = tabItem.Content as MyFrame;
             frame.Close();
-            sender.TabItems.Remove(args.Tab);
+            tabView.TabItems.Remove(tabItem);
             GC.Collect();
         }
-
         private void tabView_Loaded(object sender, RoutedEventArgs e)
         {
             var frame = new MyFrame();
@@ -197,6 +201,32 @@ namespace BiliLite
                 await gridViewer.FadeOutAsync();
                 gridViewer.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void NewTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            {
+                page = typeof(BlankPage),
+                title = "新建页面"
+            });
+            args.Handled = true;
+        }
+
+        private void CloseSelectedTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            if (((TabViewItem)tabView.SelectedItem).IsClosable)
+            {
+            
+                ClosePage((TabViewItem)tabView.SelectedItem);
+            }
+            args.Handled = true;
+
+        }
+
+        private void tabView_TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
+        {
+            
         }
     }
 }

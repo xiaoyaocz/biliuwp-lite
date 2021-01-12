@@ -1089,32 +1089,25 @@ namespace BiliLite.Pages
         }
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
             DataRequest request = args.Request;
             request.Data.Properties.Title = liveRoomVM.LiveInfo.room_info.title;
-            if (copyTitle)
-            {
-                request.Data.SetText($"{liveRoomVM.LiveInfo.anchor_info.base_info.uname}的直播间\r\nhttps://live.bilibili.com/{liveRoomVM.RoomID}");
-            }
-            else
-            {
-                request.Data.SetWebLink(new Uri("https://live.bilibili.com/" + liveRoomVM.RoomID));
-            }
+            request.Data.SetWebLink(new Uri("https://live.bilibili.com/" + liveRoomVM.RoomID));
         }
-        private void TopBtnShare_Click(object sender, RoutedEventArgs e)
+        private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            if (liveRoomVM.LiveInfo == null) return;
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
-            if (copyTitle)
-            {
-                Utils.SetClipboard($"{liveRoomVM.LiveInfo.anchor_info.base_info.uname}的直播间\r\nhttps://live.bilibili.com/{liveRoomVM.RoomID}");
-            }
-            else
-            {
-                Utils.SetClipboard("https://live.bilibili.com/" + liveRoomVM.RoomID);
-            }
-            Utils.ShowMessageToast("已复制内容到剪切板");
-            //DataTransferManager.ShowShareUI();
+            DataTransferManager.ShowShareUI();
         }
+        private void btnShareCopy_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard($"{liveRoomVM.LiveInfo.room_info.title} - {liveRoomVM.LiveInfo.anchor_info.base_info.uname}的直播间\r\nhttps://live.bilibili.com/{liveRoomVM.RoomID}");
+            Utils.ShowMessageToast("已复制内容到剪切板");
+        }
+
+        private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard("https://live.bilibili.com/" + liveRoomVM.RoomID);
+            Utils.ShowMessageToast("已复制链接到剪切板");
+        }
+
     }
 }

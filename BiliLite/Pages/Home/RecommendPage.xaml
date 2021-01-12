@@ -16,19 +16,28 @@
 
     <Page.Resources>
         <covert:ColorConvert x:Key="colorConvert"></covert:ColorConvert>
+        <covert:CountDisplayConvert x:Key="countDisplayConvert"></covert:CountDisplayConvert>
         <Flyout x:Name="Menu" >
             <ListView  ItemClick="ListMenu_ItemClick" ItemsSource="{Binding Path=three_point_v2}" ScrollViewer.VerticalScrollMode="Disabled" SelectionMode="None" IsItemClickEnabled="True">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="8 4" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="modules:RecommendThreePointV2ItemModel">
-                        <StackPanel MaxWidth="320">
+                        <StackPanel MaxWidth="320" VerticalAlignment="Center">
                             <TextBlock ><Run Text="{x:Bind title}"></Run><Run Text="{x:Bind subtitle}" Foreground="Gray" FontSize="14"></Run></TextBlock>
-                            <GridView Visibility="{x:Bind Path=reasons,Converter={StaticResource display}}" ItemClick="ListDislike_ItemClick" Margin="0 4 0 0" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" IsItemClickEnabled="True"  ItemsSource="{x:Bind reasons}" SelectionMode="None">
+                            <GridView  Visibility="{x:Bind Path=reasons,Converter={StaticResource display}}" ItemClick="ListDislike_ItemClick" Margin="0 8 0 0" Padding="0" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" IsItemClickEnabled="True"  ItemsSource="{x:Bind reasons}" SelectionMode="None">
                                 <GridView.ItemContainerStyle>
                                     <Style TargetType="GridViewItem">
                                         <Setter Property="Width" Value="120"></Setter>
                                         <Setter Property="BorderBrush" Value="#cecece"></Setter>
                                         <Setter Property="Foreground" Value="{ThemeResource TextColor}"></Setter>
                                         <Setter Property="BorderThickness" Value="1"></Setter>
+                                      
                                     </Style>
                                 </GridView.ItemContainerStyle>
                                 <GridView.ItemTemplate>
@@ -175,7 +184,7 @@
                         </Style>
                     </toolkit:AdaptiveGridView.ItemContainerStyle>
                     <controls:MyAdaptiveGridView.Header>
-                        <controls:Carousel x:Name="control" Margin="12 0" ItemsSource="{x:Bind Path=recommendVM.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="2"  MaxHeight="240">
+                        <controls:Carousel x:Name="control" Visibility="{x:Bind Path=recommendVM.Banner.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="12 0" ItemsSource="{x:Bind Path=recommendVM.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="2"  MaxHeight="240">
                             <controls:Carousel.ContentTemplate>
                                 <DataTemplate x:DataType="modules:RecommendBannerItemModel">
                                     <HyperlinkButton Margin="12 0" Padding="0" Click="BannerItem_Click">

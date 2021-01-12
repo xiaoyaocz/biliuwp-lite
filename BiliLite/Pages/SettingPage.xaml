@@ -185,9 +185,10 @@
                                     </ComboBox.Items>
                                 </ComboBox>
                             </StackPanel>
-                            <StackPanel  Margin="0 0 0 8">
-                                <TextBlock  Margin="0 8"  FontSize="16">分享时复制标题</TextBlock>
-                                <ToggleSwitch x:Name="swCopyTitle" ></ToggleSwitch>
+                           
+                            <StackPanel Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键关闭页面</TextBlock>
+                                <ToggleSwitch x:Name="swMouseClosePage" ></ToggleSwitch>
                             </StackPanel>
                             <StackPanel  Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8"  FontSize="16">隐藏首页赞助按钮(重启生效)</TextBlock>
@@ -238,6 +239,8 @@
                         <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ToolTipService.ToolTip="打开后支持观看部分大陆无版权番剧"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动跳转至上次观看进度</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingAutoToPosition" ></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">进入播放自动全屏</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerSettingAutoFullScreen" ></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">进入播放自动铺满窗口</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingAutoFullWindows" ></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">双击播放器全屏(默认双击暂停)</TextBlock>

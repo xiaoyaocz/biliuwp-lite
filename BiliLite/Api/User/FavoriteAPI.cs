@@ -22,7 +22,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.GET,
                 baseUrl = "https://api.bilibili.com/medialist/gateway/base/space",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.Profile.mid}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -38,7 +38,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.GET,
                 baseUrl = "https://api.bilibili.com/medialist/gateway/base/created",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingHelper.Account.Profile.mid}&type=2&pn=1&ps=100"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingHelper.Account.UserID}&type=2&pn=1&ps=100"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -164,7 +164,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.GET,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/list",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingHelper.Account.Profile.mid}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

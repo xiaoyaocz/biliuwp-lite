@@ -51,10 +51,17 @@
                         </AppBarButton>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <AppBarButton Label="分享" x:Name="btnShare" Click="btnShare_Click">
+                        <AppBarButton Label="分享" Style="{StaticResource AppBarButtonNoChevronStyle}" x:Name="btnShare"  Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_Share"></fa:FontAwesome>
                             </AppBarButton.Icon>
+                            <AppBarButton.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
+                                    <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
+                                    <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
+                                </MenuFlyout>
+                            </AppBarButton.Flyout>
                         </AppBarButton>
                         <AppBarButton x:Name="btnDownload" Click="btnDownload_Click" Label="下载">
                             <AppBarButton.Icon>

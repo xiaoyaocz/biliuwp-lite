@@ -44,6 +44,7 @@ namespace BiliLite.WebApi.Controllers
                     new RankRegionModel(155,"时尚"),
                     new RankRegionModel(5,"娱乐"),
                     new RankRegionModel(181,"影视"),
+                    new RankRegionModel(211,"美食"),
                 }
             });
         }

@@ -185,13 +185,13 @@ namespace BiliLite.Helpers
              * bilibili://pgc/review/11592
              */
 
-            var review = Utils.RegexMatch(url.Replace("media", "md").Replace("review", "md").Replace("/", ""), @"md(\d+)");
-            if (review != "")
-            {
-                //InfoNavigateToEvent(typeof(BanInfoPage), review);
-                await new Windows.UI.Popups.MessageDialog("请求打开点评" + review).ShowAsync();
-                return true;
-            }
+            //var review = Utils.RegexMatch(url.Replace("media", "md").Replace("review", "md").Replace("/", ""), @"md(\d+)");
+            //if (review != "")
+            //{
+            //    //InfoNavigateToEvent(typeof(BanInfoPage), review);
+            //    await new Windows.UI.Popups.MessageDialog("请求打开点评" + review).ShowAsync();
+            //    return true;
+            //}
 
 
 

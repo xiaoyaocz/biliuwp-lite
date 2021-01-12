@@ -36,6 +36,7 @@ namespace BiliLite.Dialogs
             _biliapp.ValidateLoginEvent += _biliapp_ValidateLoginEvent;
             _secure.CloseCaptchaEvent += _biliapp_CloseCaptchaEvent;
             _secure.CaptchaEvent += _biliapp_CaptchaEvent;
+            GetQRAuthInfo();
         }
 
         private void _biliapp_CaptchaEvent(object sender, string e)
@@ -63,7 +64,7 @@ namespace BiliLite.Dialogs
                 if (jObject["access_token"] != null)
                 {
                     var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()));
-                    
+
                     if (m)
                     {
                         this.Hide();
@@ -96,6 +97,11 @@ namespace BiliLite.Dialogs
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
+            if (qrLogin.Visibility == Visibility.Visible)
+            {
+                btnPasswordLogin_Click(sender, null);
+                return;
+            }
             if (txt_Username.Text.Length == 0)
             {
                 txt_Username.Focus(FocusState.Pointer);
@@ -184,7 +190,7 @@ namespace BiliLite.Dialogs
             {
                 var access = Regex.Match(args.Uri.AbsoluteUri, "access_key=(.*?)&").Groups[1].Value;
                 var mid = Regex.Match(args.Uri.AbsoluteUri, "mid=(.*?)&").Groups[1].Value;
-                await account.SaveLogin(access,"",0, long.Parse(mid));
+                await account.SaveLogin(access, "", 0, long.Parse(mid));
                 this.Hide();
                 return;
             }
@@ -217,7 +223,7 @@ namespace BiliLite.Dialogs
 
         private async void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            if (args.Uri.AbsoluteUri == "https://passport.bilibili.com/ajax/miniLogin/redirect"||args.Uri.AbsoluteUri== "https://www.bilibili.com/")
+            if (args.Uri.AbsoluteUri == "https://passport.bilibili.com/ajax/miniLogin/redirect" || args.Uri.AbsoluteUri == "https://www.bilibili.com/")
             {
                 var results = await HttpHelper.GetString("https://passport.bilibili.com/login/app/third?appkey=27eb53fc9058f8c3&api=http%3A%2F%2Flink.acg.tv%2Fforum.php&sign=67ec798004373253d60114caaad89a8c");
                 var obj = JObject.Parse(results);
@@ -233,16 +239,16 @@ namespace BiliLite.Dialogs
             }
         }
 
-        private async void btnQRLogin_Click(object sender, RoutedEventArgs e)
+        private void btnQRLogin_Click(object sender, RoutedEventArgs e)
         {
             pwdLogin.Visibility = Visibility.Collapsed;
             qrLogin.Visibility = Visibility.Visible;
-            await GetQRAuthInfo();
+            GetQRAuthInfo();
         }
         bool qr_loading = false;
         QRAuthInfo authInfo;
         Timer timer;
-        private async Task GetQRAuthInfo()
+        private async void GetQRAuthInfo()
         {
             try
             {
@@ -305,13 +311,14 @@ namespace BiliLite.Dialogs
         {
             pwdLogin.Visibility = Visibility.Visible;
             qrLogin.Visibility = Visibility.Collapsed;
+            Utils.ShowMessageToast("为了您的账号安全，推荐使用扫码登录");
         }
 
-        private async void btnRefreshQR_Click(object sender, RoutedEventArgs e)
+        private void btnRefreshQR_Click(object sender, RoutedEventArgs e)
         {
             if (qr_loading)
                 return;
-            await GetQRAuthInfo();
+            GetQRAuthInfo();
         }
 
 

@@ -105,9 +105,9 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string BACKGROUND_IMAGE = "BackgroundImage";
             /// <summary>
-            /// 分享复制标题
+            /// 鼠标功能键返回、关闭页面
             /// </summary>
-            public const string COPY_TITLE = "CopyTitle";
+            public const string MOUSE_BACK = "MouseBack";
             /// <summary>
             /// 隐藏赞助按钮
             /// </summary>
@@ -386,7 +386,10 @@ namespace BiliLite.Helpers
             /// 自动铺满窗口
             /// </summary>
             public const string AUTO_FULL_WINDOW= "PlayerAutoToFullWindow";
-
+            /// <summary>
+            /// 自动铺满全屏
+            /// </summary>
+            public const string AUTO_FULL_SCREEN = "PlayerAutoToFullScreen";
             /// <summary>
             /// 双击全屏
             /// </summary>

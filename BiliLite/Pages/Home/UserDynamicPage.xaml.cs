@@ -103,8 +103,12 @@ namespace BiliLite.Pages.Home
             SetStaggered();
             if (e.NavigationMode== NavigationMode.New && dynamicVM.Items == null)
             {
-              
                 await dynamicVM.GetDynamicItems();
+                if (SettingHelper.GetValue<bool>("动态切换提示", true) && SettingHelper.GetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0) != 1)
+                {
+                    SettingHelper.SetValue("动态切换提示", false);
+                    Utils.ShowMessageToast("右下角可以切换成瀑布流显示哦~", 5);
+                }
             }
         }
 

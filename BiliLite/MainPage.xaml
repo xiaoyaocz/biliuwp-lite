@@ -13,7 +13,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <winui:TabView x:Name="tabView"  VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Loaded="tabView_Loaded" IsAddTabButtonVisible="True" TabCloseRequested="TabView_TabCloseRequested" AddTabButtonClick="TabView_AddTabButtonClick">
+        <winui:TabView x:Name="tabView" TabItemsChanged="tabView_TabItemsChanged" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Loaded="tabView_Loaded" IsAddTabButtonVisible="True" TabCloseRequested="TabView_TabCloseRequested" AddTabButtonClick="TabView_AddTabButtonClick">
+            <winui:TabView.KeyboardAccelerators>
+                <KeyboardAccelerator Key="T" Modifiers="Control" Invoked="NewTabKeyboardAccelerator_Invoked" />
+                <KeyboardAccelerator Key="W" Modifiers="Control" Invoked="CloseSelectedTabKeyboardAccelerator_Invoked" />
+            </winui:TabView.KeyboardAccelerators>
             <winui:TabView.TabItems>
                 <winui:TabViewItem IsClosable="False" Header="首页">
                     <winui:TabViewItem.IconSource>

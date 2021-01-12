@@ -384,8 +384,15 @@
                                 <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=liveRoomVM.LiveInfo.room_info.title,Mode=OneWay}"></TextBlock>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
 
-                                    <Button x:Name="TopBtnShare" Foreground="White" Click="TopBtnShare_Click" Background="Transparent" Padding="0" Width="48" Height="48">
+                                    <Button x:Name="TopBtnShare" Foreground="White" Background="Transparent" Padding="0" Width="48" Height="48">
                                         <FontIcon FontSize="28" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;" />
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
+                                                <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
+                                                <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
                                     </Button>
                                     <Button x:Name="TopBtnScreenshot" Click="TopBtnScreenshot_Click" Background="Transparent"  Margin="8 0 0 0"  Padding="0" Width="48" Height="48">
                                         <Button.KeyboardAccelerators>

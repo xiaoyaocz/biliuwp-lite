@@ -285,7 +285,7 @@ namespace BiliLite.Modules
                 {
                     return null;
                 }
-                var space_api = accountApi.Space(SettingHelper.Account.Profile.mid.ToString());
+                var space_api = accountApi.Space(SettingHelper.Account.UserID.ToString());
                 var space_result = await space_api.Request();
                 if (!space_result.status)
                 {

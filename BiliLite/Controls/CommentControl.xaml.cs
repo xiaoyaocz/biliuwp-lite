@@ -848,7 +848,7 @@ namespace BiliLite.Controls
         {
             get
             {
-                if (SettingHelper.Account.Logined && mid.ToString() == SettingHelper.Account.Profile.mid.ToString())
+                if (SettingHelper.Account.Logined && mid.ToString() == SettingHelper.Account.UserID.ToString())
                 {
                     return Visibility.Visible;
                 }

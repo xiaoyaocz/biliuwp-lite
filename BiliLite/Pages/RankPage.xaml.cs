@@ -40,7 +40,7 @@ namespace BiliLite.Pages
                 {
                     rid = e.Parameter.ToInt32();
                 }
-                await rankVM.LoadRankRegion(rid);
+                 rankVM.LoadRankRegion(rid);
             }
         }
 
@@ -53,7 +53,7 @@ namespace BiliLite.Pages
             var data = pivot.SelectedItem as RankRegionModel;
             if (data.Items==null||data.Items.Count==0)
             {
-                await rankVM.LoadRankDetail(data,cbType.SelectedIndex+1);
+                await rankVM.LoadRankDetail(data);
             }
         }
 

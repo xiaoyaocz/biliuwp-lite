@@ -19,6 +19,8 @@ using Windows.UI;
 using System.IO;
 using BiliLite.Dialogs;
 using Windows.UI.Popups;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using Windows.System;
 
 namespace BiliLite.Helpers
 {
@@ -258,31 +260,35 @@ namespace BiliLite.Helpers
         {
             try
             {
-                var url = $"https://pic.nsapps.cn/biliuwp/bilidev.json?ts{Utils.GetTimestampS()}";
+                var url = $"https://pic.nsapps.cn/biliuwp/biliv4.json?ts{Utils.GetTimestampS()}";
                 var result = await HttpHelper.GetString(url);
-                var ver = JsonConvert.DeserializeObject<NewDevVersion>(result);
-                var v= $"{ SystemInformation.ApplicationVersion.Major }.{ SystemInformation.ApplicationVersion.Minor}.{ SystemInformation.ApplicationVersion.Build}";
-                if (v!=ver.version)
+                var ver = JsonConvert.DeserializeObject<NewVersion>(result);
+                var num = $"{ SystemInformation.ApplicationVersion.Major }{ SystemInformation.ApplicationVersion.Minor.ToString("00")}{ SystemInformation.ApplicationVersion.Build.ToString("00")}";
+                var v= int.Parse(num);
+                if (ver.version_num>v)
                 {
-                    var cd = new ContentDialog();
-                    StackPanel stackPanel = new StackPanel();
-                    cd.Title = "发现新版本";
-                    TextBlock content = new TextBlock()
-                    {
-                        Text = ver.version_desc,
-                        TextWrapping = Windows.UI.Xaml.TextWrapping.Wrap,
-                        IsTextSelectionEnabled = true
-                    };
-                    stackPanel.Children.Add(content);
-                    cd.Content = stackPanel;
-                    cd.PrimaryButtonText = "立即更新";
-                    cd.SecondaryButtonText = "忽略";
+                    var dialog = new ContentDialog();
 
-                    cd.PrimaryButtonClick += new Windows.Foundation.TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>(async (sender, e) =>
+                    dialog.Title = $"发现新版本 Ver {ver.version}";
+                    MarkdownTextBlock markdownText = new MarkdownTextBlock() {
+                        Text= ver.version_desc,
+                        TextWrapping = Windows.UI.Xaml.TextWrapping.Wrap,
+                        IsTextSelectionEnabled = true,
+                        Background=new SolidColorBrush(Colors.Transparent)
+                    };
+                    markdownText.LinkClicked += new EventHandler<LinkClickedEventArgs>(async (sender, args) => 
+                    {
+                        await Launcher.LaunchUriAsync(new Uri(args.Link));
+                    });
+                    dialog.Content = markdownText;
+                    dialog.PrimaryButtonText = "查看详情";
+                    dialog.SecondaryButtonText = "忽略";
+
+                    dialog.PrimaryButtonClick += new Windows.Foundation.TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>(async (sender, e) =>
                     {
                         await Windows.System.Launcher.LaunchUriAsync(new Uri(ver.url));
                     });
-                    await cd.ShowAsync();
+                    await dialog.ShowAsync();
                 }
             }
             catch (Exception)
@@ -335,10 +341,11 @@ namespace BiliLite.Helpers
             }
         }
     }
-    public class NewDevVersion
+    public class NewVersion
     {
         public string version { get; set; }
         public string version_desc { get; set; }
+        public int version_num { get; set; }
         public string url { get; set; }
     }
 }

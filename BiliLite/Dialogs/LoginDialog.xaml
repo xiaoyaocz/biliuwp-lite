@@ -12,7 +12,7 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
     <Grid>
-        <StackPanel x:Name="pwdLogin" Visibility="Visible">
+        <StackPanel x:Name="pwdLogin" Visibility="Collapsed">
             <Grid>
                 <Grid x:Name="show" VerticalAlignment="Top" >
                     <Grid.ColumnDefinitions>
@@ -71,13 +71,13 @@
             </StackPanel>
            
         </StackPanel>
-        <StackPanel x:Name="qrLogin" Visibility="Collapsed">
+        <StackPanel x:Name="qrLogin" Visibility="Visible">
             <Image x:Name="imgQR" Width="200" Height="200"></Image>
 
             <!--<HyperlinkButton x:Name="btnWebLogin" Click="BtnWebLogin_Click">
                 <TextBlock>切换至网页登录(可以扫码登录)</TextBlock>
             </HyperlinkButton>-->
-            <TextBlock HorizontalAlignment="Center">请使用手机客户端扫描上方二维码登录</TextBlock>
+            <TextBlock HorizontalAlignment="Center">请使用哔哩哔哩手机客户端扫描上方二维码登录</TextBlock>
             <HyperlinkButton x:Name="btnRefreshQR" HorizontalAlignment="Center" Click="btnRefreshQR_Click">
                 <TextBlock>刷新二维码</TextBlock>
             </HyperlinkButton>

@@ -191,14 +191,30 @@ namespace BiliLite
             deferral.Complete();
         }
 
-        private void ExtendAcrylicIntoTitleBar()
+        public static void ExtendAcrylicIntoTitleBar()
         {
+            UISettings uISettings = new UISettings();
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.ButtonForegroundColor = TitltBarButtonColor(uISettings);
+            uISettings.ColorValuesChanged += new TypedEventHandler<UISettings, object>((setting, args) =>
+            {
+                titleBar.ButtonForegroundColor = TitltBarButtonColor(setting);
+            });
         }
-
+        private static Color TitltBarButtonColor(UISettings uISettings)
+        {
+            var settingTheme = SettingHelper.GetValue<int>(SettingHelper.UI.THEME, 0);
+            var uiSettings = new Windows.UI.ViewManagement.UISettings();
+            var color = uiSettings.GetColorValue(UIColorType.Foreground);
+            if (settingTheme != 0)
+            {
+                color = settingTheme == 1 ? Colors.Black : Colors.White;
+            }
+            return color;
+        }
         protected override void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);

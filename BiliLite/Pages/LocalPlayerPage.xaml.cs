@@ -67,6 +67,14 @@ namespace BiliLite.Pages
             base.OnNavigatedTo(e);
             if(e.NavigationMode== NavigationMode.New)
             {
+                if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                {
+                    player.IsFullScreen = true;
+                }
+                else
+                {
+                    player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                }
                 var data = e.Parameter as LocalPlayInfo;
                 player.InitializePlayInfo(data.PlayInfos, data.Index);
             }

@@ -17,6 +17,7 @@
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
         <convert:RankColorConvert x:Key="RankConvert"/>
+        <convert:ProgressToTimeConverter x:Key="progressToTimeConverter"></convert:ProgressToTimeConverter>
     </Page.Resources>
     <Grid>
         <Pivot ItemsSource="{x:Bind Path=rankVM.RegionItems,Mode=OneWay}" SelectedItem="{x:Bind Path=rankVM.Current,Mode=TwoWay}" x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
@@ -53,6 +54,16 @@
                                 <Setter Property="Margin" Value="4"></Setter>
                             </Style>
                         </toolkit:AdaptiveGridView.ItemContainerStyle>
+                        <toolkit:AdaptiveGridView.Header>
+                            <Grid Padding="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Foreground="Gray" FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;" />
+                                <TextBlock Foreground="Gray" Margin="8 0 0 0" Grid.Column="1" Text="{x:Bind Path=ToolTip,Mode=OneWay}"></TextBlock>
+                            </Grid>
+                        </toolkit:AdaptiveGridView.Header>
                         <toolkit:AdaptiveGridView.ItemTemplate>
                             <DataTemplate x:DataType="modules:RankItemModel">
                                 <Grid Background="#00FFFFFF">
@@ -69,7 +80,7 @@
                                         <Grid>
                                             <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                                             <Border CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="4" Padding="4 2" Background="#99000000">
-                                                <TextBlock Foreground="White" FontSize="12" Text="{x:Bind duration}"></TextBlock>
+                                                <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Path=duration,Converter={StaticResource progressToTimeConverter}}"></TextBlock>
                                             </Border>
                                             <Border Padding="12 2" Background="{x:Bind Path=rank,Converter={StaticResource RankConvert}}" Opacity="0.8" CornerRadius="0 0 4 0" VerticalAlignment="Top" HorizontalAlignment="Left">
                                                 <TextBlock Foreground="White" Text="{x:Bind Path=rank}" FontWeight="Bold" ></TextBlock>
@@ -78,11 +89,11 @@
                                     </Border>
                                     <StackPanel Grid.Column="1" Margin="4 0 0 0" >
                                         <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
-                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=play,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=video_review,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=stat.view,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
 
-                                        <TextBlock Margin="0 2 0 0" Foreground="Gray" VerticalAlignment="Center" >UP:<Run Text="{x:Bind Path=author}"/></TextBlock>
+                                        <TextBlock Margin="0 2 0 0" Foreground="Gray" VerticalAlignment="Center" >UP:<Run Text="{x:Bind Path=owner.name}"/></TextBlock>
 
-                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">综合评分 <Run Text="{x:Bind Path=pts}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">综合评分 <Run Text="{x:Bind Path=score}"/></TextBlock>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

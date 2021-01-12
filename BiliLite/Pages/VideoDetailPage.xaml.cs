@@ -79,17 +79,9 @@ namespace BiliLite.Pages
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
             DataRequest request = args.Request;
             request.Data.Properties.Title = videoDetailVM.VideoInfo.title;
-            if (copyTitle)
-            {
-                request.Data.SetText($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
-            }
-            else
-            {
-                request.Data.SetWebLink(new Uri(videoDetailVM.VideoInfo.short_link));
-            }
+            request.Data.SetWebLink(new Uri(videoDetailVM.VideoInfo.short_link));
         }
         VideoPlaylist playlist;
         bool flag = false;
@@ -100,7 +92,14 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                if(SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                {
+                    player.IsFullScreen = true;
+                }
+                else
+                {
+                    player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                }
                 pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is VideoPlaylist)
                 {
@@ -349,19 +348,19 @@ namespace BiliLite.Pages
 
         private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            var copyTitle = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
-            if (copyTitle)
-            {
-                Utils.SetClipboard($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
-            }
-            else
-            {
-                Utils.SetClipboard(videoDetailVM.VideoInfo.short_link);
-            }
+            DataTransferManager.ShowShareUI();
+        }
+        private void btnShareCopy_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
             Utils.ShowMessageToast("已复制内容到剪切板");
-            //DataTransferManager.ShowShareUI();
         }
 
+        private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
+        {
+            Utils.SetClipboard(videoDetailVM.VideoInfo.short_link);
+            Utils.ShowMessageToast("已复制链接到剪切板");
+        }
 
 
         private void PlayerControl_FullScreenEvent(object sender, bool e)
@@ -470,6 +469,11 @@ namespace BiliLite.Pages
 
         private async void btnCreateFavBox_Click(object sender, RoutedEventArgs e)
         {
+            if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
             CreateFavFolderDialog createFavFolderDialog = new CreateFavFolderDialog();
             await createFavFolderDialog.ShowAsync();
             await videoDetailVM.LoadFavorite(videoDetailVM.VideoInfo.aid);
@@ -558,5 +562,7 @@ namespace BiliLite.Pages
             if (videoDetailVM.Loading) return;
             await InitializeVideo(_id);
         }
+
+      
     }
 }

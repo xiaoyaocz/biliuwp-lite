@@ -52,6 +52,11 @@ namespace BiliLite.Modules.User
         {
             try
             {
+                if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+                {
+                    Utils.ShowMessageToast("请先登录");
+                    return;
+                }
                 var results = await watchLaterAPI.Add(aid).Request();
                 if (results.status)
                 {

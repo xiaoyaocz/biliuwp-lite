@@ -21,6 +21,7 @@ namespace BiliLite.Modules
         public RecommendVM()
         {
             recommendAPI = new Api.Home.RecommendAPI();
+            Banner = new ObservableCollection<RecommendBannerItemModel>();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }
@@ -72,15 +73,32 @@ namespace BiliLite.Modules
                             }
                             items.Remove(banner);
                         }
-                        //for (int i = items.Count - 1; i >= 0; i--)
-                        //{
-                        //    if (items[i].card_goto.Contains("ad_web"))
-                        //        items.Remove(items[i]);
-                        //}
+                        for (int i = items.Count - 1; i >= 0; i--)
+                        {
+                            if (items[i].card_goto.Contains("ad_web"))
+                            {
+                                items.Remove(items[i]);
+                                continue;
+                            }
+
+                            var item = items[i];
+                            if (item.three_point_v2 != null && item.three_point_v2.Count > 0 && item.card_goto == "av")
+                            {
+                                item.three_point_v2.Insert(1, new RecommendThreePointV2ItemModel()
+                                {
+                                    idx = item.idx,
+                                    url = $"https://b23.tv/av{item.param}",
+                                    title = "使用浏览器打开",
+                                    type = "browser"
+                                });
+                            }
+
+                        }
+                        
                         if (Items == null)
                         {
                             Items = items;
-                            await GetRecommend(items.LastOrDefault().idx);
+                            //await GetRecommend(items.LastOrDefault().idx);
                         }
                         else
                         {
@@ -140,15 +158,16 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog()) {
+                if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+                {
                     Utils.ShowMessageToast("请先登录");
                     return;
                 }
                 var recommendItem = Items.FirstOrDefault(x => x.idx == idx);
-                var api = recommendAPI.Dislike(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, reason_id: itemReasons?.id??0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
+                var api = recommendAPI.Dislike(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, reason_id: itemReasons?.id ?? 0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
                 if (threePointV2Item.type == "feedback")
                 {
-                    recommendAPI.Feedback(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, feedback_id: itemReasons?.id??0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
+                    recommendAPI.Feedback(_goto: recommendItem.card_goto, id: recommendItem.param, mid: recommendItem.args.up_id, feedback_id: itemReasons?.id ?? 0, rid: recommendItem.args.rid, tag_id: recommendItem.args.tid);
                 }
                 var result = await api.Request();
                 if (result.status)
@@ -232,7 +251,8 @@ namespace BiliLite.Modules
 
         public List<RecommendThreePointV2ItemModel> three_point_v2
         {
-            get {
+            get
+            {
                 if (_three_point_v2 != null)
                 {
                     foreach (var item in _three_point_v2)
@@ -240,8 +260,8 @@ namespace BiliLite.Modules
                         item.idx = idx;
                     }
                 }
-               
-                return _three_point_v2; 
+
+                return _three_point_v2;
             }
             set { _three_point_v2 = value; }
         }
@@ -293,7 +313,7 @@ namespace BiliLite.Modules
         {
             get
             {
-                return ad_info != null&& ad_info.creative_content!=null;
+                return ad_info != null && ad_info.creative_content != null;
             }
         }
         public string bottomText
@@ -364,6 +384,7 @@ namespace BiliLite.Modules
         public string title { get; set; }
         public string type { get; set; }
         public string subtitle { get; set; }
+        public string url { get; set; }
         public List<RecommendThreePointV2ItemReasonsModel> reasons { get; set; }
 
     }

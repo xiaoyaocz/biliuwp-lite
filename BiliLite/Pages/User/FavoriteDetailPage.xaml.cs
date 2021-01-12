@@ -29,6 +29,7 @@ namespace BiliLite.Pages.User
         public FavoriteDetailPage()
         {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             favoriteDetailVM = new FavoriteDetailVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

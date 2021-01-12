@@ -131,7 +131,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.GET,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history",
-                parameter = $"offset_dynamic_id={dynamic_id}&type_list={Uri.EscapeDataString(typeList)}&uid={SettingHelper.Account.Profile.mid}"
+                parameter = $"offset_dynamic_id={dynamic_id}&type_list={Uri.EscapeDataString(typeList)}&uid={SettingHelper.Account.UserID}"
             };//使用Web的API
             if (SettingHelper.Account.Logined)
             {
@@ -147,7 +147,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.GET,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
-                parameter = $"offset_dynamic_id={dynamic_id}&visitor_uid={SettingHelper.Account.Profile.mid}&host_uid={mid}&need_top=1"
+                parameter = $"offset_dynamic_id={dynamic_id}&visitor_uid={SettingHelper.Account.UserID}&host_uid={mid}&need_top=1"
             };
             if (SettingHelper.Account.Logined)
             {

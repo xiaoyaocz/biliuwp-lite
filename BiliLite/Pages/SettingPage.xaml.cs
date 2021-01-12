@@ -65,6 +65,7 @@ namespace BiliLite.Pages
                             rootFrame.RequestedTheme = ElementTheme.Default;
                             break;
                     }
+                    App.ExtendAcrylicIntoTitleBar();
                 });
             });
 
@@ -174,13 +175,13 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, swPreviewImageOpenNewWindow.IsOn);
                 });
             });
-            //隐藏赞助图标
-            swCopyTitle.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.COPY_TITLE, true);
-            swCopyTitle.Loaded += new RoutedEventHandler((sender, e) =>
+            //鼠标侧键返回
+            swMouseClosePage.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.MOUSE_BACK, true);
+            swMouseClosePage.Loaded += new RoutedEventHandler((sender, e) =>
             {
-                swCopyTitle.Toggled += new RoutedEventHandler((obj, args) =>
+                swMouseClosePage.Toggled += new RoutedEventHandler((obj, args) =>
                 {
-                    SettingHelper.SetValue(SettingHelper.UI.COPY_TITLE, swCopyTitle.IsOn);
+                    SettingHelper.SetValue(SettingHelper.UI.MOUSE_BACK, swMouseClosePage.IsOn);
                 });
             });
             //隐藏赞助图标
@@ -287,8 +288,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_TO_POSITION, swPlayerSettingAutoToPosition.IsOn);
                 });
             });
-
-            //自动跳转进度
+            //自动铺满屏幕
             swPlayerSettingAutoFullWindows.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
             swPlayerSettingAutoFullWindows.Loaded += new RoutedEventHandler((sender, e) =>
             {
@@ -297,6 +297,16 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_FULL_WINDOW, swPlayerSettingAutoFullWindows.IsOn);
                 });
             });
+            //自动全屏
+            swPlayerSettingAutoFullScreen.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false);
+            swPlayerSettingAutoFullScreen.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swPlayerSettingAutoFullScreen.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.AUTO_FULL_SCREEN, swPlayerSettingAutoFullScreen.IsOn);
+                });
+            });
+           
 
             //双击全屏
             swPlayerSettingDoubleClickFullScreen.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, false);
@@ -378,6 +388,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Download.DOWNLOAD_PATH, folder.Path);
                     txtDownloadPath.Text = folder.Path;
                     Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(folder);
+                    DownloadVM.Instance.RefreshDownloaded();
                 }
             });
             //旧版下载目录

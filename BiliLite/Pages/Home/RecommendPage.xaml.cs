@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -139,8 +140,12 @@ namespace BiliLite.Pages.Home
                 await recommendVM.Dislike(threePoint.idx, threePoint, null);
                 return;
             }
-        
-           
+            if (threePoint.type == "browser")
+            {
+                await Launcher.LaunchUriAsync(new Uri(threePoint.url));
+                return;
+            }
+
         }
 
         private async void ListDislike_ItemClick(object sender, ItemClickEventArgs e)

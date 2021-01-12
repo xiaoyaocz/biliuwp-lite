@@ -127,6 +127,11 @@ namespace BiliLite.Modules
                         continue;
                     }
                     var info = JsonConvert.DeserializeObject<DownloadSaveInfo>(await FileIO.ReadTextAsync(infoFile));
+                    //旧版无Cover字段，跳过
+                    if (string.IsNullOrEmpty(info.Cover))
+                    {
+                        continue;
+                    }
                     List<DownloadedSubItem> lsEpisodes = new List<DownloadedSubItem>();
                     DownloadedItem downloadedItem = new DownloadedItem()
                     {
@@ -269,7 +274,13 @@ namespace BiliLite.Modules
                     {
                         continue;
                     }
+                  
                     var info = JObject.Parse(await FileIO.ReadTextAsync(infoFile));
+                    //新版下载无thumb字段
+                    if (!info.ContainsKey("thumb"))
+                    {
+                        continue;
+                    }
                     List<DownloadedSubItem> lsEpisodes = new List<DownloadedSubItem>();
                     DownloadedItem downloadedItem = new DownloadedItem()
                     {

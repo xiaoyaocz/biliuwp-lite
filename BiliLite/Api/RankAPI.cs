@@ -8,29 +8,28 @@ namespace BiliLite.Api
 {
     public class RankAPI
     {
-        public ApiModel RankRegion()
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.GET,
-                baseUrl = $"{ApiHelper.baseUrl}/api/rank/RankRegion"
-            };
-            return api;
-        }
+        //public ApiModel RankRegion()
+        //{
+        //    ApiModel api = new ApiModel()
+        //    {
+        //        method = RestSharp.Method.GET,
+        //        baseUrl = $"{ApiHelper.baseUrl}/api/rank/RankRegion"
+        //    };
+        //    return api;
+        //}
         /// <summary>
         /// 排行榜
         /// </summary>
         /// <param name="rid">分区ID</param>
-        /// <param name="type">1=全站，2原创</param>
-        /// <param name="day">3,7,30</param>
+        /// <param name="type">all=全站，origin=原创，rookie=新人</param>
         /// <returns></returns>
-        public ApiModel Rank(int rid,int type,int day=3)
+        public ApiModel Rank(int rid,string type)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = $"https://api.bilibili.com/x/web-interface/ranking",
-                parameter = $"rid={rid}&day={day}&type={type}&arc_type=0"
+                baseUrl = $"https://api.bilibili.com/x/web-interface/ranking/v2",
+                parameter = $"rid={rid}&type={type}"
             };
             return api;
         }
