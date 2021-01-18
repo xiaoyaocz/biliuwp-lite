@@ -31,6 +31,7 @@ namespace BiliLite.Pages.Live
         public LiveCenterPage()
         {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             liveAttentionVM = new LiveAttentionVM();
             liveAttentionUnLiveVM = new LiveAttentionUnLiveVM();
             liveCenterHistoryVM = new LiveCenterHistoryVM();

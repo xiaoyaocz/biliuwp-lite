@@ -24,7 +24,7 @@ namespace BiliLite.Pages.User
     /// </summary>
     public sealed partial class HistoryPage : Page
     {
-        HistoryVM  historyVM;
+        HistoryVM historyVM;
         public HistoryPage()
         {
             this.InitializeComponent();
@@ -45,14 +45,33 @@ namespace BiliLite.Pages.User
         private void Video_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as HistoryItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            if(data.business== "pgc")
             {
-                icon = Symbol.Play,
-                page = typeof(VideoDetailPage),
-                title = data.title,
-                parameters = data.aid
-            });
+                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    title = data.title,
+                    parameters = data.kid
+                });
+            }
+            else
+            {
+                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(VideoDetailPage),
+                    title = data.title,
+                    parameters = data.aid
+                });
+            }
+            
         }
 
+        private void removeVideoHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (sender as MenuFlyoutItem).DataContext as HistoryItemModel;
+            historyVM.Del(item);
+        }
     }
 }

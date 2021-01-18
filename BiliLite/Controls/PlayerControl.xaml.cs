@@ -215,6 +215,7 @@ namespace BiliLite.Controls
             runing = true;
             if (show)
             {
+                BottomImageBtnPlay.Margin = new Thickness(24, 24, 24, 100);
                 showControlsFlag = 0;
                 control.Visibility = Visibility.Visible;
                 await control.FadeInAsync(400);
@@ -225,8 +226,10 @@ namespace BiliLite.Controls
                 {
                     Window.Current.CoreWindow.PointerCursor = null;
                 }
+                BottomImageBtnPlay.Margin = new Thickness(24, 24, 24, 24);
                 await control.FadeOutAsync(400);
                 control.Visibility = Visibility.Collapsed;
+               
             }
             runing = false;
         }
@@ -528,6 +531,12 @@ namespace BiliLite.Controls
             {
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.OPACITY, DanmuSettingOpacity.Value);
             });
+            //弹幕最大值
+            DanmuSettingMaxNum.Value = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.MAX_NUM, 0);
+            DanmuSettingMaxNum.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.MAX_NUM, DanmuSettingMaxNum.Value);
+            });
             //弹幕加粗
             DanmuControl.bold = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.BOLD, false);
             DanmuSettingBold.Toggled += new RoutedEventHandler((e, args) =>
@@ -564,11 +573,15 @@ namespace BiliLite.Controls
         {
            
             //音量
-            Player.Volume = SettingHelper.GetValue<double>(SettingHelper.Player.VOLUME, 1.0);
+            Player.Volume = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_VOLUME, 1.0);
             SliderVolume.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
-                SettingHelper.SetValue<double>(SettingHelper.Player.VOLUME, SliderVolume.Value);
+                SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_VOLUME, SliderVolume.Value);
             });
+            //亮度
+            _brightness = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, 0);
+            BrightnessShield.Opacity = _brightness;
+          
             //播放模式
             PlayerSettingMode.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.DEFAULT_VIDEO_TYPE, 1);
             PlayerSettingMode.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
@@ -706,6 +719,7 @@ namespace BiliLite.Controls
             }
             var needDistinct = DanmuSettingMerge.IsOn;
             var p = Convert.ToInt32(Player.Position);
+            var max =Convert.ToInt32( DanmuSettingMaxNum.Value);
             await Task.Run(async () =>
             {
                 try
@@ -733,7 +747,10 @@ namespace BiliLite.Controls
                         {
                             data = data.Where(x => !Regex.IsMatch(x.text, item));
                         }
-
+                        if (max > 0)
+                        {
+                            data = data.Take( max);
+                        }
                         //加载弹幕
                         foreach (var item in data)
                         {
@@ -1560,6 +1577,7 @@ namespace BiliLite.Controls
             {
                 _brightness = value;
                 BrightnessShield.Opacity = value;
+                SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, _brightness);
                 //}
             }
         }
@@ -1654,6 +1672,7 @@ namespace BiliLite.Controls
 
         private void Player_PlayStateChanged(object sender, PlayState e)
         {
+            BottomImageBtnPlay.Visibility = Visibility.Collapsed;
             switch (e)
             {
                 case PlayState.Loading:
@@ -1680,6 +1699,7 @@ namespace BiliLite.Controls
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     }
+                    BottomImageBtnPlay.Visibility = Visibility.Visible;
                     BottomBtnLoading.Visibility = Visibility.Collapsed;
                     BottomBtnPlay.Visibility = Visibility.Visible;
                     BottomBtnPause.Visibility = Visibility.Collapsed;
@@ -1983,7 +2003,7 @@ namespace BiliLite.Controls
                 color = Convert.ToInt32((SendDanmakuColorBorder.Background as SolidColorBrush).Color.ToString().Replace("#FF", ""), 16).ToString();
             }
             
-            var result= await playerHelper.SendDanmaku(CurrentPlayItem.avid, CurrentPlayItem.cid, SendDanmakuTextBox.Text, modeInt, color);
+            var result= await playerHelper.SendDanmaku(CurrentPlayItem.avid, CurrentPlayItem.cid, SendDanmakuTextBox.Text,Convert.ToInt32( Player.Position), modeInt, color);
             if (result)
             {
                 DanmuControl.AddDanmu(new DanmakuModel()

@@ -1460,24 +1460,31 @@ namespace BiliLite.Controls
         /// </summary>
         public void Pause()
         {
-            if (_mediaTimelineController != null)
+            try
             {
-                if (_mediaTimelineController.State == MediaTimelineControllerState.Running)
+                if (_mediaTimelineController != null)
                 {
-                    _mediaTimelineController.Pause();
-                    PlayState = PlayState.Pause;
+                    if (_mediaTimelineController.State == MediaTimelineControllerState.Running)
+                    {
+                        _mediaTimelineController.Pause();
+                        PlayState = PlayState.Pause;
+                    }
                 }
+                else
+                {
+                    if (_playerVideo.PlaybackSession.CanPause)
+                    {
+                        _playerVideo.Pause();
+                        PlayState = PlayState.Pause;
+                    }
+                }
+                PlayStateChanged?.Invoke(this, PlayState);
             }
-
-            else
+            catch (Exception ex)
             {
-                if (_playerVideo.PlaybackSession.CanPause)
-                {
-                    _playerVideo.Pause();
-                    PlayState = PlayState.Pause;
-                }
+                LogHelper.Log("暂停出现错误", LogType.ERROR, ex);
             }
-            PlayStateChanged?.Invoke(this, PlayState);
+           
         }
 
         /// <summary>

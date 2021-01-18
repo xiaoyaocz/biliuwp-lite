@@ -57,7 +57,7 @@ namespace BiliLite
         {
             var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
             if (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
-            { 
+            {
                 //如果打开了图片浏览，则关闭图片浏览
                 if (gridViewer.Visibility == Visibility.Visible)
                 {
@@ -77,10 +77,11 @@ namespace BiliLite
 
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
-            if(e.Content is Pages.HomePage)
+            if (e.Content is Pages.HomePage)
             {
                 txtTitle.Text = "哔哩哔哩 UWP";
             }
+
             if (frame.CanGoBack)
             {
                 btnBack.Visibility = Visibility.Visible;
@@ -89,12 +90,13 @@ namespace BiliLite
             {
                 btnBack.Visibility = Visibility.Collapsed;
             }
+           
         }
         private int mode = 1;
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-           
+
             frame.Navigate(typeof(Pages.HomePage));
             if (e.NavigationMode == NavigationMode.New && e.Parameter != null && !string.IsNullOrEmpty(e.Parameter.ToString()))
             {
@@ -119,14 +121,15 @@ namespace BiliLite
 
         private void NavigationHelper_OpenNewWindowEvent(object sender, NavigationInfo e)
         {
-            if (mode==1)
+            if (mode == 1)
             {
                 txtTitle.Text = e.title;
                 frame.Navigate(e.page, e.parameters);
+                (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Enabled;
             }
             else
             {
-               OpenNewWindow(e);
+                OpenNewWindow(e);
             }
         }
 
@@ -143,20 +146,20 @@ namespace BiliLite
 
             CoreApplicationView newView = CoreApplication.CreateNewView();
             int newViewId = 0;
-           await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                var res=App.Current.Resources;
-                Frame frame = new Frame();
-                frame.Navigate(e.page, e.parameters);
-                Window.Current.Content = frame;
-                Window.Current.Activate();
-                newViewId = ApplicationView.GetForCurrentView().Id;
-                ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
-                {
-                    frame.Navigate(typeof(Pages.BlankPage));
-                    CoreWindow.GetForCurrentThread().Close();
-                };
-            });
+            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+             {
+                 var res = App.Current.Resources;
+                 Frame frame = new Frame();
+                 frame.Navigate(e.page, e.parameters);
+                 Window.Current.Content = frame;
+                 Window.Current.Activate();
+                 newViewId = ApplicationView.GetForCurrentView().Id;
+                 ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
+                 {
+                     frame.Navigate(typeof(Pages.BlankPage));
+                     CoreWindow.GetForCurrentThread().Close();
+                 };
+             });
             bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
         }
         private void MessageCenter_ViewImageEvent(object sender, ImageViewerParameter e)

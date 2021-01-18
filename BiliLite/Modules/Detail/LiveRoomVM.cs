@@ -9,7 +9,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -174,7 +176,7 @@ namespace BiliLite.Modules
                             {
                                 m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
                             }
-                           
+
                             if (Messages.Count >= CleanCount)
                             {
                                 Messages.Clear();
@@ -195,7 +197,7 @@ namespace BiliLite.Modules
                                 ShowGiftMessage = true;
                                 hide_gift_flag = 1;
                                 var info = e.value as GiftMsgModel;
-                                info.gif = Gifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
+                                info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
                                 GiftMessage.Add(info);
                                 if (!timer_auto_hide_gift.Enabled)
                                 {
@@ -315,6 +317,8 @@ namespace BiliLite.Modules
             get { return _qualites; }
             set { _qualites = value; DoPropertyChanged("qualites"); }
         }
+
+        private List<LiveGiftItem> _allGifts = new List<LiveGiftItem>();
 
         private List<LiveGiftItem> _gifts;
         public List<LiveGiftItem> Gifts
@@ -588,8 +592,9 @@ namespace BiliLite.Modules
                                 var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"].ToString());
                                 foreach (var item in ls)
                                 {
-                                    var gift = list.FirstOrDefault(x => x.id == item.gift_id);
-                                    gift.max_send_limit = item.gift_num;
+                                    var _gift = list.FirstOrDefault(x => x.id == item.gift_id);
+                                    var gift = _gift.ObjectClone();
+                                    gift.gift_num = item.gift_num;
                                     gift.corner_mark = item.corner_mark;
                                     gift.bag_id = item.bag_id;
                                     BagGifts.Add(gift);
@@ -663,6 +668,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         var list = JsonConvert.DeserializeObject<List<LiveGiftItem>>(data.data["list"].ToString());
+                        if (_allGifts == null || _allGifts.Count == 0) { _allGifts = list; }
 
                         var result_room = await liveRoomAPI.RoomGifts(LiveInfo.room_info.area_id, LiveInfo.room_info.parent_area_id, RoomID).Request();
                         if (result_room.status)
@@ -1372,13 +1378,13 @@ namespace BiliLite.Modules
         }
 
 
-
+        [Serializable]
         public class LiveGiftItemCountMap
         {
             public int num { get; set; }
             public string text { get; set; }
         }
-
+        [Serializable]
         public class LiveGiftItem
         {
             public int id { get; set; }
@@ -1429,6 +1435,7 @@ namespace BiliLite.Modules
             public int gift_type { get; set; }
             public int weight { get; set; }
             public int max_send_limit { get; set; }
+            public int gift_num { get; set; } = 0;
             public int combo_resources_id { get; set; }
             public int goods_id { get; set; }
 

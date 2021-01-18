@@ -74,6 +74,10 @@ namespace BiliLite.Helpers
         /// <param name="par"></param>
         public async static Task<bool> HandelUrl(string url)
         {
+            if (url.First() == '@')
+            {
+                return false;
+            }
             /*
              * 视频
              * https://www.bilibili.com/video/av3905642
@@ -149,7 +153,7 @@ namespace BiliLite.Helpers
              * https://bangumi.bilibili.com/movie/12364
              */
 
-            var bangumi = Utils.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d+)");
+            var bangumi = Utils.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d{4,})");
             if (bangumi != "")
             {
                 OpenNewWindow(null, new NavigationInfo()

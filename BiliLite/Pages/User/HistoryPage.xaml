@@ -28,7 +28,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="移除"></MenuFlyoutItem>
+                        <MenuFlyoutItem Text="移除" Click="removeVideoHistory_Click"></MenuFlyoutItem>
                     </MenuFlyout>
                 </Grid.ContextFlyout>
                 <Border CornerRadius="{StaticResource ImageCornerRadius}">

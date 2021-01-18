@@ -346,6 +346,15 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.VideoDanmaku.TOP_MARGIN, args.NewValue);
                 });
             });
+            //弹幕最大数量
+            numDanmakuMaxNum.Value = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.MAX_NUM, 0);
+            numDanmakuMaxNum.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                numDanmakuMaxNum.ValueChanged += new TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs>((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.VideoDanmaku.MAX_NUM, args.NewValue);
+                });
+            });
         }
         private void LoadLiveDanmu()
         {

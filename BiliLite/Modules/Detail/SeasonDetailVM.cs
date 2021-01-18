@@ -86,6 +86,15 @@ namespace BiliLite.Modules
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiResultModel<SeasonDetailModel>>();
+
+                    if (!data.success)
+                    {
+                        var result_proxy = await seasonApi.DetailProxy(season_id).Request();
+                        if (result_proxy.status)
+                        {
+                            data = await result_proxy.GetJson<ApiResultModel<SeasonDetailModel>>();
+                        }
+                    }
                     if (data.success)
                     {
                         if (data.result.limit != null)

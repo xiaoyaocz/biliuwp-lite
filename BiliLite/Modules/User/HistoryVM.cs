@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -130,7 +131,35 @@ namespace BiliLite.Modules.User
             }
             await LoadHistory();
         }
+        public async void Del(HistoryItemModel item)
+        {
+            try
+            {
 
+                var results = await accountApi.DelHistory(item.business+"_" +item.kid).Request();
+                if (results.status)
+                {
+                    var data = await results.GetJson<ApiDataModel<JObject>>();
+                    if (data.success)
+                    {
+                        Videos.Remove(item);
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(results.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var handel = HandelError<AnimeHomeModel>(ex);
+                Utils.ShowMessageToast(handel.message);
+            }
+        }
     }
     public class HistoryItemModel
     {
@@ -142,6 +171,8 @@ namespace BiliLite.Modules.User
         public string title { get; set; }
         public long view_at { get; set; }
         public string tname { get; set; }
+        public string kid { get; set; }
+        public string business { get; set; }
     }
 
     public class HistoryItemOwnerModel

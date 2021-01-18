@@ -54,7 +54,8 @@ namespace BiliLite.Helpers
                             message = StatusCodeToMessage((int)response.StatusCode)
                         };
                     }
-                    response.EnsureSuccessStatusCode();
+                   
+                    //response.EnsureSuccessStatusCode();
                     var buffer = await response.Content.ReadAsBufferAsync();
                     var byteArray = buffer.ToArray();
                     HttpResults httpResults = new HttpResults()

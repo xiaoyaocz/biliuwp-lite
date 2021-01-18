@@ -258,7 +258,8 @@
                         <ToggleSwitch x:Name="DanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">弹幕顶部距离</TextBlock>
                         <controls:NumberBox x:Name="numDanmakuTopMargin" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="4" ></controls:NumberBox>
-
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">弹幕每秒最大数量(0为不限制)</TextBlock>
+                        <controls:NumberBox x:Name="numDanmakuMaxNum" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="1" ></controls:NumberBox>
                         <Button x:Name="DanmuSettingSyncWords" Click="DanmuSettingSyncWords_Click" Margin="0 16 0 0">同步弹幕屏蔽</Button>
                         <TextBlock  Margin="0 8 0 8" FontSize="16">关键词屏蔽</TextBlock>
                         <StackPanel Orientation="Horizontal">

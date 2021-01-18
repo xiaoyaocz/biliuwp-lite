@@ -21,6 +21,8 @@ using BiliLite.Dialogs;
 using Windows.UI.Popups;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace BiliLite.Helpers
 {
@@ -338,6 +340,33 @@ namespace BiliLite.Helpers
                 }
                 read += available;
                 offset += available;
+            }
+        }
+      
+        public static T ObjectClone<T>(this T obj)
+        {
+            var type = typeof(T);
+
+            if (!type.IsSerializable)
+                return default(T);
+
+            if (Object.ReferenceEquals(obj, null))
+                return default(T);
+
+            IFormatter format = new BinaryFormatter();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                try
+                {
+                    format.Serialize(ms, obj);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return (T)format.Deserialize(ms);
+                }
+                catch (Exception e)
+                {
+                    return default(T);
+                }
             }
         }
     }

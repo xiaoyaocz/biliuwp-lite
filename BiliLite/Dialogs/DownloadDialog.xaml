@@ -42,7 +42,7 @@
          
         </StackPanel>
         <StackPanel  Grid.Row="1" Margin="0 8 0 0">
-            <TextBlock>清晰度</TextBlock>
+            <TextBlock>优先清晰度</TextBlock>
             <ComboBox x:Name="cbQuality" Margin="0 4 0 0" DisplayMemberPath="quality_description" HorizontalAlignment="Stretch" >
               
             </ComboBox>

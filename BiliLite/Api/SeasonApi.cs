@@ -21,6 +21,20 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+        public ApiModel DetailProxy(string season_id)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"https://api.bilibili.com/pgc/view/app/season",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            var apiUrl = Uri.EscapeDataString(api.url);
+            api.baseUrl = "https://biliproxy.iill.moe";
+            api.parameter = "url="+ apiUrl;
+            return api;
+        }
         public ApiModel DetailWeb(string season_id)
         {
             ApiModel api = new ApiModel()

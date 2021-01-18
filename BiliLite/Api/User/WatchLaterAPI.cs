@@ -46,7 +46,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.POST,
-                baseUrl = $"https://api.bilibili.com/x/v2/history/toview/clear",
+                baseUrl = $"https://api.bilibili.com/x/v2/history/toview/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ "&viewed=true"
             };
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);

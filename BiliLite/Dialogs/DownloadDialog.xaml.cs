@@ -51,10 +51,10 @@ namespace BiliLite.Dialogs
         }
         private async void LoadQuality()
         {
-            var episode = downloadItem.Episodes.FirstOrDefault(x=>!x.IsPreview);
+            var episode = downloadItem.Episodes.OrderByDescending(x=>x.Index).FirstOrDefault(x=>!x.IsPreview);
             if (episode == null)
             {
-                episode = downloadItem.Episodes.FirstOrDefault();
+                episode = downloadItem.Episodes.OrderByDescending(x => x.Index).FirstOrDefault();
             }
             var data = await playerVM.GetPlayUrls(new Controls.PlayInfo()
             {

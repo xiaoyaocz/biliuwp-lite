@@ -415,7 +415,7 @@
                                                             <Slider x:Name="LiveSettingDelay" Width="240" Minimum="10" Maximum="5000" StepFrequency="1"></Slider>
                                                             <TextBlock Margin="0 8 0 0">互动区自动清理条数 <Run Text="{x:Bind Path=LiveSettingCount.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                                             <Slider x:Name="LiveSettingCount" Width="240" Minimum="50" Maximum="1000" StepFrequency="1"></Slider>
-                                                            <ToggleSwitch x:Name="LiveSettingAutoOpenBox" Margin="0 8 0 0" Header="自动开启宝箱"></ToggleSwitch>
+                                                            <ToggleSwitch x:Name="LiveSettingAutoOpenBox" Visibility="Collapsed" Margin="0 8 0 0" Header="自动开启宝箱"></ToggleSwitch>
                                                             <ToggleSwitch x:Name="LiveSettingHardwareDecode" Margin="0 8 0 0" Header="开启硬解"></ToggleSwitch>
                                                         </StackPanel>
                                                     </PivotItem>
@@ -558,7 +558,7 @@
                                                 <Flyout>
                                                     <StackPanel>
                                                         <TextBlock>音量</TextBlock>
-                                                        <Slider x:Name="SliderVolume" Value="{x:Bind Path=mediaPlayer.Volume,Mode=TwoWay}" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
+                                                        <Slider x:Name="SliderVolume" Value="1" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
                                                     </StackPanel>
                                                 </Flyout>
                                             </Button.Flyout>
@@ -754,7 +754,7 @@
                                                 <StackPanel>
                                                     <Image Width="32" Height="32" Source="{x:Bind Path=img_basic,Converter={StaticResource imageConvert2},ConverterParameter='48h.png'}"></Image>
 
-                                                    <TextBlock TextAlignment="Center" FontSize="12" Margin="0 4 0 0" Text="{x:Bind Path=name}"></TextBlock>
+                                                    <TextBlock TextAlignment="Center" FontSize="12" Margin="0 4 0 0" ><Run Text="{x:Bind Path=name}"/>(<Run Text="{x:Bind Path=gift_num,Mode=OneWay}"/>)</TextBlock>
                                                 </StackPanel>
 
                                             </Grid>
@@ -769,7 +769,7 @@
                                                                    
                                                                     <TextBlock Margin="4 0 0 0"  Foreground="Gray">
                                                                         拥有数量:
-                                                                        <Run Text="{x:Bind max_send_limit}"/>
+                                                                        <Run Text="{x:Bind gift_num}"/>
                                                                     </TextBlock>
                                                                 </StackPanel>
 
@@ -779,7 +779,7 @@
 
                                                         </StackPanel>
                                                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0 8 0 0">
-                                                            <muxc:NumberBox   Value="{x:Bind Path=num,Mode=TwoWay}" Maximum="{x:Bind Path=max_send_limit}"  SpinButtonPlacementMode="Inline" Minimum="1" SmallChange="1" />
+                                                            <muxc:NumberBox   Value="{x:Bind Path=num,Mode=TwoWay}" Maximum="{x:Bind Path=gift_num}"  SpinButtonPlacementMode="Inline" Minimum="1" SmallChange="1" />
                                                             <Button  Click="btnSendBagGift_Click" VerticalAlignment="Center" Margin="8 4 0 0">赠送</Button>
                                                         </StackPanel>
                                                     </StackPanel>

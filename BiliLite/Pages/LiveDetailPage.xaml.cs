@@ -131,7 +131,11 @@ namespace BiliLite.Pages
         {
             if (DanmuControl.Visibility == Visibility.Visible)
             {
-                if (settingVM.LiveWords.FirstOrDefault(x => e.Contains(e)) != null) return;
+                if (settingVM.LiveWords != null && settingVM.LiveWords.Count > 0)
+                {
+                    if (settingVM.LiveWords.FirstOrDefault(x => e.Contains(x)) != null) return;
+                }
+
                 DanmuControl.AddLiveDanmu(e, false, Colors.White);
             }
 
@@ -404,6 +408,18 @@ namespace BiliLite.Pages
         }
         private void LoadSetting()
         {
+            //音量
+            mediaPlayer.Volume = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_VOLUME, 1.0);
+            SliderVolume.Value = mediaPlayer.Volume;
+            SliderVolume.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            {
+                mediaPlayer.Volume = SliderVolume.Value;
+                SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_VOLUME, SliderVolume.Value);
+            });
+            //亮度
+            _brightness = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, 0);
+            BrightnessShield.Opacity = _brightness;
+
             //弹幕顶部距离
             DanmuControl.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.TOP_MARGIN, 0), 0, 0);
             DanmuTopMargin.Value = DanmuControl.Margin.Top;
@@ -1024,7 +1040,7 @@ namespace BiliLite.Pages
                 //slider_V.Value -= d;
                 var volume = mediaPlayer.Volume - dd;
                 if (volume < 0) volume = 0;
-                mediaPlayer.Volume = volume;
+                SliderVolume.Value = volume;
 
             }
             else
@@ -1032,10 +1048,11 @@ namespace BiliLite.Pages
                 double dd = Math.Abs(delta) / (this.ActualHeight * 0.8);
                 var volume = mediaPlayer.Volume + dd;
                 if (volume > 1) volume = 1;
-                mediaPlayer.Volume = volume;
+                SliderVolume.Value = volume;
                 //slider_V.Value += d;
             }
             TxtToolTip.Text = "音量:" + mediaPlayer.Volume.ToString("P");
+
             //Utils.ShowMessageToast("音量:" +  mediaElement.MediaPlayer.Volume.ToString("P"), 3000);
         }
         private void HandleSlideBrightnessDelta(double delta)
@@ -1072,6 +1089,7 @@ namespace BiliLite.Pages
             {
                 _brightness = value;
                 BrightnessShield.Opacity = value;
+                SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, _brightness);
             }
         }
 

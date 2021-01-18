@@ -446,6 +446,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Icon\ic_play.png" />
     <Content Include="Assets\Icon\icon_share.png" />
     <Content Include="Assets\Icon\ic_live_center_gold_recharge.png" />
     <Content Include="Assets\Icon\ic_live_center_silver_recharge.png" />

@@ -126,7 +126,7 @@ namespace BiliLite.Pages
             selectProview = !seasonDetailVM.ShowEpisodes;
 
             var index = 0;
-            if (string.IsNullOrEmpty(ep_id) && seasonDetailVM.Detail.user_status.progress != null)
+            if (string.IsNullOrEmpty(ep_id) && seasonDetailVM.Detail.user_status?.progress != null)
             {
                 ep_id = seasonDetailVM.Detail.user_status.progress.last_ep_id.ToString();
                 SettingHelper.SetValue<double>("ep" + ep_id, Convert.ToDouble(seasonDetailVM.Detail.user_status.progress.last_time));

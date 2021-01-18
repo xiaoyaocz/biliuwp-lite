@@ -28,6 +28,7 @@ namespace BiliLite.Pages.Live
         public LiveAreaPage()
         {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             liveAreaVM = new LiveAreaVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

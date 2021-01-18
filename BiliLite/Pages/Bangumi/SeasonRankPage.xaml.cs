@@ -27,7 +27,8 @@ namespace BiliLite.Pages.Bangumi
         readonly SeasonRankVM seasonRankVM;
         public SeasonRankPage()
         {
-            this.InitializeComponent();
+            this.InitializeComponent(); 
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             seasonRankVM = new SeasonRankVM();
         }
 

@@ -234,6 +234,10 @@ namespace BiliLite.Helpers
             /// 顶部距离
             /// </summary>
             public const string TOP_MARGIN = "VideoDanmuTopMargin";
+            /// <summary>
+            /// 最大数量
+            /// </summary>
+            public const string MAX_NUM = "VideoDanmuMaxNum";
         }
         public class Live
         {
@@ -351,11 +355,14 @@ namespace BiliLite.Helpers
             /// 播放模式 int 0=顺序播放，1=单集循环，2=列表循环
             /// </summary>
             public const string DEFAULT_PLAY_MODE = "PlayerDefaultPlayMode";
-
             /// <summary>
-            /// 视频音量 double 0-1
+            /// 音量
             /// </summary>
-            public const string VOLUME = "PlayerVolume";
+            public const string PLAYER_VOLUME = "PlayerVolume";
+            /// <summary>
+            /// 亮度
+            /// </summary>
+            public const string PLAYER_BRIGHTNESS = "PlayeBrightness";
 
             /// <summary>
             /// 字幕颜色

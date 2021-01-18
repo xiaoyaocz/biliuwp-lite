@@ -934,7 +934,7 @@ namespace BiliLite.Modules
             }
         }
 
-        public async Task<bool> SendDanmaku(string aid, string cid, string text, int mode, string color)
+        public async Task<bool> SendDanmaku(string aid, string cid, string text,int position, int mode, string color)
         {
             try
             {
@@ -948,7 +948,7 @@ namespace BiliLite.Modules
                     Utils.ShowMessageToast("弹幕文本不能为空");
                     return false;
                 }
-                var result = await PlayerAPI.SendDanmu(aid, cid, color, text, mode).Request();
+                var result = await PlayerAPI.SendDanmu(aid, cid, color, text, position, mode).Request();
                 if (result.status)
                 {
                     var obj = result.GetJObject();

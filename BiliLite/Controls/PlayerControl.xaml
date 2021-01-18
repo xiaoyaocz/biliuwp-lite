@@ -373,6 +373,8 @@
                                     <Slider  x:Name="DanmuSettingOpacity" Value="{x:Bind Path=DanmuControl.Opacity,Mode=TwoWay}" Minimum="0.1" Maximum="1" StepFrequency="0.1"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕顶部距离 <Run Text="{x:Bind Path=DanmuControl.Margin.Top,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuTopMargin" Value="0" Minimum="0" Maximum="200" StepFrequency="4"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕每秒数量(0为不限制) <Run Text="{x:Bind Path=DanmuSettingMaxNum.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider  x:Name="DanmuSettingMaxNum" Value="0" Minimum="0" Maximum="50" StepFrequency="1"></Slider>
                                     <Grid Margin="0 4 0 0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -782,6 +784,7 @@
                                 </StackPanel>
                             </Grid>
                         </Grid>
+                       
                     </Grid>
                     <Grid x:Name="MiniControl" Visibility="Collapsed" VerticalAlignment="Bottom">
                         <Grid.Background>
@@ -809,8 +812,11 @@
                         </StackPanel>
                         <ProgressBar VerticalAlignment="Bottom" Foreground="White" Value="{Binding ElementName=BottomProgress,Path=Value,Mode=OneWay}" Maximum="{Binding ElementName=BottomProgress,Path=Maximum,Mode=OneWay}"></ProgressBar>
                     </Grid>
-
+                   
                 </Grid>
+                <HyperlinkButton x:Name="BottomImageBtnPlay" Visibility="Collapsed"  Margin="24 100" Width="80" Height="80" Click="BottomBtnPlay_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" >
+                    <Image Source="ms-appx:///Assets/Icon/ic_play.png"></Image>
+                </HyperlinkButton>
                 <Button x:Name="BtnFoucs" Width="0" Height="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-8 -8 0 0" Background="Transparent" BorderThickness="0"></Button>
             </Grid>
         </SplitView>

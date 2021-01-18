@@ -17,12 +17,12 @@ namespace BiliLite.Modules
 {
     public enum IndexSeasonType
     {
-        Anime=1,
-        Movie=2,
-        Documentary=3,
-        Guochuang=4,
-        TV=5,
-        Variety=7
+        Anime = 1,
+        Movie = 2,
+        Documentary = 3,
+        Guochuang = 4,
+        TV = 5,
+        Variety = 7
     }
     public class SeasonIndexParameter
     {
@@ -33,7 +33,7 @@ namespace BiliLite.Modules
         public string month { get; set; } = "-1";
         public string order { get; set; } = "3";
     }
-    public class SeasonIndexVM:IModules
+    public class SeasonIndexVM : IModules
     {
         readonly SeasonIndexAPI seasonIndexAPI;
         public SeasonIndexVM()
@@ -53,6 +53,10 @@ namespace BiliLite.Modules
             get { return _loading; }
             set { _loading = value; DoPropertyChanged("Loading"); }
         }
+      
+
+        private bool CanLoadMore = true;
+      
 
         private bool _Conditionsloading = true;
         public bool ConditionsLoading
@@ -75,13 +79,13 @@ namespace BiliLite.Modules
             set { _result = value; DoPropertyChanged("Result"); }
         }
 
-        private int _page=1;
+        private int _page = 1;
         public int Page
         {
             get { return _page; }
             set { _page = value; }
         }
-       
+
         public async Task LoadConditions()
         {
             try
@@ -121,9 +125,10 @@ namespace BiliLite.Modules
 
                         foreach (var item in data["data"]["order"])
                         {
-                            orders.Add(new SeasonIndexConditionFilterItemModel() { 
-                                keyword=item["field"].ToString(),
-                                name=item["name"].ToString()
+                            orders.Add(new SeasonIndexConditionFilterItemModel()
+                            {
+                                keyword = item["field"].ToString(),
+                                name = item["name"].ToString()
                             });
                         }
 
@@ -132,7 +137,7 @@ namespace BiliLite.Modules
                             name = "排序",
                             values = orders,
                             field = "order",
-                            current = orders.FirstOrDefault(x => x.name == Parameter.order)?? orders[0],
+                            current = orders.FirstOrDefault(x => x.name == Parameter.order) ?? orders[0],
                         });
                         Conditions = items;
                     }
@@ -157,11 +162,22 @@ namespace BiliLite.Modules
         {
             try
             {
-                Loading = true;
+                if (Loading) return;
+               
                 if (Page == 1)
                 {
+                    CanLoadMore = true;
                     Result = null;
                 }
+                else
+                {
+                    if (!CanLoadMore)
+                    {
+                        Loading = false;
+                        return;
+                    }
+                }
+                Loading = true;
                 var con = "";
                 foreach (var item in Conditions)
                 {
@@ -174,8 +190,8 @@ namespace BiliLite.Modules
                     var data = results.GetJObject();
                     if (data["code"].ToInt32() == 0)
                     {
-                        var items = JsonConvert.DeserializeObject<ObservableCollection<SeasonIndexResultItemModel>>(data["data"]["list"]?.ToString()??"[]");
-                        if (items!=null&& items.Count!=0)
+                        var items = JsonConvert.DeserializeObject<ObservableCollection<SeasonIndexResultItemModel>>(data["data"]["list"]?.ToString() ?? "[]");
+                        if (items != null && items.Count != 0)
                         {
                             if (Page == 1)
                             {
@@ -192,6 +208,8 @@ namespace BiliLite.Modules
                         }
                         else
                         {
+                           
+                            CanLoadMore = false;
                             Utils.ShowMessageToast("加载完了");
                         }
                     }
@@ -219,7 +237,7 @@ namespace BiliLite.Modules
                 return;
             }
             Page = 1;
-            if (Conditions==null)
+            if (Conditions == null)
             {
                 await LoadConditions();
             }
@@ -234,7 +252,7 @@ namespace BiliLite.Modules
             {
                 return;
             }
-            if (Conditions==null|| Conditions.Count==0||Result==null||Result.Count==0)
+            if (Conditions == null || Conditions.Count == 0 || Result == null || Result.Count == 0)
             {
                 return;
             }
@@ -243,16 +261,16 @@ namespace BiliLite.Modules
 
     }
 
-    public class SeasonIndexConditionFilterModel:IModules
+    public class SeasonIndexConditionFilterModel : IModules
     {
         public string field { get; set; }
         public string name { get; set; }
 
         private SeasonIndexConditionFilterItemModel _current;
         public SeasonIndexConditionFilterItemModel current
-        {   
+        {
             get { return _current; }
-            set { _current = value;  }
+            set { _current = value; }
         }
         public List<SeasonIndexConditionFilterItemModel> values { get; set; }
     }
@@ -306,7 +324,7 @@ namespace BiliLite.Modules
         {
             get
             {
-                if (type== "follow")
+                if (type == "follow")
                 {
                     return follow;
                 }

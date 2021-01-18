@@ -33,7 +33,7 @@ namespace BiliLite.Pages.Live
         public LiveAreaDetailPage()
         {
             this.InitializeComponent();
-
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {

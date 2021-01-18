@@ -104,9 +104,16 @@ namespace BiliLite.Modules.Live.LiveCenter
         }
 
     }
-    public class SignInfoModel
+    public class SignInfoModel:IModules
     {
-        public bool is_signed { get; set; }
+        private bool _is_signed;
+
+        public bool is_signed
+        {
+            get { return _is_signed; }
+            set { _is_signed = value; DoPropertyChanged("is_signed"); }
+        }
+
         public int days { get; set; }
         public int sign_days { get; set; }
         public string h5_url { get; set; }

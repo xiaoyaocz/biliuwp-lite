@@ -30,6 +30,7 @@ namespace BiliLite.Pages.Bangumi
         public AnimeIndexPage()
         {
             this.InitializeComponent();
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             seasonIndexVM = new SeasonIndexVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

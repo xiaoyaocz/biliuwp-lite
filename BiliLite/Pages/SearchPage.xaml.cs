@@ -82,6 +82,7 @@ namespace BiliLite.Pages
             {
                 par.keyword = e.Parameter.ToString();
             }
+            par.keyword= par.keyword.TrimStart('@');
             txtKeyword.Text = par.keyword;
             foreach (var item in searchVM.SearchItems)
             {
@@ -101,7 +102,7 @@ namespace BiliLite.Pages
             {
                 return;
             }
-
+            txtKeyword.Text = txtKeyword.Text.TrimStart('@');
             foreach (var item in searchVM.SearchItems)
             {
                 item.Keyword = txtKeyword.Text;

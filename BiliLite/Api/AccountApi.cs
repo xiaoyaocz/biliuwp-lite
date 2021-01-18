@@ -157,6 +157,17 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+        public ApiModel DelHistory(string id)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.POST,
+                baseUrl = "https://api.bilibili.com/x/v2/history/delete",
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&kid={id}"
+            };
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+            return api;
+        }
 
         /// <summary>
         /// 二维码登录获取二维码及AuthCode
