@@ -30,6 +30,7 @@
             <ItemsPanelTemplate x:Key="ListPanel">
                 <ItemsStackPanel />
             </ItemsPanelTemplate>
+          
         </ResourceDictionary>
 
 
@@ -41,11 +42,12 @@
                     <controls1:DropShadowPanel BlurRadius="12"
                                           Color="Black"
                                           Opacity="0.3"
+                                         
                                           HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch">
                         <Rectangle Fill="White" />
                     </controls1:DropShadowPanel>
-                    <Grid Background="{ThemeResource SystemControlBaseHighAcrylicElementBrush}">
+                    <Grid Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
                         <Pivot x:Name="pivotRight" SelectionChanged="pivotRight_SelectionChanged">
                             <PivotItem Margin="0">
                                 <PivotItem.Header>

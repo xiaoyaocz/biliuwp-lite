@@ -21,7 +21,7 @@
             <Style TargetType="HyperlinkButton">
                 <Setter Property="Foreground" Value="#178bcf" />
             </Style>
-
+            <AcrylicBrush x:Key="SystemControlBaseHighAcrylicElementBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeAltHighColor}" />
         </ResourceDictionary>
 
 
@@ -37,7 +37,7 @@
                                           VerticalContentAlignment="Stretch">
                         <Rectangle Fill="White" />
                     </controls1:DropShadowPanel>
-                    <Grid Background="{ThemeResource SystemControlBaseHighAcrylicElementBrush}">
+                    <Grid Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
                         <Pivot x:Name="pivotRight" SelectionChanged="pivotRight_SelectionChanged">
                             <PivotItem Margin="0">
                                 <PivotItem.Header>

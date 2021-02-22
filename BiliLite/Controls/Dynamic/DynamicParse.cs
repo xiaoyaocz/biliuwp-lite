@@ -195,7 +195,7 @@ namespace BiliLite.Controls.Dynamic
                         info = new DynamicItemDisplayOneRowInfo()
                         {
                             Cover = obj["sketch"]["cover_url"].ToString() + "@200w.jpg",
-                            Subtitle = obj["sketch"]["desc_text"].ToString(),
+                            Subtitle = obj["sketch"]["desc_text"]?.ToString()??"",
                             ID = obj["sketch"]["target_url"].ToString(),
                             Title = obj["sketch"]["title"].ToString(),
                             CoverWidth = 80,

@@ -19,6 +19,20 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+        public ApiModel DetailProxy(string id, bool isbvid)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"https://app.bilibili.com/x/v2/view",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&{(isbvid ? "bvid=" : "aid=")}{id}&plat=0"
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            var apiUrl = Uri.EscapeDataString(api.url);
+            api.baseUrl = "https://biliproxy.iill.moe";
+            api.parameter = "url=" + apiUrl;
+            return api;
+        }
         /// <summary>
         ///点赞
         /// </summary>

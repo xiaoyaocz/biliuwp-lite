@@ -489,29 +489,37 @@ namespace BiliLite.Controls
             DanmuSettingHideRoll.IsOn = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.HIDE_ROLL, false);
             if (DanmuSettingHideRoll.IsOn)
             {
-                DanmuControl.HideDanmaku(DanmakuLocation.Roll);
+                DanmuControl.HideDanmaku(DanmakuLocation.Scroll);
             }
             DanmuSettingHideRoll.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue<bool>(SettingHelper.VideoDanmaku.HIDE_ROLL, DanmuSettingHideRoll.IsOn);
                 if (DanmuSettingHideRoll.IsOn)
                 {
-                    DanmuControl.HideDanmaku(DanmakuLocation.Roll);
+                    DanmuControl.HideDanmaku(DanmakuLocation.Scroll);
                 }
                 else
                 {
-                    DanmuControl.ShowDanmaku(DanmakuLocation.Roll);
+                    DanmuControl.ShowDanmaku(DanmakuLocation.Scroll);
                 }
             });
             //弹幕大小
-            DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
+            DanmuControl.DanmakuSizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
             DanmuSettingFontZoom.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, DanmuSettingFontZoom.Value);
             });
+            //弹幕显示区域
+            DanmuControl.DanmakuArea = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.AREA, 1);
+            DanmuSettingArea.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            {
+                if (miniWin) return;
+                SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.AREA, DanmuSettingArea.Value);
+            });
+
             //弹幕速度
-            DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
+            DanmuControl.DanmakuDuration = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
             DanmuSettingSpeed.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
@@ -538,13 +546,13 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<double>(SettingHelper.VideoDanmaku.MAX_NUM, DanmuSettingMaxNum.Value);
             });
             //弹幕加粗
-            DanmuControl.bold = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.BOLD, false);
+            DanmuControl.DanmakuBold = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.BOLD, false);
             DanmuSettingBold.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue<bool>(SettingHelper.VideoDanmaku.BOLD, DanmuSettingBold.IsOn);
             });
             //弹幕样式
-            DanmuControl.BorderStyle = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.BORDER_STYLE, 2);
+            DanmuControl.DanmakuStyle = (DanmakuBorderStyle)SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.BORDER_STYLE, 2);
             DanmuSettingStyle.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
                 if (DanmuSettingStyle.SelectedIndex != -1)
@@ -559,11 +567,11 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<bool>(SettingHelper.VideoDanmaku.MERGE, DanmuSettingMerge.IsOn);
             });
             //半屏显示
-            DanmuControl.notHideSubtitle = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.DOTNET_HIDE_SUBTITLE, false);
-            DanmuSettingDotHideSubtitle.Toggled += new RoutedEventHandler((e, args) =>
-            {
-                SettingHelper.SetValue<bool>(SettingHelper.VideoDanmaku.DOTNET_HIDE_SUBTITLE, DanmuSettingDotHideSubtitle.IsOn);
-            });
+            //DanmuControl.DanmakuArea = SettingHelper.GetValue<bool>(SettingHelper.VideoDanmaku.DOTNET_HIDE_SUBTITLE, false)?1:.5;
+            //DanmuSettingDotHideSubtitle.Toggled += new RoutedEventHandler((e, args) =>
+            //{
+            //    SettingHelper.SetValue<bool>(SettingHelper.VideoDanmaku.DOTNET_HIDE_SUBTITLE, DanmuSettingDotHideSubtitle.IsOn);
+            //});
 
             //弹幕开关
             DanmuControl.Visibility = SettingHelper.GetValue<Visibility>(SettingHelper.VideoDanmaku.SHOW, Visibility.Visible);
@@ -1986,7 +1994,7 @@ namespace BiliLite.Controls
         private async void SendDanmaku()
         {
             int modeInt = 1;
-            var location = DanmakuLocation.Roll;
+            var location = DanmakuLocation.Scroll;
             if (SendDanmakuMode.SelectedIndex == 2)
             {
                 modeInt = 4;
@@ -2048,8 +2056,8 @@ namespace BiliLite.Controls
                     await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
                     SubtitleSettingSize.Value = 14;
 
-                    DanmuControl.sizeZoom = 0.5;
-                    DanmuControl.speed = 6;
+                    DanmuControl.DanmakuSizeZoom = 0.5;
+                    DanmuControl.DanmakuDuration = 6;
                     DanmuControl.ClearAll();
                 }
             }
@@ -2059,8 +2067,8 @@ namespace BiliLite.Controls
                 StandardControl.Visibility = Visibility.Visible;
                 MiniControl.Visibility = Visibility.Collapsed;
                 await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
-                DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
+                DanmuControl.DanmakuSizeZoom = SettingHelper.GetValue<double>(SettingHelper.VideoDanmaku.FONT_ZOOM, 1);
+                DanmuControl.DanmakuDuration = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
                 DanmuControl.ClearAll();
                 DanmuControl.Visibility= SettingHelper.GetValue<Visibility>(SettingHelper.VideoDanmaku.SHOW, Visibility.Visible);
                 SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);

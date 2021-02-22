@@ -15,6 +15,7 @@
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
         <convert:ByteSizeConvert x:Key="byteSizeConvert"/>
         <convert:DownloadStatusConvert x:Key="downloadStatusConvert"/>
+       
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -141,7 +142,7 @@
                                           VerticalContentAlignment="Stretch">
                                     <Rectangle Fill="White" />
                                 </toolkit:DropShadowPanel>
-                                <Grid x:Name="Pane" Background="{ThemeResource SystemControlBaseHighAcrylicElementBrush}">
+                                <Grid x:Name="Pane" Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition/>

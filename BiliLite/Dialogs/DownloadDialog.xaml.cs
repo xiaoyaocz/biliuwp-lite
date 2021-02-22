@@ -147,18 +147,33 @@ namespace BiliLite.Dialogs
                     downloadInfo.Urls = new List<DownloadUrlInfo>();
                     if (playUrl.data.current.playUrlInfo.mode == VideoPlayMode.Dash)
                     {
-                        downloadInfo.Urls.Add(new DownloadUrlInfo()
+                       
+                        if (playUrl.data.current.playUrlInfo.dash_audio_url != null)
                         {
-                            FileName = "video.m4s",
-                            HttpHeader = playUrl.data.current.HttpHeader,
-                            Url = playUrl.data.current.playUrlInfo.dash_video_url.baseUrl
-                        });
-                        downloadInfo.Urls.Add(new DownloadUrlInfo()
+                            downloadInfo.Urls.Add(new DownloadUrlInfo()
+                            {
+                                FileName = "video.m4s",
+                                HttpHeader = playUrl.data.current.HttpHeader,
+                                Url = playUrl.data.current.playUrlInfo.dash_video_url.baseUrl
+                            });
+                            downloadInfo.Urls.Add(new DownloadUrlInfo()
+                            {
+                                FileName = "audio.m4s",
+                                HttpHeader = playUrl.data.current.HttpHeader,
+                                Url = playUrl.data.current.playUrlInfo.dash_audio_url.baseUrl
+                            });
+                        }
+                        else
                         {
-                            FileName = "audio.m4s",
-                            HttpHeader = playUrl.data.current.HttpHeader,
-                            Url = playUrl.data.current.playUrlInfo.dash_audio_url.baseUrl
-                        });
+                         
+                            downloadInfo.Urls.Add(new DownloadUrlInfo()
+                            {
+                                FileName = "0.blv",
+                                HttpHeader = playUrl.data.current.HttpHeader,
+                                Url = playUrl.data.current.playUrlInfo.dash_video_url.baseUrl
+                            });
+                        }
+                      
                     }
                     if (playUrl.data.current.playUrlInfo.mode == VideoPlayMode.MultiFlv)
                     {

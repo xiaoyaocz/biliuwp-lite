@@ -4,6 +4,7 @@ using BiliLite.Modules;
 using BiliLite.Modules.LiveRoomDetailModels;
 using FFmpegInterop;
 using Microsoft.UI.Xaml.Controls;
+using NSDanmaku.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -429,14 +430,14 @@ namespace BiliLite.Pages
                 DanmuControl.Margin = new Thickness(0, DanmuTopMargin.Value, 0, 0);
             });
             //弹幕大小
-            DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.Live.FONT_ZOOM, 1);
+            DanmuControl.DanmakuSizeZoom = SettingHelper.GetValue<double>(SettingHelper.Live.FONT_ZOOM, 1);
             DanmuSettingFontZoom.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (isMini) return;
                 SettingHelper.SetValue<double>(SettingHelper.Live.FONT_ZOOM, DanmuSettingFontZoom.Value);
             });
             //弹幕速度
-            DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.Live.SPEED, 10);
+            DanmuControl.DanmakuDuration = SettingHelper.GetValue<int>(SettingHelper.Live.SPEED, 10);
             DanmuSettingSpeed.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (isMini) return;
@@ -449,13 +450,13 @@ namespace BiliLite.Pages
                 SettingHelper.SetValue<double>(SettingHelper.Live.OPACITY, DanmuSettingOpacity.Value);
             });
             //弹幕加粗
-            DanmuControl.bold = SettingHelper.GetValue<bool>(SettingHelper.Live.BOLD, false);
+            DanmuControl.DanmakuBold = SettingHelper.GetValue<bool>(SettingHelper.Live.BOLD, false);
             DanmuSettingBold.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue<bool>(SettingHelper.Live.BOLD, DanmuSettingBold.IsOn);
             });
             //弹幕样式
-            DanmuControl.BorderStyle = SettingHelper.GetValue<int>(SettingHelper.Live.BORDER_STYLE, 2);
+            DanmuControl.DanmakuStyle = (DanmakuBorderStyle)SettingHelper.GetValue<int>(SettingHelper.Live.BORDER_STYLE, 2);
             DanmuSettingStyle.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
                 if (DanmuSettingStyle.SelectedIndex != -1)
@@ -464,11 +465,12 @@ namespace BiliLite.Pages
                 }
             });
 
-            //半屏显示
-            DanmuSettingDotHideSubtitle.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Live.DOTNET_HIDE_SUBTITLE, false);
-            DanmuSettingDotHideSubtitle.Toggled += new RoutedEventHandler((e, args) =>
+ 
+            //弹幕显示区域
+            DanmuControl.DanmakuArea = SettingHelper.GetValue<double>(SettingHelper.Live.AREA, 1);
+            DanmuSettingArea.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
-                SettingHelper.SetValue<bool>(SettingHelper.Live.DOTNET_HIDE_SUBTITLE, DanmuSettingDotHideSubtitle.IsOn);
+                SettingHelper.SetValue<double>(SettingHelper.Live.AREA, DanmuSettingArea.Value);
             });
 
             //弹幕开关
@@ -912,8 +914,8 @@ namespace BiliLite.Pages
                     //隐藏标题栏
                     this.Margin = new Thickness(0, -40, 0, 0);
                     await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
-                    DanmuControl.sizeZoom = 0.5;
-                    DanmuControl.speed = 6;
+                    DanmuControl.DanmakuSizeZoom = 0.5;
+                    DanmuControl.DanmakuDuration = 6;
                     DanmuControl.ClearAll();
                 }
             }
@@ -924,8 +926,8 @@ namespace BiliLite.Pages
                 StandardControl.Visibility = Visibility.Visible;
                 MiniControl.Visibility = Visibility.Collapsed;
                 await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                DanmuControl.sizeZoom = SettingHelper.GetValue<double>(SettingHelper.Live.FONT_ZOOM, 1);
-                DanmuControl.speed = SettingHelper.GetValue<int>(SettingHelper.Live.SPEED, 10);
+                DanmuControl.DanmakuSizeZoom = SettingHelper.GetValue<double>(SettingHelper.Live.FONT_ZOOM, 1);
+                DanmuControl.DanmakuDuration = SettingHelper.GetValue<int>(SettingHelper.Live.SPEED, 10);
                 DanmuControl.ClearAll();
                 DanmuControl.Visibility = SettingHelper.GetValue<Visibility>(SettingHelper.Live.SHOW, Visibility.Visible);
             }

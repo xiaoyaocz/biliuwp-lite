@@ -198,15 +198,20 @@ namespace BiliLite.Modules
                     if (video != null)
                     {
                         DashItemModel audio = null;
-                        var audios = data.data.dash.audio.Where(x => x.mimeType == "audio/mp4" || x.mime_type == "audio/mp4").OrderBy(x => x.bandwidth);
-                        if (qn > 64)
+                        //部分视频没有音频文件
+                        if(data.data.dash.audio!=null&& data.data.dash.audio.Count > 0)
                         {
-                            audio = audios.LastOrDefault();
+                            var audios = data.data.dash.audio.Where(x => x.mimeType == "audio/mp4" || x.mime_type == "audio/mp4").OrderBy(x => x.bandwidth);
+                            if (qn > 64)
+                            {
+                                audio = audios.LastOrDefault();
+                            }
+                            else
+                            {
+                                audio = audios.FirstOrDefault();
+                            }
                         }
-                        else
-                        {
-                            audio = audios.FirstOrDefault();
-                        }
+                       
                         info = new PlayUrlInfo()
                         {
                             codec_name = video.codecid == 7 ? "h264_m4s" : "h265_m4s",
@@ -230,6 +235,7 @@ namespace BiliLite.Modules
                 }
                 if (noVIP)
                 {
+                    //非大会员，去除大会员专享清晰度
                     qualityWithPlayUrlInfos = qualityWithPlayUrlInfos.Where(x => x.quality != 74 && x.quality <= 80).ToList();
                 }
                 return new ReturnModel<PlayUrlReturnInfo>()
@@ -277,15 +283,19 @@ namespace BiliLite.Modules
                     if (video != null)
                     {
                         DashItemModel audio = null;
-                        var audios = data.data.dash.audio.OrderBy(x => x.bandwidth);
-                        if (qn > 64)
+                        if(data.data.dash.audio!=null&& data.data.dash.audio.Count > 0)
                         {
-                            audio = audios.LastOrDefault();
+                            var audios = data.data.dash.audio.OrderBy(x => x.bandwidth);
+                            if (qn > 64)
+                            {
+                                audio = audios.LastOrDefault();
+                            }
+                            else
+                            {
+                                audio = audios.FirstOrDefault();
+                            }
                         }
-                        else
-                        {
-                            audio = audios.FirstOrDefault();
-                        }
+                        
                         info = new PlayUrlInfo()
                         {
                             codec_name = video.codecid == 7 ? "h264_m4s" : "h265_m4s",

@@ -278,6 +278,7 @@
         </Style>
         <convert:ProgressToTimeConverter x:Key="progress"></convert:ProgressToTimeConverter>
         <convert:ColorConvert x:Key="color"></convert:ColorConvert>
+        <convert:DanmakuStyleConvert x:Key="styleConvert"></convert:DanmakuStyleConvert>
         <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="Transparent"></SolidColorBrush>
         <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="Transparent"></SolidColorBrush>
@@ -365,16 +366,19 @@
                                             </ToggleSwitch.Header>
                                         </ToggleSwitch>-->
                                     </Grid>
-                                    <TextBlock Margin="0 4 0 0">弹幕缩放 <Run Text="{x:Bind Path=DanmuControl.sizeZoom,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
-                                    <Slider x:Name="DanmuSettingFontZoom" Value="{x:Bind Path=DanmuControl.sizeZoom,Mode=TwoWay}" Minimum="0.1" Maximum="2" StepFrequency="0.05"></Slider>
-                                    <TextBlock Margin="0 4 0 0">弹幕速度 <Run Text="{x:Bind Path=DanmuControl.speed,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
-                                    <Slider x:Name="DanmuSettingSpeed" Value="{x:Bind Path=DanmuControl.speed,Mode=TwoWay}" Minimum="1" Maximum="25" StepFrequency="1"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕显示区域 <Run Text="{x:Bind Path=DanmuControl.DanmakuArea,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider x:Name="DanmuSettingArea" Value="{x:Bind Path=DanmuControl.DanmakuArea,Mode=TwoWay}" Minimum="0.1" Maximum="1" StepFrequency="0.1"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕缩放 <Run Text="{x:Bind Path=DanmuControl.DanmakuSizeZoom,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider x:Name="DanmuSettingFontZoom" Value="{x:Bind Path=DanmuControl.DanmakuSizeZoom,Mode=TwoWay}" Minimum="0.1" Maximum="2" StepFrequency="0.05"></Slider>
+                                    <TextBlock Margin="0 4 0 0">弹幕速度 <Run Text="{x:Bind Path=DanmuControl.DanmakuDuration,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                    <Slider x:Name="DanmuSettingSpeed" Value="{x:Bind Path=DanmuControl.DanmakuDuration,Mode=TwoWay}" Minimum="1" Maximum="25" StepFrequency="1"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕透明度 <Run Text="{x:Bind Path=DanmuControl.Opacity,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuSettingOpacity" Value="{x:Bind Path=DanmuControl.Opacity,Mode=TwoWay}" Minimum="0.1" Maximum="1" StepFrequency="0.1"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕顶部距离 <Run Text="{x:Bind Path=DanmuControl.Margin.Top,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuTopMargin" Value="0" Minimum="0" Maximum="200" StepFrequency="4"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕每秒数量(0为不限制) <Run Text="{x:Bind Path=DanmuSettingMaxNum.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuSettingMaxNum" Value="0" Minimum="0" Maximum="50" StepFrequency="1"></Slider>
+                                    
                                     <Grid Margin="0 4 0 0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -382,7 +386,7 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="1" >
                                             <TextBlock  Margin="0 4">弹幕样式</TextBlock>
-                                            <ComboBox  x:Name="DanmuSettingStyle" Foreground="White" SelectedIndex="{x:Bind Path=DanmuControl.BorderStyle,Mode=TwoWay}">
+                                            <ComboBox  x:Name="DanmuSettingStyle" Foreground="White" SelectedIndex="{x:Bind Path=DanmuControl.DanmakuStyle,Converter={StaticResource styleConvert},Mode=TwoWay}">
                                                 <ComboBox.Items>
                                                     <ComboBoxItem>重叠</ComboBoxItem>
                                                     <ComboBoxItem>无边</ComboBoxItem>
@@ -391,7 +395,7 @@
                                                 </ComboBox.Items>
                                             </ComboBox>
                                         </StackPanel>
-                                        <ToggleSwitch x:Name="DanmuSettingBold" Foreground="White" Margin="0 4 0 0"  IsOn="{x:Bind Path=DanmuControl.bold,Mode=TwoWay}">
+                                        <ToggleSwitch x:Name="DanmuSettingBold" Foreground="White" Margin="0 4 0 0"  IsOn="{x:Bind Path=DanmuControl.DanmakuBold,Mode=TwoWay}">
                                             <ToggleSwitch.Header>
                                                 <TextBlock  Foreground="White" >字体加粗</TextBlock>
                                             </ToggleSwitch.Header>
@@ -407,11 +411,7 @@
                                                 <TextBlock  Foreground="White" >合并重复弹幕</TextBlock>
                                             </ToggleSwitch.Header>
                                         </ToggleSwitch>
-                                        <ToggleSwitch x:Name="DanmuSettingDotHideSubtitle" Grid.Column="1" Foreground="White" IsOn="{x:Bind Path=DanmuControl.notHideSubtitle,Mode=TwoWay}">
-                                            <ToggleSwitch.Header>
-                                                <TextBlock  Foreground="White">半屏显示</TextBlock>
-                                            </ToggleSwitch.Header>
-                                        </ToggleSwitch>
+                                        
                                     </Grid>
                                     <TextBlock Margin="0 8">关键词屏蔽</TextBlock>
                                     <Grid >

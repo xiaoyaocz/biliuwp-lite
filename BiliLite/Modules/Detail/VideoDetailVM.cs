@@ -142,6 +142,14 @@ namespace BiliLite.Modules
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<VideoDetailModel>>();
+                    if (!data.success)
+                    {
+                        var result_proxy = await videoAPI.DetailProxy(id, isbvid).Request();
+                        if (result_proxy.status)
+                        {
+                            data = await result_proxy.GetJson<ApiDataModel<VideoDetailModel>>();
+                        }
+                    }
                     if (data.success)
                     {
                         VideoInfo = data.data;

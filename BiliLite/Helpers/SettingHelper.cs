@@ -175,6 +175,10 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string FONT_ZOOM = "VideoDanmuFontZoom";
             /// <summary>
+            /// 弹幕显示区域
+            /// </summary>
+            public const string AREA = "VideoDanmuArea";
+            /// <summary>
             /// 弹幕速度 int
             /// </summary>
             public const string SPEED = "VideoDanmuSpeed";
@@ -245,6 +249,7 @@ namespace BiliLite.Helpers
             /// 显示弹幕 Visibility
             /// </summary>
             public const string SHOW = "LiveDanmuShow";
+            public const string AREA = "LiveDanmuArea";
             /// <summary>
             /// 弹幕缩放 double
             /// </summary>
