@@ -553,6 +553,7 @@
     <Content Include="Assets\Fonts\Font Awesome 5 Free-Regular-400.otf" />
     <Content Include="Assets\Fonts\Font Awesome 5 Free-Solid-900.otf" />
     <Content Include="Assets\Fonts\vanfont.otf" />
+    <None Include="Assets\Text\new_version.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\zfb.jpg" />
     <Content Include="Properties\Default.rd.xml" />
