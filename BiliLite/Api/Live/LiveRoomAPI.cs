@@ -182,7 +182,7 @@ namespace BiliLite.Api.Live
                 baseUrl = $"https://api.live.bilibili.com/api/sendmsg",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
-            api.body = $"cid={roomId}&mid={SettingHelper.Account.UserID}&msg={text}&rnd={Utils.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
+            api.body = $"cid={roomId}&mid={SettingHelper.Account.UserID}&msg={Uri.EscapeDataString( text)}&rnd={Utils.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }

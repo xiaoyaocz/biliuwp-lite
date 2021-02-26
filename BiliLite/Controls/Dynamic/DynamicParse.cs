@@ -141,10 +141,16 @@ namespace BiliLite.Controls.Dynamic
             {
                 case DynamicDisplayType.Video:
                     {
+                        var duration = TimeSpan.FromSeconds(obj["duration"].ToInt32());
+                        var coverText = duration.ToString(@"mm\:ss");
+                        if (duration.TotalHours >= 1)
+                        {
+                            coverText = duration.ToString(@"hh\:mm\:ss");
+                        }
                         info = new DynamicItemDisplayOneRowInfo()
                         {
                             Cover = obj["pic"].ToString()+ "@412w_232h_1c.jpg",
-                            CoverText = TimeSpan.FromSeconds(obj["duration"].ToInt32()).ToString(@"mm\:ss"),
+                            CoverText = coverText,
                             Subtitle = "播放:" + obj["stat"]["view"].ToCountString() + " 弹幕:" + obj["stat"]["danmaku"].ToCountString(),
                             Tag = "视频",
                             ID = obj["aid"].ToString(),

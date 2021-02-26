@@ -45,7 +45,7 @@
             <TextBlock Margin="12 0" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Left">稍后再看(<Run Text="{x:Bind Path=watchLaterVM.Videos.Count,Mode=OneWay}"/>个视频)</TextBlock>
             <StackPanel Margin="12 0" HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button Command="{x:Bind Path=watchLaterVM.CleanCommand}" Margin="8 0">一键清空</Button>
-                <Button Command="{x:Bind Path=watchLaterVM.CleanViewedCommand}">移除以观看</Button>
+                <Button Command="{x:Bind Path=watchLaterVM.CleanViewedCommand}">移除已观看</Button>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1">

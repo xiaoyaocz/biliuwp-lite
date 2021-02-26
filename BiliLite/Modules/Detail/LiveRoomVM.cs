@@ -996,8 +996,8 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
-                Utils.ShowMessageToast("赠送礼物出现错误");
+                LogHelper.Log("发送弹幕出现错误", LogType.ERROR, ex);
+                Utils.ShowMessageToast("发送弹幕出现错误");
                 return false;
             }
 
