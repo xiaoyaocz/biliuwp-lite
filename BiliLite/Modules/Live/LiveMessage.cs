@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Windows.UI.Xaml;
 using BiliLite.Helpers;
+using Windows.UI.Xaml.Media;
+using System.ComponentModel;
 /*
 * 参考文档:
 * https://github.com/lovelyyoshino/Bilibili-Live-API/blob/master/API.WebSocket.md
@@ -178,7 +180,7 @@ namespace BiliLite.Modules.Live
                 foreach (var item in textLines)
                 {
                     ParseMessage(item);
-                     
+
                 }
             }
         }
@@ -189,7 +191,7 @@ namespace BiliLite.Modules.Live
             {
                 var obj = JObject.Parse(jsonMessage);
                 var cmd = obj["cmd"].ToString();
-                if (cmd== "DANMU_MSG")
+                if (cmd == "DANMU_MSG")
                 {
                     var msg = new DanmuMsgModel();
                     if (obj["info"] != null && obj["info"].ToArray().Length != 0)
@@ -250,7 +252,7 @@ namespace BiliLite.Modules.Live
                         msg.giftName = obj["data"]["giftName"].ToString();
                         msg.num = obj["data"]["num"].ToString();
                         msg.uid = obj["data"]["uid"].ToString();
-                        NewMessage?.Invoke( MessageType.Gift,  msg );
+                        NewMessage?.Invoke(MessageType.Gift, msg);
                     }
                     return;
                 }
@@ -279,7 +281,7 @@ namespace BiliLite.Modules.Live
                         w.svip = obj["data"]["vip"].ToInt32() != 1;
                         NewMessage?.Invoke(MessageType.Welcome, w);
                     }
-                   
+
                     return;
                 }
                 if (cmd == "SYS_MSG")
@@ -303,11 +305,33 @@ namespace BiliLite.Modules.Live
                     }
                     return;
                 }
+                if (cmd == "SUPER_CHAT_MESSAGE" )
+                {
+                    SuperChatMsgModel msg = new SuperChatMsgModel();
+                    if (obj["data"] != null)
+                    {
+                        msg.background_bottom_color = obj["data"]["background_bottom_color"].ToString();
+                        msg.background_color= obj["data"]["background_color"].ToString();
+                        msg.background_image= obj["data"]["background_image"].ToString();
+                        msg.end_time= obj["data"]["end_time"].ToInt32();
+                        msg.start_time = obj["data"]["start_time"].ToInt32();
+                        msg.time= obj["data"]["time"].ToInt32();
+                        msg.max_time = msg.end_time - msg.start_time;
+                        msg.face = obj["data"]["user_info"]["face"].ToString();
+                        msg.face_frame = obj["data"]["user_info"]["face_frame"].ToString();
+                        msg.font_color = obj["data"]["message_font_color"].ToString();
+                        msg.message= obj["data"]["message"].ToString();
+                        msg.price = obj["data"]["price"].ToInt32();
+                        msg.username = obj["data"]["user_info"]["uname"].ToString();
+                        NewMessage?.Invoke(MessageType.SuperChat, msg);
+                    }
+                    return;
+                }
             }
             catch (Exception)
             {
             }
-           
+
         }
 
         /// <summary>
@@ -383,5 +407,103 @@ namespace BiliLite.Modules.Live
         {
             ws.Dispose();
         }
+    }
+
+    public class LiveDanmuModel
+    {
+
+        public LiveDanmuTypes type { get; set; }
+        public int viewer { get; set; }
+        public object value { get; set; }
+
+    }
+    public class DanmuMsgModel
+    {
+        public string text { get; set; }
+        public string username { get; set; }//昵称
+                                            // public SolidColorBrush usernameColor { get; set; }//昵称颜色
+
+        public string ul { get; set; }//等级
+        public string ulColor { get; set; }//等级颜色
+        public SolidColorBrush ul_color { get; set; }//等级颜色
+
+
+        public string user_title { get; set; }//头衔id（对应的是CSS名）
+
+        public string vip { get; set; }
+        public string medal_name { get; set; }//勋章
+
+        public string medal_lv { get; set; }//勋章
+        public string medalColor { get; set; }//勋章颜色
+        public SolidColorBrush medal_color { get; set; }//勋章颜色
+
+        public Visibility isAdmin { get; set; } = Visibility.Collapsed;
+        public Visibility isVip { get; set; } = Visibility.Collapsed;
+        public Visibility isBigVip { get; set; } = Visibility.Collapsed;
+        public Visibility hasMedal { get; set; } = Visibility.Collapsed;
+        public Visibility hasTitle { get; set; } = Visibility.Collapsed;
+        public Visibility hasUL { get; set; } = Visibility.Visible;
+        public string titleImg
+        {
+            get
+            {
+                return LiveRoomVM.Titles.FirstOrDefault(x => x.id == user_title)?.img;
+            }
+        }
+        public SolidColorBrush uname_color { get; set; }
+        public SolidColorBrush content_color { get; set; }
+
+    }
+    public class GiftMsgModel
+    {
+        public string uname { get; set; }
+        public string giftName { get; set; }
+        public string action { get; set; }
+        public string num { get; set; }
+        public int giftId { get; set; }
+        public string uid { get; set; }
+        public string gif { get; set; }
+    }
+    public class WelcomeMsgModel
+    {
+        public string uname { get; set; }
+        public string isadmin { get; set; }
+        public string uid { get; set; }
+        public bool svip { get; set; }
+
+    }
+    public class SuperChatMsgModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void DoPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+        public string username { get; set; }
+        public string face { get; set; }
+        public string face_frame { get; set; }
+        public string message { get; set; }
+        public string message_jpn { get; set; }
+        public string background_image { get; set; }
+        public int start_time { get; set; }
+        public int end_time { get; set; }
+        private int _time;
+        public int time
+        {
+            get { return _time; }
+            set { _time = value; DoPropertyChanged("time"); }
+        }
+        public int max_time { get; set; }
+        public int price { get; set; }
+        public int price_gold
+        {
+            get
+            {
+                return price * 100;
+            }
+        }
+        public string background_color { get; set; }
+        public string background_bottom_color { get; set; }
+        public string font_color { get; set; }
     }
 }

@@ -826,11 +826,80 @@
                         </PivotItem.Header>
                         <Grid>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <ListView x:Name="list_chat" ItemsSource="{x:Bind Path=liveRoomVM.Messages,Mode=OneWay}" ItemTemplate="{StaticResource chat}" SelectionMode="None" IsItemClickEnabled="False" >
+                            <ScrollViewer VerticalAlignment="Top" Padding="0 0 0 8" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Auto">
+                                <ItemsControl ItemsSource="{x:Bind Path=liveRoomVM.SuperChats,Mode=OneWay}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="model_live:SuperChatMsgModel">
+                                            <Button Margin="8 0 0 0" Background="Transparent" Padding="0">
+
+                                                <Border Background="{x:Bind Path=background_color,Mode=OneWay,Converter={StaticResource colorConvert}}" BorderThickness="0" CornerRadius="18" Height="36" >
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <ProgressBar Grid.ColumnSpan="2" Height="48" Foreground="{x:Bind Path=background_bottom_color,Mode=OneWay,Converter={StaticResource colorConvert}}" Background="Transparent" Value="{x:Bind Path=time,Mode=OneWay}" Maximum="{x:Bind Path=max_time,Mode=OneWay}"></ProgressBar>
+
+                                                        <Ellipse Width="32" Height="32" Margin="2 0 0 0">
+                                                            <Ellipse.Fill>
+                                                                <ImageBrush ImageSource="{x:Bind Path=face,Converter={StaticResource imageConvert2},ConverterParameter='48w'}"></ImageBrush>
+                                                            </Ellipse.Fill>
+                                                        </Ellipse>
+
+
+
+                                                        <TextBlock Grid.Column="1" Foreground="White" Margin="8 0" VerticalAlignment="Center">￥<Run Text="{x:Bind Path=price}"/></TextBlock>
+                                                    </Grid>
+                                                </Border>
+                                                <Button.Flyout>
+                                                    <Flyout >
+                                                        <StackPanel Margin="-12" Width="280">
+                                                            <Grid  Height="56" Background="{x:Bind Path=background_color,Mode=OneWay,Converter={StaticResource colorConvert}}">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Image Grid.ColumnSpan="3" Margin="0 0 -36 0" HorizontalAlignment="Right" Source="{x:Bind Path=background_image}"></Image>
+                                                                <Grid Margin="12 4">
+                                                                    <Ellipse  Width="36" Height="36">
+                                                                        <Ellipse.Fill>
+                                                                            <ImageBrush ImageSource="{x:Bind Path=face,Converter={StaticResource imageConvert2},ConverterParameter='48w'}"></ImageBrush>
+                                                                        </Ellipse.Fill>
+                                                                    </Ellipse>
+                                                                    <Image Source="{x:Bind Path=face_frame}"></Image>
+                                                                </Grid>
+
+                                                                <StackPanel  VerticalAlignment="Center" Grid.Column="1">
+                                                                    <TextBlock FontSize="12" Foreground="Black" Text="{x:Bind username}"></TextBlock>
+                                                                    <TextBlock Foreground="Black">￥<Run Text="{x:Bind Path=price}"/> <Run Foreground="Gray" FontSize="12" Text="("/><Run Foreground="Gray" FontSize="12" Text="{x:Bind Path=price_gold,Converter={StaticResource numberToStringConvert}}"/><Run Foreground="Gray" FontSize="12" Text="金瓜子)"/></TextBlock>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                            <Grid Padding="12" Background="{x:Bind Path=background_bottom_color,Mode=OneWay,Converter={StaticResource colorConvert}}">
+                                                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="white" Text="{x:Bind Path=message}"></TextBlock>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Flyout>
+                                                </Button.Flyout>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    
+                                    
+                                </ItemsControl>
+                            </ScrollViewer>
+
+                            <ListView x:Name="list_chat" Grid.Row="1" ItemsSource="{x:Bind Path=liveRoomVM.Messages,Mode=OneWay}" ItemTemplate="{StaticResource chat}" SelectionMode="None" IsItemClickEnabled="False" >
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"/>
@@ -845,7 +914,9 @@
                                     </Style>
                                 </ListView.ItemContainerStyle>
                             </ListView>
-                            <ListView ItemsSource="{x:Bind Path=liveRoomVM.GiftMessage,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind Path=liveRoomVM.ShowGiftMessage,Mode=OneWay}" Grid.Row="1" >
+                            
+                            
+                            <ListView ItemsSource="{x:Bind Path=liveRoomVM.GiftMessage,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False" Visibility="{x:Bind Path=liveRoomVM.ShowGiftMessage,Mode=OneWay}" Grid.Row="2" >
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsStackPanel VerticalAlignment="Bottom" ItemsUpdatingScrollMode="KeepLastItemInView"/>
@@ -864,7 +935,7 @@
                                 </ListView.ItemTemplate>
 
                             </ListView>
-                            <Grid  Grid.Row="2" Background="{ThemeResource NavigationViewTopPaneBackground}" Padding="8">
+                            <Grid  Grid.Row="3" Background="{ThemeResource NavigationViewTopPaneBackground}" Padding="8">
                                 <AutoSuggestBox x:Name="DanmuText" QuerySubmitted="DanmuText_QuerySubmitted" QueryIcon="Send" PlaceholderText="说点什么吧"></AutoSuggestBox>
                             </Grid>
                         </Grid>

@@ -280,6 +280,21 @@ namespace BiliLite.Api.Live
             return api;
         }
 
-
+        /// <summary>
+        /// 直播间抽奖信息
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        public ApiModel RoomSuperChat(int roomId)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"https://api.live.bilibili.com/av/v1/SuperChat/getMessageList",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&room_id={roomId}",
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
     }
 }

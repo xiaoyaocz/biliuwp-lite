@@ -529,68 +529,6 @@ namespace BiliLite.Modules.Live
 
     }
 
-    public class LiveDanmuModel
-    {
-
-        public LiveDanmuTypes type { get; set; }
-        public int viewer { get; set; }
-        public object value { get; set; }
-
-    }
-    public class DanmuMsgModel
-    {
-        public string text { get; set; }
-        public string username { get; set; }//昵称
-                                            // public SolidColorBrush usernameColor { get; set; }//昵称颜色
-
-        public string ul { get; set; }//等级
-        public string ulColor { get; set; }//等级颜色
-        public SolidColorBrush ul_color { get; set; }//等级颜色
-
-
-        public string user_title { get; set; }//头衔id（对应的是CSS名）
-
-        public string vip { get; set; }
-        public string medal_name { get; set; }//勋章
-
-        public string medal_lv { get; set; }//勋章
-        public string medalColor { get; set; }//勋章颜色
-        public SolidColorBrush medal_color { get; set; }//勋章颜色
-
-        public Visibility isAdmin { get; set; } = Visibility.Collapsed;
-        public Visibility isVip { get; set; } = Visibility.Collapsed;
-        public Visibility isBigVip { get; set; } = Visibility.Collapsed;
-        public Visibility hasMedal { get; set; } = Visibility.Collapsed;
-        public Visibility hasTitle { get; set; } = Visibility.Collapsed;
-        public Visibility hasUL { get; set; } = Visibility.Visible;
-        public string titleImg
-        {
-            get
-            {
-                return LiveRoomVM.Titles.FirstOrDefault(x => x.id == user_title)?.img;
-            }
-        }
-        public SolidColorBrush uname_color { get; set; }
-        public SolidColorBrush content_color { get; set; }
-
-    }
-    public class GiftMsgModel
-    {
-        public string uname { get; set; }
-        public string giftName { get; set; }
-        public string action { get; set; }
-        public string num { get; set; }
-        public int giftId { get; set; }
-        public string uid { get; set; }
-        public string gif { get; set; }
-    }
-    public class WelcomeMsgModel
-    {
-        public string uname { get; set; }
-        public string isadmin { get; set; }
-        public string uid { get; set; }
-        public bool svip { get; set; }
-
-    }
+    
 
 }

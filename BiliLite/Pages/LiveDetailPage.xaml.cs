@@ -619,7 +619,7 @@ namespace BiliLite.Pages
                 return;
             }
             url = liveRoomVM.urls[BottomCBLine.SelectedIndex].url;
-           // await SetPlayer(url);
+            await SetPlayer(url);
         }
 
         private void BottomBtnPause_Click(object sender, RoutedEventArgs e)

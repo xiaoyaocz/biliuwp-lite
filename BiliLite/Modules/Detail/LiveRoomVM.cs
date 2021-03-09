@@ -51,6 +51,7 @@ namespace BiliLite.Modules
             GiftMessage = new ObservableCollection<GiftMsgModel>();
             Guards = new ObservableCollection<LiveGuardRankItem>();
             BagGifts = new ObservableCollection<LiveGiftItem>();
+            SuperChats = new ObservableCollection<SuperChatMsgModel>();
             timer = new Timer(1000);
             timer_box = new Timer(1000);
             timer_auto_hide_gift = new Timer(1000);
@@ -68,11 +69,11 @@ namespace BiliLite.Modules
             switch (type)
             {
                 case MessageType.ConnectSuccess:
-                    //Messages.Add(new DanmuMsgModel()
-                    //{
-                    //    username = message.ToString(),
-                    //    uname_color=new SolidColorBrush(Colors.Gray)
-                    //});
+                    Messages.Add(new DanmuMsgModel()
+                    {
+                        username = message.ToString(),
+                        uname_color = new SolidColorBrush(Colors.Gray)
+                    });
                     break;
                 case MessageType.Online:
                     Online = (int)message;
@@ -161,8 +162,8 @@ namespace BiliLite.Modules
                 case MessageType.SystemMsg:
                     break;
                 case MessageType.SuperChat:
-                    break;
                 case MessageType.SuperChatJpn:
+                    SuperChats.Add(message as SuperChatMsgModel);
                     break;
                 case MessageType.AnchorLotteryStart:
                     if (ReceiveLotteryMsg)
@@ -187,111 +188,7 @@ namespace BiliLite.Modules
                     break;
             }
         }
-        private async void LiveDanmaku_NewMessage(object sender, Live.LiveDanmuModel e)
-        {
-            try
-            {
-                if (Messages == null) return;
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    switch (e.type)
-                    {
-                        case LiveDanmuTypes.Viewer:
-                            Online = e.viewer;
-                            break;
-                        case LiveDanmuTypes.Danmu:
-                            var m = e.value as DanmuMsgModel;
-                            m.uname_color = new SolidColorBrush(Colors.Gray);
-                            if (m.medalColor != null && m.medalColor != "")
-                            {
-                                m.ul_color = new SolidColorBrush(Utils.ToColor(m.ulColor));
-                            }
-                            else
-                            {
-                                m.ul_color = new SolidColorBrush(Colors.Gray);
-                            }
-                            if (m.medalColor != null && m.medalColor != "")
-                            {
-                                m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
-                            }
-
-                            if (Messages.Count >= CleanCount)
-                            {
-                                Messages.Clear();
-                            }
-                            Messages.Add(m);
-                            AddNewDanmu?.Invoke(this, m.text);
-                            break;
-                        case LiveDanmuTypes.Gift:
-                            {
-                                if (!ReceiveGiftMsg)
-                                {
-                                    return;
-                                }
-                                if (GiftMessage.Count >= 2)
-                                {
-                                    GiftMessage.RemoveAt(0);
-                                }
-                                ShowGiftMessage = true;
-                                hide_gift_flag = 1;
-                                var info = e.value as GiftMsgModel;
-                                info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
-                                GiftMessage.Add(info);
-                                if (!timer_auto_hide_gift.Enabled)
-                                {
-                                    timer_auto_hide_gift.Start();
-                                }
-                            }
-                            break;
-                        case LiveDanmuTypes.Welcome:
-                            {
-                                var info = e.value as WelcomeMsgModel;
-                                if (ReceiveWelcomeMsg)
-                                {
-                                    Messages.Add(new DanmuMsgModel()
-                                    {
-                                        isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
-                                        isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
-                                        hasUL = Visibility.Collapsed,
-                                        username = info.uname,
-                                        uname_color = new SolidColorBrush(Colors.HotPink),
-                                        text = " 进入直播间"
-                                    });
-                                }
-                            }
-                            break;
-                        case LiveDanmuTypes.SystemMsg:
-                            break;
-                        case LiveDanmuTypes.ANCHOR_LOT_START:
-                            {
-                                if (ReceiveLotteryMsg)
-                                {
-                                    var info = e.value.ToString();
-                                    anchorLotteryVM.SetLotteryInfo(JsonConvert.DeserializeObject<LiveRoomAnchorLotteryInfoModel>(info));
-                                }
-                            }
-                            break;
-                        case LiveDanmuTypes.ANCHOR_LOT_AWARD:
-                            {
-                                if (ReceiveLotteryMsg)
-                                {
-                                    var info = JsonConvert.DeserializeObject<LiveRoomEndAnchorLotteryInfoModel>(e.value.ToString());
-                                    LotteryEnd?.Invoke(this, info);
-                                }
-
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("接收直播弹幕出错", LogType.ERROR, ex);
-            }
-
-        }
+       
         public ICommand LoadMoreGuardCommand { get; private set; }
         public ICommand ShowBagCommand { get; private set; }
         private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
@@ -343,9 +240,22 @@ namespace BiliLite.Modules
                 }
                 var start_time = Utils.TimestampToDatetime(LiveInfo.room_info.live_start_time);
                 var ts = DateTime.Now - start_time;
-
+               
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
+                    for (int i = 0; i < SuperChats.Count; i++)
+                    {
+                        var item = SuperChats[i];
+                        if (item.time<=0)
+                        {
+                            SuperChats.Remove(item);
+                        }
+                        else
+                        {
+                            item.time -= 1;
+                        }
+                    }
+                   
                     LiveTime = ts.ToString(@"hh\:mm\:ss");
                 });
             }
@@ -430,7 +340,7 @@ namespace BiliLite.Modules
         }
 
         public ObservableCollection<LiveGuardRankItem> Guards { get; set; }
-
+        public ObservableCollection<SuperChatMsgModel> SuperChats { get; set; }
 
         private LiveRoomWebUrlQualityDescriptionItemModel _current_qn;
         public LiveRoomWebUrlQualityDescriptionItemModel current_qn
@@ -623,6 +533,7 @@ namespace BiliLite.Modules
                             timer.Start();
                             await GetPlayUrl(RoomID, 0);
                             //GetFreeSilverTime(); 
+                            await LoadSuperChat();
                             if (ReceiveLotteryMsg)
                             {
                                 anchorLotteryVM.LoadLotteryInfo(RoomID);
@@ -635,6 +546,7 @@ namespace BiliLite.Modules
                         {
                             await GetTitles();
                         }
+                       
                         ReceiveMessage(data.data.room_info.room_id);
                     }
                     else
@@ -680,6 +592,60 @@ namespace BiliLite.Modules
             }
 
         }
+
+        /// <summary>
+        /// 读取醒目留言
+        /// </summary>
+        /// <returns></returns>
+        public async Task LoadSuperChat()
+        {
+            try
+            {
+               
+                var result = await liveRoomAPI.RoomSuperChat(RoomID).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<JObject>();
+                    if (data.success)
+                    {
+                        SuperChats.Clear();
+                        var ls = JsonConvert.DeserializeObject<List<LiveRoomSuperChatModel>>(data.data["list"].ToString());
+                        foreach (var item in ls)
+                        {
+                            SuperChats.Add(new SuperChatMsgModel() { 
+                                background_bottom_color=item.background_bottom_color,
+                                background_color=item.background_color,
+                                background_image=item.background_image,
+                                end_time=item.end_time,
+                                face=item.user_info.face,
+                                face_frame=item.user_info.face_frame,
+                                font_color= string.IsNullOrEmpty(item.font_color)?"#FFFFFF": item.font_color,
+                                max_time=item.end_time-item.start_time,
+                                message=item.message,
+                                price=item.price,
+                                start_time=item.start_time,
+                                time=item.time,
+                                username=item.user_info.uname
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("读取醒目留言失败:" + data.message);
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(result.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var result = HandelError<object>(ex);
+                Utils.ShowMessageToast(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// 读取钱包信息
@@ -1795,6 +1761,41 @@ namespace BiliLite.Modules
 
         }
 
+
+        public class LiveRoomSuperChatUserInfoModel
+        {
+            public string uname { get; set; }
+            public string face { get; set; }
+            public string face_frame { get; set; }
+            public int guard_level { get; set; }
+            public int user_level { get; set; }
+            public int is_vip { get; set; }
+            public int is_svip { get; set; }
+            public int is_main_vip { get; set; }
+        }
+
+        public class LiveRoomSuperChatModel
+        {
+            public int id { get; set; }
+            public int uid { get; set; }
+            public string background_image { get; set; }
+            public string background_color { get; set; }
+            public string background_icon { get; set; }
+            public string background_bottom_color { get; set; }
+            public string background_price_color { get; set; }
+            public string font_color { get; set; }
+            public int price { get; set; }
+            public int rate { get; set; }
+            public int time { get; set; }
+            public int start_time { get; set; }
+            public int end_time { get; set; }
+            public string message { get; set; }
+            public int trans_mark { get; set; }
+            public string message_trans { get; set; }
+            public int ts { get; set; }
+            public string token { get; set; }
+            public LiveRoomSuperChatUserInfoModel user_info { get; set; }
+        }
     }
 
 }
