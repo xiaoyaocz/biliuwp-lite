@@ -20,11 +20,6 @@
             <Setter Property="BorderBrush" Value="#33808080"></Setter>
             <Setter Property="Padding" Value="4"></Setter>
         </Style>
-        <Style x:Name="btn_Style1" TargetType="Button">
-            <Setter Property="Width" Value="100"></Setter>
-            <Setter Property="Background" Value="#FFF9F9F9"></Setter>
-            <Setter Property="Foreground" Value="Black"></Setter>
-        </Style>
         <Style TargetType="ListViewItem" x:Key="replyStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
             <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
@@ -32,67 +27,7 @@
             <Setter Property="Padding" Value="0"></Setter>
         </Style>
         <convert:ColorSelecteConvert x:Key="colorSelct" ></convert:ColorSelecteConvert>
-        <Flyout x:Key="EmojiFlyout" x:Name="EmojiFlyout">
-            <Flyout.FlyoutPresenterStyle>
-                <Style TargetType="FlyoutPresenter">
-                    <Setter Property="ScrollViewer.ZoomMode" Value="Enabled"/>
-                    <Setter Property="Background" Value="#FFF9F9F9"/>
-                    <Setter Property="MinHeight" Value="300"/>
-                    <Setter Property="MinWidth" Value="300"/>
-                </Style>
-            </Flyout.FlyoutPresenterStyle>
-            <Grid>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(⌒▽⌒)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（￣▽￣）</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(=・ω・=)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(｀・ω・´)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(〜￣△￣)〜</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(･∀･)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(°∀°)ﾉ</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(｡･ω･｡)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(●￣(ｴ)￣●)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">ε=ε=(ノ≧∇≦)ノ</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（#-_-)┯━┯</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">_(:3」∠)_</Button>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(￣3￣)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">╮(￣▽￣)╭</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">( ´_ゝ｀)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">←_←</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">→_→</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(&lt; _&lt; )</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(&gt; _&lt; )</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(´･_･`)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(-_-#)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（￣へ￣）</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(笑)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(汗)</Button>
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">("▔□▔)/</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(ﾟДﾟ≡ﾟдﾟ)!?</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">Σ(ﾟдﾟ;)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">Σ( ￣□￣||)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(´；ω；`)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">（/TДT)/</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(^・ω・^ )</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(￣ε(#￣) Σ</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">ヽ(`Д´)ﾉ</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(╯°口°)╯(┴—┴</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(泣)</Button>
-                    <Button Click="Button_Click_1" Style="{StaticResource btn_Style1}">(苦笑)</Button>
-                </StackPanel>
-            </Grid>
-        </Flyout>
-
+        <convert:ColorConvert x:Key="colorConvert" ></convert:ColorConvert>
         <Flyout  x:Key="FaceFlyout" x:Name="FaceFlyout">
             <Grid Width="320">
                 <Pivot x:Name="pivot_face" ItemsSource="{x:Bind Path=emoteVM.Packages,Mode=OneWay}">
@@ -141,6 +76,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -162,8 +98,19 @@
                     <TextBlock VerticalAlignment="Center" Visibility="{x:Bind showTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
                     <TextBlock  Text="{x:Bind Path=member.uname}" 
                                 Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
-                    <Image Height="12" Margin="8 0" Source="{Binding Path=member.LV}"></Image>
-
+                    <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=member.LV}"></Image>
+                    <Border Margin="0 4 0 0" Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}" VerticalAlignment="Center" BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
+                            <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
+                            <TextBlock Margin="4 0" FontSize="10" Grid.Column="2" Foreground="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                        </Grid>
+                    </Border>
                 </StackPanel>
                 <AppBarButton Grid.Column="1" Height="36" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More" Grid.RowSpan="2" Width="48" ></AppBarButton>
                 <TextBlock Grid.Column="1" Grid.Row="1"  FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}"><!--#<Run Text="{Binding Path=floor}"></Run>--> <Run Text="{x:Bind Path=time}"></Run> <Run Text="{x:Bind Path=content.plat_str}"></Run></TextBlock>
@@ -171,33 +118,39 @@
                 <ContentControl  Grid.Row="2" Grid.Column="1" Margin="4 0" Content="{x:Bind Path=content.text}">
 
                 </ContentControl>
+                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.Row="3">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                <StackPanel Orientation="Horizontal" Margin="0 8 0 0" Grid.Column="1" Grid.Row="3">
+                        <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
+                                <TextBlock  Margin="4 0" Text="{x:Bind like_str,Mode=OneWay}"></TextBlock>
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton  Click="btn_ShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <fa:FontAwesome Icon="Regular_Comment" FontSize="14"></fa:FontAwesome>
+                                <TextBlock Margin="4 0" Text="{x:Bind rcount_str,Mode=OneWay}"></TextBlock>
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton Visibility="{x:Bind showReplyBtn,Mode=OneWay}" Click="btn_ShowReplyBtn_Click" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="4 0">回复</TextBlock>
+                            </StackPanel>
+                        </HyperlinkButton>
+                        <HyperlinkButton Click="btn_DonotLike_Click" Visibility="Collapsed" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon VerticalAlignment="Center" FontSize="14" FontFamily="Segoe MDL2 Assets" Glyph="&#xE19E;" />
+                                <TextBlock ></TextBlock>
+                            </StackPanel>
+                        </HyperlinkButton>
+                    </StackPanel>
 
-                    <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
-                            <TextBlock  Margin="4 0" Text="{x:Bind like_str,Mode=OneWay}"></TextBlock>
-                        </StackPanel>
-                    </HyperlinkButton>
-                    <HyperlinkButton  Click="btn_ShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <fa:FontAwesome Icon="Regular_Comment" FontSize="14"></fa:FontAwesome>
-                            <TextBlock Margin="4 0" Text="{x:Bind rcount_str,Mode=OneWay}"></TextBlock>
-                        </StackPanel>
-                    </HyperlinkButton>
-                    <HyperlinkButton Visibility="{x:Bind showReplyBtn,Mode=OneWay}" Click="btn_ShowReplyBtn_Click" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="4 0">回复</TextBlock>
-                        </StackPanel>
-                    </HyperlinkButton>
-                    <HyperlinkButton Click="btn_DonotLike_Click" Visibility="Collapsed" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon VerticalAlignment="Center" FontSize="14" FontFamily="Segoe MDL2 Assets" Glyph="&#xE19E;" />
-                            <TextBlock ></TextBlock>
-                        </StackPanel>
-                    </HyperlinkButton>
-                </StackPanel>
+                    <Border Visibility="{x:Bind Path=up_action.like,Mode=OneWay}" Background="#3C808080" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="2">
+                        <TextBlock FontSize="12" Margin="8 4" Foreground="Gray">UP主觉得很赞</TextBlock>
+                    </Border>
+                </Grid>
+              
                 <StackPanel Grid.Column="1" Grid.Row="4" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
 
                     <StackPanel  Visibility="{x:Bind Path=showReplyBox,Mode=OneWay}" Margin="0 0 0 4">

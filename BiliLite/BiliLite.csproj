@@ -279,6 +279,7 @@
     <Compile Include="Modules\Live\LiveCenter\LiveCenterHistoryVM.cs" />
     <Compile Include="Modules\Live\LiveCenter\LiveCenterVM.cs" />
     <Compile Include="Modules\Live\LiveDanmaku.cs" />
+    <Compile Include="Modules\Live\LiveMessage.cs" />
     <Compile Include="Modules\Live\LiveRecommendVM.cs" />
     <Compile Include="Modules\Player\InteractionVideoVM.cs" />
     <Compile Include="Modules\RegionDetailVM.cs" />
@@ -553,6 +554,7 @@
     <Content Include="Assets\Fonts\Font Awesome 5 Free-Regular-400.otf" />
     <Content Include="Assets\Fonts\Font Awesome 5 Free-Solid-900.otf" />
     <Content Include="Assets\Fonts\vanfont.otf" />
+    <Content Include="Assets\Fonts\FansNum.otf" />
     <None Include="Assets\Text\new_version.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\zfb.jpg" />

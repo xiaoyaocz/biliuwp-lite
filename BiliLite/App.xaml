@@ -310,6 +310,8 @@
             <convert:DisplayConvert x:Key="display"></convert:DisplayConvert>
             <FontFamily x:Key="VanFont">ms-appx:///Assets/Fonts/vanfont.otf#vanfont</FontFamily>
             <CornerRadius x:Key="ImageCornerRadius">4</CornerRadius>
+            <!--该字体来自哔哩哔哩Web端，该字体可能需要商业授权-->
+            <FontFamily x:Key="FansNum">ms-appx:///Assets/Fonts/FansNum.otf#FansNum</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 

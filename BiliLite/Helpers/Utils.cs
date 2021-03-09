@@ -306,19 +306,17 @@ namespace BiliLite.Helpers
                 obj = c.ToString("X2");
             }
             Color color = new Color();
-            if (obj.Length == 4)
+            if (obj.Length <= 6)
             {
-                obj = "00" + obj;
-            }
-            if (obj.Length == 6)
-            {
+                obj = obj.PadLeft(6, '0');
                 color.R = byte.Parse(obj.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
                 color.G = byte.Parse(obj.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
                 color.B = byte.Parse(obj.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
                 color.A = 255;
             }
-            if (obj.Length == 8)
+            else
             {
+                obj = obj.PadLeft(8, '0');
                 color.R = byte.Parse(obj.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
                 color.G = byte.Parse(obj.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
                 color.B = byte.Parse(obj.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);

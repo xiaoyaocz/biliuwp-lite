@@ -60,7 +60,7 @@
                         </HyperlinkButton>
                         <Grid Grid.Column="1" HorizontalAlignment="Right" ToolTipService.ToolTip="{x:Bind Path=Model.DecorateName,Mode=OneWay}" Visibility="{x:Bind Path=Model.ShowDecorate,Mode=OneWay}" VerticalAlignment="Center">
                             <Image Height="44" Source="{x:Bind Path=Model.DecorateImage,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}"></Image>
-                            <TextBlock  Visibility="{x:Bind Path=Model.ShowDecorateText,Mode=OneWay}" VerticalAlignment="Center" Margin="0 0 40 0" HorizontalAlignment="Right" Foreground="{x:Bind Path=Model.DecorateColor,Mode=OneWay,Converter={StaticResource colorConvert}}" FontWeight="Bold" Text="{x:Bind Path=Model.DecorateText,Mode=OneWay}"></TextBlock>
+                            <TextBlock FontSize="12" Visibility="{x:Bind Path=Model.ShowDecorateText,Mode=OneWay}" FontFamily="{StaticResource FansNum}"  VerticalAlignment="Center" Margin="0 0 40 0" HorizontalAlignment="Right" Foreground="{x:Bind Path=Model.DecorateColor,Mode=OneWay,Converter={StaticResource colorConvert}}"  Text="{x:Bind Path=Model.DecorateText,Mode=OneWay}"></TextBlock>
                         </Grid>
                         <AppBarButton Style="{StaticResource AppBarButtonNoChevronStyle}" Width="40" VerticalAlignment="Center" Height="40" Grid.Column="2" Icon="More" Foreground="Gray">
                             <AppBarButton.Flyout>

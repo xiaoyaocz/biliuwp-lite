@@ -126,8 +126,10 @@ namespace BiliLite.Controls.Dynamic
                 case 4200:
                     return DynamicDisplayType.LiveShare;
                 case 4300:
+                case 4310:
                     return DynamicDisplayType.MediaList;
                 case 4303:
+                case 4302:
                     return DynamicDisplayType.Cheese;
                 default:
                     return DynamicDisplayType.Other;

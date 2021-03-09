@@ -29,7 +29,8 @@ namespace BiliLite.Modules
         public LiveRoomAnchorLotteryVM anchorLotteryVM;
         readonly LiveRoomAPI liveRoomAPI;
         readonly PlayerAPI PlayerAPI;
-        readonly Live.LiveDanmaku liveDanmaku;
+        System.Threading.CancellationTokenSource cancelSource;
+        readonly Live.LiveMessage liveMessage;
         public event EventHandler<LiveRoomPlayUrlModel> ChangedPlayUrl;
         public event EventHandler<LiveRoomEndAnchorLotteryInfoModel> LotteryEnd;
         public event EventHandler<string> AddNewDanmu;
@@ -41,7 +42,7 @@ namespace BiliLite.Modules
         {
             liveRoomAPI = new LiveRoomAPI();
             PlayerAPI = new PlayerAPI();
-            liveDanmaku = new Live.LiveDanmaku();
+            liveMessage = new Live.LiveMessage();
             anchorLotteryVM = new LiveRoomAnchorLotteryVM();
             MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
             MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
@@ -56,99 +57,136 @@ namespace BiliLite.Modules
             timer.Elapsed += Timer_Elapsed;
             timer_box.Elapsed += Timer_box_Elapsed;
             timer_auto_hide_gift.Elapsed += Timer_auto_hide_gift_Elapsed;
-            liveDanmaku.NewMessage += LiveDanmaku_NewMessage;
+            liveMessage.NewMessage += LiveMessage_NewMessage;
             LoadMoreGuardCommand = new RelayCommand(LoadMoreGuardList);
             ShowBagCommand = new RelayCommand(SetShowBag);
         }
-        public ICommand LoadMoreGuardCommand { get; private set; }
-        public ICommand ShowBagCommand { get; private set; }
-        private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
+
+        private void LiveMessage_NewMessage(MessageType type, object message)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            if (Messages == null) return;
+            switch (type)
             {
-                if (GiftMessage != null && GiftMessage.Count != 0)
-                {
-                    if (hide_gift_flag >= 5)
+                case MessageType.ConnectSuccess:
+                    //Messages.Add(new DanmuMsgModel()
+                    //{
+                    //    username = message.ToString(),
+                    //    uname_color=new SolidColorBrush(Colors.Gray)
+                    //});
+                    break;
+                case MessageType.Online:
+                    Online = (int)message;
+                    break;
+                case MessageType.Danmu:
                     {
-                        ShowGiftMessage = false;
-                        GiftMessage.Clear();
+                        var m = message as DanmuMsgModel;
+                        m.uname_color = new SolidColorBrush(Colors.Gray);
+                        if (m.medalColor != null && m.medalColor != "")
+                        {
+                            m.ul_color = new SolidColorBrush(Utils.ToColor(m.ulColor));
+                        }
+                        else
+                        {
+                            m.ul_color = new SolidColorBrush(Colors.Gray);
+                        }
+                        if (m.medalColor != null && m.medalColor != "")
+                        {
+                            m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
+                        }
+
+                        if (Messages.Count >= CleanCount)
+                        {
+                            Messages.Clear();
+                        }
+                        Messages.Add(m);
+                        AddNewDanmu?.Invoke(this, m.text);
                     }
-                    else
+                    break;
+                case MessageType.Gift:
                     {
-                        hide_gift_flag++;
+                        if (!ReceiveGiftMsg)
+                        {
+                            return;
+                        }
+                        if (GiftMessage.Count >= 2)
+                        {
+                            GiftMessage.RemoveAt(0);
+                        }
+                        ShowGiftMessage = true;
+                        hide_gift_flag = 1;
+                        var info = message as GiftMsgModel;
+                        info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
+                        GiftMessage.Add(info);
+                        if (!timer_auto_hide_gift.Enabled)
+                        {
+                            timer_auto_hide_gift.Start();
+                        }
                     }
-                }
-            });
-        }
 
-        private void MessageCenter_LogoutedEvent(object sender, EventArgs e)
-        {
-            Logined = false;
-            timer_box.Stop();
-            ShowBox = false;
-            OpenBox = false;
-        }
-
-        private async void MessageCenter_LoginedEvent(object sender, object e)
-        {
-            Logined = true;
-            //TODO 加载背包
-            await LoadWalletInfo();
-            //await GetFreeSilverTime();
-        }
-
-        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            try
-            {
-                if (LiveInfo == null && !Liveing)
-                {
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    break;
+                case MessageType.Welcome:
                     {
-                        LiveTime = "";
-                    });
-                    return;
-                }
-                var start_time = Utils.TimestampToDatetime(LiveInfo.room_info.live_start_time);
-                var ts = DateTime.Now - start_time;
-
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    LiveTime = ts.ToString(@"hh\:mm\:ss");
-                });
+                        var info = message as WelcomeMsgModel;
+                        if (ReceiveWelcomeMsg)
+                        {
+                            Messages.Add(new DanmuMsgModel()
+                            {
+                                isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
+                                isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
+                                hasUL = Visibility.Collapsed,
+                                username = info.uname,
+                                uname_color = new SolidColorBrush(Colors.HotPink),
+                                text = " 进入直播间"
+                            });
+                        }
+                    }
+                    break;
+                case MessageType.WelcomeGuard:
+                    {
+                        var info = message as WelcomeMsgModel;
+                        if (ReceiveWelcomeMsg)
+                        {
+                            Messages.Add(new DanmuMsgModel()
+                            {
+                                isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
+                                isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
+                                hasUL = Visibility.Collapsed,
+                                username = info.uname,
+                                uname_color = new SolidColorBrush(Colors.HotPink),
+                                text = " (舰长)进入直播间"
+                            });
+                        }
+                    }
+                    break;
+                case MessageType.SystemMsg:
+                    break;
+                case MessageType.SuperChat:
+                    break;
+                case MessageType.SuperChatJpn:
+                    break;
+                case MessageType.AnchorLotteryStart:
+                    if (ReceiveLotteryMsg)
+                    {
+                        var info = message.ToString();
+                        anchorLotteryVM.SetLotteryInfo(JsonConvert.DeserializeObject<LiveRoomAnchorLotteryInfoModel>(info));
+                    }
+                    break;
+                case MessageType.AnchorLotteryEnd:
+                    break;
+                case MessageType.AnchorLotteryAward:
+                    if (ReceiveLotteryMsg)
+                    {
+                        var info = JsonConvert.DeserializeObject<LiveRoomEndAnchorLotteryInfoModel>(message.ToString());
+                        LotteryEnd?.Invoke(this, info);
+                    }
+                    break;
+               
+                case MessageType.GuardBuy:
+                    break;
+                default:
+                    break;
             }
-            catch (Exception)
-            {
-            }
-
         }
-        public static List<LiveTitleModel> Titles { get; set; }
-
-        private bool _logined = false;
-        public bool Logined
-        {
-            get { return _logined; }
-            set { _logined = value; DoPropertyChanged("Logined"); }
-        }
-        /// <summary>
-        /// 直播ID
-        /// </summary>
-        public int RoomID { get; set; }
-
-        public ObservableCollection<DanmuMsgModel> Messages { get; set; }
-        public ObservableCollection<GiftMsgModel> GiftMessage { get; set; }
-        public ObservableCollection<LiveGiftItem> BagGifts { get; set; }
-        public bool ReceiveWelcomeMsg { get; set; } = true;
-        public bool ReceiveLotteryMsg { get; set; } = true;
-        public bool ReceiveGiftMsg { get; set; } = true;
-        private int hide_gift_flag = 1;
-        private bool _show_gift_message = false;
-        public bool ShowGiftMessage
-        {
-            get { return _show_gift_message; }
-            set { _show_gift_message = value; DoPropertyChanged("ShowGiftMessage"); }
-        }
-
         private async void LiveDanmaku_NewMessage(object sender, Live.LiveDanmuModel e)
         {
             try
@@ -254,6 +292,96 @@ namespace BiliLite.Modules
             }
 
         }
+        public ICommand LoadMoreGuardCommand { get; private set; }
+        public ICommand ShowBagCommand { get; private set; }
+        private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (GiftMessage != null && GiftMessage.Count != 0)
+                {
+                    if (hide_gift_flag >= 5)
+                    {
+                        ShowGiftMessage = false;
+                        GiftMessage.Clear();
+                    }
+                    else
+                    {
+                        hide_gift_flag++;
+                    }
+                }
+            });
+        }
+
+        private void MessageCenter_LogoutedEvent(object sender, EventArgs e)
+        {
+            Logined = false;
+            timer_box.Stop();
+            ShowBox = false;
+            OpenBox = false;
+        }
+
+        private async void MessageCenter_LoginedEvent(object sender, object e)
+        {
+            Logined = true;
+            //TODO 加载背包
+            await LoadWalletInfo();
+            //await GetFreeSilverTime();
+        }
+
+        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                if (LiveInfo == null && !Liveing)
+                {
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        LiveTime = "";
+                    });
+                    return;
+                }
+                var start_time = Utils.TimestampToDatetime(LiveInfo.room_info.live_start_time);
+                var ts = DateTime.Now - start_time;
+
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    LiveTime = ts.ToString(@"hh\:mm\:ss");
+                });
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        public static List<LiveTitleModel> Titles { get; set; }
+
+        private bool _logined = false;
+        public bool Logined
+        {
+            get { return _logined; }
+            set { _logined = value; DoPropertyChanged("Logined"); }
+        }
+        /// <summary>
+        /// 直播ID
+        /// </summary>
+        public int RoomID { get; set; }
+
+        public ObservableCollection<DanmuMsgModel> Messages { get; set; }
+        public ObservableCollection<GiftMsgModel> GiftMessage { get; set; }
+        public ObservableCollection<LiveGiftItem> BagGifts { get; set; }
+        public bool ReceiveWelcomeMsg { get; set; } = true;
+        public bool ReceiveLotteryMsg { get; set; } = true;
+        public bool ReceiveGiftMsg { get; set; } = true;
+        private int hide_gift_flag = 1;
+        private bool _show_gift_message = false;
+        public bool ShowGiftMessage
+        {
+            get { return _show_gift_message; }
+            set { _show_gift_message = value; DoPropertyChanged("ShowGiftMessage"); }
+        }
+
+
 
         private int _online = 0;
         /// <summary>
@@ -458,10 +586,13 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (liveDanmaku != null)
+                if (cancelSource != null)
                 {
-                    liveDanmaku.Dispose();
+                    cancelSource.Cancel();
+                    cancelSource.Dispose();
                 }
+                cancelSource = new System.Threading.CancellationTokenSource();
+
                 Loading = true;
                 var result = await liveRoomAPI.LiveRoomInfo(id).Request();
                 if (result.status)
@@ -504,7 +635,7 @@ namespace BiliLite.Modules
                         {
                             await GetTitles();
                         }
-                        liveDanmaku.Start(data.data.room_info.room_id, SettingHelper.GetValue<int>(SettingHelper.Account.USER_ID, 0));
+                        ReceiveMessage(data.data.room_info.room_id);
                     }
                     else
                     {
@@ -526,6 +657,30 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
+
+        private async void ReceiveMessage(int roomId)
+        {
+            try
+            {
+                await liveMessage.Connect(roomId, cancelSource.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                Messages.Add(new DanmuMsgModel()
+                {
+                    username = "取消连接"
+                });
+            }
+            catch (Exception ex)
+            {
+                Messages?.Add(new DanmuMsgModel()
+                {
+                    username = "连接失败:" + ex.Message
+                });
+            }
+
+        }
+
         /// <summary>
         /// 读取钱包信息
         /// </summary>
@@ -1005,10 +1160,15 @@ namespace BiliLite.Modules
 
         public void Dispose()
         {
-            if (liveDanmaku != null)
+            if (cancelSource != null)
             {
-                liveDanmaku.Dispose();
+                cancelSource.Cancel();
             }
+            if (liveMessage != null)
+            {
+                liveMessage.Dispose();
+            }
+
             if (timer != null)
             {
                 timer.Stop();
@@ -1026,7 +1186,7 @@ namespace BiliLite.Modules
                 anchorLotteryVM.timer.Stop();
                 anchorLotteryVM = null;
             }
-            liveDanmaku.NewMessage -= LiveDanmaku_NewMessage;
+
             Messages?.Clear();
             Messages = null;
             GiftMessage?.Clear();
@@ -1035,13 +1195,13 @@ namespace BiliLite.Modules
             Guards = null;
         }
 
-        public void SetDelay(int ms)
-        {
-            if (liveDanmaku != null)
-            {
-                liveDanmaku.delay = ms;
-            }
-        }
+        //public void SetDelay(int ms)
+        //{
+        //    if (liveDanmaku != null)
+        //    {
+        //        liveDanmaku.delay = ms;
+        //    }
+        //}
     }
 
     public class LiveRoomRankVM : IModules

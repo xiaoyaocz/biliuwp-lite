@@ -476,13 +476,13 @@ namespace BiliLite.Pages
             //弹幕开关
             DanmuControl.Visibility = SettingHelper.GetValue<Visibility>(SettingHelper.Live.SHOW, Visibility.Visible);
             //弹幕延迟
-            LiveSettingDelay.Value = SettingHelper.GetValue<int>(SettingHelper.Live.DELAY, 20);
-            liveRoomVM.SetDelay(LiveSettingDelay.Value.ToInt32());
-            LiveSettingDelay.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
-            {
-                SettingHelper.SetValue(SettingHelper.Live.DELAY, LiveSettingDelay.Value);
-                liveRoomVM.SetDelay(LiveSettingDelay.Value.ToInt32());
-            });
+            //LiveSettingDelay.Value = SettingHelper.GetValue<int>(SettingHelper.Live.DELAY, 20);
+            //liveRoomVM.SetDelay(LiveSettingDelay.Value.ToInt32());
+            //LiveSettingDelay.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            //{
+            //    SettingHelper.SetValue(SettingHelper.Live.DELAY, LiveSettingDelay.Value);
+            //    liveRoomVM.SetDelay(LiveSettingDelay.Value.ToInt32());
+            //});
 
             //互动清理数量
             LiveSettingCount.Value = SettingHelper.GetValue<int>(SettingHelper.Live.DANMU_CLEAN_COUNT, 200);
@@ -619,7 +619,7 @@ namespace BiliLite.Pages
                 return;
             }
             url = liveRoomVM.urls[BottomCBLine.SelectedIndex].url;
-            await SetPlayer(url);
+           // await SetPlayer(url);
         }
 
         private void BottomBtnPause_Click(object sender, RoutedEventArgs e)

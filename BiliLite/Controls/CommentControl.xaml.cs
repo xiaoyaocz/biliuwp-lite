@@ -786,7 +786,7 @@ namespace BiliLite.Controls
 
         public CommentMemberModel member { get; set; }
         public CommentContentModel content { get; set; }
-
+        public CommentUPActionModel up_action { get; set; }
 
         private ObservableCollection<CommentModel> _replies = new ObservableCollection<CommentModel>();
         public ObservableCollection<CommentModel> replies
@@ -843,7 +843,7 @@ namespace BiliLite.Controls
             set { _showLoading = value; thisPropertyChanged("showLoading"); }
         }
 
-
+        
         public Visibility showDelete
         {
             get
@@ -954,7 +954,11 @@ namespace BiliLite.Controls
         public JObject emote { get; set; }
     }
 
-
+    public class CommentUPActionModel
+    {
+        public bool like { get; set; } = false;
+        public bool reply { get; set; }
+    }
     public class CommentMemberModel
     {
         public string mid { get; set; }
@@ -969,6 +973,14 @@ namespace BiliLite.Controls
 
 
         public CommentMemberModel level_info { get; set; }
+        public CommentMemberFansDetailModel fans_detail { get; set; }
+        public bool ShowFansDetail
+        {
+            get
+            {
+                return fans_detail != null;
+            }
+        }
         public int current_level { get; set; }
         public string LV
         {
@@ -1064,5 +1076,12 @@ namespace BiliLite.Controls
 
 
     }
-
+    public class CommentMemberFansDetailModel
+    {
+        public int uid { get; set; }
+        public int medal_id { get; set; }
+        public string medal_name { get; set; }
+        public int level { get; set; }
+        public int medal_color { get; set; }
+    }
 }
