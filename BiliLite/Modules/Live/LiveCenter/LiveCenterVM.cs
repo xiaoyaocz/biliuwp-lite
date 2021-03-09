@@ -23,6 +23,7 @@ namespace BiliLite.Modules.Live.LiveCenter
         {
             liveCenterAPI = new LiveCenterAPI();
             SignCommand = new RelayCommand(DoSign);
+            TitleCommand = new RelayCommand(OpenTitle);
         }
         private SignInfoModel _SignInfo;
 
@@ -32,6 +33,7 @@ namespace BiliLite.Modules.Live.LiveCenter
             set { _SignInfo = value; DoPropertyChanged("SignInfo"); }
         }
         public ICommand SignCommand { get; private set; }
+        public ICommand TitleCommand { get; private set; }
         public async void GetUserInfo()
         {
             try
@@ -101,6 +103,16 @@ namespace BiliLite.Modules.Live.LiveCenter
 
 
 
+        }
+
+        public void OpenTitle()
+        {
+            MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
+                icon= Windows.UI.Xaml.Controls.Symbol.World,
+                title="佩戴中心",
+                page=typeof(Pages.WebPage),
+                parameters= "https://link.bilibili.com/p/center/index#/user-center/wearing-center/my-medal"
+            });
         }
 
     }

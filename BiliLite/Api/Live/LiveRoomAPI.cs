@@ -296,5 +296,21 @@ namespace BiliLite.Api.Live
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+        /// <summary>
+        /// 进入房间
+        /// </summary>
+        /// <param name="roomId"></param>
+        /// <returns></returns>
+        public ApiModel RoomEntryAction(int roomId)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.POST,
+                baseUrl = $"https://api.live.bilibili.com/room/v1/Room/room_entry_action",
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&room_id={roomId}",
+            };
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+            return api;
+        }
     }
 }

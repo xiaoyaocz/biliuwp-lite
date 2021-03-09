@@ -546,7 +546,7 @@ namespace BiliLite.Modules
                         {
                             await GetTitles();
                         }
-                       
+                        EntryRoom();
                         ReceiveMessage(data.data.room_info.room_id);
                     }
                     else
@@ -569,12 +569,17 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
-
+        
         private async void ReceiveMessage(int roomId)
         {
             try
             {
-                await liveMessage.Connect(roomId, cancelSource.Token);
+                var uid = 0;
+                if (SettingHelper.Account.Logined)
+                {
+                    uid = SettingHelper.Account.UserID;
+                }
+                await liveMessage.Connect(roomId, uid, cancelSource.Token);
             }
             catch (TaskCanceledException)
             {
@@ -645,8 +650,23 @@ namespace BiliLite.Modules
                 Utils.ShowMessageToast(ex.Message);
             }
         }
-
-
+        /// <summary>
+        /// 进入房间
+        /// </summary>
+        public async void EntryRoom()
+        {
+            try
+            {
+                if (SettingHelper.Account.Logined)
+                {
+                    await liveRoomAPI.RoomEntryAction(RoomID).Request();
+                }
+            }
+            catch (Exception)
+            {
+            }
+          
+        }
         /// <summary>
         /// 读取钱包信息
         /// </summary>

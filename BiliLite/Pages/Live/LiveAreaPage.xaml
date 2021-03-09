@@ -27,6 +27,7 @@
         </Pivot.ItemContainerStyle>
         <Pivot.ItemTemplate>
             <DataTemplate x:DataType="modules:LiveAreaModel">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <GridView ItemClick="GridView_ItemClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{x:Bind Path=list,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
@@ -43,7 +44,8 @@
                     </GridView.ItemTemplate>
 
                 </GridView>
-            </DataTemplate>
+                    </ScrollViewer>
+                </DataTemplate>
         </Pivot.ItemTemplate>
     </Pivot>
         <ProgressRing IsActive="True" Width="56" Height="56" HorizontalAlignment="Center" Visibility="{x:Bind Path=liveAreaVM.Loading,Mode=OneWay}"></ProgressRing>

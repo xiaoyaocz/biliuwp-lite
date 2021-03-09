@@ -26,6 +26,10 @@
                             <ProgressBar Foreground="#61c05a" Margin="0 4 0 0" Width="120" Value="60" Height="8"></ProgressBar>
                         </StackPanel>-->
                         <Button Width="80" 
+                                Margin="0 0 8 0"
+                              
+                                Command="{x:Bind Path=liveCenterVM.TitleCommand,Mode=OneWay}" >佩戴中心</Button>
+                        <Button Width="80" 
                                 Visibility="{x:Bind Path=liveCenterVM.SignInfo.is_signed,Mode=OneWay,Converter={StaticResource display}}"
                                 Command="{x:Bind Path=liveCenterVM.SignCommand,Mode=OneWay}" >签到</Button>
                         <Button Width="80"

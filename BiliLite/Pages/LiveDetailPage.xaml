@@ -411,9 +411,9 @@
                                                             <TextBlock FontSize="18">设置</TextBlock>
                                                         </PivotItem.Header>
                                                         <StackPanel HorizontalAlignment="Left">
-                                                            <TextBlock >弹幕接收延迟(毫秒) <Run Text="{x:Bind Path=LiveSettingDelay.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
-                                                            <Slider x:Name="LiveSettingDelay" Width="240" Minimum="10" Maximum="5000" StepFrequency="1"></Slider>
-                                                            <TextBlock Margin="0 8 0 0">互动区自动清理条数 <Run Text="{x:Bind Path=LiveSettingCount.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                                            <!--<TextBlock >弹幕接收延迟(毫秒) <Run Text="{x:Bind Path=LiveSettingDelay.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                                            <Slider x:Name="LiveSettingDelay" Width="240" Minimum="10" Maximum="5000" StepFrequency="1"></Slider>-->
+                                                            <TextBlock >互动区自动清理条数 <Run Text="{x:Bind Path=LiveSettingCount.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                                             <Slider x:Name="LiveSettingCount" Width="240" Minimum="50" Maximum="1000" StepFrequency="1"></Slider>
                                                             <ToggleSwitch x:Name="LiveSettingAutoOpenBox" Visibility="Collapsed" Margin="0 8 0 0" Header="自动开启宝箱"></ToggleSwitch>
                                                             <ToggleSwitch x:Name="LiveSettingHardwareDecode" Margin="0 8 0 0" Header="开启硬解"></ToggleSwitch>
