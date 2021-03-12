@@ -242,6 +242,10 @@ namespace BiliLite.Helpers
             /// 最大数量
             /// </summary>
             public const string MAX_NUM = "VideoDanmuMaxNum";
+            /// <summary>
+            /// 弹幕云屏蔽等级
+            /// </summary>
+            public const string SHIELD_LEVEL = "VideoDanmuShieldLevel";
         }
         public class Live
         {

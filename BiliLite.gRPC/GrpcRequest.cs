@@ -105,6 +105,46 @@ namespace BiliLite.gRPC
                 };
             }
         }
+
+        public async Task<GrpcResult> Get(string url)
+        {
+            try
+            {
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    var data = await httpClient.GetByteArrayAsync(url);
+                   // var data = await response.Content.ReadAsByteArrayAsync();
+                    if (data.Length > 5)
+                    {
+                        return new GrpcResult()
+                        {
+                            code = 0,
+                            status = true,
+                            message = "请求成功",
+                            results = data.Skip(5).ToArray()
+                        };
+                    }
+                    else
+                    {
+                        return new GrpcResult()
+                        {
+                            code = -102,
+                            status = false,
+                            message = "请求失败,没有数据返回",
+                        };
+                    }
+                }       
+            }
+            catch (Exception ex)
+            {
+                return new GrpcResult()
+                {
+                    code = ex.HResult,
+                    status = false,
+                    message = "发送Http请求失败" + ex.Message
+                };
+            }
+        }
     }
 
     public class GrpcResult

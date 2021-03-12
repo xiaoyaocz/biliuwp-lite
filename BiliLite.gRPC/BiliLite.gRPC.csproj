@@ -33,6 +33,7 @@
     <Protobuf Include="Proto\Config\restriction.proto" GrpcServices="Client" />
     <Protobuf Include="Proto\Reply\PlayViewReply.proto" GrpcServices="Client" />
     <Protobuf Include="Proto\Request\PlayViewReq.proto" GrpcServices="Client" />
+    <Protobuf Include="Proto\Reply\DanmakuReply.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

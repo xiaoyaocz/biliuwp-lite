@@ -854,7 +854,7 @@
       <Version>4.7.5</Version>
     </PackageReference>
     <PackageReference Include="NSDanmaku">
-      <Version>2.0.0</Version>
+      <Version>2.0.2</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.7</Version>

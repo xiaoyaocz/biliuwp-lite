@@ -886,7 +886,7 @@
                                                                 </StackPanel>
                                                             </Grid>
                                                             <Grid Padding="12" Background="{x:Bind Path=background_bottom_color,Mode=OneWay,Converter={StaticResource colorConvert}}">
-                                                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="white" Text="{x:Bind Path=message}"></TextBlock>
+                                                                <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="white" Text="{x:Bind Path=message}"></TextBlock>
                                                             </Grid>
                                                         </StackPanel>
                                                     </Flyout>

@@ -199,7 +199,7 @@ namespace BiliLite.Modules
                     {
                         DashItemModel audio = null;
                         //部分视频没有音频文件
-                        if(data.data.dash.audio!=null&& data.data.dash.audio.Count > 0)
+                        if (data.data.dash.audio != null && data.data.dash.audio.Count > 0)
                         {
                             var audios = data.data.dash.audio.Where(x => x.mimeType == "audio/mp4" || x.mime_type == "audio/mp4").OrderBy(x => x.bandwidth);
                             if (qn > 64)
@@ -211,7 +211,7 @@ namespace BiliLite.Modules
                                 audio = audios.FirstOrDefault();
                             }
                         }
-                       
+
                         info = new PlayUrlInfo()
                         {
                             codec_name = video.codecid == 7 ? "h264_m4s" : "h265_m4s",
@@ -260,7 +260,7 @@ namespace BiliLite.Modules
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelGrpcDash(PlayInfo playInfo, int qn, int mode)
         {
             var noVIP = !SettingHelper.Account.Logined || (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.type == 0);
-            var data = await GetGrpcDash(playInfo, qn,mode);
+            var data = await GetGrpcDash(playInfo, qn, mode);
             if (data.code == 0 && data.data.dash != null)
             {
                 var codecid = (mode == 0) ? 7 : 12;
@@ -279,11 +279,11 @@ namespace BiliLite.Modules
                     PlayUrlInfo info = null;
                     var video = data.data.dash.video.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
 
-                   
+
                     if (video != null)
                     {
                         DashItemModel audio = null;
-                        if(data.data.dash.audio!=null&& data.data.dash.audio.Count > 0)
+                        if (data.data.dash.audio != null && data.data.dash.audio.Count > 0)
                         {
                             var audios = data.data.dash.audio.OrderBy(x => x.bandwidth);
                             if (qn > 64)
@@ -295,7 +295,7 @@ namespace BiliLite.Modules
                                 audio = audios.FirstOrDefault();
                             }
                         }
-                        
+
                         info = new PlayUrlInfo()
                         {
                             codec_name = video.codecid == 7 ? "h264_m4s" : "h265_m4s",
@@ -331,6 +331,10 @@ namespace BiliLite.Modules
                     }
                 };
             }
+            else if (data.code == -910)
+            {
+                return await HandelGrpcFlv(playInfo, qn);
+            }
             else
             {
                 return new ReturnModel<PlayUrlReturnInfo>()
@@ -358,12 +362,25 @@ namespace BiliLite.Modules
                     });
                 }
                 var index = data.data.accept_quality.IndexOf(data.data.quality);
-                qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
+                if (data.data.durl.Count == 1 && data.data.durl[0].url.Contains(".mp4"))
                 {
-                    multi_flv_url = data.data.durl,
-                    mode = data.data.durl.Count > 1 ? VideoPlayMode.MultiFlv : VideoPlayMode.SingleFlv,
-                    codec_name = "h264_flv"
-                };
+                    qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
+                    {
+                        url = data.data.durl[0].url,
+                        mode = VideoPlayMode.SingleMp4,
+                        codec_name = "h264_mp4"
+                    };
+                }
+                else
+                {
+                    qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
+                    {
+                        multi_flv_url = data.data.durl,
+                        mode = data.data.durl.Count > 1 ? VideoPlayMode.MultiFlv : VideoPlayMode.SingleFlv,
+                        codec_name = "h264_flv"
+                    };
+                }
+
                 if (noVIP)
                 {
                     qualityWithPlayUrlInfos = qualityWithPlayUrlInfos.Where(x => x.quality != 74 && x.quality <= 80).ToList();
@@ -403,7 +420,7 @@ namespace BiliLite.Modules
                 }
 
                 DashModel dashModel = new DashModel();
-                if (playViewReply.VideoInfo.DashAudio == null)
+                if (playViewReply.VideoInfo.DashAudio == null || playViewReply.VideoInfo.DashAudio.Count == 0)
                 {
                     return new ApiDataModel<DashModel>()
                     {
@@ -421,6 +438,10 @@ namespace BiliLite.Modules
                 dashModel.dash.audio = new List<DashItemModel>();
                 foreach (var item in playViewReply.VideoInfo.StreamList)
                 {
+                    if (item.DashVideo == null)
+                    {
+                        continue;
+                    }
                     dashModel.dash.video.Add(new DashItemModel()
                     {
                         backupUrl = item.DashVideo.BackupUrl.ToList(),
@@ -488,21 +509,22 @@ namespace BiliLite.Modules
                 FlvModel flvModel = new FlvModel();
                 flvModel.accept_description = playViewReply.VideoInfo.StreamList.Select(x => x.StreamInfo.NewDescription).ToList();
                 flvModel.accept_quality = playViewReply.VideoInfo.StreamList.Select(x => x.StreamInfo.Quality).ToList();
-                flvModel.code =0;
+                flvModel.code = 0;
                 flvModel.message = "";
                 flvModel.quality = playViewReply.VideoInfo.Quality;
                 flvModel.timelength = playViewReply.VideoInfo.Timelength;
                 flvModel.video_codecid = playViewReply.VideoInfo.VideoCodecid;
                 flvModel.durl = new List<FlvDurlModel>();
-               var video= playViewReply.VideoInfo.StreamList.FirstOrDefault(x => x.SegmentVideo != null);
+                var video = playViewReply.VideoInfo.StreamList.FirstOrDefault(x => x.SegmentVideo != null);
                 foreach (var item in video.SegmentVideo.Segment)
                 {
-                    flvModel.durl.Add(new FlvDurlModel() { 
-                        backup_url= item.BackupUrl.ToList(),
-                        length=item.Length,
-                        order=item.Order,
-                        size=item.Size,
-                        url=item.Url
+                    flvModel.durl.Add(new FlvDurlModel()
+                    {
+                        backup_url = item.BackupUrl.ToList(),
+                        length = item.Length,
+                        order = item.Order,
+                        size = item.Size,
+                        url = item.Url
                     });
 
                 }
@@ -827,7 +849,7 @@ namespace BiliLite.Modules
             }
         }
 
-      
+
 
         private async Task<ApiDataModel<string>> Get23Moe(PlayInfo playInfo, int qn)
         {
@@ -944,7 +966,55 @@ namespace BiliLite.Modules
             }
         }
 
-        public async Task<bool> SendDanmaku(string aid, string cid, string text,int position, int mode, string color)
+        public async Task<List<NSDanmaku.Model.DanmakuModel>> GetDanmaku(string cid, int segment_index=1)
+        {
+            List<NSDanmaku.Model.DanmakuModel> danmuList = new List<NSDanmaku.Model.DanmakuModel>();
+            try
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+               
+                var data = await HttpHelper.GetStream(PlayerAPI.SegDanmaku(cid, segment_index).url);
+                var result = Proto.Reply.DmSegMobileReply.Parser.ParseFrom(data);
+                foreach (var item in result.Elems)
+                {
+                    NSDanmaku.Model.DanmakuLocation location = NSDanmaku.Model.DanmakuLocation.Scroll;
+                    if (item.Mode == 4)
+                    {
+                        location = NSDanmaku.Model.DanmakuLocation.Bottom;
+                    }
+                    if (item.Mode == 5)
+                    {
+                        location = NSDanmaku.Model.DanmakuLocation.Top;
+                    }
+                    danmuList.Add(new NSDanmaku.Model.DanmakuModel()
+                    {
+                        color = Utils.ToColor(item.Color.ToString()),
+                        fromSite = NSDanmaku.Model.DanmakuSite.Bilibili,
+                        location = location,
+                        pool = item.Pool.ToString(),
+                        rowID = item.IdStr,
+                        sendID = item.MidHash,
+                        size = item.Fontsize,
+                        weight = item.Weight,
+                        text = item.Content,
+                        sendTime = item.Ctime.ToString(),
+                        time = item.Progress / 1000d,
+                        time_s = item.Progress / 1000
+                    });
+                }
+                sw.Stop();
+                Debug.WriteLine($"获取弹幕耗时：{sw.ElapsedMilliseconds}ms");
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast("弹幕加载失败:" + ex.Message);
+                LogHelper.Log("grpc弹幕加载失败", LogType.FATAL, ex);
+            }
+            return danmuList;
+        }
+
+        public async Task<bool> SendDanmaku(string aid, string cid, string text, int position, int mode, string color)
         {
             try
             {

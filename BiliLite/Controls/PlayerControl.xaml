@@ -413,6 +413,8 @@
                                         </ToggleSwitch>
                                         
                                     </Grid>
+                                    <TextBlock Margin="0 8">屏蔽等级(0为不屏蔽) <Run Text="{x:Bind Path=DanmuSettingShieldLevel.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>级</TextBlock>
+                                    <Slider x:Name="DanmuSettingShieldLevel"  Minimum="0" Maximum="10" StepFrequency="1"></Slider>
                                     <TextBlock Margin="0 8">关键词屏蔽</TextBlock>
                                     <Grid >
                                         <Grid.ColumnDefinitions>

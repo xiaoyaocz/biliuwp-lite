@@ -218,7 +218,21 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
             return api;
         }
-
-
+        /// <summary>
+        /// 分段弹幕
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <param name="segment_index"></param>
+        /// <returns></returns>
+        public ApiModel SegDanmaku(string oid, int segment_index)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = $"http://api.bilibili.com/x/v2/dm/list/seg.so",
+                parameter = $"type=1&oid={oid}&segment_index={segment_index}"
+            };
+            return api;
+        }
     }
 }

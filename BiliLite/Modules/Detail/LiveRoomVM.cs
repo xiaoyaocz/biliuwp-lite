@@ -776,7 +776,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         Profile = data.data;
-                        Attention = Profile.relation_status == 2;
+                        Attention = Profile.relation_status >1;
                     }
                     else
                     {
