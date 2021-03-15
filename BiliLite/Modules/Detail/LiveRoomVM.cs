@@ -221,8 +221,8 @@ namespace BiliLite.Modules
         private async void MessageCenter_LoginedEvent(object sender, object e)
         {
             Logined = true;
-            //TODO 加载背包
             await LoadWalletInfo();
+            await LoadBag();
             //await GetFreeSilverTime();
         }
 

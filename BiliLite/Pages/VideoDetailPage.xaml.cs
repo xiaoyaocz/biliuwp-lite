@@ -189,7 +189,8 @@ namespace BiliLite.Pages
                     if (history != null)
                     {
                         SettingHelper.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
-                        player.InitializePlayInfo(playInfos, videoDetailVM.VideoInfo.pages.IndexOf(history));
+                        index = videoDetailVM.VideoInfo.pages.IndexOf(history);
+                        //player.InitializePlayInfo(playInfos, );
                     }
                 }
                 player.InitializePlayInfo(playInfos, index);

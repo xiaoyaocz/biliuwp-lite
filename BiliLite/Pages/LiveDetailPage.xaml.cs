@@ -81,7 +81,6 @@ namespace BiliLite.Pages
             liveRoomVM.LotteryEnd += LiveRoomVM_LotteryEnd;
             this.Loaded += LiveDetailPage_Loaded;
             this.Unloaded += LiveDetailPage_Unloaded;
-            //TODO 快捷键
         }
 
 

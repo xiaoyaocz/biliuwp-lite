@@ -637,6 +637,7 @@ namespace BiliLite.Controls
             Player.SetRate(SettingHelper.GetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, 1.0d));
             BottomCBSpeed.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
+                SettingHelper.SetValue<double>(SettingHelper.Player.DEFAULT_VIDEO_SPEED, SettingHelper.Player.VideoSpeed[BottomCBSpeed.SelectedIndex]);
                 Player.SetRate(SettingHelper.Player.VideoSpeed[BottomCBSpeed.SelectedIndex]);
             });
 
@@ -724,7 +725,7 @@ namespace BiliLite.Controls
             var p = Convert.ToInt32(Player.Position);
             var segIndex = Convert.ToInt32(Math.Ceiling(Player.Position / (60 * 6d)));
             if (segIndex <= 0) segIndex = 1;
-            if (danmakuLoadedSegment!=null&&!danmakuLoadedSegment.Contains(segIndex))
+            if (danmakuLoadedSegment != null && !danmakuLoadedSegment.Contains(segIndex))
             {
                 await LoadDanmaku(segIndex);
             }
@@ -751,8 +752,8 @@ namespace BiliLite.Controls
                     if (danmakuPool != null && danmakuPool.ContainsKey(p))
                     {
                         var data = danmakuPool[p].Where(x => true);
-                        //TODO 云屏蔽
-                        data = data.Where(x => x.weight>= level);
+                        //云屏蔽
+                        data = data.Where(x => x.weight >= level);
                         //去重
                         if (needDistinct)
                         {
@@ -1089,6 +1090,7 @@ namespace BiliLite.Controls
             }
             catch (Exception)
             {
+
             }
             finally
             {
@@ -1838,10 +1840,9 @@ namespace BiliLite.Controls
             {
                 DanmuControl.PauseDanmaku();
                 InteractionChoices.Visibility = Visibility.Visible;
-                //TODO 互动视频
                 return;
             }
-            playerHelper.ReportHistory(CurrentPlayItem, Convert.ToInt32(Player.Duration));
+            playerHelper.ReportHistory(CurrentPlayItem, Player.Duration);
             //列表顺序播放
             if (PlayerSettingPlayMode.SelectedIndex == 0)
             {
@@ -2023,7 +2024,9 @@ namespace BiliLite.Controls
             if (CurrentPlayItem != null)
             {
                 SettingHelper.SetValue<double>(CurrentPlayItem.season_id != 0 ? "ep" + CurrentPlayItem.ep_id : CurrentPlayItem.cid, Player.Position);
-                await playerHelper.ReportHistory(CurrentPlayItem, Convert.ToInt32(Player.Position));
+                //当视频播放结束的话，Position为0
+                if (Player.PlayState != PlayState.End)
+                    await playerHelper.ReportHistory(CurrentPlayItem, Player.Position);
             }
 
             Player.PlayStateChanged -= Player_PlayStateChanged;

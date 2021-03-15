@@ -901,11 +901,11 @@ namespace BiliLite.Modules
             }
         }
 
-        public async Task ReportHistory(PlayInfo playInfo, int progress)
+        public async Task ReportHistory(PlayInfo playInfo, double progress)
         {
             try
             {
-                var api = PlayerAPI.SeasonHistoryReport(playInfo.avid, playInfo.cid, progress, playInfo.season_id, playInfo.ep_id, playInfo.play_mode == VideoPlayType.Video ? 3 : 4);
+                var api = PlayerAPI.SeasonHistoryReport(playInfo.avid, playInfo.cid,Math.Floor(progress).ToInt32(), playInfo.season_id, playInfo.ep_id, playInfo.play_mode == VideoPlayType.Video ? 3 : 4);
                 await api.Request();
                 Debug.WriteLine(progress);
             }
