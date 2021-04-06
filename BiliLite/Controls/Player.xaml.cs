@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
@@ -227,9 +228,12 @@ namespace BiliLite.Controls
         {
             this.InitializeComponent();
 
-
-            SYEngine.Core.ForceNetworkMode = true;
-            SYEngine.Core.ForceSoftwareDecode = !SettingHelper.GetValue<bool>(SettingHelper.Player.HARDWARE_DECODING, false);
+            // We don't have ARM64 support of SYEngine.
+            if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
+            {
+                SYEngine.Core.ForceNetworkMode = true;
+                SYEngine.Core.ForceSoftwareDecode = !SettingHelper.GetValue<bool>(SettingHelper.Player.HARDWARE_DECODING, false);
+            }
             //_ffmpegConfig.StreamBufferSize = 655360;//1024 * 30;
 
         }

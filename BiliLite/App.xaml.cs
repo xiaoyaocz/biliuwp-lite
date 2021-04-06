@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -96,7 +97,11 @@ namespace BiliLite
 
         private async void Navigation(object arguments, bool prelaunch=false)
         {
-            SYEngine.Core.Initialize();
+            // We don't have ARM64 support of SYEngine.
+            if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
+            {
+                SYEngine.Core.Initialize();
+            }
             InitBili();
             Frame rootFrame = Window.Current.Content as Frame;
 
