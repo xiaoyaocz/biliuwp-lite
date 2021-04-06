@@ -25,9 +25,8 @@
     <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>
-    </PackageCertificateThumbprint>
-    <PackageCertificateKeyFile>BiliLite_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>6DDE612D6A80D159B45492E9C1F6E5D5491E6129</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile />
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
