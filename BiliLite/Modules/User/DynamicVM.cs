@@ -194,25 +194,32 @@ namespace BiliLite.Modules.User
             };
             await contentDialog.ShowAsync();
         }
-        public async void OpenVote(object id)
+        public void OpenVote(object id)
         {
-            ContentDialog contentDialog = new ContentDialog()
+            MessageCenter.OpenNewWindow(this, new NavigationInfo()
             {
-                IsPrimaryButtonEnabled = true,
-                Title = "投票",
-                PrimaryButtonText = "关闭"
-            };
-            contentDialog.PrimaryButtonClick += new TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>((sender, e) =>
-            {
-                contentDialog.Hide();
+                icon = Symbol.Document,
+                page = typeof(WebPage),
+                title = "投票",
+                parameters = $"https://t.bilibili.com/vote/h5/index/#/result?vote_id={ id.ToString()}"
             });
-            contentDialog.Content = new WebView()
-            {
-                Width = 500,
-                Height = 500,
-                Source = new Uri($"https://t.bilibili.com/vote/h5/index/#/result?vote_id={ id.ToString()}"),
-            };
-            await contentDialog.ShowAsync();
+            //ContentDialog contentDialog = new ContentDialog()
+            //{
+            //    IsPrimaryButtonEnabled = true,
+            //    Title = "投票",
+            //    PrimaryButtonText = "关闭"
+            //};
+            //contentDialog.PrimaryButtonClick += new TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>((sender, e) =>
+            //{
+            //    contentDialog.Hide();
+            //});
+            //contentDialog.Content = new WebView()
+            //{
+            //    Width = 500,
+            //    Height = 500,
+            //    Source = new Uri($"https://t.bilibili.com/vote/h5/index/#/result?vote_id={ id.ToString()}"),
+            //};
+            //await contentDialog.ShowAsync();
         }
         public void OpenComment(DynamicItemDisplayModel data)
         {
@@ -235,7 +242,7 @@ namespace BiliLite.Modules.User
                 Utils.ShowMessageToast("请先登录后再操作");
                 return;
             }
-            MessageDialog messageDialog = new MessageDialog("确定要删除动态吗?","删除动态");
+            MessageDialog messageDialog = new MessageDialog("确定要删除动态吗?", "删除动态");
             messageDialog.Commands.Add(new UICommand("确定", cmd => { }, commandId: 0));
             messageDialog.Commands.Add(new UICommand("取消", cmd => { }, commandId: 1));
             var result = await messageDialog.ShowAsync();
@@ -277,7 +284,7 @@ namespace BiliLite.Modules.User
 
             try
             {
-                var results = await dynamicAPI.Like(item.DynamicID, item.Liked?2:1).Request();
+                var results = await dynamicAPI.Like(item.DynamicID, item.Liked ? 2 : 1).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<object>>();
@@ -450,7 +457,7 @@ namespace BiliLite.Modules.User
         {
             try
             {
-               
+
                 var card = JObject.Parse(item.card);
                 var extend_json = JObject.Parse(item.extend_json);
                 var data = new DynamicItemDisplayModel()
@@ -479,10 +486,10 @@ namespace BiliLite.Modules.User
                     DeleteCommand = DeleteCommand,
                     RepostCommand = RepostCommand,
                     DetailCommand = DetailCommand,
-                    WatchLaterCommand=watchLaterVM.AddCommand,
+                    WatchLaterCommand = watchLaterVM.AddCommand,
                     Liked = item.desc.is_liked == 1
                 };
-                if(data.Type== DynamicDisplayType.Other)
+                if (data.Type == DynamicDisplayType.Other)
                 {
                     return new DynamicItemDisplayModel()
                     {
@@ -655,14 +662,15 @@ namespace BiliLite.Modules.User
             }
             catch (Exception)
             {
-                return new DynamicItemDisplayModel() {
-                    Type= DynamicDisplayType.Other,
-                    IntType=999,
+                return new DynamicItemDisplayModel()
+                {
+                    Type = DynamicDisplayType.Other,
+                    IntType = 999,
                     DynamicID = item.desc.dynamic_id,
                     ContentStr = "动态加载失败:\r\n" + JsonConvert.SerializeObject(item)
                 };
             }
-            
+
         }
 
     }
