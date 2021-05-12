@@ -881,6 +881,7 @@ namespace BiliLite.Pages
                 var result = await liveRoomVM.SendDanmu(liveRoomVM.anchorLotteryVM.LotteryInfo.danmu);
                 if (result)
                 {
+                    Utils.ShowMessageToast("弹幕发送成功");
                     FlyoutLottery.Hide();
                 }
 

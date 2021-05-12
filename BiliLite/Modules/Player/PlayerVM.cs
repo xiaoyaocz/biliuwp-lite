@@ -138,6 +138,7 @@ namespace BiliLite.Modules
                 qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
                 {
                     multi_flv_url = data.data.durl,
+                    url = data.data.durl[0]?.url??"",
                     mode = data.data.durl.Count > 1 ? VideoPlayMode.MultiFlv : VideoPlayMode.SingleFlv,
                     codec_name = "h264_flv"
                 };

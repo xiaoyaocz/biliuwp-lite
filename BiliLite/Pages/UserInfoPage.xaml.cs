@@ -260,7 +260,7 @@ namespace BiliLite.Pages
                 icon = Symbol.Document,
                 page = typeof(WebPage),
                 title = data.title,
-                parameters = "https://www.bilibili.com/read/app/" + data.id
+                parameters = "https://www.bilibili.com/read/cv" + data.id
             });
         }
 

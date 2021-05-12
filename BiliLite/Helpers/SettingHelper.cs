@@ -353,7 +353,7 @@ namespace BiliLite.Helpers
             /// 默认视频类型 int flv=0, dash=1,dash_hevc=2
             /// </summary>
             public const string DEFAULT_VIDEO_TYPE = "PlayerDefaultVideoType";
-            public static List<double> VideoSpeed =new List<double>() { 2.0d, 1.75d, 1.5d, 1.0d,0.75d,0.5d };
+            public static List<double> VideoSpeed =new List<double>() { 2.0d, 1.5d, 1.25d, 1.0d,0.75d,0.5d };
 
             /// <summary>
             /// 默认视频类型 int 1.0

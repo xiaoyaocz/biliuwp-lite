@@ -57,6 +57,12 @@ namespace BiliLite.Pages
                 {
                     webView.MaxWidth = 500;
                 }
+
+                if (uri.Contains("read/cv"))
+                {
+                    //如果是专栏，内容加载完成再显示
+                    webView.Visibility = Visibility.Collapsed;
+                }
                 webView.Navigate(new Uri(uri));
                 
             }
@@ -104,13 +110,35 @@ namespace BiliLite.Pages
             }
             try
             {
-               await webView?.InvokeScriptAsync("eval", new List<string>() {
+               
+                //专栏阅读设置
+                if (args.Uri != null && args.Uri.AbsoluteUri.Contains("read/cv"))
+                {
+                    await webView?.InvokeScriptAsync("eval", new List<string>() {
+                    @"$('#internationalHeader').hide();
+$('.unlogin-popover').hide();
+$('.up-info-holder').hide();
+$('.nav-tab-bar').hide();
+$('.international-footer').hide();
+$('.page-container').css('padding-right','0');
+$('.no-login').hide();
+$('.author-container').show();
+$('.author-container').css('margin','12px 0px -12px 0px');"
+                });
+                }
+
+
+                await webView?.InvokeScriptAsync("eval", new List<string>() {
                     "$('.h5-download-bar').hide()"
                 });
             }
             catch (Exception)
             {
-                
+
+            }
+            finally
+            {
+                if(webView!=null) webView.Visibility = Visibility.Visible;
             }
         }
 
@@ -139,10 +167,10 @@ namespace BiliLite.Pages
 
         private void webView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            if (args.Uri!=null&&args.Uri.AbsoluteUri.Contains("read/cv"))
+            if (args.Uri!=null&&args.Uri.AbsoluteUri.Contains("read/cv") )
             {
-                args.Cancel = true;
-                return;
+               // args.Cancel = true;
+               // return;
             }
         }
 

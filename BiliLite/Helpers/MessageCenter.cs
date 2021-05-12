@@ -251,7 +251,7 @@ namespace BiliLite.Helpers
                     icon = Symbol.Document,
                     page = typeof(WebPage),
                     title = "专栏加载中...",
-                    parameters = "https://www.bilibili.com/read/app/" + article
+                    parameters = "https://www.bilibili.com/read/cv" + article
                 });
                 return true;
             }

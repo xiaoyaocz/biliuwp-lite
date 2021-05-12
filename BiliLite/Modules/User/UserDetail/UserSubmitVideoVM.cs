@@ -204,13 +204,7 @@ namespace BiliLite.Modules.User.UserDetail
         public int comment { get; set; }
         public string play { get; set; }
 
-        private string _pic;
-
-        public string pic
-        {
-            get { return _pic.Replace("//", "http://"); }
-            set { _pic = value; }
-        }
+        public string pic { get; set; }
         public string description { get; set; }
         public string title { get; set; }
         public string author { get; set; }

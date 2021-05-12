@@ -663,6 +663,7 @@
                            
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Margin="4" VerticalAlignment="Center" Visibility="{x:Bind Path=liveRoomVM.Logined,Mode=OneWay}">
                             <StackPanel Orientation="Horizontal">
@@ -675,7 +676,15 @@
                             </StackPanel>
 
                         </StackPanel>
-                        <Button Grid.Column="2" Background="Transparent" Margin="4" Command="{x:Bind Path=liveRoomVM.ShowBagCommand}">
+                        <Button  Grid.Column="2" Visibility="{x:Bind Path=liveRoomVM.ShowBag,Mode=OneWay}" Command="{x:Bind Path=liveRoomVM.RefreshBagCommand}" Background="Transparent" Margin="4">
+                            <StackPanel>
+                                <Grid Width="32" Height="32">
+                                    <fa:FontAwesome  Icon="Solid_Sync"></fa:FontAwesome>
+                                </Grid>
+                                <TextBlock  TextAlignment="Center" FontSize="12" Margin="0 4 0 0" Text="刷新"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Grid.Column="3" Background="Transparent" Margin="4" Command="{x:Bind Path=liveRoomVM.ShowBagCommand}">
                             <Grid>
                                 <StackPanel>
                                     <Grid Width="32" Height="32">

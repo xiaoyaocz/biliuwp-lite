@@ -225,7 +225,7 @@ namespace BiliLite.Controls.Dynamic
                             Tag = "专栏",
                             
                         };
-                        info.Url = "https://www.bilibili.com/read/app/" + info.ID.ToString();
+                        info.Url = "https://www.bilibili.com/read/cv" + info.ID.ToString();
                     }
                     return info;
                 case DynamicDisplayType.Live:

@@ -30,7 +30,7 @@ namespace BiliLite.Modules
         readonly LiveRoomAPI liveRoomAPI;
         readonly PlayerAPI PlayerAPI;
         System.Threading.CancellationTokenSource cancelSource;
-        readonly Live.LiveMessage liveMessage;
+        Live.LiveMessage liveMessage;
         public event EventHandler<LiveRoomPlayUrlModel> ChangedPlayUrl;
         public event EventHandler<LiveRoomEndAnchorLotteryInfoModel> LotteryEnd;
         public event EventHandler<string> AddNewDanmu;
@@ -42,7 +42,7 @@ namespace BiliLite.Modules
         {
             liveRoomAPI = new LiveRoomAPI();
             PlayerAPI = new PlayerAPI();
-            liveMessage = new Live.LiveMessage();
+            //liveMessage = new Live.LiveMessage();
             anchorLotteryVM = new LiveRoomAnchorLotteryVM();
             MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
             MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
@@ -58,9 +58,10 @@ namespace BiliLite.Modules
             timer.Elapsed += Timer_Elapsed;
             timer_box.Elapsed += Timer_box_Elapsed;
             timer_auto_hide_gift.Elapsed += Timer_auto_hide_gift_Elapsed;
-            liveMessage.NewMessage += LiveMessage_NewMessage;
+          
             LoadMoreGuardCommand = new RelayCommand(LoadMoreGuardList);
             ShowBagCommand = new RelayCommand(SetShowBag);
+            RefreshBagCommand = new RelayCommand(RefreshBag);
         }
 
         private void LiveMessage_NewMessage(MessageType type, object message)
@@ -191,6 +192,7 @@ namespace BiliLite.Modules
        
         public ICommand LoadMoreGuardCommand { get; private set; }
         public ICommand ShowBagCommand { get; private set; }
+        public ICommand RefreshBagCommand { get; private set; }
         private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
@@ -501,8 +503,16 @@ namespace BiliLite.Modules
                     cancelSource.Cancel();
                     cancelSource.Dispose();
                 }
+                if (liveMessage != null)
+                {
+                    liveMessage.NewMessage -= LiveMessage_NewMessage;
+                    liveMessage = null;
+                   
+                }
+                liveMessage = new LiveMessage();
+                liveMessage.NewMessage += LiveMessage_NewMessage;
                 cancelSource = new System.Threading.CancellationTokenSource();
-
+                
                 Loading = true;
                 var result = await liveRoomAPI.LiveRoomInfo(id).Request();
                 if (result.status)
@@ -578,6 +588,10 @@ namespace BiliLite.Modules
                 if (SettingHelper.Account.Logined)
                 {
                     uid = SettingHelper.Account.UserID;
+                }
+                if (liveMessage == null)
+                {
+                    liveMessage = new LiveMessage();
                 }
                 await liveMessage.Connect(roomId, uid, cancelSource.Token);
             }
@@ -1105,7 +1119,15 @@ namespace BiliLite.Modules
             }
             ShowBag = !ShowBag;
         }
-
+        private async void RefreshBag()
+        {
+            if (!SettingHelper.Account.Logined)
+            {
+                Utils.ShowMessageToast("请先登录");
+                return;
+            }
+            await LoadBag();
+        }
         public async Task<bool> SendDanmu(string text)
         {
             if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
@@ -1280,8 +1302,8 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
-                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                Utils.ShowMessageToast("读取直播排行榜失败："+ RankType);
+                LogHelper.Log("读取直播排行榜失败"+ RankType, LogType.ERROR, ex);
             }
             finally
             {

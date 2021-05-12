@@ -103,9 +103,17 @@ namespace BiliLite.Modules.Live
             heartBeatTimer.Start();
             while (!cancellationToken.IsCancellationRequested && ws.State == WebSocketState.Open)
             {
-                var buffer = new byte[4096];
-                WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, cancellationToken);
-                ParseData(buffer.Take(result.Count).ToArray());
+                try
+                {
+                    var buffer = new byte[4096];
+                    WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, cancellationToken);
+                    ParseData(buffer.Take(result.Count).ToArray());
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("直播接收包出错",LogType.ERROR,ex);
+                }
+               
             }
         }
 
