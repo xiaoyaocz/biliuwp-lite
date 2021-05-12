@@ -114,7 +114,13 @@
                                         </HyperlinkButton>
                                     </Grid>
                                 </toolkit:AdaptiveGridView.Header>
-
+                                <toolkit:AdaptiveGridView.Footer>
+                                    <Grid>
+                                        <HyperlinkButton Command="{x:Bind Path=videoVM.LoadMoreCommand}" Visibility="{x:Bind Path=videoVM.HasMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" >
+                                            <TextBlock>加载更多</TextBlock>
+                                        </HyperlinkButton>
+                                    </Grid>
+                                </toolkit:AdaptiveGridView.Footer>
                             </toolkit:AdaptiveGridView>
                             <toolkit:AdaptiveGridView SelectionMode="None" 
                                           IsItemClickEnabled="True"
@@ -129,7 +135,7 @@
                                           ItemHeight="80">
                                 <toolkit:AdaptiveGridView.Header>
                                     <Grid Margin="12 8 0 0">
-                                        <TextBlock FontSize="18" FontWeight="Bold">我的收藏</TextBlock>
+                                        <TextBlock FontSize="18" FontWeight="Bold">我的收藏与订阅</TextBlock>
                                     </Grid>
                                 </toolkit:AdaptiveGridView.Header>
 

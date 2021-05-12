@@ -277,7 +277,10 @@ namespace BiliLite.Pages
                 icon = Symbol.OutlineStar,
                 page = typeof(FavoriteDetailPage),
                 title = "收藏夹",
-                parameters = data.id
+                parameters = new FavoriteDetailArgs()
+                {
+                    Id = data.id.ToString(),
+                } 
             });
         }
 

@@ -15,7 +15,7 @@ namespace BiliLite.Api
         public static ApiKeyInfo AndroidVideoKey = new ApiKeyInfo("iVGUTjsxvpLeuDCf", "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt");
         public static ApiKeyInfo WebVideoKey = new ApiKeyInfo("84956560bc028eb7", "94aba54af9065f71de72f5508f1cd42e");
         public static ApiKeyInfo AndroidTVKey = new ApiKeyInfo("4409e2ce8ffd12b8", "59b43e04ad6965f34319062b478f83dd");
-        private const string build = "5442100";
+        private const string build = "6235200";
         private const string _mobi_app = "android";
         private const string _platform = "android";
         public static string GetSign(string url, ApiKeyInfo apiKeyInfo,string par= "&sign=")

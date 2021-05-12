@@ -21,13 +21,23 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
-                baseUrl = "https://api.bilibili.com/medialist/gateway/base/space",
+                baseUrl = "https://api.bilibili.com/x/v3/fav/folder/space/v2",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-
+        public ApiModel MyCreatedFavoriteList(int page)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = "https://api.bilibili.com/x/v3/fav/folder/created/list",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}&pn={page}&ps=20"
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
         /// <summary>
         /// 我创建的收藏夹
         /// </summary>
@@ -169,7 +179,17 @@ namespace BiliLite.Api.User
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-
+        public ApiModel FavoriteSeasonInfo(string season_id, string keyword, int page = 1)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = "https://api.bilibili.com/x/space/fav/season/list",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
 
         /// <summary>
         /// 取消收藏

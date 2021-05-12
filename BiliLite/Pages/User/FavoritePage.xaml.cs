@@ -117,7 +117,11 @@ namespace BiliLite.Pages.User
                 icon = Symbol.OutlineStar,
                 page = typeof(FavoriteDetailPage),
                 title = data.title,
-                parameters = data.id
+                parameters = new FavoriteDetailArgs()
+                {
+                    Id = data.id,
+                    Type=data.type
+                } 
             });
         }
 

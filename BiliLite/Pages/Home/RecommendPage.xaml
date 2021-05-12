@@ -184,7 +184,7 @@
                         </Style>
                     </toolkit:AdaptiveGridView.ItemContainerStyle>
                     <controls:MyAdaptiveGridView.Header>
-                        <controls:Carousel x:Name="control" Visibility="{x:Bind Path=recommendVM.Banner.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="12 0" ItemsSource="{x:Bind Path=recommendVM.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="2"  MaxHeight="240">
+                        <controls:Carousel x:Name="control" Visibility="{x:Bind Path=recommendVM.Banner.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="12 0" ItemsSource="{x:Bind Path=recommendVM.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="1.77"  MaxHeight="240">
                             <controls:Carousel.ContentTemplate>
                                 <DataTemplate x:DataType="modules:RecommendBannerItemModel">
                                     <HyperlinkButton Margin="12 0" Padding="0" Click="BannerItem_Click">

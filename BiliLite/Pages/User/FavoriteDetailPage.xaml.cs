@@ -20,6 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BiliLite.Pages.User
 {
+    public class FavoriteDetailArgs
+    {
+        public int Type { get; set; } = 11;
+        public string Id { get; set; }
+    }
     /// <summary>
     /// 收藏夹详情、播放列表详情
     /// </summary>
@@ -37,7 +42,9 @@ namespace BiliLite.Pages.User
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.New && favoriteDetailVM.FavoriteInfo == null)
             {
-                favoriteDetailVM.Fid = e.Parameter.ToString();
+                FavoriteDetailArgs args = e.Parameter as FavoriteDetailArgs;
+                favoriteDetailVM.Id = args.Id;
+                favoriteDetailVM.Type = args.Type;
                 favoriteDetailVM.Page = 1;
                 favoriteDetailVM.Keyword = "";
                 await favoriteDetailVM.LoadFavoriteInfo();
@@ -99,7 +106,7 @@ namespace BiliLite.Pages.User
                 {
                     ls.Add(item);
                 }
-                CopyOrMoveFavVideoDialog copyOrMoveFavVideoDialog = new CopyOrMoveFavVideoDialog(favoriteDetailVM.Fid, favoriteDetailVM.FavoriteInfo.mid, true, ls);
+                CopyOrMoveFavVideoDialog copyOrMoveFavVideoDialog = new CopyOrMoveFavVideoDialog(favoriteDetailVM.Id, favoriteDetailVM.FavoriteInfo.mid, true, ls);
                 await copyOrMoveFavVideoDialog.ShowAsync();
                 favoriteDetailVM.Refresh();
             }
@@ -114,7 +121,7 @@ namespace BiliLite.Pages.User
                 {
                     ls.Add(item);
                 }
-                CopyOrMoveFavVideoDialog copyOrMoveFavVideoDialog = new CopyOrMoveFavVideoDialog(favoriteDetailVM.Fid, favoriteDetailVM.FavoriteInfo.mid, false, ls);
+                CopyOrMoveFavVideoDialog copyOrMoveFavVideoDialog = new CopyOrMoveFavVideoDialog(favoriteDetailVM.Id, favoriteDetailVM.FavoriteInfo.mid, false, ls);
                 await copyOrMoveFavVideoDialog.ShowAsync();
             }
         }

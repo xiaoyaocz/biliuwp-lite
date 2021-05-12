@@ -63,7 +63,7 @@ namespace BiliLite.Modules
                     var obj = result.GetJObject();
                     if (obj["code"].ToInt32() == 0)
                     {
-                        var items = JsonConvert.DeserializeObject<ObservableCollection<RecommendItemModel>>(obj["data"]["items"].ToString());
+                        var items = JsonConvert.DeserializeObject<ObservableCollection<RecommendItemModel>>(obj["data"]["items"].ToString().Replace("left_bottom_rcmd_reason_style", "rcmd_reason_style"));
                         var banner = items.FirstOrDefault(x => x.card_goto == "banner");
                         if (banner != null)
                         {
@@ -80,7 +80,6 @@ namespace BiliLite.Modules
                                 items.Remove(items[i]);
                                 continue;
                             }
-
                             var item = items[i];
                             if (item.three_point_v2 != null && item.three_point_v2.Count > 0 && item.card_goto == "av")
                             {
@@ -323,6 +322,10 @@ namespace BiliLite.Modules
                 if (desc_button != null)
                 {
                     return desc_button.text;
+                }
+                if (card_goto=="live")
+                {
+                    return args.up_name;
                 }
                 return "";
             }

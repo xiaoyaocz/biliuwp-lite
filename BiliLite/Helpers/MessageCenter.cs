@@ -384,7 +384,10 @@ namespace BiliLite.Helpers
                     icon = Symbol.OutlineStar,
                     page = typeof(FavoriteDetailPage),
                     title = "收藏夹",
-                    parameters = medialist_id
+                    parameters = new FavoriteDetailArgs()
+                    {
+                        Id= medialist_id,
+                    }
                 });
 
                 return true;

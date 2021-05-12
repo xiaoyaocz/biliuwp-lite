@@ -16,7 +16,8 @@ namespace BiliLite.Modules
         readonly Api.User.FavoriteApi  favoriteApi;
         public int Page { get; set; } = 1;
         public string Keyword { get; set; } = "";
-        public string Fid { get; set; }
+        public string Id { get; set; }
+        public int Type { get; set; }
         public FavoriteDetailVM()
         {
             favoriteApi = new Api.User.FavoriteApi();
@@ -102,7 +103,12 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await favoriteApi.FavoriteInfo(Fid, Keyword,Page).Request();
+                var api = favoriteApi.FavoriteInfo(Id, Keyword, Page);
+                if (Type==21)
+                {
+                    api = favoriteApi.FavoriteSeasonInfo(Id, Keyword, Page);
+                }
+                var results = await api.Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<FavoriteDetailModel>>();
@@ -171,7 +177,7 @@ namespace BiliLite.Modules
                     Utils.ShowMessageToast("请先登录后再操作");
                     return;
                 }
-                var results = await favoriteApi.Delete(Fid, items.Select(x=>x.id).ToList()).Request();
+                var results = await favoriteApi.Delete(Id, items.Select(x=>x.id).ToList()).Request();
                 if (results.status)
                 {
                     var data = await results.GetData<object>();
@@ -208,7 +214,7 @@ namespace BiliLite.Modules
                     Utils.ShowMessageToast("请先登录后再操作");
                     return;
                 }
-                var results = await favoriteApi.Clean(Fid).Request();
+                var results = await favoriteApi.Clean(Id).Request();
                 if (results.status)
                 {
                     var data = await results.GetData<object>();
