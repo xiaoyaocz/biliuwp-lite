@@ -10,7 +10,7 @@
   <Identity
     Name="5421.502643927C6AD"
     Publisher="CN=xiaoyaocz"
-    Version="4.2.0.0" />
+    Version="4.2.2.0" />
 
   <mp:PhoneIdentity PhoneProductId="5dafa284-d0d7-453e-b0d7-b691397a3959" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

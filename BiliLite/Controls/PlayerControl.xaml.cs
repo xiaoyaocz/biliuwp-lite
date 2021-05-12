@@ -1161,7 +1161,7 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展", "播放失败");
+                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
             }
         }
 
@@ -1310,7 +1310,7 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、在播放设置打开/关闭硬解视频\r\n3、在播放设置中更换视频类型\r\n4、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n5、如果是付费视频，请在手机或网页端购买后观看", "播放失败");
+                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、在播放设置打开/关闭硬解视频\r\n3、在播放设置中更换视频类型\r\n4、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n5、如果是付费视频，请在手机或网页端购买后观看\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
             }
         }
 
@@ -1939,7 +1939,7 @@ namespace BiliLite.Controls
         {
             if (!e.need_change)
             {
-                ShowDialog($"播放失败:{e.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展", "播放失败");
+                ShowDialog($"播放失败:{e.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
                 return;
             }
             VideoLoading.Visibility = Visibility.Visible;
