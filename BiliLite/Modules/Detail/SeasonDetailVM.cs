@@ -1,6 +1,7 @@
 ﻿using BiliLite.Api;
 using BiliLite.Helpers;
 using BiliLite.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -111,6 +112,27 @@ namespace BiliLite.Modules
                                 }
                             }
                         }
+                        else
+                        {
+                            try
+                            {
+                                //build 6235200
+                                data.result.episodes = JsonConvert.DeserializeObject<List<SeasonDetailEpisodeModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "positive")?["data"]?["episodes"]?.ToString()??"[]");
+                                data.result.seasons = JsonConvert.DeserializeObject<List<SeasonDetailSeasonItemModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "season")?["data"]?["seasons"]?.ToString() ?? "[]");
+                                var pv = JsonConvert.DeserializeObject<List<SeasonDetailEpisodeModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "section")?["data"]?["episodes"]?.ToString() ?? "[]");
+                                foreach (var item in pv)
+                                {
+                                    item.section_type = 1;
+                                    data.result.episodes.Add(item);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+
+
+
                         if (data.result.section != null)
                         {
                             foreach (var item in data.result.section)
@@ -229,6 +251,7 @@ namespace BiliLite.Modules
         public string square_cover { get; set; }
         public int media_id { get; set; }
         public int mode { get; set; }
+        public JArray modules { get; set; }
         public SeasonDetailActorModel actor { get; set; }
         public SeasonDetailActorModel staff { get; set; }
         public List<SeasonDetailAreaItemModel> areas { get; set; }

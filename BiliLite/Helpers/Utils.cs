@@ -262,7 +262,7 @@ namespace BiliLite.Helpers
         {
             try
             {
-                var url = $"https://cdn.jsdelivr.net/gh/xiaoyaocz/biliuwp-lite/BiliLite/Assets/Text/new_version.json?ts{Utils.GetTimestampS()}";
+                var url = $"https://cdn.jsdelivr.net/gh/xiaoyaocz/biliuwp-lite@master/BiliLite/Assets/Text/new_version.json?ts{Utils.GetTimestampS()}";
                 var result = await HttpHelper.GetString(url);
                 var ver = JsonConvert.DeserializeObject<NewVersion>(result);
                 var num = $"{ SystemInformation.ApplicationVersion.Major }{ SystemInformation.ApplicationVersion.Minor.ToString("00")}{ SystemInformation.ApplicationVersion.Build.ToString("00")}";
