@@ -131,7 +131,7 @@ namespace BiliLite.Modules.User
         }
         public void OpenUser(object id)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 page = typeof(UserInfoPage),
@@ -149,7 +149,7 @@ namespace BiliLite.Modules.User
         }
         public void OpenWeb(object url)
         {
-            MessageCenter.OpenNewWindow(null, new NavigationInfo()
+            MessageCenter.NavigateToPage(null, new NavigationInfo()
             {
                 icon = Symbol.World,
                 page = typeof(WebPage),
@@ -166,7 +166,7 @@ namespace BiliLite.Modules.User
         public void OpenTag(object name)
         {
             //TODO 打开话题
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.World,
                 page = typeof(WebPage),
@@ -196,7 +196,7 @@ namespace BiliLite.Modules.User
         }
         public void OpenVote(object id)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Document,
                 page = typeof(WebPage),
@@ -227,7 +227,7 @@ namespace BiliLite.Modules.User
         }
         public void OpenDetail(DynamicItemDisplayModel data)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Document,
                 page = typeof(DynamicDetailPage),

@@ -141,7 +141,7 @@ namespace BiliLite.Modules
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null) ?? "";
             if (seasonId!=null&& seasonId.ToInt32()!=0)
             {
-                MessageCenter.OpenNewWindow(sender, new NavigationInfo()
+                MessageCenter.NavigateToPage(sender, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(Pages.SeasonDetailPage),
@@ -161,7 +161,7 @@ namespace BiliLite.Modules
         {
             var weblink = e.ClickedItem.GetType().GetProperty("link").GetValue(e.ClickedItem, null);
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null) ?? "";
-            MessageCenter.OpenNewWindow(sender, new NavigationInfo()
+            MessageCenter.NavigateToPage(sender, new NavigationInfo()
             {
                 icon = Symbol.World,
                 page = typeof(Pages.WebPage),

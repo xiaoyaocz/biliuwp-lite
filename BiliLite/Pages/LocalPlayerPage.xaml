@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:PlayPage
     x:Class="BiliLite.Pages.LocalPlayerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,4 +12,4 @@
     <Grid>
         <controls:PlayerControl x:Name="player"></controls:PlayerControl>
     </Grid>
-</Page>
+</local:PlayPage>

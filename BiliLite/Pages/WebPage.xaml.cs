@@ -24,12 +24,11 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class WebPage : Page
+    public sealed partial class WebPage : BasePage
     {
         public WebPage()
         {
             this.InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Disabled;
             this.Loaded += WebPage_Loaded;
         }
         private void WebPage_Loaded(object sender, RoutedEventArgs e)
@@ -44,7 +43,9 @@ namespace BiliLite.Pages
         private void WebPage_ClosedPage(object sender, EventArgs e)
         {
             webView.NavigateToString("");
+            (this.Content as Grid).Children.Remove(webView);
             webView = null;
+            GC.Collect();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -68,9 +69,20 @@ namespace BiliLite.Pages
             }
            
         }
-       
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if(e.NavigationMode== NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            {
+                NavigationCacheMode = NavigationCacheMode.Disabled;
+                webView.NavigateToString("");
+                (this.Content as Grid).Children.Remove(webView);
+                webView = null;
+                GC.Collect();
+            }
+            base.OnNavigatingFrom(e);
+        }
 
-     
+
         private void btnForword_Click(object sender, RoutedEventArgs e)
         {
            if (webView.CanGoForward)

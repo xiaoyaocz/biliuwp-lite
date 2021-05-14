@@ -27,7 +27,7 @@ namespace BiliLite.Pages.Live
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class LiveAreaDetailPage : Page
+    public sealed partial class LiveAreaDetailPage : BasePage
     {
         LiveAreaDetailVM liveAreaDetailVM;
         public LiveAreaDetailPage()
@@ -54,7 +54,7 @@ namespace BiliLite.Pages.Live
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as LiveRecommendItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),

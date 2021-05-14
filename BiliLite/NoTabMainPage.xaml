@@ -25,8 +25,10 @@
                 <TextBlock x:Name="txtTitle" Margin="12 0" VerticalAlignment="Center">哔哩哔哩 UWP</TextBlock>
             </Border>
         </Grid>
-       
-        <Frame x:Name="frame" Grid.Row="1"/>
+
+        <local:NewInstanceFrame x:Name="frame" Grid.Row="1"/>
+
+
         <Border x:Name="MiniWindowsTitleBar" Grid.RowSpan="2" Visibility="Collapsed"  Background="#00FFFFFF" Height="40" VerticalAlignment="Top"></Border>
         <Grid x:Name="gridViewer" Grid.RowSpan="2" Visibility="Collapsed" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}" >
             <controls:ImageViewerControl x:Name="imgViewer" CloseEvent="imgViewer_CloseEvent"></controls:ImageViewerControl>

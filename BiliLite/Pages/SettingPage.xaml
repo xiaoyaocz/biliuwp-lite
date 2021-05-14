@@ -165,7 +165,7 @@
                             </StackPanel>
                             <StackPanel  Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8"  FontSize="16">新窗口打开图片预览</TextBlock>
-                                <ToggleSwitch x:Name="swPreviewImageOpenNewWindow" ></ToggleSwitch>
+                                <ToggleSwitch x:Name="swPreviewImageNavigateToPage" ></ToggleSwitch>
                             </StackPanel>
                             <StackPanel Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8" FontSize="16">首页推荐显示方式</TextBlock>

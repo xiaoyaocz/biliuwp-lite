@@ -22,7 +22,7 @@ namespace BiliLite.Pages.User
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class HistoryPage : Page
+    public sealed partial class HistoryPage : BasePage
     {
         HistoryVM historyVM;
         public HistoryPage()
@@ -47,7 +47,7 @@ namespace BiliLite.Pages.User
             var data = e.ClickedItem as HistoryItemModel;
             if(data.business== "pgc")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
@@ -57,7 +57,7 @@ namespace BiliLite.Pages.User
             }
             else
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),

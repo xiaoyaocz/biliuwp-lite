@@ -177,7 +177,7 @@ namespace BiliLite.Modules.User
         }
         public void OpenUser(object id)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 page = typeof(UserInfoPage),

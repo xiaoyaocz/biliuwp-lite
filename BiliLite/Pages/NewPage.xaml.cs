@@ -28,9 +28,9 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class BlankPage : Page
+    public sealed partial class NewPage : Page
     {
-        public BlankPage()
+        public NewPage()
         {
             this.InitializeComponent();
         }
@@ -60,7 +60,7 @@ namespace BiliLite.Pages
             ((this.Parent as Frame).Parent as TabViewItem).Header = "排行榜";
             ((this.Parent as Frame).Parent as TabViewItem).IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol= Symbol.FourBars };
             this.Frame.Navigate(typeof(RankPage));
-            //MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
+            //MessageCenter.NavigateToPage(this,new NavigationInfo() { 
             //    icon= Symbol.FourBars,
             //    page=typeof(RankPage),
             //    title="排行榜"
@@ -111,7 +111,7 @@ namespace BiliLite.Pages
             {
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Find,
                 page = typeof(SearchPage),
@@ -164,7 +164,7 @@ namespace BiliLite.Pages
 
         private void BtnOpenLive_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Document,
                 page = typeof(Live.LiveRecommendPage),

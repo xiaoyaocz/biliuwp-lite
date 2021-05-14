@@ -1,4 +1,5 @@
-﻿<Page
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
     x:Class="BiliLite.Pages.User.WatchlaterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -69,4 +70,4 @@
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>
     </Grid>
-</Page>
+</pages:BasePage>

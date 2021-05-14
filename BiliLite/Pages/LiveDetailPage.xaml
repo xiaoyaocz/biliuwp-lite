@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:BasePage
     x:Class="BiliLite.Pages.LiveDetailPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1101,4 +1101,4 @@
         </Grid>
         <ProgressRing IsActive="True"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=liveRoomVM.Loading,Mode=OneWay}"></ProgressRing>
     </Grid>
-</Page>
+</local:BasePage>

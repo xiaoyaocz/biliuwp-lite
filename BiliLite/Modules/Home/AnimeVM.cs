@@ -118,7 +118,7 @@ namespace BiliLite.Modules
         {
             var seasonId = e.ClickedItem.GetType().GetProperty("season_id").GetValue(e.ClickedItem, null);
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null)??"";
-            MessageCenter.OpenNewWindow(sender,new NavigationInfo() {
+            MessageCenter.NavigateToPage(sender,new NavigationInfo() {
                 icon= Symbol.Play,
                 page=typeof(Pages.SeasonDetailPage),
                 parameters= seasonId,
@@ -129,7 +129,7 @@ namespace BiliLite.Modules
         {
             var weblink = e.ClickedItem.GetType().GetProperty("link").GetValue(e.ClickedItem, null);
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null) ?? "";
-            MessageCenter.OpenNewWindow(sender, new NavigationInfo()
+            MessageCenter.NavigateToPage(sender, new NavigationInfo()
             {
                 icon = Symbol.World,
                 page = typeof(Pages.WebPage),

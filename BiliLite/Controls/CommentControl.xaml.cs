@@ -45,7 +45,7 @@ namespace BiliLite.Controls
 
         private void btn_User_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Account,
                 title = "用户信息",

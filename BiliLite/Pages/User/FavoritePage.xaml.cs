@@ -30,7 +30,7 @@ namespace BiliLite.Pages.User
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class FavoritePage : Page
+    public sealed partial class FavoritePage : BasePage
     {
         MyFollowSeasonVM animeVM;
         MyFollowSeasonVM cinemaVM;
@@ -100,7 +100,7 @@ namespace BiliLite.Pages.User
         private void BangumiSeason_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data= e.ClickedItem as FollowSeasonModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(SeasonDetailPage),
@@ -112,7 +112,7 @@ namespace BiliLite.Pages.User
         private void VideoFavorite_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as FavoriteItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.OutlineStar,
                 page = typeof(FavoriteDetailPage),

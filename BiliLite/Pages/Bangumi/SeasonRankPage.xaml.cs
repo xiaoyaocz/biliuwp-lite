@@ -22,7 +22,7 @@ namespace BiliLite.Pages.Bangumi
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class SeasonRankPage : Page
+    public sealed partial class SeasonRankPage : BasePage
     {
         readonly SeasonRankVM seasonRankVM;
         public SeasonRankPage()
@@ -57,7 +57,7 @@ namespace BiliLite.Pages.Bangumi
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as SeasonRankItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(SeasonDetailPage),

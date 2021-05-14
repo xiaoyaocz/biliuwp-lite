@@ -22,12 +22,13 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class LocalPlayerPage : Page
+    public sealed partial class LocalPlayerPage : PlayPage
     {
         public LocalPlayerPage()
         {
             this.InitializeComponent();
             this.Loaded += LocalPlayerPage_Loaded;
+            this.Player = this.player;
             player.FullScreenEvent += Player_FullScreenEvent;
         }
 
@@ -41,7 +42,7 @@ namespace BiliLite.Pages
             else
             {
                 this.Margin = new Thickness(0);
-              
+
             }
         }
 
@@ -59,13 +60,13 @@ namespace BiliLite.Pages
             Player_FullScreenEvent(this, false);
             player.MiniWidnows(false);
             player?.Dispose();
-            
+
         }
 
-        protected  override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if(e.NavigationMode== NavigationMode.New)
+            if (e.NavigationMode == NavigationMode.New)
             {
                 if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
                 {
@@ -81,10 +82,12 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            Player_FullScreenEvent(this, false);
-            player.MiniWidnows(false);
-            player?.Dispose();
-            
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            {
+                Player_FullScreenEvent(this, false);
+                player.MiniWidnows(false);
+                player?.Dispose();
+            }
             base.OnNavigatingFrom(e);
         }
     }

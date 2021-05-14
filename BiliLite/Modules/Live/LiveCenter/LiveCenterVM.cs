@@ -107,7 +107,7 @@ namespace BiliLite.Modules.Live.LiveCenter
 
         public void OpenTitle()
         {
-            MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
+            MessageCenter.NavigateToPage(this,new NavigationInfo() { 
                 icon= Windows.UI.Xaml.Controls.Symbol.World,
                 title="佩戴中心",
                 page=typeof(Pages.WebPage),

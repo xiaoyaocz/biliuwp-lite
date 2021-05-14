@@ -41,7 +41,7 @@ namespace BiliLite.Pages
         public string Cover { get; set; }
         public string Title { get; set; }
     }
-    public sealed partial class VideoDetailPage : Page
+    public sealed partial class VideoDetailPage : PlayPage
     {
         VideoDetailVM videoDetailVM;
         string avid = "";
@@ -51,6 +51,8 @@ namespace BiliLite.Pages
         {
             this.InitializeComponent();
             this.Loaded += VideoDetailPage_Loaded;
+            this.Player = this.player;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             videoDetailVM = new VideoDetailVM();
             this.DataContext = videoDetailVM;
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
@@ -228,13 +230,17 @@ namespace BiliLite.Pages
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            player?.Dispose();
-            videoDetailVM.Loaded = false;
-            videoDetailVM.Loading = true;
-            videoDetailVM.VideoInfo = null;
-            changedFlag = true;
-            player.FullScreen(false);
-            player.MiniWidnows(false);
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            {
+                player?.Dispose();
+                videoDetailVM.Loaded = false;
+                videoDetailVM.Loading = true;
+                videoDetailVM.VideoInfo = null;
+                changedFlag = true;
+                player.FullScreen(false);
+                player.MiniWidnows(false);
+            }
+               
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -311,7 +317,7 @@ namespace BiliLite.Pages
         private void listRelates_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as VideoDetailRelatesModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),
@@ -338,7 +344,7 @@ namespace BiliLite.Pages
         private void btnTagItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (sender as HyperlinkButton).DataContext as VideoDetailTagModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Find,
                 page = typeof(SearchPage),
@@ -416,7 +422,7 @@ namespace BiliLite.Pages
             var data = (sender as HyperlinkButton).DataContext;
             if (data is VideoDetailStaffModel)
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
                     title = (data as VideoDetailStaffModel).name,
@@ -426,7 +432,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
                     title = videoDetailVM.VideoInfo.owner.name,

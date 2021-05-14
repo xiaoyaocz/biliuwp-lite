@@ -23,7 +23,7 @@ namespace BiliLite.Pages.Bangumi
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class AnimeIndexPage : Page
+    public sealed partial class AnimeIndexPage : BasePage
     {
         private SeasonIndexParameter indexParameter;
         readonly SeasonIndexVM seasonIndexVM;
@@ -59,7 +59,7 @@ namespace BiliLite.Pages.Bangumi
         private void ListResult_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as SeasonIndexResultItemModel;
-            MessageCenter.OpenNewWindow(sender, new NavigationInfo()
+            MessageCenter.NavigateToPage(sender, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(Pages.SeasonDetailPage),

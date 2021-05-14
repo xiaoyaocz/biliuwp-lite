@@ -330,14 +330,12 @@
     <Compile Include="Pages\Bangumi\TimelinePage.xaml.cs">
       <DependentUpon>TimelinePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\BlankPage.xaml.cs">
-      <DependentUpon>BlankPage.xaml</DependentUpon>
+    <Compile Include="Pages\NewPage.xaml.cs">
+      <DependentUpon>NewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\BasePage.cs" />
     <Compile Include="Pages\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\HelpPage.xaml.cs">
-      <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -676,15 +674,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\DownloadPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\HelpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -751,6 +741,10 @@
     <Page Include="Pages\LocalPlayerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\NewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Other\FindMorePage.xaml">
       <SubType>Designer</SubType>

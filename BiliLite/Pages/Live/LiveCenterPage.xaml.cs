@@ -22,7 +22,7 @@ namespace BiliLite.Pages.Live
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class LiveCenterPage : Page
+    public sealed partial class LiveCenterPage : BasePage
     {
         readonly LiveAttentionVM liveAttentionVM;
         readonly LiveAttentionUnLiveVM liveAttentionUnLiveVM;
@@ -51,7 +51,7 @@ namespace BiliLite.Pages.Live
         private void AttentionlList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as LiveFollowAnchorModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),
@@ -63,7 +63,7 @@ namespace BiliLite.Pages.Live
         private void UnLiveList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as LiveFollowUnliveAnchorModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),
@@ -75,7 +75,7 @@ namespace BiliLite.Pages.Live
         private void HistoryList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as LiveHistoryItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),

@@ -25,7 +25,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class UserInfoPage : Page
+    public sealed partial class UserInfoPage : BasePage
     {
         readonly DynamicVM dynamicVM;
         UserDetailVM userDetailVM;
@@ -124,7 +124,7 @@ namespace BiliLite.Pages
         private void SubmitVideo_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as SubmitVideoItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),
@@ -136,7 +136,7 @@ namespace BiliLite.Pages
         private void btnLiveRoom_Click(object sender, RoutedEventArgs e)
         {
             if (userDetailVM.UserInfo == null) return;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),
@@ -147,7 +147,7 @@ namespace BiliLite.Pages
 
         private void btnChat_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Message,
                 title = "消息中心",
@@ -255,7 +255,7 @@ namespace BiliLite.Pages
         private void SubmitArticle_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as SubmitArticleItemModel;
-            MessageCenter.OpenNewWindow(null, new NavigationInfo()
+            MessageCenter.NavigateToPage(null, new NavigationInfo()
             {
                 icon = Symbol.Document,
                 page = typeof(WebPage),
@@ -272,7 +272,7 @@ namespace BiliLite.Pages
         private void FavList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as FavFolderItemModel;
-            MessageCenter.OpenNewWindow(null, new NavigationInfo()
+            MessageCenter.NavigateToPage(null, new NavigationInfo()
             {
                 icon = Symbol.OutlineStar,
                 page = typeof(FavoriteDetailPage),
@@ -287,7 +287,7 @@ namespace BiliLite.Pages
         private void UserList_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as UserFollowItemModel;
-            MessageCenter.OpenNewWindow(null, new NavigationInfo()
+            MessageCenter.NavigateToPage(null, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 page = typeof(UserInfoPage),

@@ -1,4 +1,5 @@
-﻿<Page
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
     x:Class="BiliLite.Pages.Other.FindMorePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -39,4 +40,4 @@
             
         </toolkit:AdaptiveGridView>
     </Grid>
-</Page>
+</pages:BasePage>

@@ -62,7 +62,7 @@ namespace BiliLite.Pages.Home
            var item= e.ClickedItem as DynamicItemModel;
             if (item.desc.type==8)
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo() { 
+                MessageCenter.NavigateToPage(this, new NavigationInfo() { 
                     icon= Symbol.Play,
                     page=typeof(VideoDetailPage),
                     parameters=item.video.aid,
@@ -70,7 +70,7 @@ namespace BiliLite.Pages.Home
                 });
             }else if (item.desc.type == 512)
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),

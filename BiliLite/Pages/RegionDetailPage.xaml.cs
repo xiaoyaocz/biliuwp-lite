@@ -23,7 +23,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class RegionDetailPage : Page
+    public sealed partial class RegionDetailPage : BasePage
     {
         RegionDetailVM regionDetailVM;
         OpenRegionInfo regionInfo;
@@ -82,7 +82,7 @@ namespace BiliLite.Pages
             if (regionInfo.id == 13)
             {
                 //打开番剧排行榜
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.FourBars,
                     page = typeof(SeasonRankPage),
@@ -94,7 +94,7 @@ namespace BiliLite.Pages
             if (regionInfo.id == 167)
             {
                 //打开国创排行榜
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.FourBars,
                     page = typeof(SeasonRankPage),
@@ -103,7 +103,7 @@ namespace BiliLite.Pages
                 });
                 return;
             } 
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.FourBars,
                 page = typeof(RankPage),
@@ -134,7 +134,7 @@ namespace BiliLite.Pages
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as RegionVideoItemModel;
-            MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
+            MessageCenter.NavigateToPage(this,new NavigationInfo() { 
                 icon= Symbol.Play,
                 page=typeof(VideoDetailPage),
                 parameters=data.param,

@@ -59,7 +59,7 @@ namespace BiliLite.Pages.Home
             var data = (e.ClickedItem as Modules.HotDataItemModel);
             if (data.card_goto=="av")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo() {
+                MessageCenter.NavigateToPage(this, new NavigationInfo() {
                     icon= Symbol.Play,
                     page=typeof(VideoDetailPage),
                     title= data.title,
@@ -77,7 +77,7 @@ namespace BiliLite.Pages.Home
             var data = (e.ClickedItem as Modules.HotTopItemModel);
             if (data.module_id == "rank")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.FourBars,
                     page = typeof(RankPage),

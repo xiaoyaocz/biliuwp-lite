@@ -167,12 +167,12 @@ namespace BiliLite.Pages
             });
 
             //新窗口浏览图片
-            swPreviewImageOpenNewWindow.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false);
-            swPreviewImageOpenNewWindow.Loaded += new RoutedEventHandler((sender, e) =>
+            swPreviewImageNavigateToPage.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false);
+            swPreviewImageNavigateToPage.Loaded += new RoutedEventHandler((sender, e) =>
             {
-                swPreviewImageOpenNewWindow.Toggled += new RoutedEventHandler((obj, args) =>
+                swPreviewImageNavigateToPage.Toggled += new RoutedEventHandler((obj, args) =>
                 {
-                    SettingHelper.SetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, swPreviewImageOpenNewWindow.IsOn);
+                    SettingHelper.SetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, swPreviewImageNavigateToPage.IsOn);
                 });
             });
             //鼠标侧键返回

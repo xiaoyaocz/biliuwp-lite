@@ -22,7 +22,7 @@ namespace BiliLite.Pages.User
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class WatchlaterPage : Page
+    public sealed partial class WatchlaterPage : BasePage
     {
         WatchLaterVM watchLaterVM;
         public WatchlaterPage()
@@ -58,7 +58,7 @@ namespace BiliLite.Pages.User
                 }
 
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),

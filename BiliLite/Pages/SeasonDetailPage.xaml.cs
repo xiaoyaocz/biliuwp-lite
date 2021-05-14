@@ -29,7 +29,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class SeasonDetailPage : Page
+    public sealed partial class SeasonDetailPage : PlayPage
     {
         SeasonDetailVM seasonDetailVM;
         SeasonReviewVM seasonReviewVM;
@@ -40,8 +40,8 @@ namespace BiliLite.Pages
         {
             this.InitializeComponent();
             this.Loaded += SeasonDetailPage_Loaded;
-
-            NavigationCacheMode = NavigationCacheMode.Disabled;
+            this.Player = this.player;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
             seasonDetailVM = new SeasonDetailVM();
             seasonReviewVM = new SeasonReviewVM();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
@@ -207,13 +207,17 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            player?.Dispose();
-            seasonDetailVM.Loaded = false;
-            seasonDetailVM.Loading = true;
-            seasonDetailVM.Detail = null;
-            changedFlag = true;
-            player.FullScreen(false);
-            player.MiniWidnows(false);
+            if(e.NavigationMode== NavigationMode.Back||e.SourcePageType.Name == "BlankPage")
+            {
+                player?.Dispose();
+                seasonDetailVM.Loaded = false;
+                seasonDetailVM.Loading = true;
+                seasonDetailVM.Detail = null;
+                changedFlag = true;
+                player.FullScreen(false);
+                player.MiniWidnows(false);
+            }
+            
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -383,14 +387,22 @@ namespace BiliLite.Pages
             var item = SeasonList.SelectedItem as SeasonDetailSeasonItemModel;
             if (item.season_id.ToString() != season_id)
             {
-                this.Frame.Navigate(typeof(SeasonDetailPage), item.season_id);
+                
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    parameters = item.season_id,
+                    title = item.title
+                });
+                //this.Frame.Navigate(typeof(SeasonDetailPage), item.season_id);
             }
         }
 
         private void btnOpenIndexWithArea_Click(object sender, RoutedEventArgs e)
         {
             var data = (sender as HyperlinkButton).DataContext as SeasonDetailAreaItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),
@@ -407,7 +419,7 @@ namespace BiliLite.Pages
         {
 
             var data = (sender as HyperlinkButton).DataContext as SeasonDetailStyleItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),

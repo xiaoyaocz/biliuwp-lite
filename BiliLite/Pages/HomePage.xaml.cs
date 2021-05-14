@@ -108,7 +108,7 @@ namespace BiliLite.Pages
 
         private void btnSetting_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Setting,
                 page = typeof(SettingPage),
@@ -137,7 +137,7 @@ namespace BiliLite.Pages
 
         private void btnDownlaod_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Download,
                 page = typeof(DownloadPage),
@@ -159,7 +159,7 @@ namespace BiliLite.Pages
                 return;
             }
 
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Find,
                 page = typeof(SearchPage),
@@ -179,7 +179,7 @@ namespace BiliLite.Pages
                 Utils.ShowMessageToast("请先登录");
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.OutlineStar,
                 page = typeof(User.FavoritePage),
@@ -195,7 +195,7 @@ namespace BiliLite.Pages
                 Utils.ShowMessageToast("请先登录");
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 page = typeof(Live.LiveCenterPage),
@@ -206,7 +206,7 @@ namespace BiliLite.Pages
 
         private void btnOpenFans_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.World,
                 page = typeof(WebPage),
@@ -217,7 +217,7 @@ namespace BiliLite.Pages
 
         private void MenuHistory_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Clock,
                 page = typeof(User.HistoryPage),
@@ -227,7 +227,7 @@ namespace BiliLite.Pages
 
         private void MenuUserCenter_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 title = SettingHelper.Account.Profile.name,
@@ -238,7 +238,7 @@ namespace BiliLite.Pages
 
         private void MenuMessage_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Message,
                 title = "消息中心",
@@ -254,7 +254,7 @@ namespace BiliLite.Pages
                 Utils.ShowMessageToast("请先登录");
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(User.WatchlaterPage),

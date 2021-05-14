@@ -83,7 +83,7 @@ namespace BiliLite.Pages.Home
         private void FollowLive_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as LiveFollowAnchorModel;
-            MessageCenter.OpenNewWindow(this,new NavigationInfo() {
+            MessageCenter.NavigateToPage(this,new NavigationInfo() {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),
                 title = data.uname+"的直播间",
@@ -94,7 +94,7 @@ namespace BiliLite.Pages.Home
         private void LiveItems_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data=e.ClickedItem as LiveHomeItemsItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Video,
                 page = typeof(LiveDetailPage),
@@ -108,7 +108,7 @@ namespace BiliLite.Pages.Home
             var data = (sender as HyperlinkButton).DataContext as LiveHomeItemsModel;
             if (data.module_info.title== "热门直播")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo() { 
+                MessageCenter.NavigateToPage(this, new NavigationInfo() { 
                     icon= Symbol.Document,
                     page=typeof(LiveRecommendPage),
                     title="全部直播"
@@ -121,7 +121,7 @@ namespace BiliLite.Pages.Home
                     var match = Regex.Match(data.module_info.link, @"parentAreaId=(\d+)&areaId=(\d+)");
                     if (match.Groups.Count == 3)
                     {
-                        MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                        MessageCenter.NavigateToPage(this, new NavigationInfo()
                         {
                             icon = Symbol.Document,
                             page = typeof(LiveAreaDetailPage),
@@ -149,7 +149,7 @@ namespace BiliLite.Pages.Home
             var area = e.ClickedItem as LiveHomeAreaModel;
             if (area.id== 0)
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(LiveAreaPage),
@@ -157,7 +157,7 @@ namespace BiliLite.Pages.Home
                 });
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Document,
                 page = typeof(LiveAreaDetailPage),
@@ -177,7 +177,7 @@ namespace BiliLite.Pages.Home
                 Utils.ShowMessageToast("请先登录");
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
                 page = typeof(Live.LiveCenterPage),

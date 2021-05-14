@@ -29,14 +29,14 @@ namespace BiliLite.Helpers
     public static class MessageCenter
     {
         public static event EventHandler<bool> MiniWindowEvent;
-        public static event EventHandler<NavigationInfo> OpenNewWindowEvent;
+        public static event EventHandler<NavigationInfo> NavigateToPageEvent;
         public static event EventHandler<string> ChangeTitleEvent;
         public static event EventHandler<object> LoginedEvent;
         public static event EventHandler<ImageViewerParameter> ViewImageEvent;
         public static event EventHandler LogoutedEvent;
-        public static void OpenNewWindow(object sender, NavigationInfo navigationInfo)
+        public static void NavigateToPage(object sender, NavigationInfo navigationInfo)
         {
-            OpenNewWindowEvent?.Invoke(sender, navigationInfo);
+            NavigateToPageEvent?.Invoke(sender, navigationInfo);
         }
         public static void SetMiniWindow (bool mini)
         {
@@ -91,7 +91,7 @@ namespace BiliLite.Helpers
             var video = Utils.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
             if (video != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
@@ -103,7 +103,7 @@ namespace BiliLite.Helpers
             video = Utils.RegexMatch(url, @"bilibili://video/(\d+)");
             if (video != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
@@ -115,7 +115,7 @@ namespace BiliLite.Helpers
             video = Utils.RegexMatch(url, @"avid=(\d+)");
             if (video != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
@@ -132,7 +132,7 @@ namespace BiliLite.Helpers
             var video_bv = Utils.RegexMatch(url, @"BV([a-zA-Z0-9]{5,})");
             if (video_bv != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
@@ -156,7 +156,7 @@ namespace BiliLite.Helpers
             var bangumi = Utils.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d{4,})");
             if (bangumi != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
@@ -168,7 +168,7 @@ namespace BiliLite.Helpers
             bangumi = Utils.RegexMatch(url, @"ep(\d+)");
             if (bangumi != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
@@ -210,7 +210,7 @@ namespace BiliLite.Helpers
             var live = Utils.RegexMatch(url.Replace("h5", "live").Replace("live.bilibili.com", "live").Replace("/", ""), @"live(\d+)");
             if (live != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Video,
                     page = typeof(LiveDetailPage),
@@ -246,7 +246,7 @@ namespace BiliLite.Helpers
             var article = Utils.RegexMatch(url.Replace("read/mobile/", "article").Replace("read/cv", "article").Replace("/", ""), @"article(\d+)");
             if (article != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(WebPage),
@@ -266,7 +266,7 @@ namespace BiliLite.Helpers
             var music = Utils.RegexMatch(url.Replace("music/detail/", "au").Replace("/", ""), @"au(\d+)");
             if (music != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.MusicInfo,
                     page = typeof(WebPage),
@@ -285,7 +285,7 @@ namespace BiliLite.Helpers
             var musicmenu = Utils.RegexMatch(url.Replace("menu/detail/", "am").Replace("/", ""), @"am(\d+)");
             if (musicmenu != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.MusicInfo,
                     page = typeof(WebPage),
@@ -308,7 +308,7 @@ namespace BiliLite.Helpers
             var album = Utils.RegexMatch(url.Replace("bilibili://following/detail/", "album").Replace("h.bilibili.com/ywh/h5/", "album").Replace("h.bilibili.com", "album").Replace("t.bilibili.com", "album").Replace("/", ""), @"album(\d+)");
             if (album != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Comment,
                     page = typeof(DynamicDetailPage),
@@ -330,7 +330,7 @@ namespace BiliLite.Helpers
             var user = Utils.RegexMatch(url.Replace("space.bilibili.com", "space").Replace("author", "space").Replace("/", ""), @"space(\d+)");
             if (user != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
                     page = typeof(UserInfoPage),
@@ -347,7 +347,7 @@ namespace BiliLite.Helpers
             var topic = Utils.RegexMatch(url, @"tag/(.*?)/feed");
             if (topic != "")
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Tag,
                     page = typeof(TagDetailPage),
@@ -360,7 +360,7 @@ namespace BiliLite.Helpers
             if (topic1 != "")
             {
                 var data = Uri.UnescapeDataString(topic1);
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Tag,
                     page = typeof(TagDetailPage),
@@ -379,7 +379,7 @@ namespace BiliLite.Helpers
             var medialist_id = Utils.RegexMatch(url, @"ml(\d+)");
             if (!string.IsNullOrEmpty(medialist_id))
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.OutlineStar,
                     page = typeof(FavoriteDetailPage),
@@ -402,7 +402,7 @@ namespace BiliLite.Helpers
             var add_archive = url.Contains("/add_archive");
             if (add_archive)
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.World,
                     page = typeof(WebPage),
@@ -419,7 +419,7 @@ namespace BiliLite.Helpers
              */
             if (url.Contains("favorite?tab=bangumi"))
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.Comment,
                     page = typeof(FavoritePage),
@@ -435,7 +435,7 @@ namespace BiliLite.Helpers
              */
             if (url.Contains("bilibili://pegasus/channel/v2/9222"))
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.World,
                     page = typeof(WebPage),
@@ -448,7 +448,7 @@ namespace BiliLite.Helpers
 
             if (url.Contains("http://") || url.Contains("https://"))
             {
-                OpenNewWindow(null, new NavigationInfo()
+                NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.World,
                     page = typeof(WebPage),

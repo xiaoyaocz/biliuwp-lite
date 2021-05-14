@@ -95,7 +95,7 @@ namespace BiliLite.Pages.Home
 
         private void btnTimeline_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Clock,
                 page = typeof(Bangumi.TimelinePage),
@@ -120,7 +120,7 @@ namespace BiliLite.Pages.Home
 
         private void btnOpenIndex_Click(object sender, RoutedEventArgs e)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),
@@ -139,7 +139,7 @@ namespace BiliLite.Pages.Home
                 Utils.ShowMessageToast("请先登录");
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.OutlineStar,
                 page = typeof(User.FavoritePage),
@@ -150,7 +150,7 @@ namespace BiliLite.Pages.Home
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as PageEntranceModel;
-            MessageCenter.OpenNewWindow(this, item.NavigationInfo);
+            MessageCenter.NavigateToPage(this, item.NavigationInfo);
         }
     }
 }

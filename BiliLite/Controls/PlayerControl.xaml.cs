@@ -179,7 +179,7 @@ namespace BiliLite.Controls
         DisplayRequest dispRequest;
         SystemMediaTransportControls _systemMediaTransportControls;
         DispatcherTimer timer_focus;
-
+        public Player PlayerInstance { get { return Player; } }
         public PlayerControl()
         {
             this.InitializeComponent();

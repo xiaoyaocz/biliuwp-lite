@@ -55,7 +55,7 @@ namespace BiliLite.Pages.Home
             var item = e.ClickedItem as RegionItem;
             if (item.uri.Contains("http"))
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.World,
                     page = typeof(WebPage),
@@ -66,7 +66,7 @@ namespace BiliLite.Pages.Home
             }
             if (item.children!=null)
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(Pages.RegionDetailPage),
@@ -80,7 +80,7 @@ namespace BiliLite.Pages.Home
             }
             if (item.name== "番剧")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.AnimePage),
@@ -91,7 +91,7 @@ namespace BiliLite.Pages.Home
             }
             if (item.name == "国创")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.AnimePage),
@@ -102,7 +102,7 @@ namespace BiliLite.Pages.Home
             }
             if (item.name == "放映厅")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.MoviePage),
@@ -112,7 +112,7 @@ namespace BiliLite.Pages.Home
             }
             if (item.name == "直播")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.LivePage),
@@ -122,7 +122,7 @@ namespace BiliLite.Pages.Home
             }
             if(item.name== "全区排行榜")
             {
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.FourBars,
                     page = typeof(RankPage),

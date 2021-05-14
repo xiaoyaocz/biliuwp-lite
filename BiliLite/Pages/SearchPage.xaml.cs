@@ -62,7 +62,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class SearchPage : Page
+    public sealed partial class SearchPage : BasePage
     {
         SearchVM searchVM;
         public SearchPage()
@@ -139,7 +139,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchVideoItem)
             {
                 var data = e.ClickedItem as SearchVideoItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
@@ -151,7 +151,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchAnimeItem)
             {
                 var data = e.ClickedItem as SearchAnimeItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
@@ -163,7 +163,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchUserItem)
             {
                 var data = e.ClickedItem as SearchUserItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
                     title = data.uname,
@@ -175,7 +175,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchLiveRoomItem)
             {
                 var data = e.ClickedItem as SearchLiveRoomItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     title = data.title,
@@ -187,7 +187,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchArticleItem)
             {
                 var data = e.ClickedItem as SearchArticleItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(WebPage),
@@ -199,7 +199,7 @@ namespace BiliLite.Pages
             if (e.ClickedItem is SearchTopicItem)
             {
                 var data = e.ClickedItem as SearchTopicItem;
-                MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(WebPage),

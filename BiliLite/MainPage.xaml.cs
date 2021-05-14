@@ -40,7 +40,7 @@ namespace BiliLite
             Window.Current.SetTitleBar(CustomDragRegion);
 
             //处理页面跳转
-            MessageCenter.OpenNewWindowEvent += NavigationHelper_OpenNewWindowEvent;
+            MessageCenter.NavigateToPageEvent += NavigationHelper_NavigateToPageEvent;
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
@@ -86,7 +86,7 @@ namespace BiliLite
             (tabView.SelectedItem as TabViewItem).Header = e;
         }
 
-        private void NavigationHelper_OpenNewWindowEvent(object sender, NavigationInfo e)
+        private void NavigationHelper_NavigateToPageEvent(object sender, NavigationInfo e)
         {
             var item = new TabViewItem()
             {
@@ -129,8 +129,9 @@ namespace BiliLite
                     }
                     else
                     {
-                        frame.Close();
-                        tabView.TabItems.Remove(tabView.SelectedItem);
+                        ClosePage(tabView.SelectedItem as TabViewItem);
+                        //frame.Close();
+                        //tabView.TabItems.Remove(tabView.SelectedItem);
                     }
                     e.Handled = true;
                 }
@@ -160,9 +161,9 @@ namespace BiliLite
 
         private void TabView_AddTabButtonClick(Microsoft.UI.Xaml.Controls.TabView sender, object args)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
-                page = typeof(BlankPage),
+                page = typeof(NewPage),
                 title = "新建页面"
             });
            
@@ -175,7 +176,11 @@ namespace BiliLite
         private void ClosePage(TabViewItem tabItem)
         {
             var frame = tabItem.Content as MyFrame;
+            ((frame.Content as Page).Content as Grid).Children.Clear();
+            frame.Navigate(typeof(BlankPage));
             frame.Close();
+            frame.BackStack.Clear();
+            tabItem.Content = null;
             tabView.TabItems.Remove(tabItem);
             GC.Collect();
         }
@@ -184,7 +189,7 @@ namespace BiliLite
             var frame = new MyFrame();
 
             frame.Navigate(typeof(HomePage));
-
+            
             (tabView.TabItems[0] as TabViewItem).Content = frame;
         }
         private async void MessageCenter_ViewImageEvent(object sender, ImageViewerParameter e)
@@ -205,9 +210,9 @@ namespace BiliLite
 
         private void NewTabKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
-                page = typeof(BlankPage),
+                page = typeof(NewPage),
                 title = "新建页面"
             });
             args.Handled = true;

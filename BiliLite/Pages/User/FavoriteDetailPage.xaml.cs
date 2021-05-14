@@ -28,13 +28,12 @@ namespace BiliLite.Pages.User
     /// <summary>
     /// 收藏夹详情、播放列表详情
     /// </summary>
-    public sealed partial class FavoriteDetailPage : Page
+    public sealed partial class FavoriteDetailPage : BasePage
     {
         FavoriteDetailVM favoriteDetailVM;
         public FavoriteDetailPage()
         {
             this.InitializeComponent();
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             favoriteDetailVM = new FavoriteDetailVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -51,12 +50,15 @@ namespace BiliLite.Pages.User
             }
         }
 
-
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+        }
 
         private void Video_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as FavoriteInfoVideoItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),
@@ -168,7 +170,7 @@ namespace BiliLite.Pages.User
                 }
 
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),

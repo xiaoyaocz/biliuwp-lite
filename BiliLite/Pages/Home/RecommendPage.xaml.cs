@@ -97,7 +97,7 @@ namespace BiliLite.Pages.Home
                 }
                 await MessageCenter.HandelUrl(url);
               
-                //MessageCenter.OpenNewWindow(this, new NavigationInfo()
+                //MessageCenter.NavigateToPage(this, new NavigationInfo()
                 //{
                 //    icon = Symbol.World,
                 //    page = typeof(WebPage),

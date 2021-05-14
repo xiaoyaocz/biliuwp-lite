@@ -5,6 +5,7 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   IgnorableNamespaces="uap mp uap3">
 
   <Identity
@@ -44,7 +45,7 @@
             <uap:ShowOn Tile="wide310x150Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile >
-        <uap:SplashScreen Image="Assets\SplashScreen.png"   BackgroundColor="#E6E6E6"/>
+        <uap:SplashScreen Image="Assets\SplashScreen.png"   BackgroundColor="#E6E6E6" uap5:Optional="true"/>
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.protocol" EntryPoint="BiliLite.App">

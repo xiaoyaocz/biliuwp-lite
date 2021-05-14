@@ -38,7 +38,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class LiveDetailPage : Page
+    public sealed partial class LiveDetailPage : BasePage
     {
         DisplayRequest dispRequest;
         readonly FFmpegInteropConfig _config;
@@ -51,7 +51,7 @@ namespace BiliLite.Pages
         public LiveDetailPage()
         {
             this.InitializeComponent();
-            this.NavigationCacheMode = NavigationCacheMode.Disabled;
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
             dispRequest = new DisplayRequest();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
@@ -403,7 +403,8 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            StopPlay();
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+                StopPlay();
             base.OnNavigatingFrom(e);
         }
         private void LoadSetting()
@@ -778,7 +779,7 @@ namespace BiliLite.Pages
             {
                 return;
             }
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Account,
                 title = "用户信息",
@@ -838,7 +839,7 @@ namespace BiliLite.Pages
         private void list_Guard_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as LiveGuardRankItem;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Account,
                 title = item.username,
@@ -865,7 +866,7 @@ namespace BiliLite.Pages
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as LiveRoomRankItemModel;
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Account,
                 title = item.uname,

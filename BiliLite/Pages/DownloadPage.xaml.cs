@@ -24,7 +24,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class DownloadPage : Page
+    public sealed partial class DownloadPage : BasePage
     {
         DownloadVM downloadVM;
         public DownloadPage()
@@ -122,7 +122,7 @@ namespace BiliLite.Pages
                 });
             }
 
-            MessageCenter.OpenNewWindow(this, new NavigationInfo()
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(LocalPlayerPage),

@@ -1,5 +1,6 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Helpers;
+using BiliLite.Pages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,7 +35,7 @@ namespace BiliLite
             mode = SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0);
             Window.Current.SetTitleBar(TitleBar);
             frame.Navigated += Frame_Navigated;
-            MessageCenter.OpenNewWindowEvent += NavigationHelper_OpenNewWindowEvent;
+            MessageCenter.NavigateToPageEvent += NavigationHelper_NavigateToPageEvent;
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
@@ -90,7 +91,7 @@ namespace BiliLite
             {
                 btnBack.Visibility = Visibility.Collapsed;
             }
-           
+
         }
         private int mode = 1;
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -119,13 +120,14 @@ namespace BiliLite
             }
         }
 
-        private void NavigationHelper_OpenNewWindowEvent(object sender, NavigationInfo e)
+        private void NavigationHelper_NavigateToPageEvent(object sender, NavigationInfo e)
         {
             if (mode == 1)
             {
                 txtTitle.Text = e.title;
                 frame.Navigate(e.page, e.parameters);
-                (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Enabled;
+                (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Required;
+
             }
             else
             {
@@ -156,7 +158,7 @@ namespace BiliLite
                  newViewId = ApplicationView.GetForCurrentView().Id;
                  ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
                  {
-                     frame.Navigate(typeof(Pages.BlankPage));
+                     frame.Navigate(typeof(BlankPage));
                      CoreWindow.GetForCurrentThread().Close();
                  };
              });
@@ -176,4 +178,108 @@ namespace BiliLite
             }
         }
     }
+
+    public class NewInstanceFrame : Grid
+    {
+        //TODO 动画、页面缓存、页面标题
+        public event NavigatedEventHandler Navigated;
+        public NewInstanceFrame()
+        {
+            AddFrame();
+        }
+        public object Content
+        {
+            get
+            {
+                var frame = this.Children.Last() as Frame;
+                return frame.Content;
+            }
+        }
+
+        private void AddFrame()
+        {
+            var frame = new Frame();
+            frame.Navigated += Frame_Navigated;
+          
+            this.Children.Add(frame);
+        }
+
+      
+        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        {
+            Navigated?.Invoke(sender, e);
+        }
+
+        public bool Navigate(Type sourcePageType, object parameter=null)
+        {
+            var frame = this.Children.Last() as Frame;
+            //检查最后一个Frame中是否存在此页面
+            var contaias = ContainsPageType(sourcePageType);
+            if (contaias)
+            {
+               
+                AddFrame();
+            }
+            if (frame.Content is PlayPage)
+            {
+                (frame.Content as PlayPage).Pause();
+            } 
+            
+            //跳转页面
+            (this.Children.Last() as Frame).Navigate(sourcePageType, parameter);
+           
+           
+            return true;
+        }
+        public bool CanGoBack
+        {
+            get
+            {
+                var frame = this.Children.Last() as Frame;
+                return this.Children.Count > 1 || frame.CanGoBack;
+            }
+        }
+
+        public void GoBack()
+        {
+            var frame = this.Children.Last() as Frame;
+            (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Disabled;
+            if (frame.CanGoBack)
+            {
+                frame.GoBack();
+                frame.ForwardStack.Clear();
+            }
+            else
+            {
+                if (this.Children.Count > 1)
+                {
+                 
+                    frame.Navigated -= Frame_Navigated;
+                    frame.Navigate(typeof(BlankPage));
+                    frame.BackStack.Clear();
+                    this.Children.Remove(frame);
+                    frame = this.Children.Last() as Frame;
+                    
+                }
+            }
+        }
+
+        private bool ContainsPageType(Type sourcePageType)
+        {
+            var frame = this.Children.Last() as Frame;
+            if (frame.CurrentSourcePageType == sourcePageType)
+            {
+                return true;
+            }
+            foreach (var item in frame.BackStack)
+            {
+                if (sourcePageType == item.SourcePageType)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    public class BlankPage : Page { }
 }

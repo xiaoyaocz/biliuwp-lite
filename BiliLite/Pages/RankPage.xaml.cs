@@ -22,7 +22,7 @@ namespace BiliLite.Pages
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class RankPage : Page
+    public sealed partial class RankPage : BasePage
     {
         readonly RankVM rankVM;
         public RankPage()
@@ -30,7 +30,7 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             rankVM = new RankVM();
         }
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if(e.NavigationMode== NavigationMode.New)
@@ -60,7 +60,7 @@ namespace BiliLite.Pages
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
            var item= e.ClickedItem as RankItemModel;
-            MessageCenter.OpenNewWindow(this,new NavigationInfo() { 
+            MessageCenter.NavigateToPage(this,new NavigationInfo() { 
                 icon= Symbol.Play,
                 page=typeof(VideoDetailPage),
                 title=item.title,
