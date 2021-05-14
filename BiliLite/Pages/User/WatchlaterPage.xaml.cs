@@ -28,6 +28,7 @@ namespace BiliLite.Pages.User
         public WatchlaterPage()
         {
             this.InitializeComponent();
+            Title = "稍后再看";
             watchLaterVM = new WatchLaterVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

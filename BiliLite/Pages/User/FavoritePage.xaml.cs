@@ -38,6 +38,7 @@ namespace BiliLite.Pages.User
         public FavoritePage()
         {
             this.InitializeComponent();
+            Title = "我的收藏";
             animeVM = new MyFollowSeasonVM(true);
             cinemaVM = new MyFollowSeasonVM(false);
             videoVM = new MyFollowVideoVM();

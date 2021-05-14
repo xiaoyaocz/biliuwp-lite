@@ -28,6 +28,7 @@ namespace BiliLite.Pages.Live
         public LiveRecommendPage()
         {
             this.InitializeComponent();
+            Title = "推荐直播";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
             liveRecommendVM = new LiveRecommendVM();
         }

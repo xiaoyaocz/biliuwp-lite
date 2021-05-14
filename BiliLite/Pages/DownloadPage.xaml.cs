@@ -31,6 +31,7 @@ namespace BiliLite.Pages
         {
             downloadVM = DownloadVM.Instance;
             this.InitializeComponent();
+            Title = "下载";
         }
         protected  override void OnNavigatedTo(NavigationEventArgs e)
         {

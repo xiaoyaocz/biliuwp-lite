@@ -34,6 +34,7 @@ namespace BiliLite.Pages.User
         public FavoriteDetailPage()
         {
             this.InitializeComponent();
+            Title = "收藏夹详情";
             favoriteDetailVM = new FavoriteDetailVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

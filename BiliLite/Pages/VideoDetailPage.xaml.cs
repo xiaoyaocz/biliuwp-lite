@@ -50,6 +50,7 @@ namespace BiliLite.Pages
         public VideoDetailPage()
         {
             this.InitializeComponent();
+            Title = "视频详情";
             this.Loaded += VideoDetailPage_Loaded;
             this.Player = this.player;
             NavigationCacheMode = NavigationCacheMode.Enabled;
@@ -120,7 +121,12 @@ namespace BiliLite.Pages
                     var id = e.Parameter.ToString();
                     await InitializeVideo(id);
                 }
-               
+
+            }
+            else
+            {
+                Title = videoDetailVM?.VideoInfo?.title ?? "视频详情";
+                MessageCenter.ChangeTitle(Title); 
             }
 
         }

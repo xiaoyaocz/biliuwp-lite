@@ -39,6 +39,7 @@ namespace BiliLite.Pages
         public SeasonDetailPage()
         {
             this.InitializeComponent();
+            Title = "剧集详情";
             this.Loaded += SeasonDetailPage_Loaded;
             this.Player = this.player;
             NavigationCacheMode = NavigationCacheMode.Enabled;
@@ -99,6 +100,11 @@ namespace BiliLite.Pages
                 }
 
                 await InitSeasonDetail();
+            }
+            else
+            {
+                Title = seasonDetailVM?.Detail?.title ?? "视频详情";
+                MessageCenter.ChangeTitle(Title);
             }
 
         }
@@ -222,6 +228,7 @@ namespace BiliLite.Pages
         }
         public void ChangeTitle(string title)
         {
+            Title = title;
             if ((this.Parent as Frame).Parent is TabViewItem)
             {
                 if (this.Parent != null)

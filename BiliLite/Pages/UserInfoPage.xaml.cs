@@ -38,6 +38,7 @@ namespace BiliLite.Pages
         public UserInfoPage()
         {
             this.InitializeComponent();
+            Title = "用户中心";
             userDetailVM = new Modules.User.UserDetailVM(); 
             userSubmitVideoVM = new UserSubmitVideoVM();
             userSubmitArticleVM = new UserSubmitArticleVM();

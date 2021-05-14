@@ -29,6 +29,7 @@ namespace BiliLite.Pages
         public WebPage()
         {
             this.InitializeComponent();
+            Title = "网页浏览";
             this.Loaded += WebPage_Loaded;
         }
         private void WebPage_Loaded(object sender, RoutedEventArgs e)

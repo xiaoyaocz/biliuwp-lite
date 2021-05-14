@@ -28,6 +28,7 @@ namespace BiliLite.Pages
         public RankPage()
         {
             this.InitializeComponent();
+            Title = "排行榜";
             rankVM = new RankVM();
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

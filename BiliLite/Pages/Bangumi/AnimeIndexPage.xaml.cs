@@ -30,6 +30,7 @@ namespace BiliLite.Pages.Bangumi
         public AnimeIndexPage()
         {
             this.InitializeComponent();
+            Title = "剧集索引";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
             seasonIndexVM = new SeasonIndexVM();
         }

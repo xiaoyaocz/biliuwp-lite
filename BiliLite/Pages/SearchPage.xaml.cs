@@ -68,6 +68,7 @@ namespace BiliLite.Pages
         public SearchPage()
         {
             this.InitializeComponent();
+            Title = "搜索";
             searchVM = new SearchVM();
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

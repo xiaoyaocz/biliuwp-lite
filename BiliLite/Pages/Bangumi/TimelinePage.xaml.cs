@@ -29,7 +29,7 @@ namespace BiliLite.Pages.Bangumi
         public TimelinePage()
         {
             this.InitializeComponent();
-            
+            Title = "番剧时间表";
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

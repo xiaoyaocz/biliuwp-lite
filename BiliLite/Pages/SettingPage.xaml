@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:BasePage
     x:Class="BiliLite.Pages.SettingPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -442,4 +442,4 @@
             </PivotItem>
         </Pivot>
     </Grid>
-</Page>
+</local:BasePage>

@@ -27,6 +27,7 @@ namespace BiliLite.Pages.User
         public DynamicDetailPage()
         {
             this.InitializeComponent();
+            Title = "动态详情";
             dynamicVM = new DynamicVM();
             dynamicVM.OpenCommentEvent += DynamicVM_OpenCommentEvent;
             splitView.PaneClosed += SplitView_PaneClosed;

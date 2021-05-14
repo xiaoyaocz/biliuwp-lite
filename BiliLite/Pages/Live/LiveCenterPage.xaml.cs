@@ -31,6 +31,7 @@ namespace BiliLite.Pages.Live
         public LiveCenterPage()
         {
             this.InitializeComponent();
+            Title = "直播中心";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
             liveAttentionVM = new LiveAttentionVM();
             liveAttentionUnLiveVM = new LiveAttentionUnLiveVM();

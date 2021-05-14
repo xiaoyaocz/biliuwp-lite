@@ -28,6 +28,7 @@ namespace BiliLite.Pages.User
         public HistoryPage()
         {
             this.InitializeComponent();
+            Title = "历史记录";
             historyVM = new HistoryVM();
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

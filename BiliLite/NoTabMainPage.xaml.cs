@@ -83,6 +83,10 @@ namespace BiliLite
             {
                 txtTitle.Text = "哔哩哔哩 UWP";
             }
+            if (e.Content is Pages.BasePage)
+            {
+                txtTitle.Text = (e.Content as BasePage).Title ;
+            }
 
             if (frame.CanGoBack)
             {
@@ -182,7 +186,6 @@ namespace BiliLite
 
     public class NewInstanceFrame : Grid
     {
-        //TODO 页面标题
         public event NavigatedEventHandler Navigated;
         public NewInstanceFrame()
         {

@@ -27,6 +27,7 @@ namespace BiliLite.Pages
         public LocalPlayerPage()
         {
             this.InitializeComponent();
+            Title = "本地播放";
             this.Loaded += LocalPlayerPage_Loaded;
             this.Player = this.player;
             player.FullScreenEvent += Player_FullScreenEvent;

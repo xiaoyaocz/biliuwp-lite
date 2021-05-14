@@ -12,6 +12,7 @@ namespace BiliLite.Pages
 {
     public class BasePage : Page
     {
+        public string Title { get; set; }
         public BasePage()
         {
             this.NavigationCacheMode = (SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 1) ? Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled : Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;

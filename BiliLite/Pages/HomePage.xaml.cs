@@ -33,7 +33,6 @@ namespace BiliLite.Pages
         public HomePage()
         {
             this.InitializeComponent();
-
             MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
             MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
             homeVM = new HomeVM();

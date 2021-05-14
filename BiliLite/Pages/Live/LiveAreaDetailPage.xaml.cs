@@ -33,6 +33,7 @@ namespace BiliLite.Pages.Live
         public LiveAreaDetailPage()
         {
             this.InitializeComponent();
+            Title = "分区详情";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)

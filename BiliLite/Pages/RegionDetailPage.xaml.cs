@@ -30,6 +30,7 @@ namespace BiliLite.Pages
         public RegionDetailPage()
         {
             this.InitializeComponent();
+            Title = "分区详情";
             regionDetailVM = new RegionDetailVM();
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

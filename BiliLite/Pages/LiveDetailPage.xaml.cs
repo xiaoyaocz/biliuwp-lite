@@ -51,6 +51,7 @@ namespace BiliLite.Pages
         public LiveDetailPage()
         {
             this.InitializeComponent();
+            Title = "直播间";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
             dispRequest = new DisplayRequest();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
@@ -398,7 +399,13 @@ namespace BiliLite.Pages
                 LoadSetting();
                 roomid = e.Parameter.ToString();
                 await liveRoomVM.LoadLiveRoomDetail(roomid);
+                Title = liveRoomVM.LiveInfo.anchor_info.base_info.uname + "的直播间";
                 ChangeTitle(liveRoomVM.LiveInfo.anchor_info.base_info.uname + "的直播间");
+            }
+            else
+            {
+                Title = (liveRoomVM.LiveInfo?.anchor_info?.base_info?.uname ?? "") + "直播间";
+                MessageCenter.ChangeTitle(Title);
             }
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -465,7 +472,7 @@ namespace BiliLite.Pages
                 }
             });
 
- 
+
             //弹幕显示区域
             DanmuControl.DanmakuArea = SettingHelper.GetValue<double>(SettingHelper.Live.AREA, 1);
             DanmuSettingArea.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
