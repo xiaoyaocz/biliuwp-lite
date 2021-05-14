@@ -32,7 +32,7 @@ namespace BiliLite.Helpers
             try
             {
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-               
+
                 fiter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
                 using (var client = new HttpClient(fiter))
                 {
@@ -43,7 +43,7 @@ namespace BiliLite.Helpers
                             client.DefaultRequestHeaders.Add(item.Key, item.Value);
                         }
                     }
-                   
+
                     var response = await client.GetAsync(new Uri(url));
                     if (!response.IsSuccessStatusCode)
                     {
@@ -54,7 +54,7 @@ namespace BiliLite.Helpers
                             message = StatusCodeToMessage((int)response.StatusCode)
                         };
                     }
-                   
+
                     //response.EnsureSuccessStatusCode();
                     var buffer = await response.Content.ReadAsBufferAsync();
                     var byteArray = buffer.ToArray();
@@ -184,7 +184,7 @@ namespace BiliLite.Helpers
                     var response = await client.GetAsync(new Uri(url));
                     response.EnsureSuccessStatusCode();
                     var buffer = await response.Content.ReadAsBufferAsync();
-                    return  Encoding.UTF8.GetString(buffer.ToArray());
+                    return Encoding.UTF8.GetString(buffer.ToArray());
                 }
 
 
@@ -235,7 +235,7 @@ namespace BiliLite.Helpers
                     }
                     var buffer = await response.Content.ReadAsBufferAsync();
                     var byteArray = buffer.ToArray();
-                 
+
                     HttpResults httpResults = new HttpResults()
                     {
                         code = (int)response.StatusCode,
@@ -256,7 +256,7 @@ namespace BiliLite.Helpers
                 {
                     code = ex.HResult,
                     status = false,
-                    message ="网络请求出现错误(POST)"
+                    message = "网络请求出现错误(POST)"
                 };
             }
         }

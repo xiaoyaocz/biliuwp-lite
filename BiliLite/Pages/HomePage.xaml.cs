@@ -1,6 +1,7 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
 using BiliLite.Pages.Home;
+using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -65,22 +66,37 @@ namespace BiliLite.Pages
         }
         private async void CheckLoginStatus()
         {
+            if (!NetworkHelper.Instance.ConnectionInformation.IsInternetAvailable)
+            {
+                return;
+            }
+
             if (SettingHelper.Account.Logined)
             {
-                if (await account.CheckLoginState())
+                try
                 {
-                    await homeVM.LoginUserCard();
-                }
-                else
-                {
-                    var result = await account.RefreshToken();
-                    if (!result)
+                    if (await account.CheckLoginState())
                     {
-                        MessageCenter.SendLogout();
-                        Utils.ShowMessageToast("登录过期，请重新登录");
-                        await Utils.ShowLoginDialog();
+                        await homeVM.LoginUserCard();
+                    }
+                    else
+                    {
+                        var result = await account.RefreshToken();
+                        if (!result)
+                        {
+                            MessageCenter.SendLogout();
+                            Utils.ShowMessageToast("登录过期，请重新登录");
+                            await Utils.ShowLoginDialog();
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    LogHelper.Log("读取access_key信息失败", LogType.INFO, ex);
+                    Utils.ShowMessageToast("读取登录信息失败");
+                    //throw;
+                }
+                
             }
         }
 

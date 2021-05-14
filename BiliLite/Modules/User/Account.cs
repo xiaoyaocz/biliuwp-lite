@@ -429,19 +429,21 @@ namespace BiliLite.Modules
             {
                 var req = await accountApi.GetOAuth2Info().Request();
                 var obj = req.GetJObject();
-                if (req.status && obj["code"].ToInt32() == 0)
+                if (req.status )
                 {
-                    return true;
+                    return obj["code"].ToInt32() == 0;
                 }
                 else
                 {
-                    return false;
+                    throw new Exception(req.message);
+                    //return false;
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取access_key信息失败", LogType.ERROR, ex);
-                return false;
+                throw ex;
+                //LogHelper.Log("读取access_key信息失败", LogType.ERROR, ex);
+                //return LogHelper.IsNetworkError(ex);
             }
         }
         /// <summary>
@@ -454,21 +456,30 @@ namespace BiliLite.Modules
             {
                 var req = await accountApi.RefreshToken().Request();
                 var obj = req.GetJObject();
-                if (req.status && obj["code"].ToInt32() == 0)
+                if (req.status)
                 {
-                    var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
-                    await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid);
-                    return true;
+                    if(obj["code"].ToInt32() == 0)
+                    {
+                        var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
+                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    return false;
+                    throw new Exception(req.message);
+                   // return false;
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取access_key信息失败", LogType.ERROR, ex);
-                return false;
+                throw ex;
+                //LogHelper.Log("读取access_key信息失败", LogType.ERROR, ex);
+                //return false;
             }
         }
     }

@@ -38,17 +38,19 @@
                         <Button Background="Transparent"
                                 Width="56" 
                                 Margin="0 0 4 0"
+                                Padding="0 8"
                                 Command="{x:Bind Path=seasonDetailVM.FollowCommand}"
                                 Foreground="{x:Bind Path=seasonDetailVM.Detail.user_status.follow,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" >
                             <StackPanel>
-                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE66B;" />
+                                <FontIcon Visibility="{x:Bind Path=seasonDetailVM.Detail.user_status.follow,Mode=OneWay,Converter={StaticResource display},ConverterParameter=0}" FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE66B;" />
+                                <FontIcon Visibility="{x:Bind Path=seasonDetailVM.Detail.user_status.follow,Mode=OneWay,Converter={StaticResource display},ConverterParameter=1}" FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6DB;" />
                                 <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=seasonDetailVM.Detail.stat.favorites,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                             </StackPanel>
                         </Button>
 
                         <Button x:Name="btnSendReview"
                                 Background="Transparent"
-                                Margin="0"
+                                Padding="0 8"
                                 Width="56" Click="btnSendReview_Click" >
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6DF;" />
