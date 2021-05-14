@@ -63,6 +63,21 @@ namespace BiliLite.Modules
             get { return _loaded; }
             set { _loaded = value; DoPropertyChanged("Loaded"); }
         }
+        private bool _ShowError=false;
+        public bool ShowError
+        {
+            get { return _ShowError; }
+            set { _ShowError = value; DoPropertyChanged("ShowError"); }
+        }
+        private string _errorMsg="";
+
+        public string ErrorMsg
+        {
+            get { return _errorMsg; }
+            set { _errorMsg = value; DoPropertyChanged("ErrorMsg"); }
+        }
+
+
         private VideoDetailModel _videoInfo;
         public VideoDetailModel VideoInfo
         {
@@ -92,6 +107,7 @@ namespace BiliLite.Modules
             StaffHeight = h;
 
         }
+
 
         private ObservableCollection<FavoriteItemModel> _myFavorite;
         public ObservableCollection<FavoriteItemModel> MyFavorite
@@ -138,6 +154,7 @@ namespace BiliLite.Modules
             {
                 Loaded = false;
                 Loading = true;
+                ShowError = false;
                 var results = await videoAPI.Detail(id, isbvid).Request();
                 if (results.status)
                 {
@@ -159,12 +176,16 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        ShowError = true;
+                        ErrorMsg = data.message;
+                        //Utils.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    ShowError = true;
+                    ErrorMsg = results.message;
+                    //Utils.ShowMessageToast(results.message);
 
                 }
             }
@@ -172,6 +193,8 @@ namespace BiliLite.Modules
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
                 Utils.ShowMessageToast(handel.message);
+                ShowError = true;
+                ErrorMsg = handel.message;
             }
             finally
             {

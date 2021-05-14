@@ -69,30 +69,40 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <StackPanel Orientation="Horizontal" >
-                        <AppBarButton Holding="btnLike_Holding" 
+                        <Button Holding="btnLike_Holding" 
                                   RightTapped="btnLike_RightTapped"
                                   Command="{x:Bind Path=videoDetailVM.LikeCommand}" 
                                   Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.like,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" 
                                   ToolTipService.ToolTip="右击或长按可以一键三连哦"
-                                  Label="{x:Bind Path=videoDetailVM.VideoInfo.stat.like,Mode=OneWay,Converter={StaticResource numberToStringConvert}}" >
-                            <AppBarButton.Icon>
-                                <!--<FontIcon  FontFamily="{StaticResource VanFont}" Glyph="&#xE6E0;" />-->
-                                <fa:FontAwesome Icon="Solid_ThumbsUp"></fa:FontAwesome>
-                            </AppBarButton.Icon>
+                                  Background="Transparent"
+                                  Margin="0 0 4 0"
+                                  Width="56">
+                            <StackPanel>
+                                <FontIcon  FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6C6;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=videoDetailVM.VideoInfo.stat.like,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                <!--<fa:FontAwesome Icon="Solid_ThumbsUp"></fa:FontAwesome>-->
+                            </StackPanel>
 
-                        </AppBarButton>
-                        <AppBarButton Command="{x:Bind Path=videoDetailVM.DislikeCommand}" Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.dislike,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" Label="不喜欢" >
-                            <AppBarButton.Icon>
-
-                                <fa:FontAwesome Icon="Solid_ThumbsDown"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
-                        <AppBarButton Style="{StaticResource AppBarButtonNoChevronStyle}" Label="{x:Bind Path=videoDetailVM.VideoInfo.stat.favorite,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"    Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.favorite,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
-                            <AppBarButton.Icon>
-                                <!--<FontIcon FontFamily="{StaticResource VanFont}" Glyph="&#xE672;" />-->
-                                <fa:FontAwesome Icon="Solid_Star"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                            <AppBarButton.Flyout>
+                        </Button>
+                        <Button Command="{x:Bind Path=videoDetailVM.DislikeCommand}" 
+                                Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56"
+                                Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.dislike,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                            <StackPanel>
+                                <FontIcon Margin="0 -2 0 2" FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6C5;" />
+                                <TextBlock  FontSize="12" TextAlignment="Center" Text="不喜欢"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <Button Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56"
+                                Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.favorite,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                            <StackPanel>
+                                <FontIcon  FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE673;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=videoDetailVM.VideoInfo.stat.favorite,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
                                 <Flyout>
                                     <Grid Width="240">
                                         <Grid.RowDefinitions>
@@ -134,45 +144,56 @@
 
                                     </Grid>
                                 </Flyout>
-                            </AppBarButton.Flyout>
-                        </AppBarButton>
-                        <AppBarButton Style="{StaticResource AppBarButtonNoChevronStyle}" Label="{x:Bind Path=videoDetailVM.VideoInfo.stat.coin,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"   Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.coin,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
-                            <AppBarButton.Icon>
-                                <!--<FontIcon FontFamily="{StaticResource VanFont}" Glyph="&#xE6E4;" />-->
-                                <fa:FontAwesome Icon="Solid_Coins"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                            <AppBarButton.Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <Button Background="Transparent"
+                                Margin="0"
+                                Width="56" 
+                                Foreground="{x:Bind Path=videoDetailVM.VideoInfo.req_user.coin,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE670;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=videoDetailVM.VideoInfo.stat.coin,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Command="{x:Bind Path=videoDetailVM.CoinCommand}" CommandParameter="1">投一个币</MenuFlyoutItem>
                                     <MenuFlyoutItem Command="{x:Bind Path=videoDetailVM.CoinCommand}" CommandParameter="2">投两个币</MenuFlyoutItem>
                                 </MenuFlyout>
-                            </AppBarButton.Flyout>
-                        </AppBarButton>
+                            </Button.Flyout>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <AppBarButton Label="分享" Style="{StaticResource AppBarButtonNoChevronStyle}" x:Name="btnShare"  Foreground="{ThemeResource TextColor}">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Share"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                            <AppBarButton.Flyout>
+                        <Button x:Name="btnShare"
+                                Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE671;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="分享"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
                                     <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
                                     <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
                                 </MenuFlyout>
-                            </AppBarButton.Flyout>
-                        </AppBarButton>
-                        <AppBarButton x:Name="btnDownload" Click="btnDownload_Click" Label="下载" Style="{StaticResource AppBarButtonNoChevronStyle}"  Foreground="{ThemeResource TextColor}">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Download"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
-                        <AppBarButton Style="{StaticResource AppBarButtonNoChevronStyle}" Label="手机看" Foreground="{ThemeResource TextColor}">
+                            </Button.Flyout>
+                        </Button>
+                        <Button Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56"
+                                x:Name="btnDownload" Click="btnDownload_Click" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE672;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="下载"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <AppBarButton Visibility="Collapsed" Style="{StaticResource AppBarButtonNoChevronStyle}" Label="手机看" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_MobileAlt"></fa:FontAwesome>
                             </AppBarButton.Icon>
                             <AppBarButton.Flyout>
-                                <Flyout>
+                                <Flyout x:Name="qrFlyout">
                                     <StackPanel MaxWidth="220">
                                         <TextBlock Text="{x:Bind Path=videoDetailVM.VideoInfo.title,Mode=OneWay}" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
                                         <TextBlock  TextWrapping="Wrap" TextAlignment="Center">AV<Run Text="{x:Bind Path=videoDetailVM.VideoInfo.aid,Mode=OneWay}"/></TextBlock>
@@ -185,12 +206,12 @@
                                 </Flyout>
                             </AppBarButton.Flyout>
                         </AppBarButton>
-                        <AppBarButton x:Name="btnOpenWeb" Label="浏览器" Click="btnOpenWeb_Click" Foreground="{ThemeResource TextColor}">
+                        <AppBarButton x:Name="btnOpenWeb" Visibility="Collapsed" Label="浏览器" Click="btnOpenWeb_Click" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_GlobeAsia"></fa:FontAwesome>
                             </AppBarButton.Icon>
                         </AppBarButton>
-                        <AppBarButton x:Name="btnRefresh" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
+                        <AppBarButton x:Name="btnRefresh" Visibility="Collapsed" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_Sync"></fa:FontAwesome>
                             </AppBarButton.Icon>
@@ -198,11 +219,25 @@
                                 <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
-                        <AppBarButton Label="稍后看" x:Name="BtnWatchLater" Click="BtnWatchLater_Click" Foreground="{ThemeResource TextColor}">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Regular_PlusSquare"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
+                        
+                        <Button Background="Transparent"
+                                Margin="0"
+                                Width="56" 
+                                x:Name="btnMore"
+                                Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE680;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="更多"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Click="BtnWatchLater_Click" >稍后再看</MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="btnOpenQR_Click" >手机观看</MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="btnOpenWeb_Click" >浏览器打开</MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="btnRefresh_Click">刷新</MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Grid>
@@ -405,6 +440,15 @@
             </Grid>
 
 
+        </Grid>
+        <Grid Visibility="{x:Bind Path=videoDetailVM.ShowError,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel VerticalAlignment="Center">
+                <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
+                <TextBlock Text="{x:Bind Path=videoDetailVM.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>
+                <HyperlinkButton Click="btnRefresh_Click" HorizontalAlignment="Center">
+                    <TextBlock>点击刷新</TextBlock>
+                </HyperlinkButton>
+            </StackPanel>
         </Grid>
         <ProgressRing IsActive="True" Grid.ColumnSpan="2"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=videoDetailVM.Loading,Mode=OneWay}"></ProgressRing>
     </Grid>

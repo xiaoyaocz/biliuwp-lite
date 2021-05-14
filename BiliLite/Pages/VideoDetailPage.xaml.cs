@@ -570,6 +570,9 @@ namespace BiliLite.Pages
             await InitializeVideo(_id);
         }
 
-      
+        private void btnOpenQR_Click(object sender, RoutedEventArgs e)
+        {
+            qrFlyout.ShowAt(btnMore);
+        }
     }
 }

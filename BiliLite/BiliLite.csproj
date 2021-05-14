@@ -553,6 +553,7 @@
     <Content Include="Assets\Fonts\Font Awesome 5 Free-Solid-900.otf" />
     <Content Include="Assets\Fonts\vanfont.otf" />
     <Content Include="Assets\Fonts\FansNum.otf" />
+    <Content Include="Assets\Fonts\biliicon.ttf" />
     <None Include="Assets\Text\new_version.json" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\zfb.jpg" />

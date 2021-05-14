@@ -62,6 +62,10 @@ namespace BiliLite.Controls
                 await AnimateDoublePropertyAsync(element.GetCompositeTransform(), "TranslateX", element.GetTranslateX(), x, duration, easingFunction);
             }
         }
+        public static async Task AnimateYAsync(this FrameworkElement element, double from, double to, double duration = 250, EasingFunctionBase easingFunction = null)
+        {
+            await AnimateDoublePropertyAsync(element.GetCompositeTransform(), "TranslateY", from, to, duration, easingFunction);
+        }
         public static int Mod(this int value, int module)
         {
             if (module==0)

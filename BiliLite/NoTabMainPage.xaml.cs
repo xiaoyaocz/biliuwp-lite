@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -240,7 +241,7 @@ namespace BiliLite
             }
         }
 
-        public void GoBack()
+        public async void GoBack()
         {
             var frame = this.Children.Last() as Frame;
             (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Disabled;
@@ -253,12 +254,13 @@ namespace BiliLite
             {
                 if (this.Children.Count > 1)
                 {
-                 
+                    await frame.AnimateYAsync(0, this.ActualHeight,200);
                     frame.Navigated -= Frame_Navigated;
                     frame.Navigate(typeof(BlankPage));
                     frame.BackStack.Clear();
+                    
                     this.Children.Remove(frame);
-                    frame = this.Children.Last() as Frame;
+                    //frame = this.Children.Last() as Frame;
                     
                 }
             }

@@ -793,7 +793,10 @@ namespace BiliLite.Controls
                 {
                 }
             });
-
+            if (Player.PlayState== PlayState.Pause)
+            {
+                DanmuControl.PauseDanmaku();
+            }
         }
 
         private async Task SetPlayItem(int index)

@@ -43,6 +43,20 @@ namespace BiliLite.Modules
             get { return _loaded; }
             set { _loaded = value; DoPropertyChanged("Loaded"); }
         }
+        private bool _ShowError = false;
+        public bool ShowError
+        {
+            get { return _ShowError; }
+            set { _ShowError = value; DoPropertyChanged("ShowError"); }
+        }
+        private string _errorMsg = "";
+
+        public string ErrorMsg
+        {
+            get { return _errorMsg; }
+            set { _errorMsg = value; DoPropertyChanged("ErrorMsg"); }
+        }
+
         public ICommand FollowCommand { get; private set; }
 
         private List<SeasonDetailEpisodeModel> _episodes;
@@ -83,6 +97,7 @@ namespace BiliLite.Modules
             {
                 Loaded = false;
                 Loading = true;
+                ShowError = false;
                 var results = await seasonApi.Detail(season_id).Request();
                 if (results.status)
                 {
@@ -156,18 +171,24 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        ShowError = true;
+                        ErrorMsg = data.message;
+                        //Utils.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    //Utils.ShowMessageToast(results.message);
+                    ShowError = true;
+                    ErrorMsg = results.message;
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                //Utils.ShowMessageToast(handel.message);
+                ShowError = true;
+                ErrorMsg = handel.message;
             }
             finally
             {

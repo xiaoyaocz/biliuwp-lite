@@ -35,45 +35,59 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <StackPanel Orientation="Horizontal" >
-                        <AppBarButton 
-                            Command="{x:Bind Path=seasonDetailVM.FollowCommand}"
-                             Foreground="{x:Bind Path=seasonDetailVM.Detail.user_status.follow,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" 
-                            Label="{x:Bind Path=seasonDetailVM.Detail.stat.favorites,Mode=OneWay,Converter={StaticResource numberToStringConvert}}" >
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Heart"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
+                        <Button Background="Transparent"
+                                Width="56" 
+                                Margin="0 0 4 0"
+                                Command="{x:Bind Path=seasonDetailVM.FollowCommand}"
+                                Foreground="{x:Bind Path=seasonDetailVM.Detail.user_status.follow,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" >
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE66B;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=seasonDetailVM.Detail.stat.favorites,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                            </StackPanel>
+                        </Button>
 
-                        <AppBarButton x:Name="btnSendReview" Click="btnSendReview_Click" Label="点评">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Edit"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
+                        <Button x:Name="btnSendReview"
+                                Background="Transparent"
+                                Margin="0"
+                                Width="56" Click="btnSendReview_Click" >
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6DF;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="点评"></TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <AppBarButton Label="分享" Style="{StaticResource AppBarButtonNoChevronStyle}" x:Name="btnShare"  Foreground="{ThemeResource TextColor}">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Share"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                            <AppBarButton.Flyout>
+                        <Button x:Name="btnShare"
+                                Background="Transparent"
+                                Width="56" 
+                                Margin="0 0 4 0" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE671;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="分享"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
                                     <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
                                     <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
                                 </MenuFlyout>
-                            </AppBarButton.Flyout>
-                        </AppBarButton>
-                        <AppBarButton x:Name="btnDownload" Click="btnDownload_Click" Label="下载">
-                            <AppBarButton.Icon>
-                                <fa:FontAwesome Icon="Solid_Download"></fa:FontAwesome>
-                            </AppBarButton.Icon>
-                        </AppBarButton>
-                        <AppBarButton Label="手机看" Style="{StaticResource AppBarButtonNoChevronStyle}">
+                            </Button.Flyout>
+                        </Button>
+                        <Button x:Name="btnDownload" Click="btnDownload_Click"  
+                                Background="Transparent"
+                                Width="56" 
+                                Margin="0 0 4 0" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE672;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="下载"></TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <AppBarButton Label="手机看" Visibility="Collapsed" Style="{StaticResource AppBarButtonNoChevronStyle}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_MobileAlt"></fa:FontAwesome>
                             </AppBarButton.Icon>
                             <AppBarButton.Flyout>
-                                <Flyout>
+                                <Flyout x:Name="qrFlyout">
                                     <StackPanel MaxWidth="220">
                                         <TextBlock Text="{x:Bind Path=seasonDetailVM.Detail.title,Mode=OneWay}" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
                                         <Grid Margin="0 8">
@@ -85,12 +99,12 @@
                                 </Flyout>
                             </AppBarButton.Flyout>
                         </AppBarButton>
-                        <AppBarButton x:Name="btnOpenWeb" Label="浏览器" Click="btnOpenWeb_Click" Foreground="{ThemeResource TextColor}">
+                        <AppBarButton x:Name="btnOpenWeb" Visibility="Collapsed" Label="浏览器" Click="btnOpenWeb_Click" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_GlobeAsia"></fa:FontAwesome>
                             </AppBarButton.Icon>
                         </AppBarButton>
-                        <AppBarButton x:Name="btnRefresh" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
+                        <AppBarButton x:Name="btnRefresh" Visibility="Collapsed" Label="刷新" Click="btnRefresh_Click" Foreground="{ThemeResource TextColor}">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_Sync"></fa:FontAwesome>
                             </AppBarButton.Icon>
@@ -98,6 +112,24 @@
                                 <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
+                        <Button Background="Transparent"
+                                Margin="0"
+                                Width="56" 
+                                x:Name="btnMore"
+                                Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE680;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="更多"></TextBlock>
+                            </StackPanel>
+                            <Button.Flyout>
+                                <MenuFlyout>
+
+                                    <MenuFlyoutItem Click="btnOpenQR_Click" >手机观看</MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="btnOpenWeb_Click" >浏览器打开</MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="btnRefresh_Click">刷新</MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
                         <!--<AppBarButton Label="磁贴">
                             <AppBarButton.Icon>
                                 <fa:FontAwesome Icon="Solid_Thumbtack"></fa:FontAwesome>
@@ -383,6 +415,15 @@
                     </Grid>
                 </PivotItem>
             </Pivot>
+        </Grid>
+        <Grid Visibility="{x:Bind Path=seasonDetailVM.ShowError,Mode=OneWay}" >
+            <StackPanel VerticalAlignment="Center">
+                <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
+                <TextBlock Text="{x:Bind Path=seasonDetailVM.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>
+                <HyperlinkButton Click="btnRefresh_Click" HorizontalAlignment="Center">
+                    <TextBlock>点击刷新</TextBlock>
+                </HyperlinkButton>
+            </StackPanel>
         </Grid>
         <ProgressRing IsActive="True"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=seasonDetailVM.Loading,Mode=OneWay}"></ProgressRing>
     </Grid>
