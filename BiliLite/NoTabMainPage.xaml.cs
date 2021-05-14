@@ -182,7 +182,7 @@ namespace BiliLite
 
     public class NewInstanceFrame : Grid
     {
-        //TODO 动画、页面缓存、页面标题
+        //TODO 页面标题
         public event NavigatedEventHandler Navigated;
         public NewInstanceFrame()
         {

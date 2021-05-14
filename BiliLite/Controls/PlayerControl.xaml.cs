@@ -284,7 +284,7 @@ namespace BiliLite.Controls
                 case SystemMediaTransportControlsButton.Pause:
                     await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        Player.Pause();
+                        Pause();
                     });
                     break;
                 default:
@@ -306,7 +306,7 @@ namespace BiliLite.Controls
                 case Windows.System.VirtualKey.Space:
                     if (Player.PlayState == PlayState.Playing || Player.PlayState == PlayState.End)
                     {
-                        Player.Pause();
+                        Pause();
                     }
                     else
                     {
@@ -1513,7 +1513,7 @@ namespace BiliLite.Controls
             //        }
             //        else if (Player.PlayState == PlayState.Playing)
             //        {
-            //            Player.Pause();
+            //            Pause();
             //        }
             //    }
 
@@ -1533,7 +1533,7 @@ namespace BiliLite.Controls
                 }
                 else if (Player.PlayState == PlayState.Playing)
                 {
-                    Player.Pause();
+                    Pause();
                 }
             }
             else
@@ -1731,8 +1731,7 @@ namespace BiliLite.Controls
             {
                 return;
             }
-            Player.Pause();
-            DanmuControl.PauseDanmaku();
+            Pause();
         }
 
         private void BottomBtnPlay_Click(object sender, RoutedEventArgs e)
@@ -1983,7 +1982,7 @@ namespace BiliLite.Controls
 
         private async void BottomBtnSendDanmakuWide_Click(object sender, RoutedEventArgs e)
         {
-            Player.Pause();
+            Pause();
             SendDanmakuDialog sendDanmakuDialog = new SendDanmakuDialog(CurrentPlayItem.avid, CurrentPlayItem.cid, Player.Position);
             sendDanmakuDialog.DanmakuSended += new EventHandler<SendDanmakuModel>((obj, arg) =>
             {
@@ -2155,7 +2154,12 @@ namespace BiliLite.Controls
             MessageCenter.SetMiniWindow(mini);
         }
 
-
+        public  void Pause()
+        {
+            DanmuControl.PauseDanmaku();
+            Player.Pause();
+           
+        }
     }
     public class CompareDanmakuModel : IEqualityComparer<DanmakuModel>
     {
