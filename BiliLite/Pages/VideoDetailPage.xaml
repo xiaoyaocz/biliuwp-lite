@@ -370,7 +370,7 @@
                                     <GridView.ItemTemplate>
                                         <DataTemplate x:DataType="modules:VideoDetailPagesModel">
                                             <StackPanel ToolTipService.ToolTip="{x:Bind Path=part}" VerticalAlignment="Center">
-                                                <TextBlock Foreground="{ThemeResource TextColor}" TextAlignment="Center" TextTrimming="CharacterEllipsis" >P<Run Text="{x:Bind Path=page}"/> <Run Text="{x:Bind Path=part}"/></TextBlock>
+                                                <TextBlock Margin="8 0" Foreground="{ThemeResource TextColor}" TextAlignment="Center" TextTrimming="CharacterEllipsis" >P<Run Text="{x:Bind Path=page}"/> <Run Text="{x:Bind Path=part}"/></TextBlock>
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridView.ItemTemplate>

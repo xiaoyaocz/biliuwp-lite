@@ -744,7 +744,8 @@ namespace BiliLite.Modules
                             if (bag_data.success)
                             {
                                 BagGifts.Clear();
-                                var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"].ToString());
+                                var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"]?.ToString()??"[]");
+                                if(ls!=null)
                                 foreach (var item in ls)
                                 {
                                     var _gift = list.FirstOrDefault(x => x.id == item.gift_id);

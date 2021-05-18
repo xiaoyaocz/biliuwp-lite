@@ -269,7 +269,15 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_PLAY, swAutoPlay.IsOn);
                 });
             });
-
+            //自动跳转下一P
+            swAutoNext.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_NEXT, true);
+            swAutoNext.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swAutoNext.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.AUTO_NEXT, swAutoNext.IsOn);
+                });
+            });
             //使用其他网站
             swPlayerSettingUseOtherSite.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false);
             swPlayerSettingUseOtherSite.Loaded += new RoutedEventHandler((sender, e) =>

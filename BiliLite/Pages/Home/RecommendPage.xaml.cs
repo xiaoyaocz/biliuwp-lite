@@ -106,6 +106,17 @@ namespace BiliLite.Pages.Home
                 //});
                 return;
             }
+            if (data.card_goto== "new_tunnel")
+            { 
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Favorite,
+                    page = typeof(User.FavoritePage),
+                    parameters = User.OpenFavoriteType.Bangumi,
+                    title = "我的收藏"
+                });
+                return;
+            }
             if (await MessageCenter.HandelUrl(data.uri))
             {
                 return;

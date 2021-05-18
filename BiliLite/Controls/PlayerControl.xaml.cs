@@ -623,7 +623,12 @@ namespace BiliLite.Controls
             {
                 SettingHelper.SetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, PlayerSettingAutoToPosition.IsOn);
             });
-
+            //自动跳转
+            PlayerSettingAutoNext.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_NEXT, true);
+            PlayerSettingAutoNext.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<bool>(SettingHelper.Player.AUTO_NEXT, PlayerSettingAutoNext.IsOn);
+            });
             //播放比例
             PlayerSettingRatio.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.RATIO, 0);
             Player.SetRatioMode(PlayerSettingRatio.SelectedIndex);
@@ -1862,8 +1867,16 @@ namespace BiliLite.Controls
                 }
                 else
                 {
-                    _autoPlay = true;
-                    ChangePlayIndex(CurrentPlayIndex + 1);
+                    if (PlayerSettingAutoNext.IsOn)
+                    {
+                        _autoPlay = true;
+                        ChangePlayIndex(CurrentPlayIndex + 1);
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast("本P播放完成");
+                    }
+                    
                 }
                 return;
             }
@@ -1876,6 +1889,11 @@ namespace BiliLite.Controls
             //列表循环播放
             if (PlayerSettingPlayMode.SelectedIndex == 2)
             {
+                if (!PlayerSettingAutoNext.IsOn)
+                {
+                    Utils.ShowMessageToast("本P播放完成");
+                    return;
+                }
                 _autoPlay = true;
                 if (CurrentPlayIndex == PlayInfos.Count - 1)
                 {

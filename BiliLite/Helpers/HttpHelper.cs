@@ -43,7 +43,10 @@ namespace BiliLite.Helpers
                             client.DefaultRequestHeaders.Add(item.Key, item.Value);
                         }
                     }
-
+                    if (url.Contains("bilibili.com"))
+                    {
+                        client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 BiliDroid/6.23.5 (bbcallen@gmail.com)");
+                    }
                     var response = await client.GetAsync(new Uri(url));
                     if (!response.IsSuccessStatusCode)
                     {

@@ -338,7 +338,10 @@ namespace BiliLite.Helpers
             /// 自动播放 bool
             /// </summary>
             public const string AUTO_PLAY = "PlayerAutoPlay";
-
+            /// <summary>
+            /// 自动切换下一个视频
+            /// </summary>
+            public const string AUTO_NEXT = "PlayerAutoNext";
             /// <summary>
             /// 默认清晰度 int
             /// </summary>

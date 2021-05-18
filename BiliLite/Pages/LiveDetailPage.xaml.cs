@@ -380,7 +380,7 @@ namespace BiliLite.Pages
                 interopMSS.Dispose();
                 interopMSS = null;
             }
-            liveRoomVM.Dispose();
+            liveRoomVM?.Dispose();
             //取消屏幕常亮
             if (dispRequest != null)
             {

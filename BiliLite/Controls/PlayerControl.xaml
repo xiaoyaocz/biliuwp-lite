@@ -469,7 +469,11 @@
                                             <TextBlock  Foreground="White">自动跳转至上次观看进度</TextBlock>
                                         </ToggleSwitch.Header>
                                     </ToggleSwitch>
-
+                                    <ToggleSwitch x:Name="PlayerSettingAutoNext" Margin="0 8"  Foreground="White" >
+                                        <ToggleSwitch.Header>
+                                            <TextBlock  Foreground="White">自动播放下一P</TextBlock>
+                                        </ToggleSwitch.Header>
+                                    </ToggleSwitch>
                                     <TextBlock Margin="0 8" >播放模式</TextBlock>
                                     <ComboBox x:Name="PlayerSettingPlayMode">
                                         <ComboBox.Items>

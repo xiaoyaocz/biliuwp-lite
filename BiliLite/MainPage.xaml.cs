@@ -177,8 +177,9 @@ namespace BiliLite
         {
             var frame = tabItem.Content as MyFrame;
             ((frame.Content as Page).Content as Grid).Children.Clear();
+           
+            //frame.Close();
             frame.Navigate(typeof(BlankPage));
-            frame.Close();
             frame.BackStack.Clear();
             tabItem.Content = null;
             tabView.TabItems.Remove(tabItem);

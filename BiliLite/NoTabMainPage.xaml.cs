@@ -257,7 +257,7 @@ namespace BiliLite
             {
                 if (this.Children.Count > 1)
                 {
-                    await frame.AnimateYAsync(0, this.ActualHeight,200);
+                    await frame.AnimateYAsync(0, this.ActualHeight,300);
                     frame.Navigated -= Frame_Navigated;
                     frame.Navigate(typeof(BlankPage));
                     frame.BackStack.Clear();
