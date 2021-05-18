@@ -61,11 +61,21 @@ namespace BiliLite.Pages
 
         private void SeasonDetailPage_ClosedPage(object sender, EventArgs e)
         {
-            player.FullScreen(false);
-            player.MiniWidnows(false);
+            ClosePage();
+        }
+        private void ClosePage()
+        {
+            if (seasonDetailVM != null)
+            {
+                seasonDetailVM.Loaded = false;
+                seasonDetailVM.Loading = true;
+                seasonDetailVM.Detail = null;
+            }
+            changedFlag = true;
+            player?.FullScreen(false);
+            player?.MiniWidnows(false);
             player?.Dispose();
         }
-
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
@@ -215,13 +225,7 @@ namespace BiliLite.Pages
         {
             if(e.NavigationMode== NavigationMode.Back||e.SourcePageType.Name == "BlankPage")
             {
-                player?.Dispose();
-                seasonDetailVM.Loaded = false;
-                seasonDetailVM.Loading = true;
-                seasonDetailVM.Detail = null;
-                changedFlag = true;
-                player.FullScreen(false);
-                player.MiniWidnows(false);
+                ClosePage();
             }
             
             base.OnNavigatingFrom(e);

@@ -75,11 +75,21 @@ namespace BiliLite.Pages
 
         private void VideoDetailPage_ClosedPage(object sender, EventArgs e)
         {
-            player.FullScreen(false);
-            player.MiniWidnows(false);
-             player?.Dispose();
+            ClosePage();
         }
-
+        private void ClosePage()
+        {
+            if (videoDetailVM != null)
+            {
+                videoDetailVM.Loaded = false;
+                videoDetailVM.Loading = true;
+                videoDetailVM.VideoInfo = null;
+            }
+            changedFlag = true;
+            player?.FullScreen(false);
+            player?.MiniWidnows(false);
+            player?.Dispose();
+        }
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
@@ -233,18 +243,12 @@ namespace BiliLite.Pages
             }
 
         }
-
+       
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType.Name == "BlankPage")
             {
-                player?.Dispose();
-                videoDetailVM.Loaded = false;
-                videoDetailVM.Loading = true;
-                videoDetailVM.VideoInfo = null;
-                changedFlag = true;
-                player.FullScreen(false);
-                player.MiniWidnows(false);
+                ClosePage();
             }
                
             base.OnNavigatingFrom(e);

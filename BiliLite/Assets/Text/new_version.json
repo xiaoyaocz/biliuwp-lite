@@ -1,7 +1,7 @@
 {
-  "version": "4.2.3",
-  "version_num": 40203,
-  "version_desc": "更新内容:\r\n\r\n* 修复个人中心视频投稿图片无法加载\r\n\r\n* 修复直播刷新后弹幕加载失败\r\n\r\n* 修复直播无法一键发送弹幕\r\n\r\n* 修复直播无法刷新我的背包 \r\n\r\n* 修复我的收藏无法显示完整\r\n\r\n* 修复专栏显示不正常\r\n\r\n* 修复默认倍速设置不正确\r\n\r\n* 修复FLV下载失败",
+  "version": "4.3.0",
+  "version_num": 40300,
+  "version_desc": "更新内容:\r\n\r\n* 修复视频出现未知错误\r\n\r\n* 修复视频点踩变点赞\r\n\r\n* 修复单窗口模式下页面跳转问题\r\n\r\n* 增加自动切换下一P选项 \r\n\r\n* 修改部分图标",
   "url": "https://www.showdoc.com.cn/biliuwpv4",
-  "download_url": "https://xiaoyaocz.lanzoui.com/b00uht0gd"
+  "download_url": "https://xiaoyaocz.lanzoui.com/b00uicn2b"
 }

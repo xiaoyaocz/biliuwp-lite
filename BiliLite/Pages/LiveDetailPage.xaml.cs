@@ -410,7 +410,7 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType.Name == "BlankPage")
                 StopPlay();
             base.OnNavigatingFrom(e);
         }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -202,7 +203,7 @@ namespace BiliLite
 
         private void AddFrame()
         {
-            var frame = new Frame();
+            var frame = new MyFrame();
             frame.Navigated += Frame_Navigated;
           
             this.Children.Add(frame);
@@ -221,7 +222,6 @@ namespace BiliLite
             var contaias = ContainsPageType(sourcePageType);
             if (contaias)
             {
-               
                 AddFrame();
             }
             if (frame.Content is PlayPage)
@@ -246,7 +246,7 @@ namespace BiliLite
 
         public async void GoBack()
         {
-            var frame = this.Children.Last() as Frame;
+            var frame = this.Children.Last() as MyFrame;
             (frame.Content as Page).NavigationCacheMode = NavigationCacheMode.Disabled;
             if (frame.CanGoBack)
             {
@@ -259,9 +259,9 @@ namespace BiliLite
                 {
                     await frame.AnimateYAsync(0, this.ActualHeight,300);
                     frame.Navigated -= Frame_Navigated;
-                    frame.Navigate(typeof(BlankPage));
-                    frame.BackStack.Clear();
-                    
+                    frame.Close();
+
+
                     this.Children.Remove(frame);
                     //frame = this.Children.Last() as Frame;
                     

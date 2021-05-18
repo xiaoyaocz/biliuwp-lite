@@ -292,12 +292,12 @@ namespace BiliLite.Helpers
                 case 502:
                 case 503:
                 case 505:
-                    return "网络请求失败，代码:" + code;
+                    return "网络请求失败，响应代码:" + code;
                 case -2147012867:
                 case -2147012889:
                     return "请检查的网络连接";
                 default:
-                    return "未知错误";
+                    return "未知错误,响应代码："+ code;
             }
         }
     }

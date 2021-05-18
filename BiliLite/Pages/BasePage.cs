@@ -43,8 +43,8 @@ namespace BiliLite.Pages
         {
             if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
             {
-                (this.Content as Grid).Children.Clear();
-                GC.Collect();
+               // (this.Content as Grid).Children.Clear();
+              //  GC.Collect();
             }
             base.OnNavigatingFrom(e);
         }
