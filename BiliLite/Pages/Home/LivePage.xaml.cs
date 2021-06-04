@@ -106,7 +106,7 @@ namespace BiliLite.Pages.Home
         private void loadMore_Click(object sender, RoutedEventArgs e)
         {
             var data = (sender as HyperlinkButton).DataContext as LiveHomeItemsModel;
-            if (data.module_info.title== "热门直播")
+            if (data.module_info.title== "推荐直播")
             {
                 MessageCenter.NavigateToPage(this, new NavigationInfo() { 
                     icon= Symbol.Document,

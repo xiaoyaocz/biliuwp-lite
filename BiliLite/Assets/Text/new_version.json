@@ -1,7 +1,7 @@
 {
-  "version": "4.3.0",
-  "version_num": 40300,
-  "version_desc": "更新内容:\r\n\r\n* 修复视频出现未知错误\r\n\r\n* 修复视频点踩变点赞\r\n\r\n* 修复单窗口模式下页面跳转问题\r\n\r\n* 增加自动切换下一P选项 \r\n\r\n* 修改部分图标",
+  "version": "4.3.1",
+  "version_num": 40310,
+  "version_desc": "更新内容:\r\n\r\n* 修复视频无法观看问题\r\n\r\n* 修复直播弹幕无法显示",
   "url": "https://www.showdoc.com.cn/biliuwpv4",
   "download_url": "https://xiaoyaocz.lanzoui.com/b00uicn2b"
 }

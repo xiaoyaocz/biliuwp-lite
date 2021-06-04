@@ -821,6 +821,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FFmpegInteropX">
+      <Version>0.9.2</Version>
+    </PackageReference>
     <PackageReference Include="Google.Protobuf">
       <Version>3.14.0</Version>
     </PackageReference>
@@ -868,10 +871,6 @@
     <Content Include="Assets\Fonts\SourceHanSansCN-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FFmpegInteropX\FFmpegInterop\FFmpegInterop.vcxproj">
-      <Project>{9cfa3b3e-b7af-4629-84e2-c962c5b046b1}</Project>
-      <Name>FFmpegInterop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BiliLite.gRPC\BiliLite.gRPC.csproj">
       <Project>{aee3dcaa-2c3c-4308-b602-4797994219d7}</Project>
       <Name>BiliLite.gRPC</Name>
