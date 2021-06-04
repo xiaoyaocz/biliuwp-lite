@@ -27,41 +27,44 @@
 
 
     </Page.Resources>
-    <SplitView x:Name="splitView" OpenPaneLength="360" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="False" DisplayMode="Overlay">
-        <SplitView.Pane>
-            <Border x:Name="RootBorder" Padding="12,0,0,0" >
-                <Grid>
-                    <controls1:DropShadowPanel BlurRadius="12"
+    <Grid>
+
+
+        <SplitView x:Name="splitView" OpenPaneLength="360" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="False" DisplayMode="Overlay">
+            <SplitView.Pane>
+                <Border x:Name="RootBorder" Padding="12,0,0,0" >
+                    <Grid>
+                        <controls1:DropShadowPanel BlurRadius="12"
                                           Color="Black"
                                           Opacity="0.3"
                                           HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch">
-                        <Rectangle Fill="White" />
-                    </controls1:DropShadowPanel>
-                    <Grid Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
-                        <Pivot x:Name="pivotRight" SelectionChanged="pivotRight_SelectionChanged">
-                            <PivotItem Margin="0">
-                                <PivotItem.Header>
-                                    <TextBlock FontSize="15">转发(<Run x:Name="repostCount"/>)</TextBlock>
-                                </PivotItem.Header>
-                                <controls:DynamicRepostControl x:Name="repost"></controls:DynamicRepostControl>
-                            </PivotItem>
-                            <PivotItem Margin="0">
-                                <PivotItem.Header>
-                                    <TextBlock FontSize="15">评论(<Run x:Name="commentCount"/>)</TextBlock>
-                                </PivotItem.Header>
-                                <controls:CommentControl x:Name="comment"></controls:CommentControl>
-                            </PivotItem>
-                        </Pivot>
+                            <Rectangle Fill="White" />
+                        </controls1:DropShadowPanel>
+                        <Grid Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
+                            <Pivot x:Name="pivotRight" SelectionChanged="pivotRight_SelectionChanged">
+                                <PivotItem Margin="0">
+                                    <PivotItem.Header>
+                                        <TextBlock FontSize="15">转发(<Run x:Name="repostCount"/>)</TextBlock>
+                                    </PivotItem.Header>
+                                    <controls:DynamicRepostControl x:Name="repost"></controls:DynamicRepostControl>
+                                </PivotItem>
+                                <PivotItem Margin="0">
+                                    <PivotItem.Header>
+                                        <TextBlock FontSize="15">评论(<Run x:Name="commentCount"/>)</TextBlock>
+                                    </PivotItem.Header>
+                                    <controls:CommentControl x:Name="comment"></controls:CommentControl>
+                                </PivotItem>
+                            </Pivot>
+                        </Grid>
                     </Grid>
-                </Grid>
 
-            </Border>
-        </SplitView.Pane>
-        <SplitView.Content>
-            <Grid  >
+                </Border>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid  >
 
-                <controls:MyListView SelectionMode="None" 
+                    <controls:MyListView SelectionMode="None" 
                   IsItemClickEnabled="false" 
                           x:Name="list"
                   ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}" 
@@ -72,16 +75,16 @@
                   Grid.Row="1"
                  ItemTemplateSelector="{StaticResource select}"
                   HorizontalContentAlignment="Center">
-                    <controls:MyListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                            <Setter Property="MaxWidth" Value="800"></Setter>
-                            <Setter Property="Margin" Value="4"></Setter>
+                        <controls:MyListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                <Setter Property="MaxWidth" Value="800"></Setter>
+                                <Setter Property="Margin" Value="4"></Setter>
 
-                        </Style>
-                    </controls:MyListView.ItemContainerStyle>
-                    <!--<ListView.ItemsPanel>-->
-                    <!--<ItemsPanelTemplate>
+                            </Style>
+                        </controls:MyListView.ItemContainerStyle>
+                        <!--<ListView.ItemsPanel>-->
+                        <!--<ItemsPanelTemplate>
                      
                             <controls1:StaggeredPanel DesiredColumnWidth="500"
                                              HorizontalAlignment="Stretch"
@@ -89,11 +92,12 @@
                                              RowSpacing="8" />
                         </ItemsPanelTemplate>-->
 
-                    <!--</ListView.ItemsPanel>-->
+                        <!--</ListView.ItemsPanel>-->
 
-                </controls:MyListView>
-                <ProgressRing Grid.Row="1" VerticalAlignment="Center" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
-            </Grid>
-        </SplitView.Content>
-    </SplitView>
+                    </controls:MyListView>
+                    <ProgressRing Grid.Row="1" VerticalAlignment="Center" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+    </Grid>
 </pages:BasePage>
