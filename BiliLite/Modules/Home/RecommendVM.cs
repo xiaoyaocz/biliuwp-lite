@@ -67,10 +67,8 @@ namespace BiliLite.Modules
                         var banner = items.FirstOrDefault(x => x.card_goto == "banner");
                         if (banner != null)
                         {
-                            if (Banner == null || Banner.Count == 0)
-                            {
-                                Banner = banner.banner_item;
-                            }
+                            //处理banner
+                            LoadBanner(banner);
                             items.Remove(banner);
                         }
                         for (int i = items.Count - 1; i >= 0; i--)
@@ -128,6 +126,32 @@ namespace BiliLite.Modules
             {
                 Loading = false;
             }
+        }
+
+        private void LoadBanner(RecommendItemModel banner)
+        {
+            try
+            {
+                if (Banner == null || Banner.Count == 0)
+                {
+                    foreach (var item in banner.banner_item)
+                    {
+
+                        if (item["type"].ToString() == "static")
+                        {
+                            Banner.Add(JsonConvert.DeserializeObject<RecommendBannerItemModel>(item["static_banner"].ToString()));
+                        }
+                        if (item["type"].ToString() == "ad")
+                        {
+                            Banner.Add(JsonConvert.DeserializeObject<RecommendBannerItemModel>(item["ad_banner"].ToString()));
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+           
         }
         public async void LoadMore()
         {
@@ -197,7 +221,8 @@ namespace BiliLite.Modules
     }
     public class RecommendItemModel
     {
-        public ObservableCollection<RecommendBannerItemModel> banner_item { get; set; }
+        //public ObservableCollection<RecommendBannerItemModel> banner_item { get; set; }
+        public JArray banner_item { get; set; }
         private string _title = "";
         public string title
         {
