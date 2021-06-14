@@ -25,7 +25,6 @@
     <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>6DDE612D6A80D159B45492E9C1F6E5D5491E6129</PackageCertificateThumbprint>
     <PackageCertificateKeyFile />
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
   </PropertyGroup>
@@ -878,6 +877,10 @@
     <ProjectReference Include="..\BiliLite.JSBridge\BiliLite.JSBridge.csproj">
       <Project>{809c7636-0af1-4695-9230-22f74d7b1327}</Project>
       <Name>BiliLite.JSBridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FFmpegInteropX\FFmpegInterop\FFmpegInterop.vcxproj">
+      <Project>{9cfa3b3e-b7af-4629-84e2-c962c5b046b1}</Project>
+      <Name>FFmpegInterop</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
