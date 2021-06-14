@@ -375,6 +375,10 @@ namespace BiliLite.Helpers
             /// 亮度
             /// </summary>
             public const string PLAYER_BRIGHTNESS = "PlayeBrightness";
+            /// <summary>
+            /// A-B 循环播放模式的播放记录
+            /// </summary>
+            public const string PLAYER_ABPLAY_HISTORIES = "PlayerABPlayHistories";
 
             /// <summary>
             /// 字幕颜色

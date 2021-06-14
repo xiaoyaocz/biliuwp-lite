@@ -491,6 +491,15 @@
                                             <ComboBoxItem>4:3</ComboBoxItem>
                                         </ComboBox.Items>
                                     </ComboBox>
+                                    <ToggleSwitch x:Name="PlayerSettingABPlayMode" Margin="0 8"  Foreground="White" >
+                                        <ToggleSwitch.Header>
+                                            <TextBlock  Foreground="White">A-B 循环播放</TextBlock>
+                                        </ToggleSwitch.Header>
+                                    </ToggleSwitch>
+                                    <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                                        <Button x:Name="PlayerSettingABPlaySetPointA" Click="PlayerSettingABPlaySetPointA_Click" Grid.Column="1" Foreground="White" Margin="0 0 8 0" Visibility="Collapsed">设置A点</Button>
+                                        <Button x:Name="PlayerSettingABPlaySetPointB" Click="PlayerSettingABPlaySetPointB_Click" Grid.Column="1" Foreground="White" Visibility="Collapsed">设置B点</Button>
+                                    </StackPanel>
                                 </StackPanel>
                             </ScrollViewer>
                         </PivotItem>

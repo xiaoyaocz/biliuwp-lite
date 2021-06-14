@@ -259,6 +259,7 @@
     <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="Helpers\UrlHandle.cs" />
     <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Helpers\VideoPlayHistoryHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

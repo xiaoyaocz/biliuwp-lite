@@ -171,6 +171,7 @@ namespace BiliLite
             await AppHelper.SetRegions();
             DownloadVM.Instance.LoadDownloading();
             DownloadVM.Instance.LoadDownloaded();
+            VideoPlayHistoryHelper.LoadABPlayHistories(true);
         }
 
         /// <summary>
