@@ -64,6 +64,7 @@ namespace BiliLite.Controls
         }
         public PlayState PlayState { get; set; }
         public PlayMediaType PlayMediaType { get; set; }
+        public VideoPlayHistoryHelper.ABPlayHistoryEntry ABPlay { get; set; }
         private DashItemModel _dash_video;
         private DashItemModel _dash_audio;
         private PlayEngine current_engine;
@@ -117,6 +118,11 @@ namespace BiliLite.Controls
         private static void OnPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as Player;
+            if (sender.ABPlay != null && sender.ABPlay.PointB != 0 && (double) e.NewValue > sender.ABPlay.PointB)
+            {
+                sender.Position = sender.ABPlay.PointA;
+                return;
+            }
             if (Math.Abs((double)e.NewValue - (double)e.OldValue) > 1)
             {
                 if (sender.PlayState == PlayState.Playing || sender.PlayState == PlayState.Pause)

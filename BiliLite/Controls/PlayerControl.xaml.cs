@@ -647,6 +647,22 @@ namespace BiliLite.Controls
             });
 
             _autoPlay = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_PLAY, false);
+            //A-B播放
+            PlayerSettingABPlayMode.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                if (PlayerSettingABPlayMode.IsOn)
+                {
+                    PlayerSettingABPlaySetPointA.Visibility = Visibility.Visible;
+                } else
+                {
+                    Player.ABPlay = null;
+                    VideoPlayHistoryHelper.SetABPlayHistory(CurrentPlayItem, null);
+                    PlayerSettingABPlaySetPointA.Visibility = Visibility.Collapsed;
+                    PlayerSettingABPlaySetPointB.Visibility = Visibility.Collapsed;
+                    PlayerSettingABPlaySetPointA.Content = "设置A点";
+                    PlayerSettingABPlaySetPointB.Content = "设置B点";
+                }
+            });
         }
         private void LoadSutitleSetting()
         {
@@ -867,6 +883,19 @@ namespace BiliLite.Controls
             await SetQuality();
             await GetPlayerInfo();
 
+            Player.ABPlay = VideoPlayHistoryHelper.FindABPlayHistory(CurrentPlayItem);
+            if (Player.ABPlay == null)
+            {
+                PlayerSettingABPlayMode.IsOn = false;
+            } else
+            {
+                PlayerSettingABPlayMode.IsOn = true;
+                PlayerSettingABPlaySetPointA.Visibility = Visibility.Visible;
+                PlayerSettingABPlaySetPointB.Visibility = Visibility.Visible;
+                PlayerSettingABPlaySetPointA.Content = "A: " + TimeSpan.FromSeconds(Player.ABPlay.PointA).ToString(@"hh\:mm\:ss\.fff");
+                if (Player.ABPlay.PointB != double.MaxValue)
+                    PlayerSettingABPlaySetPointB.Content = "B: " + TimeSpan.FromSeconds(Player.ABPlay.PointB).ToString(@"hh\:mm\:ss\.fff");
+            }
         }
 
 
@@ -2177,6 +2206,54 @@ namespace BiliLite.Controls
             DanmuControl.PauseDanmaku();
             Player.Pause();
            
+        }
+
+        public void PlayerSettingABPlaySetPointA_Click(object sender, RoutedEventArgs e)
+        {
+            if (Player.ABPlay != null)
+            {
+                Player.ABPlay = null;
+                VideoPlayHistoryHelper.SetABPlayHistory(CurrentPlayItem, null);
+                PlayerSettingABPlaySetPointA.Content = "设置A点";
+                PlayerSettingABPlaySetPointB.Content = "设置B点";
+                PlayerSettingABPlaySetPointB.Visibility = Visibility.Collapsed;
+                
+                Utils.ShowMessageToast("已取消设置A点");
+            } else
+            {
+                Player.ABPlay = new VideoPlayHistoryHelper.ABPlayHistoryEntry()
+                {
+                    PointA = Player.Position
+                };
+                PlayerSettingABPlaySetPointA.Content = "A: " + TimeSpan.FromSeconds(Player.ABPlay.PointA).ToString(@"hh\:mm\:ss\.fff");
+                PlayerSettingABPlaySetPointB.Visibility = Visibility.Visible;
+                
+                Utils.ShowMessageToast("已设置A点, 再次点击可取消设置");
+            }
+        }
+
+        public void PlayerSettingABPlaySetPointB_Click(object sender, RoutedEventArgs e)
+        {
+            if (Player.ABPlay.PointB > 0 && Player.ABPlay.PointB != Double.MaxValue)
+            {
+                Player.ABPlay.PointB = double.MaxValue;
+                PlayerSettingABPlaySetPointB.Content = "设置B点";
+                
+                Utils.ShowMessageToast("已取消设置B点");
+            } else
+            {
+                if (Player.Position <= Player.ABPlay.PointA)
+                {
+                    Utils.ShowMessageToast("B点必须在A点之后");
+                } else
+                {
+                    Player.ABPlay.PointB = Player.Position;
+                    VideoPlayHistoryHelper.SetABPlayHistory(CurrentPlayItem, Player.ABPlay);
+                    PlayerSettingABPlaySetPointB.Content = "B: " + TimeSpan.FromSeconds(Player.ABPlay.PointB).ToString(@"hh\:mm\:ss\.fff");
+                    
+                    Utils.ShowMessageToast("已设置B点, 再次点击可取消设置");
+                }
+            }
         }
     }
     public class CompareDanmakuModel : IEqualityComparer<DanmakuModel>
