@@ -1034,11 +1034,11 @@ namespace BiliLite.Controls
             await interactionVideoVM.GetNodes(node_id);
 
             TopTitle.Text = interactionVideoVM.Select.title;
-            if ((interactionVideoVM.Info.edges?.questions?.Count ?? 0) <= 0)
-            {
-                Utils.ShowMessageToast("播放完毕，请点击右下角节点，重新开始");
-                return;
-            }
+            //if ((interactionVideoVM.Info.edges?.questions?.Count ?? 0) <= 0)
+            //{
+            //    Utils.ShowMessageToast("播放完毕，请点击右下角节点，重新开始");
+            //    return;
+            //}
             _postion = 0;
             _autoPlay = true;
             DanmuControl.ClearAll();
@@ -1874,6 +1874,11 @@ namespace BiliLite.Controls
         {
             if (CurrentPlayItem.is_interaction)
             {
+                if (interactionVideoVM.Info.is_leaf==1)
+                {
+                    Utils.ShowMessageToast("播放完毕，请点击右下角节点，重新开始");
+                    return;
+                }
                 DanmuControl.PauseDanmaku();
                 InteractionChoices.Visibility = Visibility.Visible;
                 return;

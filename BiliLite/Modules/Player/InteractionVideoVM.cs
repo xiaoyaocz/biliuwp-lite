@@ -165,7 +165,7 @@ namespace BiliLite.Modules.Player
             }
         }
         public string title_shadow_color { get; set; }
-        public int title_shadow_offset_y { get; set; }
+        public double title_shadow_offset_y { get; set; }
         public string progressbar_color { get; set; }
         public string progressbar_shadow_color { get; set; }
     }
