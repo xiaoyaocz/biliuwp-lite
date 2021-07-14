@@ -34,7 +34,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="BiliLite.App">
       <uap:VisualElements
-        DisplayName="哔哩哔哩 UWP"
+        DisplayName="ms-resource:AppName"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="哔哩哔哩UWP V4" BackgroundColor="transparent">

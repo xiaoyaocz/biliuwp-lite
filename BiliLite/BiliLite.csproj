@@ -566,6 +566,7 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="$(SolutionDir)..\FFmpegInteropX\ffmpeg\Build\Windows10\$(PlatformTarget)\bin\*.dll" />
+    <PRIResource Include="Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
