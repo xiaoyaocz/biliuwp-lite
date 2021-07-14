@@ -110,9 +110,9 @@ namespace BiliLite.Modules.User
                     if (data.success)
                     {
                         UserCenterSpaceStatModel stat = new UserCenterSpaceStatModel();
-                        stat.article_count = data.data["article"]["count"].ToInt32();
-                        stat.video_count = data.data["archive"]["count"].ToInt32();
-                        stat.favourite_count = data.data["favourite2"]["count"].ToInt32();
+                        stat.article_count = (data.data["article"]?["count"]??0).ToInt32();
+                        stat.video_count = (data.data["archive"]?["count"]??0).ToInt32();
+                        stat.favourite_count = (data.data["favourite2"]?["count"]??0).ToInt32();
                         stat.follower = data.data["card"]["fans"].ToInt32();
                         stat.following = data.data["card"]["attention"].ToInt32();
                         return stat;

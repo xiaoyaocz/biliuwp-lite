@@ -49,19 +49,19 @@ namespace BiliLite.Pages
         {
             LaodUserStatus();
         }
-        protected  override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if(e.NavigationMode== NavigationMode.New&& homeVM.IsLogin&&homeVM.Profile == null)
+            if (e.NavigationMode == NavigationMode.New && homeVM.IsLogin && homeVM.Profile == null)
             {
-                 CheckLoginStatus();
+                CheckLoginStatus();
                 //await homeVM.LoginUserCard();
             }
-            if(SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false))
+            if (SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false))
             {
                 btnSponsor.Visibility = Visibility.Collapsed;
             }
-           
+
         }
         private async void CheckLoginStatus()
         {
@@ -95,7 +95,7 @@ namespace BiliLite.Pages
                     Utils.ShowMessageToast("读取登录信息失败");
                     //throw;
                 }
-                
+
             }
         }
 
@@ -157,13 +157,13 @@ namespace BiliLite.Pages
                 icon = Symbol.Download,
                 page = typeof(DownloadPage),
                 title = "下载",
-               
+
             });
         }
 
         private async void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if (string.IsNullOrEmpty( SearchBox.Text))
+            if (string.IsNullOrEmpty(SearchBox.Text))
             {
                 Utils.ShowMessageToast("关键字不能为空");
                 return;
@@ -178,18 +178,18 @@ namespace BiliLite.Pages
             {
                 icon = Symbol.Find,
                 page = typeof(SearchPage),
-                title = "搜索:"+ SearchBox.Text,
+                title = "搜索:" + SearchBox.Text,
                 parameters = new SearchParameter()
                 {
-                    keyword=SearchBox.Text,
-                    searchType= SearchType.Video
+                    keyword = SearchBox.Text,
+                    searchType = SearchType.Video
                 }
             });
         }
 
         private async void MenuMyFollow_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined&&!await Utils.ShowLoginDialog())
+            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
             {
                 Utils.ShowMessageToast("请先登录");
                 return;
@@ -215,20 +215,10 @@ namespace BiliLite.Pages
                 icon = Symbol.Contact,
                 page = typeof(Live.LiveCenterPage),
                 title = "直播中心",
-                
+
             });
         }
 
-        private void btnOpenFans_Click(object sender, RoutedEventArgs e)
-        {
-            MessageCenter.NavigateToPage(this, new NavigationInfo()
-            {
-                icon = Symbol.World,
-                page = typeof(WebPage),
-                title = "我的好友",
-                parameters = "https://space.bilibili.com/h5/follow"
-            });
-        }
 
         private void MenuHistory_Click(object sender, RoutedEventArgs e)
         {
@@ -280,12 +270,13 @@ namespace BiliLite.Pages
 
         private async void btnSponsor_Click(object sender, RoutedEventArgs e)
         {
-            var x = new ContentDialog() { 
-                Title="赞助作者"
+            var x = new ContentDialog()
+            {
+                Title = "赞助作者"
             };
             ScrollViewer scrollViewer = new ScrollViewer();
             StackPanel st = new StackPanel();
-           
+
             st.Children.Add(new TextBlock()
             {
                 TextWrapping = TextWrapping.Wrap,
@@ -294,7 +285,7 @@ namespace BiliLite.Pages
             });
             st.Children.Add(new Image()
             {
-                Width=280,
+                Width = 280,
                 Source = new BitmapImage(new Uri("ms-appx:///Assets/zfb.jpg"))
             });
             scrollViewer.Content = st;
@@ -302,6 +293,56 @@ namespace BiliLite.Pages
             x.PrimaryButtonText = "知道了";
             x.IsPrimaryButtonEnabled = true;
             await x.ShowAsync();
+        }
+        private void btnOpenFans_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                title = SettingHelper.Account.Profile.name,
+                page = typeof(UserInfoPage),
+                parameters = new UserInfoParameter()
+                {
+                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Tab = UserTab.Fans
+                }
+            });
+            //MessageCenter.NavigateToPage(this, new NavigationInfo()
+            //{
+            //    icon = Symbol.World,
+            //    page = typeof(WebPage),
+            //    title = "我的好友",
+            //    parameters = "https://space.bilibili.com/h5/follow"
+            //});
+        }
+        private void btnOpenAttention_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                title = SettingHelper.Account.Profile.name,
+                page = typeof(UserInfoPage),
+                parameters = new UserInfoParameter()
+                {
+                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Tab = UserTab.Attention
+                }
+            });
+        }
+
+        private void btnOpenDynamic_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Symbol.Contact,
+                title = SettingHelper.Account.Profile.name,
+                page = typeof(UserInfoPage),
+                parameters = new UserInfoParameter()
+                {
+                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Tab = UserTab.Dynamic
+                }
+            });
         }
     }
 

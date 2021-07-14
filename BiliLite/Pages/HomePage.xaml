@@ -30,9 +30,9 @@
             <winui:NavigationView.PaneFooter>
                 <StackPanel Margin="-8 0 0 0" Orientation="Horizontal">
                     <Button x:Name="btnUser" Visibility="{x:Bind Path=homeVM.IsLogin,Mode=OneWay}" BorderThickness="0"  Width="48" Height="40" Background="Transparent">
-                        <Ellipse Width="24" Height="24">
+                        <Ellipse Width="24" Height="24" >
                             <Ellipse.Fill>
-                                <ImageBrush  x:Name="imgPhoto" ImageSource="{x:Bind Path=homeVM.Profile.face,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='100w'}"/>
+                                <ImageBrush  x:Name="imgPhoto"  ImageSource="{x:Bind Path=homeVM.Profile.face,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='100w'}"/>
                             </Ellipse.Fill>
                         </Ellipse>
                         <Button.Flyout>
@@ -68,7 +68,7 @@
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <HyperlinkButton Click="btnOpenFans_Click" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
+                                        <HyperlinkButton Click="btnOpenAttention_Click" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Foreground="Gray">关注</TextBlock>
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.follow,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
@@ -80,7 +80,7 @@
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.fans,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                                             </StackPanel>
                                         </HyperlinkButton>
-                                        <HyperlinkButton Grid.Column="2" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
+                                        <HyperlinkButton Click="btnOpenDynamic_Click"  Grid.Column="2" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Foreground="Gray">动态</TextBlock>
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.dynamic,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>

@@ -22,6 +22,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BiliLite.Pages
 {
+    public enum UserTab
+    {
+        SubmitVideo=0,
+        Dynamic=1,
+        Article=2,
+        Favorite=3,
+        Attention=4,
+        Fans = 5,
+    }
+    public class UserInfoParameter
+    {
+        public string Mid { get; set; }
+        public UserTab Tab { get; set; } = UserTab.SubmitVideo;
+    }
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
@@ -105,20 +119,40 @@ namespace BiliLite.Pages
             SetStaggered();
             if (e.NavigationMode == NavigationMode.New)
             {
-                userDetailVM.mid = e.Parameter.ToString();
-                userSubmitVideoVM.mid = e.Parameter.ToString();
-                userSubmitArticleVM.mid = e.Parameter.ToString();
-                userFavlistVM.mid = e.Parameter.ToString();
-                fansVM.mid = e.Parameter.ToString();
-                followVM.mid = e.Parameter.ToString();
+                var mid = "";
+                var tabIndex = 0;
+                if(e.Parameter is UserInfoParameter)
+                {
+                    var par = e.Parameter as UserInfoParameter;
+                    mid = par.Mid;
+                    tabIndex = (int)par.Tab;
+                }
+                else
+                {
+                    mid= e.Parameter.ToString();
+                }
+                userDetailVM.mid = mid;
+                userSubmitVideoVM.mid = mid;
+                userSubmitArticleVM.mid = mid;
+                userFavlistVM.mid = mid;
+                fansVM.mid = mid;
+                followVM.mid = mid;
                 if (userDetailVM.mid == SettingHelper.Account.UserID.ToString())
                 {
                     appBar.Visibility = Visibility.Collapsed;
                 }
                 dynamicVM.DynamicType = DynamicType.Space;
-                dynamicVM.Uid = e.Parameter.ToString();
+                dynamicVM.Uid = mid;
                 userDetailVM.GetUserInfo();
-                await userSubmitVideoVM.GetSubmitVideo();
+                
+                if (tabIndex != 0)
+                {
+                    pivot.SelectedIndex = tabIndex;
+                }
+                else
+                {
+                    await userSubmitVideoVM.GetSubmitVideo();
+                }
             }
         }
 
@@ -231,6 +265,10 @@ namespace BiliLite.Pages
 
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (pivot.SelectedIndex ==0&& userSubmitVideoVM.SubmitVideoItems == null)
+            {
+                await userSubmitVideoVM.GetSubmitVideo();
+            }
             if (pivot.SelectedIndex == 1&&dynamicVM.Items==null)
             {
                 await dynamicVM.GetDynamicItems();
