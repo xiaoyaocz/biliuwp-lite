@@ -1,7 +1,7 @@
 {
-  "version": "4.3.1",
-  "version_num": 40301,
-  "version_desc": "更新内容:\r\n\r\n* 修复视频无法观看问题\r\n\r\n* 修复直播弹幕无法显示",
+  "version": "4.3.2",
+  "version_num": 40302,
+  "version_desc": "更新内容:\r\n\r\n* 修复互动视频问题\r\n\r\n* 修复推荐Banner问题\r\n\r\n* 修复部分番剧图片模糊问题\r\n\r\n* 修复搜索图片不显示问题\r\n\r\n* 修复我的粉丝无法点击问题",
   "url": "https://www.showdoc.com.cn/biliuwpv4",
-  "download_url": "https://xiaoyaocz.lanzoui.com/b00uicn2b"
+  "download_url": "https://xiaoyaocz.lanzoui.com/b00unpuod"
 }
