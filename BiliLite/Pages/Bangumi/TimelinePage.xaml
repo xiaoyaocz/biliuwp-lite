@@ -72,7 +72,7 @@
                                     </Grid.RowDefinitions>
                                     <Border  CornerRadius="{StaticResource ImageCornerRadius}">
                                         <Grid>
-                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='300w'}"></toolkit:ImageEx>
                                             <Grid VerticalAlignment="Bottom" Padding="8">
                                                 <Grid.Background>
                                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
