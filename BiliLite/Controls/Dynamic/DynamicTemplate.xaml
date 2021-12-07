@@ -6,15 +6,17 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:local="using:BiliLite.Controls.Dynamic">
     <local:DynamicItemDataTemplateSelector x:Key="select" 
-                                                     TextTemplate="{StaticResource Text}"
-                                                     MissTemplate="{StaticResource Miss}"
-                                                     RepostTemplate="{StaticResource Repost}"
-                                                     Photo1x1Template="{StaticResource Photo1x1}"
-                                                     Photo2x2Template="{StaticResource Photo2x2}"
-                                                     Photo3x3Template="{StaticResource Photo3x3}"
-                                                     ShortVideoTemplate="{StaticResource ShortVideo}"
-                                                     OneRowTemplate="{StaticResource OneRow}"
-                                                     OtherTemplate="{StaticResource Other}"></local:DynamicItemDataTemplateSelector>
+        TextTemplate="{StaticResource Text}"
+        MissTemplate="{StaticResource Miss}"
+        RepostTemplate="{StaticResource Repost}"
+        Photo1x1Template="{StaticResource Photo1x1}"
+        Photo2x2Template="{StaticResource Photo2x2}"
+        Photo3x3Template="{StaticResource Photo3x3}"
+        ShortVideoTemplate="{StaticResource ShortVideo}"
+        OneRowTemplate="{StaticResource OneRow}"
+        OtherTemplate="{StaticResource Other}">
+    </local:DynamicItemDataTemplateSelector>
+    
     <DataTemplate x:Key="OneRow" >
         <local:DynamicItemControl Model="{Binding}">
             <local:DynamicItemControl.CardContent>

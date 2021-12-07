@@ -6,7 +6,7 @@
 
 ### 4.3更新日志
 
-更新时间:2020-07-14
+更新时间:2021-07-14
 
 4.3.2：
 
@@ -53,7 +53,7 @@
 
 * 如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展
 
-HEV扩展安装地址:[ms-windows-store://pdp/?productid=9n4wgh0z6vhq](ms-windows-store://pdp/?productid=9n4wgh0z6vhq)
+HEVC扩展安装地址:[ms-windows-store://pdp/?productid=9n4wgh0z6vhq](ms-windows-store://pdp/?productid=9n4wgh0z6vhq)
 
 ### 播放视频掉帧或卡死
 
@@ -144,5 +144,7 @@ Webp图片扩展安装地址:[ms-windows-store://pdp/?productid=9PG2DK419DRG](ms
 ### 日志文件
 
 路径:`%USERPROFILE%\AppData\Local\Packages\5421.502643927C6AD_wp9dg7z2zqgtj\LocalState\log`
+
+为了你的账号安全，发送日志时请一定要移除access_key=...里的内容
 
 [点击打开日志存放目录](OpenLog)

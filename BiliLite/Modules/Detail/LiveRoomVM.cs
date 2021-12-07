@@ -628,7 +628,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         SuperChats.Clear();
-                        var ls = JsonConvert.DeserializeObject<List<LiveRoomSuperChatModel>>(data.data["list"].ToString());
+                        var ls = JsonConvert.DeserializeObject<List<LiveRoomSuperChatModel>>(data.data["list"]?.ToString()??"[]");
                         foreach (var item in ls)
                         {
                             SuperChats.Add(new SuperChatMsgModel() { 

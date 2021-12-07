@@ -111,7 +111,11 @@ namespace BiliLite.Modules.Live
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Log("直播接收包出错",LogType.ERROR,ex);
+                    if(ex is OperationCanceledException)
+                    {
+                        return;
+                    }
+                    LogHelper.Log("直播接收包出错", LogType.ERROR, ex);
                 }
                
             }

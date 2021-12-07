@@ -83,6 +83,7 @@ namespace BiliLite.Pages
                         var result = await account.RefreshToken();
                         if (!result)
                         {
+                            homeVM.IsLogin = false;
                             MessageCenter.SendLogout();
                             Utils.ShowMessageToast("登录过期，请重新登录");
                             await Utils.ShowLoginDialog();
@@ -91,8 +92,9 @@ namespace BiliLite.Pages
                 }
                 catch (Exception ex)
                 {
+                    homeVM.IsLogin = false;
                     LogHelper.Log("读取access_key信息失败", LogType.INFO, ex);
-                    Utils.ShowMessageToast("读取登录信息失败");
+                    Utils.ShowMessageToast("读取登录信息失败，请重新登录");
                     //throw;
                 }
 

@@ -428,9 +428,9 @@ namespace BiliLite.Modules
             try
             {
                 var req = await accountApi.GetOAuth2Info().Request();
-                var obj = req.GetJObject();
                 if (req.status )
                 {
+                    var obj = req.GetJObject();
                     return obj["code"].ToInt32() == 0;
                 }
                 else
@@ -455,10 +455,11 @@ namespace BiliLite.Modules
             try
             {
                 var req = await accountApi.RefreshToken().Request();
-                var obj = req.GetJObject();
+              
                 if (req.status)
                 {
-                    if(obj["code"].ToInt32() == 0)
+                    var obj = req.GetJObject();
+                    if (obj["code"].ToInt32() == 0)
                     {
                         var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
                         await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid);
