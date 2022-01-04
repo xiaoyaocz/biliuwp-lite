@@ -315,7 +315,7 @@ namespace BiliLite.Modules
                 return data;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

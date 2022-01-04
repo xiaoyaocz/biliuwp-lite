@@ -195,7 +195,7 @@ namespace BiliLite.Modules
         public ICommand RefreshBagCommand { get; private set; }
         private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,  () =>
             {
                 if (GiftMessage != null && GiftMessage.Count != 0)
                 {
@@ -1335,7 +1335,7 @@ namespace BiliLite.Modules
 
         private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,  () =>
             {
                 if (LotteryInfo != null)
                 {

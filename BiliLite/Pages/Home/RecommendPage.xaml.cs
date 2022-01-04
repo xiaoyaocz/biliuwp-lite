@@ -121,7 +121,11 @@ namespace BiliLite.Pages.Home
             {
                 return;
             }
-           
+            var browserUri = data.three_point_v2.FirstOrDefault(x => x.type == "browser")?.url ?? "";
+            if (!string.IsNullOrEmpty(browserUri)&& await MessageCenter.HandelUrl(browserUri))
+            {
+                return;
+            }
         }
 
    

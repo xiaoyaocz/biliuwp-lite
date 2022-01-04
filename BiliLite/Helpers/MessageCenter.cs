@@ -86,6 +86,7 @@ namespace BiliLite.Helpers
              * bilibili://video/19239064
              * bilibili://?av=4284663
              * https://m.bilibili.com/playlist/pl733016988?avid=68818070
+             * bilibili://story/722919541
              */
 
             var video = Utils.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
@@ -101,6 +102,18 @@ namespace BiliLite.Helpers
                 return true;
             }
             video = Utils.RegexMatch(url, @"bilibili://video/(\d+)");
+            if (video != "")
+            {
+                NavigateToPage(null, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(VideoDetailPage),
+                    title = "视频加载中...",
+                    parameters = video
+                });
+                return true;
+            }
+            video = Utils.RegexMatch(url, @"bilibili://story/(\d+)");
             if (video != "")
             {
                 NavigateToPage(null, new NavigationInfo()
