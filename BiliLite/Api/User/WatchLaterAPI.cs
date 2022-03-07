@@ -12,7 +12,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/history/toview/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}"
             };
@@ -23,7 +23,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/x/v2/history/toview",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&ps=100"
             };
@@ -34,7 +34,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/history/toview/clear",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) 
             };
@@ -45,7 +45,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/history/toview/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ "&viewed=true"
             };
@@ -56,7 +56,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/history/toview/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&aid="+id
             };

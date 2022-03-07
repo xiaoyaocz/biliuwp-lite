@@ -12,7 +12,7 @@ namespace BiliLite.Api.Home
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://app.bilibili.com/x/v2/feed/index",
                 parameter=ApiHelper.MustParameter(ApiHelper.AndroidKey,true)+$"&flush=0&idx={idx}&login_event=2&network=wifi&open_event=&pull={(idx == "0").ToString().ToLower()}&qn=32&style=2"
             };
@@ -24,7 +24,7 @@ namespace BiliLite.Api.Home
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://app.biliapi.net/x/feed/dislike",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&goto={_goto}&id={id}&mid={mid}&reason_id={reason_id}&rid={rid}&tag_id={tag_id}"
             };
@@ -35,7 +35,7 @@ namespace BiliLite.Api.Home
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://app.biliapi.net/x/feed/dislike",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&goto={_goto}&id={id}&mid={mid}&feedback_id={feedback_id}&rid={rid}&tag_id={tag_id}"
             };

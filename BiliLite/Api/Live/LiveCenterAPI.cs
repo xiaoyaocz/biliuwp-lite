@@ -12,7 +12,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.live.bilibili.com/xlive/app-interface/v1/relation/liveAnchor",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&qn=0&sortRule=0&filterRule=0",
             };
@@ -23,7 +23,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.live.bilibili.com/xlive/app-interface/v1/relation/unliveAnchor",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&page={page}&pagesize=30",
             };
@@ -34,7 +34,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/history/liveList",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={page}&ps=20",
             };
@@ -45,7 +45,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.live.bilibili.com/rc/v2/Sign/getSignInfo",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&actionKey=appkey",
             };
@@ -56,7 +56,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/rc/v1/Sign/doSign",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&actionKey=appkey"
             };

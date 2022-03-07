@@ -17,7 +17,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/space/acc/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)+$"&mid={mid}",
             };
@@ -33,7 +33,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/space",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey) + $"&vmid={mid}",
             };
@@ -49,7 +49,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/relation/stat",
                 parameter =  $"vmid={mid}",
             };
@@ -68,7 +68,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/space/arc/search",
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
             };
@@ -85,7 +85,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/space/article",
                 parameter = $"mid={mid}&ps={pagesize}&pn={page}&sort={order.ToString()}",
             };
@@ -99,7 +99,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/relation/tags",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
             };
@@ -117,7 +117,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/relation/followings",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true) + $"&vmid={mid}&ps={pagesize}&pn={page}&order=desc&order_type={(order== FollowingsOrder.attention? "attention":"")}",
             };
@@ -146,7 +146,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/relation/followers",
                 parameter = $"vmid={mid}&ps={pagesize}&pn={page}&order=desc",
             };
@@ -162,7 +162,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
                 parameter = $"up_mid={mid}",
             };

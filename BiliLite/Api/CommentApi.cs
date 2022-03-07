@@ -36,7 +36,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}"
             };
@@ -47,7 +47,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply/reply",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
             };
@@ -59,7 +59,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply/action",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&rpid={root}&action={action}&type={type}"
             };
@@ -71,7 +71,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&root={root}&parent={parent}&type={type}&message={message}"
             };
@@ -82,7 +82,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&rpid={rpid}&type={type}"
             };
@@ -93,7 +93,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/v2/reply/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&type={(int)type}&message={Uri.EscapeDataString(message)}"
             };

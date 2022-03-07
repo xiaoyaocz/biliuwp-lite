@@ -12,7 +12,7 @@ namespace BiliLite.Api
         //{
         //    ApiModel api = new ApiModel()
         //    {
-        //        method = RestSharp.Method.GET,
+        //        method = RestSharp.Method.Get,
         //        baseUrl = $"{ApiHelper.baseUrl}/api/rank/RankRegion"
         //    };
         //    return api;
@@ -27,7 +27,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/x/web-interface/ranking/v2",
                 parameter = $"rid={rid}&type={type}"
             };
@@ -44,7 +44,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/pgc/season/rank/list",
                 parameter = $"season_type={type}"
             };

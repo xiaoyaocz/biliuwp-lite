@@ -20,7 +20,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/pgc/app/follow/v2/bangumi",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={page}&ps={pagesize}&status={status}",
             };
@@ -38,7 +38,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/pgc/app/follow/v2/cinema",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={page}&ps={pagesize}&status={status}",
             };
@@ -53,7 +53,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/pgc/app/follow/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
             };
@@ -68,7 +68,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/pgc/app/follow/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
             };
@@ -84,7 +84,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/pgc/app/follow/status/update",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}&status={status}"
             };
@@ -103,7 +103,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.bilibili.com/x/relation/modify",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&act={mode}&fid={mid}&re_src=32"
             };

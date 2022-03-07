@@ -35,7 +35,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<HttpResults> Request(this ApiModel api)
         {
-            if (api.method == RestSharp.Method.GET)
+            if (api.method == RestSharp.Method.Get)
             {
                 return await HttpHelper.Get(api.url, api.headers);
             }

@@ -83,11 +83,12 @@ namespace BiliLite.Modules.User
                 var bytes = new byte[fileStream.Size];
                 await fileStream.ReadAsync(bytes.AsBuffer(), (uint)fileStream.Size, Windows.Storage.Streams.InputStreamOptions.None);
                 var client = new RestClient(api.url);
-                var request = new RestRequest(Method.POST);
+                var request = new RestRequest();
+                request.Method = Method.Post;
                 request.AddParameter("biz", "draw");
                 request.AddParameter("category", "daily");
                 request.AddFile("file_up", bytes, file.Name);
-                IRestResponse response = await client.ExecuteAsync(request);
+                RestResponse response = await client.ExecuteAsync(request);
                 var content = response.Content;
 
                 ApiDataModel<UploadImagesModel> result = JsonConvert.DeserializeObject<ApiDataModel<UploadImagesModel>>(content);

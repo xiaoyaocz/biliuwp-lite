@@ -12,7 +12,7 @@ namespace BiliLite.Api.Home
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.baseUrl}/api/cinema/home"
             };
             return api;
@@ -21,7 +21,7 @@ namespace BiliLite.Api.Home
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.baseUrl}/api/cinema/falls",
                 parameter = $"wid={wid}&cursor={cursor}"
             };

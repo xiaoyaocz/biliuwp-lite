@@ -14,7 +14,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/pgc/view/app/season",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
             };
@@ -25,7 +25,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/pgc/view/app/season",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
             };
@@ -39,7 +39,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://bangumi.bilibili.com/view/web_api/season",
                 parameter = $"season_id={season_id}"
             };
@@ -55,7 +55,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.bilibili.com/pgc/review/short/list",
                 parameter = $"media_id={media_id}&ps=20&sort={sort}&cursor={next}"
             };
@@ -74,7 +74,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://bangumi.bilibili.com/review/api/like",
                 body = $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&media_id={media_id}&review_id={review_id}&review_type={(int)review_type}"
             };
@@ -90,7 +90,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://bangumi.bilibili.com/review/api/dislike",
                 body = $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&media_id={media_id}&review_id={review_id}&review_type={(int)review_type}"
             };
@@ -109,7 +109,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://bangumi.bilibili.com/review/api/short/post",
                 body = $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&media_id={media_id}&content={Uri.EscapeDataString(content)}&share_feed={(share_feed?1:0)}&score={score}"
             };

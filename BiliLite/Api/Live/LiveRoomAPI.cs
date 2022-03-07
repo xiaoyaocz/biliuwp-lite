@@ -18,7 +18,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/xlive/app-room/v1/index/getInfoByRoom",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&room_id={roomid}&device=android"
             };
@@ -33,7 +33,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/pay/v2/Pay/myWallet",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey"
             };
@@ -49,7 +49,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/rc/v1/Title/getTitle",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey"
             };
@@ -65,7 +65,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/gift/v4/Live/giftConfig",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&area_v2_id={area_v2_id}&area_v2_parent_id={area_v2_parent_id}&roomid={roomId}"
             };
@@ -81,7 +81,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/xlive/app-room/v1/gift/bag_list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&roomid={roomId}"
             };
@@ -97,7 +97,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/gift/v3/live/room_gift_list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&area_v2_id={area_v2_id}&area_v2_parent_id={area_v2_parent_id}&roomid={roomId}"
             };
@@ -113,7 +113,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/mobile/freeSilverCurrentTask",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey"
             };
@@ -128,7 +128,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/mobile/freeSilverAward",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey"
             };
@@ -144,7 +144,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/gift/v2/live/bag_send",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
                 body=$"uid={SettingHelper.Account.UserID}&ruid={ruid}&send_ruid=0&gift_id={gift_id}&gift_num={num}&bag_id={bag_id}&biz_id={roomId}&rnd={new Random().Next(1000,999999).ToString("000000")}&biz_code=live&data_behavior_id=&data_source_id="
@@ -161,7 +161,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/gift/v2/live/send",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
@@ -178,7 +178,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/api/sendmsg",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
@@ -195,7 +195,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/live_user/v1/card/card_up",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&uid={uid}",
             };
@@ -215,7 +215,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/xlive/app-room/v1/guardTab/topList",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&page={page}&page_size=20&roomid={roomId}&ruid={ruid}",
             };
@@ -234,7 +234,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/rankdb/v2/RoomRank/mobileMedalRank",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&page={page}&roomid={roomId}&ruid={ruid}",
             };
@@ -255,7 +255,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/rankdb/v1/RoomRank/tabRanks",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&next_offset={next_offset}&room_id={roomId}&ruid={ruid}&rank_type={rank_type}",
             };
@@ -272,7 +272,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/xlive/lottery-interface/v1/lottery/getLotteryInfo",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&roomid={roomId}",
             };
@@ -289,7 +289,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.live.bilibili.com/av/v1/SuperChat/getMessageList",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&room_id={roomId}",
             };
@@ -305,7 +305,7 @@ namespace BiliLite.Api.Live
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/room/v1/Room/room_entry_action",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey&room_id={roomId}",
             };

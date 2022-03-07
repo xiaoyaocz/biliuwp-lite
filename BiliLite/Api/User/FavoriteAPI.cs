@@ -20,7 +20,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/space/v2",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}"
             };
@@ -31,7 +31,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/created/list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}&pn={page}&ps=20"
             };
@@ -46,7 +46,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/medialist/gateway/base/created",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingHelper.Account.UserID}&type=2&pn=1&ps=100"
             };
@@ -68,7 +68,7 @@ namespace BiliLite.Api.User
             ids = Uri.EscapeDataString(ids.TrimEnd(','));
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/medialist/gateway/coll/resource/deal",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&add_media_ids={ids}&rid={avid}&type=2"
             };
@@ -85,7 +85,7 @@ namespace BiliLite.Api.User
           
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/fav",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={media_id}"
             };
@@ -101,7 +101,7 @@ namespace BiliLite.Api.User
 
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/unfav",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={media_id}"
             };
@@ -120,7 +120,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"privacy={(isOpen ? 0 : 1)}&title={Uri.EscapeDataString(title)}&intro={Uri.EscapeDataString(intro)}"
             };
@@ -139,7 +139,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/edit",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"privacy={(isOpen ? 0 : 1)}&title={Uri.EscapeDataString(title)}&intro={Uri.EscapeDataString(intro)}&media_id={media_id}"
             };
@@ -156,7 +156,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/folder/del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_ids={media_id}"
             };
@@ -172,7 +172,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
             };
@@ -183,7 +183,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/space/fav/season/list",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
             };
@@ -205,7 +205,7 @@ namespace BiliLite.Api.User
             ids = Uri.EscapeDataString(ids.TrimEnd(','));
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/batch-del",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={media_id}&resources={ids}"
             };
@@ -226,7 +226,7 @@ namespace BiliLite.Api.User
             ids = Uri.EscapeDataString(ids.TrimEnd(','));
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/copy",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&src_media_id={src_media_id}&tar_media_id={tar_media_id}&resources={ids}&mid={mid}"
             };
@@ -247,7 +247,7 @@ namespace BiliLite.Api.User
             ids = Uri.EscapeDataString(ids.TrimEnd(','));
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/move",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&src_media_id={src_media_id}&tar_media_id={tar_media_id}&resources={ids}"
             };
@@ -262,7 +262,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v3/fav/resource/clean",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={media_id}"
             };

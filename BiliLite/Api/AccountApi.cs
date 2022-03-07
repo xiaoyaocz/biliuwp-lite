@@ -17,7 +17,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/getKey",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey)
             };
@@ -36,7 +36,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/login",
                 body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}{((captcha == "") ? "" : "&captcha=" + captcha)}&" + ApiHelper.MustParameter(ApiHelper.AndroidKey)
             };
@@ -55,7 +55,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/v3/oauth2/login",
                 body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}&gee_type={gee_type}&" + ApiHelper.MustParameter(ApiHelper.AndroidTVKey)
             };
@@ -72,7 +72,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://passport.bilibili.com/api/login/sso",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,false) + $"&gourl=https%3A%2F%2Faccount.bilibili.com%2Faccount%2Fhome&access_key={access_key}",
                 headers = ApiHelper.GetDefaultHeaders()
@@ -89,7 +89,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://passport.bilibili.com/captcha",
                 headers = ApiHelper.GetDefaultHeaders(),
                 parameter = $"ts={Utils.GetTimestampS()}"
@@ -105,7 +105,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/account/myinfo",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true)
             };
@@ -122,7 +122,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/account/mine",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
             };
@@ -138,7 +138,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "http://app.biliapi.net/x/v2/space",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ $"&vmid={mid}"
             };
@@ -150,7 +150,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.bilibili.com/x/v2/history",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={pn}&ps={ps}"
             };
@@ -161,7 +161,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://api.bilibili.com/x/v2/history/delete",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&kid={id}"
             };
@@ -178,7 +178,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method =  RestSharp.Method.POST,
+                method =  RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidTVKey, false) + $"&local_id={local_id}",
             };
@@ -195,7 +195,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-tv-login/qrcode/poll",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidTVKey, false) + $"&auth_code={auth_code}&guid={Guid.NewGuid().ToString()}&local_id={local_id}",
             };
@@ -212,7 +212,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)+ "&access_token="+SettingHelper.Account.AccessKey
             };
@@ -228,7 +228,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/refreshToken",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey)+ $"&access_token={SettingHelper.Account.AccessKey}&refresh_token={SettingHelper.GetValue<string>(SettingHelper.Account.REFRESH_KEY, "")}"
             };

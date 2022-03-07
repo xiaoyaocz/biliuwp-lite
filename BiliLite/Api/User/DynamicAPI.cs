@@ -55,13 +55,13 @@ namespace BiliLite.Api.User
             }
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new",
                 parameter = $"type_list={Uri.EscapeDataString(typeList)}&uid={SettingHelper.Account.UserID}",
             };
             //ApiModel api = new ApiModel()
             //{
-            //    method = RestSharp.Method.GET,
+            //    method = RestSharp.Method.Get,
             //    baseUrl = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
             //    parameter = $"host_uid={SettingHelper.Account.UserID}&visitor_uid={SettingHelper.Account.UserID}",
             //};
@@ -78,7 +78,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/get_dynamic_detail",
                 parameter = $"dynamic_id={id}",
             };
@@ -94,7 +94,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost_detail",
                 parameter = $"dynamic_id={id}&offset={offset}",
             };
@@ -129,7 +129,7 @@ namespace BiliLite.Api.User
             
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_history",
                 parameter = $"offset_dynamic_id={dynamic_id}&type_list={Uri.EscapeDataString(typeList)}&uid={SettingHelper.Account.UserID}"
             };//使用Web的API
@@ -145,7 +145,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
                 parameter = $"offset_dynamic_id={dynamic_id}&visitor_uid={SettingHelper.Account.UserID}&host_uid={mid}&need_top=1"
             };
@@ -164,7 +164,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = "https://api.vc.bilibili.com/topic_svr/v1/topic_svr/get_rcmd_topic",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) ,
             };
@@ -185,7 +185,7 @@ namespace BiliLite.Api.User
 
             ApiModel api = new ApiModel()
             {
-                method =  RestSharp.Method.POST,
+                method =  RestSharp.Method.Post,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create_draw",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true),
                 body = $"uid={ SettingHelper.Account.UserID}&category=3&pictures={Uri.EscapeDataString(imgs)}&description={Uri.EscapeDataString(content)}&content={Uri.EscapeDataString(content)}&setting=%7B%22copy_forbidden%22%3A0%7D&at_uids={Uri.EscapeDataString(at_uids)}&at_control={Uri.EscapeDataString(at_control)}&extension=%7B%22emoji_type%22%3A1%7D"
@@ -204,7 +204,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method =  RestSharp.Method.POST,
+                method =  RestSharp.Method.Post,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/create",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true),
                 body = $"uid={SettingHelper.Account.UserID}&dynamic_id=0&type=4&content={Uri.EscapeDataString(content)}&setting=%7B%22copy_forbidden%22%3A0%7D&at_uids={Uri.EscapeDataString(at_uids)}&at_control={Uri.EscapeDataString(at_control)}&jumpfrom=110&extension=%7B%22emoji_type%22%3A1%7D"
@@ -223,7 +223,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_repost/v1/dynamic_repost/repost",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true),
                 body = $"uid={SettingHelper.Account.UserID}&dynamic_id={dynamic_id}&content={Uri.EscapeDataString(content)}&at_uids={Uri.EscapeDataString(at_uids)}&at_control={Uri.EscapeDataString(at_control)}&extension=%7B%22emoji_type%22%3A1%7D"
@@ -242,7 +242,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_like/v1/dynamic_like/thumb",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+$"&dynamic_id={dynamic_id}&uid={SettingHelper.Account.UserID}&up={up}"
             };
@@ -258,7 +258,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.POST,
+                method = RestSharp.Method.Post,
                 baseUrl = $"https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/rm_dynamic",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&dynamic_id={dynamic_id}"
             };
@@ -275,7 +275,7 @@ namespace BiliLite.Api.User
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.GET,
+                method = RestSharp.Method.Get,
                 baseUrl = $"https://api.vc.bilibili.com/api/v1/drawImage/upload",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) 
             };
