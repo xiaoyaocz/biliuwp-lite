@@ -134,9 +134,10 @@ namespace BiliLite.Modules.User.UserDetail
                 {
                     var data =  results.GetJObject();
                     var successful = data["code"].ToInt32()==0;
-                    var listStr= data["data"] is JArray? data["data"].ToString() : data["data"]["list"].ToString();
+                    
                     if (successful)
                     {
+                        var listStr = data["data"] is JArray ? data["data"].ToString() : data["data"]["list"].ToString();
                         var items = JsonConvert.DeserializeObject<ObservableCollection<UserFollowItemModel>>(listStr ?? "[]");
                         if (Items == null)
                         {

@@ -1,7 +1,7 @@
 {
-  "version": "4.3.5",
-  "version_num": 40305,
-  "version_desc": "更新内容:\r\n\r\n* 修复一些问题",
+  "version": "4.3.6",
+  "version_num": 40306,
+  "version_desc": "更新内容:\r\n\r\n* 增加AV1编码支持\r\n\r\n* 增加关注列表分组支持\r\n\r\n* 修复个人中心视频重复加载问题\r\n\r\n* 修复用户设置隐藏时无法查看我的关注",
   "url": "https://www.showdoc.com.cn/biliuwpv4",
-  "download_url": "https://xiaoyaocz.lanzouo.com/b00v83a4h"
+  "download_url": "https://xiaoyaocz.lanzouv.com/b00veeuqb"
 }
