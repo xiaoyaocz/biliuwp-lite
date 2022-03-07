@@ -183,7 +183,7 @@ namespace BiliLite.Pages.Home
             btnList.Visibility = Visibility.Collapsed;
             //设置
             SettingHelper.SetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 1);
-            RecommendGridView.ItemHeight = 100;
+            RecommendGridView.ItemHeight = 110;
             RecommendGridView.DesiredWidth =500;
             RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["List"];
         }

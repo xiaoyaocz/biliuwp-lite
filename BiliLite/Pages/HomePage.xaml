@@ -8,10 +8,10 @@
     mc:Ignorable="d"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:fa="using:FontAwesome5"
-    xmlns:pages="using:BiliLite.Pages.Home"
+    xmlns:ip="using:MahApps.Metro.IconPacks"
     xmlns:modules="using:BiliLite.Modules" xmlns:converters="using:BiliLite.Converters"
     NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+   >
     <Page.Resources>
         <converters:CountDisplayConvert x:Name="countDisplayConvert"></converters:CountDisplayConvert>
     </Page.Resources>
@@ -25,11 +25,11 @@
                                PaneDisplayMode="Top"  
                                IsBackButtonVisible="Collapsed" >
             <winui:NavigationView.AutoSuggestBox>
-                <AutoSuggestBox x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" MinWidth="140" PlaceholderText="你想找什么呢?" QueryIcon="Find"></AutoSuggestBox>
+                <AutoSuggestBox x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" Width="160" PlaceholderText="你想找什么呢?" QueryIcon="Find"></AutoSuggestBox>
             </winui:NavigationView.AutoSuggestBox>
             <winui:NavigationView.PaneFooter>
                 <StackPanel Margin="-8 0 0 0" Orientation="Horizontal">
-                    <Button x:Name="btnUser" Visibility="{x:Bind Path=homeVM.IsLogin,Mode=OneWay}" BorderThickness="0"  Width="48" Height="40" Background="Transparent">
+                    <Button x:Name="btnUser" Visibility="{x:Bind Path=homeVM.IsLogin,Mode=OneWay}" BorderThickness="0" Width="48" Height="40" Background="Transparent">
                         <Ellipse Width="24" Height="24" >
                             <Ellipse.Fill>
                                 <ImageBrush  x:Name="imgPhoto"  ImageSource="{x:Bind Path=homeVM.Profile.face,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='100w'}"/>
@@ -37,7 +37,7 @@
                         </Ellipse>
                         <Button.Flyout>
                             <Flyout x:Name="UserFlyout">
-                                <StackPanel Width="240">
+                                <StackPanel Width="280">
                                     <Grid>
                                         <Ellipse Width="48" Height="48">
                                             <Ellipse.Fill>
@@ -62,72 +62,72 @@
                                     </Grid>
                                     <ProgressBar Margin="12 4"  Background="#33808080" Value="{x:Bind Path=homeVM.Profile.current_exp,Mode=OneWay}" Maximum="{x:Bind Path=homeVM.Profile.next_exp,Mode=OneWay}"></ProgressBar>
 
-                                    <Grid Padding="0 12" BorderThickness="0 1 0 1" Margin="0 4" BorderBrush="#19808080">
+                                    <Grid  BorderThickness="0 1 0 1" Margin="0 4" BorderBrush="#19808080">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <HyperlinkButton Click="btnOpenAttention_Click" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
+                                        <HyperlinkButton Click="btnOpenAttention_Click" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="12">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Foreground="Gray">关注</TextBlock>
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.follow,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                                             </StackPanel>
                                         </HyperlinkButton>
-                                        <HyperlinkButton Click="btnOpenFans_Click" Grid.Column="1" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
+                                        <HyperlinkButton Click="btnOpenFans_Click" Grid.Column="1" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="12">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Foreground="Gray">粉丝</TextBlock>
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.fans,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                                             </StackPanel>
                                         </HyperlinkButton>
-                                        <HyperlinkButton Click="btnOpenDynamic_Click"  Grid.Column="2" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="0">
+                                        <HyperlinkButton Click="btnOpenDynamic_Click"  Grid.Column="2" Foreground="{ThemeResource TextColor}" HorizontalAlignment="Center" Padding="12">
                                             <StackPanel>
                                                 <TextBlock TextAlignment="Center" Foreground="Gray">动态</TextBlock>
                                                 <TextBlock TextAlignment="Center" FontWeight="Bold" FontSize="12" Text="{x:Bind Path=homeVM.Profile.dynamic,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                                             </StackPanel>
                                         </HyperlinkButton>
                                     </Grid>
-                                    <Button x:Name="MenuUserCenter" Click="MenuUserCenter_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuUserCenter" Click="MenuUserCenter_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Regular_User" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">个人中心</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="User" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">个人中心</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuMessage" Click="MenuMessage_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuMessage" Click="MenuMessage_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Regular_Envelope" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">我的消息</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="Mail" Width="24" FontSize="16"  VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">我的消息</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuWatchlater" Click="MenuWatchlater_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuWatchlater" Click="MenuWatchlater_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Regular_PlayCircle" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">稍后再看</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="PlayCircle" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">稍后再看</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuMyFollow" Click="MenuMyFollow_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuMyFollow" Click="MenuMyFollow_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Regular_Star" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">我的收藏</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="Star" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">我的收藏</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuHistory"  Click="MenuHistory_Click" Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuHistory"  Click="MenuHistory_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Solid_History" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">历史记录</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="Clock" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">历史记录</TextBlock>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="MenuMyLive" Click="MenuMyLive_Click"   Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="MenuMyLive" Click="MenuMyLive_Click"  BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Regular_Flag" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">直播中心</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="Tv" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">直播中心</TextBlock>
                                         </StackPanel>
                                     </Button>
                                     <Border Height="1" Margin="0 4" Background="#19808080"></Border>
-                                    <Button x:Name="btnLogout" Click="btnLogout_Click"  Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                    <Button x:Name="btnLogout" Click="btnLogout_Click" BorderThickness="0"  Padding="12" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
-                                            <fa:FontAwesome Icon="Solid_SignOutAlt" Width="24" FontSize="16"></fa:FontAwesome>
-                                            <TextBlock Margin="12 0">退出登录</TextBlock>
+                                            <ip:PackIconFeatherIcons Kind="LogOut" Width="24" FontSize="16" VerticalAlignment="Center"></ip:PackIconFeatherIcons>
+                                            <TextBlock Margin="16 0">退出登录</TextBlock>
                                         </StackPanel>
                                     </Button>
                                 </StackPanel>

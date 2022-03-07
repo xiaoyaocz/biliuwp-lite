@@ -134,6 +134,7 @@ namespace BiliLite.Modules
             {
                 if (Banner == null || Banner.Count == 0)
                 {
+                    Banner = new ObservableCollection<RecommendBannerItemModel>();
                     foreach (var item in banner.banner_item)
                     {
 

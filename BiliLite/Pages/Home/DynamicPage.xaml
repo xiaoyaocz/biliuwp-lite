@@ -16,7 +16,7 @@
     <Page.Resources>
         <convert:DatetimeConvert x:Key="time"/>
         <DataTemplate x:Key="DynamicVideo" x:DataType="modules:DynamicItemModel">
-            <Grid Background="#00FFFFFF">
+            <Grid Background="#00FFFFFF" Padding="4">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
@@ -27,7 +27,7 @@
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                <Border CornerRadius="4">
                     <Grid>
                         <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=video.pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                         <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
@@ -36,7 +36,7 @@
 
                     </Grid>
                 </Border>
-                <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                <StackPanel Grid.Column="1" Margin="12 0 4 0">
                     <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=video.title}"></TextBlock>
                     <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=video.stat.view,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=video.stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                     <StackPanel Orientation="Horizontal">
@@ -76,7 +76,7 @@
         <winui:RefreshContainer  RefreshRequested="RefreshContainer_RefreshRequested">
             <controls:MyAdaptiveGridView 
                 Padding="12 8" 
-                ItemHeight="100" 
+                ItemHeight="112" 
                 DesiredWidth="600" 
                 StretchContentForSingleRow="False" 
                 LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand,Mode=OneWay}"
@@ -89,8 +89,12 @@
                 Loading="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"
                 OneRowModeEnabled="False">
                 <controls:MyAdaptiveGridView.ItemContainerStyle>
-                    <Style TargetType="GridViewItem">
-                        <Setter Property="Margin" Value="12"></Setter>
+                    <Style TargetType="GridViewItem" BasedOn="{StaticResource GridViewItemCornerRadiusStyle}">
+                        <Setter Property="Margin" Value="4"></Setter>
+                        <Setter Property="BorderThickness" Value="1"></Setter>
+                        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"></Setter>
+                        <Setter Property="Background" Value="{ThemeResource ButtonBackground}"></Setter>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                     </Style>
                 </controls:MyAdaptiveGridView.ItemContainerStyle>
                 

@@ -12,6 +12,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:fa="using:FontAwesome5"
+    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -52,13 +53,13 @@
             </ListView>
         </Flyout>
         <DataTemplate x:Key="Grid" x:DataType="modules:RecommendItemModel">
-            <Grid ContextFlyout="{StaticResource Menu}">
+            <Grid ContextFlyout="{StaticResource Menu}" >
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="48"/>
                     <RowDefinition Height="24"/>
                 </Grid.RowDefinitions>
-                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                <Border >
                     <Grid>
                     <toolkit:ImageEx IsCacheEnabled="True"  
                                      PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   
@@ -85,8 +86,8 @@
                 </Grid>
                 </Border>
 
-                <TextBlock Grid.Row="1" Margin="4 4 4 0"  MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
-                <StackPanel  Grid.Row="2" Margin="4 0 4 4" Orientation="Horizontal">
+                <TextBlock Grid.Row="1" Margin="8 4 8 0"  MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                <StackPanel  Grid.Row="2" Margin="8 0 8 4" Orientation="Horizontal">
                     <Border Visibility="{x:Bind showRcmd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
                         <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
                     </Border>
@@ -103,13 +104,13 @@
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="List" x:DataType="modules:RecommendItemModel">
-            <Grid ContextFlyout="{StaticResource Menu}">
+            <Grid ContextFlyout="{StaticResource Menu}" Padding="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Border CornerRadius="{StaticResource ImageCornerRadius}">
-                    <Grid Width="160">
+                <Border CornerRadius="4" >
+                    <Grid Width="160" >
                         <toolkit:ImageEx IsCacheEnabled="True"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200h'}"></toolkit:ImageEx>
                         <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind showCoverText}">
                             <Grid.Background>
@@ -131,7 +132,7 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <Grid Grid.Column="1" Margin="8 0 0 0">
+                <Grid Grid.Column="1" Margin="12 0 0 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition />
@@ -170,7 +171,6 @@
                                           ItemHeight="240"
                                           DesiredWidth="260"
                                           Padding="8"
-                                         
                                           SelectionMode="None"
                                           LoadMoreBottomOffset="0"
                                           LoadMoreCommand="{x:Bind Path=recommendVM.LoadMoreCommand}"
@@ -178,9 +178,13 @@
                                           Loading="{x:Bind Path=recommendVM.Loading,Mode=OneWay}"
                                           IsItemClickEnabled="True">
                     <toolkit:AdaptiveGridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="Margin" Value="12"></Setter>
-
+                        <Style TargetType="GridViewItem" BasedOn="{StaticResource GridViewItemCornerRadiusStyle}">
+                            <Setter Property="Margin" Value="8"></Setter>
+                            <Setter Property="BorderThickness" Value="1"></Setter>
+                            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"></Setter>
+                            <Setter Property="Background" Value="{ThemeResource ButtonBackground}"></Setter>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            
                         </Style>
                     </toolkit:AdaptiveGridView.ItemContainerStyle>
                     <controls:MyAdaptiveGridView.Header>
@@ -188,7 +192,7 @@
                             <controls:Carousel.ContentTemplate>
                                 <DataTemplate x:DataType="modules:RecommendBannerItemModel">
                                     <HyperlinkButton Margin="12 0" Padding="0" Click="BannerItem_Click">
-                                        <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <Border CornerRadius="8">
                                             <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Source="{x:Bind Path=image,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
                                         </Border>
                                     </HyperlinkButton>
