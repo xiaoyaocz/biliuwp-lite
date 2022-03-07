@@ -24,11 +24,11 @@ namespace BiliLite.Pages
 {
     public enum UserTab
     {
-        SubmitVideo=0,
-        Dynamic=1,
-        Article=2,
-        Favorite=3,
-        Attention=4,
+        SubmitVideo = 0,
+        Dynamic = 1,
+        Article = 2,
+        Favorite = 3,
+        Attention = 4,
         Fans = 5,
     }
     public class UserInfoParameter
@@ -44,16 +44,17 @@ namespace BiliLite.Pages
         readonly DynamicVM dynamicVM;
         UserDetailVM userDetailVM;
         UserSubmitVideoVM userSubmitVideoVM;
-        UserSubmitArticleVM  userSubmitArticleVM;
+        UserSubmitArticleVM userSubmitArticleVM;
         UserFavlistVM userFavlistVM;
         UserFollowVM fansVM;
         UserFollowVM followVM;
         private bool IsStaggered { get; set; } = false;
+        bool isSelf = false;
         public UserInfoPage()
         {
             this.InitializeComponent();
             Title = "用户中心";
-            userDetailVM = new Modules.User.UserDetailVM(); 
+            userDetailVM = new Modules.User.UserDetailVM();
             userSubmitVideoVM = new UserSubmitVideoVM();
             userSubmitArticleVM = new UserSubmitArticleVM();
             userFavlistVM = new UserFavlistVM();
@@ -113,7 +114,7 @@ namespace BiliLite.Pages
                 oid = id
             });
         }
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected  override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             SetStaggered();
@@ -121,7 +122,7 @@ namespace BiliLite.Pages
             {
                 var mid = "";
                 var tabIndex = 0;
-                if(e.Parameter is UserInfoParameter)
+                if (e.Parameter is UserInfoParameter)
                 {
                     var par = e.Parameter as UserInfoParameter;
                     mid = par.Mid;
@@ -129,7 +130,7 @@ namespace BiliLite.Pages
                 }
                 else
                 {
-                    mid= e.Parameter.ToString();
+                    mid = e.Parameter.ToString();
                 }
                 userDetailVM.mid = mid;
                 userSubmitVideoVM.mid = mid;
@@ -139,20 +140,24 @@ namespace BiliLite.Pages
                 followVM.mid = mid;
                 if (userDetailVM.mid == SettingHelper.Account.UserID.ToString())
                 {
+                    isSelf = true;
                     appBar.Visibility = Visibility.Collapsed;
+                    followHeader.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    isSelf = false;
+                    followHeader.Visibility = Visibility.Collapsed;
                 }
                 dynamicVM.DynamicType = DynamicType.Space;
                 dynamicVM.Uid = mid;
                 userDetailVM.GetUserInfo();
-                
+
                 if (tabIndex != 0)
                 {
                     pivot.SelectedIndex = tabIndex;
                 }
-                else
-                {
-                    await userSubmitVideoVM.GetSubmitVideo();
-                }
+               
             }
         }
 
@@ -203,12 +208,12 @@ namespace BiliLite.Pages
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(userSubmitVideoVM!=null&&userSubmitVideoVM.CurrentTid!= userSubmitVideoVM.SelectTid.tid)
+            if (userSubmitVideoVM != null && userSubmitVideoVM.CurrentTid != userSubmitVideoVM.SelectTid.tid)
             {
 
                 userSubmitVideoVM?.Refresh();
             }
-           
+
         }
 
         private void pivotRight_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -265,11 +270,11 @@ namespace BiliLite.Pages
 
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (pivot.SelectedIndex ==0&& userSubmitVideoVM.SubmitVideoItems == null)
+            if (pivot.SelectedIndex == 0 && userSubmitVideoVM.SubmitVideoItems == null)
             {
                 await userSubmitVideoVM.GetSubmitVideo();
             }
-            if (pivot.SelectedIndex == 1&&dynamicVM.Items==null)
+            if (pivot.SelectedIndex == 1 && dynamicVM.Items == null)
             {
                 await dynamicVM.GetDynamicItems();
             }
@@ -277,12 +282,17 @@ namespace BiliLite.Pages
             {
                 await userSubmitArticleVM.GetSubmitArticle();
             }
-            if (pivot.SelectedIndex == 3 && userFavlistVM.Items== null)
+            if (pivot.SelectedIndex == 3 && userFavlistVM.Items == null)
             {
                 await userFavlistVM.Get();
             }
             if (pivot.SelectedIndex == 4 && followVM.Items == null)
             {
+                if (isSelf)
+                {
+                    await followVM.GetTags();
+                }
+                
                 await followVM.Get();
             }
             if (pivot.SelectedIndex == 5 && fansVM.Items == null)
@@ -319,7 +329,7 @@ namespace BiliLite.Pages
                 parameters = new FavoriteDetailArgs()
                 {
                     Id = data.id.ToString(),
-                } 
+                }
             });
         }
 
@@ -339,6 +349,33 @@ namespace BiliLite.Pages
         {
             var data = (sender as MenuFlyoutItem).DataContext as SubmitVideoItemModel;
             Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.aid);
+        }
+
+        private void comFollowOrder_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            followVM.Refresh();
+        }
+
+        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            if (followVM != null && followVM.CurrentTid != followVM.SelectTid.tagid)
+            {
+                if (followVM.SelectTid.tagid == -1)
+                {
+                    searchFollow.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    searchFollow.Visibility = Visibility.Collapsed;
+                }
+                followVM.Refresh();
+            }
+
+        }
+
+        private void searchFollow_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            followVM.Refresh();
         }
     }
 }

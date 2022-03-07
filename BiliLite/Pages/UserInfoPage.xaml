@@ -54,7 +54,7 @@
                     </StackPanel>
                 </Grid>
             </DataTemplate>
-          
+
         </ResourceDictionary>
 
     </Page.Resources>
@@ -458,13 +458,28 @@
                                     ItemClick="UserList_ItemClick"
                                     ItemTemplate="{StaticResource UserTpl}"
                                     OneRowModeEnabled="False">
+                                    <toolkit:AdaptiveGridView.Header>
+                                        <Grid Margin="4 8" x:Name="followHeader">
+                                            <StackPanel Orientation="Horizontal">
+                                                <ComboBox DisplayMemberPath="name" ItemsSource="{x:Bind Path=followVM.Tlist,Mode=OneWay}" SelectionChanged="ComboBox_SelectionChanged_1" SelectedItem="{x:Bind Path=followVM.SelectTid,Mode=TwoWay}">
 
+                                                </ComboBox>
+                                                <ComboBox x:Name="comFollowOrder" SelectionChanged="comFollowOrder_SelectionChanged" Margin="8 0"  SelectedIndex="{x:Bind Path=followVM.SelectOrder,Mode=TwoWay}">
+                                                    <ComboBoxItem>关注时间</ComboBoxItem>
+                                                    <ComboBoxItem>最常访问</ComboBoxItem>
+                                                 
+
+                                                </ComboBox>
+                                            </StackPanel>
+                                            <AutoSuggestBox Text="{x:Bind Path=followVM.Keyword,Mode=TwoWay}" x:Name="searchFollow"  QuerySubmitted="searchFollow_QuerySubmitted" QueryIcon="Find" PlaceholderText="搜索关注的人" Width="160" HorizontalAlignment="Right"></AutoSuggestBox>
+                                        </Grid>
+                                    </toolkit:AdaptiveGridView.Header>
                                     <toolkit:AdaptiveGridView.ItemContainerStyle>
                                         <Style TargetType="GridViewItem">
                                             <Setter Property="Margin" Value="4"></Setter>
                                         </Style>
                                     </toolkit:AdaptiveGridView.ItemContainerStyle>
-                                  
+
                                     <toolkit:AdaptiveGridView.Footer>
                                         <StackPanel>
                                             <HyperlinkButton  Command="{x:Bind Path=followVM.LoadMoreCommand}" Visibility="{x:Bind Path=followVM.CanLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center">

@@ -92,20 +92,46 @@ namespace BiliLite.Api.User
             return api;
         }
         /// <summary>
+        /// 关注的分组
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel FollowingsTag()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.GET,
+                baseUrl = "https://api.bilibili.com/x/relation/tags",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
+        /// <summary>
         /// 关注的人
         /// </summary>
         /// <param name="mid">用户ID</param>
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数量</param>
         /// <returns></returns>
-        public ApiModel Followings(string mid, int page = 1, int pagesize = 30)
+        public ApiModel Followings(string mid, int page = 1, int pagesize = 30,int tid=0,string keyword="",FollowingsOrder order= FollowingsOrder.attention)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.GET,
                 baseUrl = "https://api.bilibili.com/x/relation/followings",
-                parameter = $"vmid={mid}&ps={pagesize}&pn={page}&order=desc",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true) + $"&vmid={mid}&ps={pagesize}&pn={page}&order=desc&order_type={(order== FollowingsOrder.attention? "attention":"")}",
             };
+            if (tid==-1&& keyword != "")
+            {
+                api.baseUrl = "https://api.bilibili.com/x/relation/followings/search";
+                api.parameter += $"&name={keyword}";
+            }
+            if (tid != -1)
+            {
+                api.baseUrl = "https://api.bilibili.com/x/relation/tag";
+                api.parameter += $"&tagid={tid}&mid={mid}";
+            }
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -155,5 +181,16 @@ namespace BiliLite.Api.User
         publish_time,
         view,
         fav
+    }
+    public enum FollowingsOrder
+    {
+        /// <summary>
+        /// 关注时间
+        /// </summary>
+        addtime,
+        /// <summary>
+        /// 最常访问
+        /// </summary>
+        attention,
     }
 }
