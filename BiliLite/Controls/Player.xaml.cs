@@ -1623,7 +1623,7 @@ namespace BiliLite.Controls
                 _ffmpegMSSItems.Clear();
                 _ffmpegMSSItems = null;
             }
-
+            
 
             PlayState = PlayState.End;
             //进度设置为0
@@ -1669,10 +1669,10 @@ namespace BiliLite.Controls
                 info += $"Engine: {current_engine.ToString()}\r\n";
                 if (_ffmpegMSSVideo != null)
                 {
-                    info += $"Resolution: {_ffmpegMSSVideo.VideoStream.PixelHeight} x {_ffmpegMSSVideo.VideoStream.PixelWidth}\r\n";
-                    info += $"Video Codec: {_ffmpegMSSVideo.VideoStream.CodecName}\r\n";
-                    info += $"Video Bitrate: {_ffmpegMSSVideo.VideoStream.Bitrate}\r\n";
-                    info += $"Average Frame: {((double)_ffmpegMSSVideo.VideoDescriptor.EncodingProperties.FrameRate.Numerator / _ffmpegMSSVideo.VideoDescriptor.EncodingProperties.FrameRate.Denominator).ToString("0.0")}\r\n";
+                    info += $"Resolution: {_ffmpegMSSVideo.CurrentVideoStream.PixelHeight} x {_ffmpegMSSVideo.CurrentVideoStream.PixelWidth}\r\n";
+                    info += $"Video Codec: {_ffmpegMSSVideo.CurrentVideoStream.CodecName}\r\n";
+                    info += $"Video Bitrate: {_ffmpegMSSVideo.CurrentVideoStream.Bitrate}\r\n";
+                    info += $"Average Frame: {((double)_ffmpegMSSVideo.CurrentVideoStream.FramesPerSecond).ToString("0.0")}\r\n";
                     if (PlayMediaType == PlayMediaType.Dash)
                     {
                         info += $"Audio Codec: {_ffmpegMSSAudio.AudioStreams[0].CodecName}\r\n";
@@ -1818,8 +1818,7 @@ namespace BiliLite.Controls
             {
                 _ffmpegConfig.FFmpegOptions.Add("referer", httpHeader["Referer"]);
             }
-            _ffmpegConfig.PassthroughVideoHEVC = passthrough;
-            _ffmpegConfig.PassthroughVideoH264 = passthrough;
+           
             _ffmpegConfig.VideoDecoderMode = passthrough ? VideoDecoderMode.ForceSystemDecoder : VideoDecoderMode.ForceFFmpegSoftwareDecoder;
             return _ffmpegConfig;
         }

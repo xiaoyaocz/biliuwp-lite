@@ -204,11 +204,11 @@ namespace BiliLite.Pages
             {
                 var str = $"Url: {url}\r\n";
                 str += $"Quality: {liveRoomVM.current_qn.desc}({liveRoomVM.current_qn.qn})\r\n";
-                str += $"Video Codec: {interopMSS.VideoStream.CodecName}\r\nAudio Codec:{interopMSS.AudioStreams[0].CodecName}\r\n";
-                str += $"Resolution: {interopMSS.VideoStream.PixelWidth} x {interopMSS.VideoStream.PixelHeight}\r\n";
-                str += $"Video Bitrate: {interopMSS.VideoStream.Bitrate / 1024} Kbps\r\n";
+                str += $"Video Codec: {interopMSS.CurrentVideoStream.CodecName}\r\nAudio Codec:{interopMSS.AudioStreams[0].CodecName}\r\n";
+                str += $"Resolution: {interopMSS.CurrentVideoStream.PixelWidth} x {interopMSS.CurrentVideoStream.PixelHeight}\r\n";
+                str += $"Video Bitrate: {interopMSS.CurrentVideoStream.Bitrate / 1024} Kbps\r\n";
                 str += $"Audio Bitrate: {interopMSS.AudioStreams[0].Bitrate / 1024} Kbps\r\n";
-                str += $"Decoder Engine: {interopMSS.VideoStream.DecoderEngine.ToString()}";
+                str += $"Decoder Engine: {interopMSS.CurrentVideoStream.DecoderEngine.ToString()}";
                 txtInfo.Text = str;
             }
             catch (Exception)

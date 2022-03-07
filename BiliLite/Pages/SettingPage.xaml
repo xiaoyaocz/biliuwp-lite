@@ -206,21 +206,29 @@
                 </PivotItem.Header>
                 <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock  Margin="0 16 0 8"  FontSize="16">优先视频类型</TextBlock>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">优先视频编码</TextBlock>
                         <ComboBox x:Name="cbVideoType" SelectedIndex="0" MinWidth="200">
                             <ComboBox.Items>
-                                <ComboBoxItem>FLV</ComboBoxItem>
-                                <ComboBoxItem>MP4</ComboBoxItem>
-                                <ComboBoxItem>MP4-HEVC</ComboBoxItem>
+                                <ComboBoxItem>FLV/H.264</ComboBoxItem>
+                                <ComboBoxItem>AVC/H.264</ComboBoxItem>
+                                <ComboBoxItem>HEVC/H.265</ComboBoxItem>
+                                <ComboBoxItem>AV1</ComboBoxItem>
                             </ComboBox.Items>
                         </ComboBox>
-                        <TextBlock  Margin="0 16 0 8" FontSize="16">硬解视频</TextBlock>
-                        <RichTextBlock>
+                        <RichTextBlock Margin="0 12 0 0">
                             <Paragraph>
                                 <Run>视频编码为HEVC时系统需要</Run>
                                 <Hyperlink NavigateUri="ms-windows-store://pdp/?productid=9n4wgh0z6vhq">安装HEVC扩展</Hyperlink>
                             </Paragraph>
                         </RichTextBlock>
+                        <RichTextBlock>
+                            <Paragraph>
+                                <Run>视频编码为AV1时系统需要</Run>
+                                <Hyperlink NavigateUri="ms-windows-store://pdp/?productid=9MVZQVXJBQ9V">安装AV1扩展</Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">硬解视频</TextBlock>
+                        
                         <ToggleSwitch x:Name="swHardwareDecode"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8"  FontSize="16">视频默认倍速</TextBlock>
                         <ComboBox x:Name="cbVideoSpeed" SelectedIndex="0" MinWidth="200">
@@ -396,9 +404,10 @@
                         <TextBlock>当选择FLV时不支持4K视频下载，部分视频不支持M4S</TextBlock>
                         <ComboBox x:Name="cbDownloadVideoType" Margin="0 8"  MinWidth="200">
                             <ComboBox.Items>
-                                <ComboBoxItem>H264/FLV</ComboBoxItem>
-                                <ComboBoxItem>H264/M4S</ComboBoxItem>
-                                <ComboBoxItem>H265/M4S</ComboBoxItem>
+                                <ComboBoxItem>FLV格式(H264)</ComboBoxItem>
+                                <ComboBoxItem>M4S格式(H264)</ComboBoxItem>
+                                <ComboBoxItem>M4S格式(HEVC)</ComboBoxItem>
+                                <ComboBoxItem>M4S格式(AV1)</ComboBoxItem>
                             </ComboBox.Items>
                         </ComboBox>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">同时下载多个任务</TextBlock>

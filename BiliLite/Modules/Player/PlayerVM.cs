@@ -171,9 +171,9 @@ namespace BiliLite.Modules
             var data = await GetBiliBiliDash(playInfo, qn);
             if (data.code == 0 && data.data.dash != null)
             {
-                var codecid = (mode == 0) ? 7 : 12;
-                var h264 = data.data.dash.video.Where(x => x.codecid == 7);
-                var h265 = data.data.dash.video.Where(x => x.codecid == 12);
+                var h264 = data.data.dash.video.Where(x => x.codecs.Contains("avc"));
+                var h265 = data.data.dash.video.Where(x => x.codecs.Contains("hev"));
+                var av01 = data.data.dash.video.Where(x => x.codecs.Contains("av01"));
                 if (qn > data.data.accept_quality.Max())
                 {
                     qn = data.data.accept_quality.Max();
@@ -194,6 +194,14 @@ namespace BiliLite.Modules
                         if (h265_video != null)
                         {
                             video = h265_video;
+                        }
+                    }
+                    if (mode == 3)
+                    {
+                        var av1_video = av01.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
+                        if (av1_video != null)
+                        {
+                            video = av1_video;
                         }
                     }
                     if (video != null)

@@ -451,12 +451,14 @@
                             </PivotItem.Header>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
-                                    <TextBlock Margin="0 8" >优先选择视频类型</TextBlock>
+                                    <TextBlock Margin="0 8" >优先选择视频编码</TextBlock>
                                     <ComboBox x:Name="PlayerSettingMode">
                                         <ComboBox.Items>
-                                            <ComboBoxItem>FLV</ComboBoxItem>
-                                            <ComboBoxItem>MP4</ComboBoxItem>
-                                            <ComboBoxItem>MP4-HEVC</ComboBoxItem>
+                                            <ComboBoxItem>FLV/H.264</ComboBoxItem>
+                                            <ComboBoxItem>AVC/H.264</ComboBoxItem>
+                                            <ComboBoxItem>HEVC/H.265</ComboBoxItem>
+                                            <ComboBoxItem>AV1</ComboBoxItem>
+
                                         </ComboBox.Items>
                                     </ComboBox>
                                     <ToggleSwitch x:Name="PlayerSettingUseOtherSite" Margin="0 8"  Foreground="White" >

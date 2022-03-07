@@ -35,7 +35,9 @@
                     <ComboBoxItem>
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/H265</TextBlock>
                     </ComboBoxItem>
-                    
+                    <ComboBoxItem>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/AV1</TextBlock>
+                    </ComboBoxItem>
                 </ComboBox.Items>
                 
             </ComboBox>

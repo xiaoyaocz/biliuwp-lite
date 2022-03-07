@@ -2086,6 +2086,7 @@ namespace BiliLite.Controls
             Player.PlayStateChanged -= Player_PlayStateChanged;
             Player.PlayMediaEnded -= Player_PlayMediaEnded;
             Player.PlayMediaError -= Player_PlayMediaError;
+            Player.ChangeEngine -= Player_ChangeEngine;
             //Player.PlayBufferEnd -= Player_PlayBufferEnd;
             //Player.PlayBufferStart -= Player_PlayBufferStart;
             //Player.PlayBuffering -= Player_PlayBuffering;

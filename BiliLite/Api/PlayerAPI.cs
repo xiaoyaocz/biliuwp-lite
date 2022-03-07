@@ -19,7 +19,7 @@ namespace BiliLite.Api
             };
             if (dash)
             {
-                api.parameter += "&fourk=1&fnver=0&fnval=16";
+                api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
@@ -39,7 +39,7 @@ namespace BiliLite.Api
             }
             if (dash)
             {
-                api.parameter += "&fourk=1&fnver=0&fnval=16";
+                api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
@@ -58,7 +58,7 @@ namespace BiliLite.Api
             }
             if (dash)
             {
-                api.parameter += "&fourk=1&fnver=0&fnval=16";
+                api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
@@ -88,7 +88,7 @@ namespace BiliLite.Api
             }
             if (dash)
             {
-                api.parameter += "&fnver=0&fnval=16";
+                api.parameter += "&fnver=0&fnval=4048";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
