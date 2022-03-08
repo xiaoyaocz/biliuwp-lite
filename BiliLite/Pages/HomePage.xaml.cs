@@ -57,10 +57,6 @@ namespace BiliLite.Pages
                 CheckLoginStatus();
                 //await homeVM.LoginUserCard();
             }
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false))
-            {
-                btnSponsor.Visibility = Visibility.Collapsed;
-            }
 
         }
         private async void CheckLoginStatus()
@@ -270,32 +266,6 @@ namespace BiliLite.Pages
             });
         }
 
-        private async void btnSponsor_Click(object sender, RoutedEventArgs e)
-        {
-            var x = new ContentDialog()
-            {
-                Title = "赞助作者"
-            };
-            ScrollViewer scrollViewer = new ScrollViewer();
-            StackPanel st = new StackPanel();
-
-            st.Children.Add(new TextBlock()
-            {
-                TextWrapping = TextWrapping.Wrap,
-                IsTextSelectionEnabled = true,
-                Text = "\r\n如果觉得应用还不错，就请我喝杯咖啡吧!\r\n支付宝：2500655055@qq.com\r\n\r\n如果您不想显示此按钮，请到设置-个性化中设置"
-            });
-            st.Children.Add(new Image()
-            {
-                Width = 280,
-                Source = new BitmapImage(new Uri("ms-appx:///Assets/zfb.jpg"))
-            });
-            scrollViewer.Content = st;
-            x.Content = scrollViewer;
-            x.PrimaryButtonText = "知道了";
-            x.IsPrimaryButtonEnabled = true;
-            await x.ShowAsync();
-        }
         private void btnOpenFans_Click(object sender, RoutedEventArgs e)
         {
             MessageCenter.NavigateToPage(this, new NavigationInfo()

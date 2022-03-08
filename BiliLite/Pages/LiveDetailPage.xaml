@@ -556,7 +556,7 @@
                                                 <Flyout>
                                                     <StackPanel>
                                                         <TextBlock>音量</TextBlock>
-                                                        <Slider x:Name="SliderVolume" Value="1" Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
+                                                        <Slider x:Name="SliderVolume"   Value="1"  Width="200" Minimum="0" Maximum="1" StepFrequency="0.1"></Slider>
                                                     </StackPanel>
                                                 </Flyout>
                                             </Button.Flyout>

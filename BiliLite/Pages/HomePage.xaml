@@ -141,11 +141,7 @@
                             <TextBlock  FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Text="{x:Bind Path=downloadVM.Downloadings.Count,Mode=OneWay}"></TextBlock>
                         </Border>
                     </Grid>
-                    <AppBarButton x:Name="btnSponsor" Height="48" Click="btnSponsor_Click" Width="48" >
-                        <AppBarButton.Icon>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE006;" />
-                        </AppBarButton.Icon>
-                    </AppBarButton>
+
                     <AppBarButton x:Name="btnSetting" Height="48" Click="btnSetting_Click" Width="48" Icon="Setting" ></AppBarButton>
                 </StackPanel>
             </winui:NavigationView.PaneFooter>
