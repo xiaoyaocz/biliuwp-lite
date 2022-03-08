@@ -109,7 +109,7 @@ namespace BiliLite.Controls
         public async void LoadComment(LoadCommentInfo loadCommentInfo)
         {
 
-            if (loadCommentInfo.commentSort == commentSort.Hot)
+            if (loadCommentInfo.CommentSort == commentSort.Hot)
             {
                 hot.Visibility = Visibility.Visible;
                 _new.Visibility = Visibility.Collapsed;
@@ -119,7 +119,14 @@ namespace BiliLite.Controls
                 hot.Visibility = Visibility.Collapsed;
                 _new.Visibility = Visibility.Visible;
             }
-
+            if (loadCommentInfo.IsDialog)
+            {
+                btn_Refresh.Margin= new Thickness(0,0,40,0);
+            }
+            else
+            {
+                btn_Refresh.Margin = new Thickness(0);
+            }
             _loadCommentInfo = loadCommentInfo;
             _page = 1;
             await GetComment();
@@ -144,7 +151,7 @@ namespace BiliLite.Controls
                 ObservableCollection<CommentModel> ls = new ObservableCollection<CommentModel>();
 
 
-                var re = await commentApi.Comment(_loadCommentInfo.oid, _loadCommentInfo.commentSort, _page, _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.Comment(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
@@ -233,7 +240,7 @@ namespace BiliLite.Controls
                 data.showReplyMore = Visibility.Collapsed;
                 data.showLoading = Visibility.Visible;
                 ObservableCollection<CommentModel> ls = new ObservableCollection<CommentModel>();
-                var re = await commentApi.Reply(_loadCommentInfo.oid, data.rpid.ToString(), data.loadpage, _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.Reply(_loadCommentInfo.Oid, data.rpid.ToString(), data.loadpage, _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
@@ -291,7 +298,7 @@ namespace BiliLite.Controls
                 {
                     action = 1;
                 }
-                var re = await commentApi.Like(_loadCommentInfo.oid, data.rpid.ToString(), action, _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.Like(_loadCommentInfo.Oid, data.rpid.ToString(), action, _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -395,13 +402,13 @@ namespace BiliLite.Controls
 
         private void btn_HotSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.commentSort = commentSort.Hot;
+            _loadCommentInfo.CommentSort = commentSort.Hot;
             LoadComment(_loadCommentInfo);
         }
 
         private void btn_NewSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.commentSort = commentSort.New;
+            _loadCommentInfo.CommentSort = commentSort.New;
             LoadComment(_loadCommentInfo);
         }
 
@@ -442,7 +449,7 @@ namespace BiliLite.Controls
             }
             try
             {
-                var re = await commentApi.ReplyComment(_loadCommentInfo.oid, m.rpid.ToString(), m.rpid.ToString(), Uri.EscapeDataString(m.replyText), _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.ReplyComment(_loadCommentInfo.Oid, m.rpid.ToString(), m.rpid.ToString(), Uri.EscapeDataString(m.replyText), _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -499,7 +506,7 @@ namespace BiliLite.Controls
                 //    ApiHelper.access_key, ApiHelper.AndroidKey.Appkey, _type, _loadCommentInfo.oid, ApiHelper.GetTimeSpan_2, Uri.EscapeDataString(txt), m.root, m.rpid);
                 //content += "&sign=" + ApiHelper.GetSign(content);
 
-                var re = await commentApi.ReplyComment(_loadCommentInfo.oid, m.root.ToString(), m.rpid.ToString(), Uri.EscapeDataString(txt), _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.ReplyComment(_loadCommentInfo.Oid, m.root.ToString(), m.rpid.ToString(), Uri.EscapeDataString(txt), _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -571,7 +578,7 @@ namespace BiliLite.Controls
                 //content += "&sign=" + ApiHelper.GetSign(content);
 
                 //var re = await WebClientClass.PostResults(new Uri(url), content);
-                var re = await commentApi.DeleteComment(_loadCommentInfo.oid, m.rpid.ToString(), _loadCommentInfo.commentMode).Request();
+                var re = await commentApi.DeleteComment(_loadCommentInfo.Oid, m.rpid.ToString(), _loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -612,16 +619,22 @@ namespace BiliLite.Controls
 
         private async void btnOpenSendComment_Click(object sender, RoutedEventArgs e)
         {
-            SendCommentDialog sendCommentDialog = new SendCommentDialog(_loadCommentInfo.oid, (CommentType)_loadCommentInfo.commentMode);
+            SendCommentDialog sendCommentDialog = new SendCommentDialog(_loadCommentInfo.Oid, (CommentType)_loadCommentInfo.CommentMode);
             await sendCommentDialog.ShowAsync();
+        }
+
+        private void btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            LoadComment(_loadCommentInfo);
         }
     }
 
     public class LoadCommentInfo
     {
-        public int commentMode { get; set; }
-        public commentSort commentSort { get; set; }
-        public string oid { get; set; }
+        public int CommentMode { get; set; }
+        public commentSort CommentSort { get; set; }
+        public string Oid { get; set; }
+        public bool IsDialog { get; set; }=false;
     }
 
     public class dataCommentModel

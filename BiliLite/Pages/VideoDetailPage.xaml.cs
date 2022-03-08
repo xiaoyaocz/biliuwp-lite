@@ -214,9 +214,9 @@ namespace BiliLite.Pages
                 player.InitializePlayInfo(playInfos, index);
                 comment.LoadComment(new LoadCommentInfo()
                 {
-                    commentMode = (int)Api.CommentApi.CommentType.Video,
-                    commentSort = Api.CommentApi.commentSort.Hot,
-                    oid = videoDetailVM.VideoInfo.aid
+                    CommentMode = (int)Api.CommentApi.CommentType.Video,
+                    CommentSort = Api.CommentApi.commentSort.Hot,
+                    Oid = videoDetailVM.VideoInfo.aid
                 });
             }
             flag = false;

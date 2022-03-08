@@ -180,6 +180,9 @@
     <Compile Include="Converters\CountDisplayConvert.cs" />
     <Compile Include="Converters\DanmakuStyleConvert.cs" />
     <Compile Include="Converters\DownloadStatusConvert.cs" />
+    <Compile Include="Dialogs\CommentDialog.xaml.cs">
+      <DependentUpon>CommentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\CopyOrMoveFavVideoDialog.xaml.cs">
       <DependentUpon>CopyOrMoveFavVideoDialog.xaml</DependentUpon>
     </Compile>
@@ -577,6 +580,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\CommentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CommentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
-﻿using BiliLite.Modules.User;
+﻿using BiliLite.Helpers;
+using BiliLite.Modules.User;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +41,7 @@ namespace BiliLite.Pages.User
         string dynamic_id;
         private void DynamicVM_OpenCommentEvent(object sender, Controls.Dynamic.DynamicItemDisplayModel e)
         {
-            splitView.IsPaneOpen = true;
+            //splitView.IsPaneOpen = true;
             dynamic_id = e.DynamicID;
             pivotRight.SelectedIndex = 1;
             repostCount.Text = e.ShareCount.ToString();
@@ -74,13 +75,13 @@ namespace BiliLite.Pages.User
                     id = e.DynamicID;
                     break;
             }
-
-            comment.LoadComment(new Controls.LoadCommentInfo()
-            {
-                commentMode = (int)commentType,
-                commentSort = Api.CommentApi.commentSort.Hot,
-                oid = id
-            });
+            Utils.ShowComment(id, (int)commentType, Api.CommentApi.commentSort.Hot);
+            //comment.LoadComment(new Controls.LoadCommentInfo()
+            //{
+            //    CommentMode = (int)commentType,
+            //    CommentSort = Api.CommentApi.commentSort.Hot,
+            //    Oid = id
+            //});
         }
 
 

@@ -275,28 +275,33 @@
 
     </UserControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid  BorderThickness="0 0 0 1" BorderBrush="#33808080">
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="hot" >
+                <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" FontWeight="Bold">热门评论</TextBlock>
+                <HyperlinkButton x:Name="btn_NewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="btn_NewSort_Click"  HorizontalAlignment="Right">
+                    <TextBlock>按最新排序</TextBlock>
+                </HyperlinkButton>
+            </StackPanel>
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="_new">
+                <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" FontWeight="Bold">最新评论</TextBlock>
+                <HyperlinkButton x:Name="btn_HotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="btn_HotSort_Click" >
+                    <TextBlock>按热门排序</TextBlock>
+                </HyperlinkButton>
+            </StackPanel>
+            <AppBarButton x:Name="btn_Refresh" Click="btn_Refresh_Click" Margin="0 0 40 0" Width="40" Height="40" Icon="Refresh" HorizontalAlignment="Right"></AppBarButton>
+        </Grid>
         <ListView x:Name="ls_new"
                   Padding="0 0 12 0"
+                  Grid.Row="1"
                           ItemTemplate="{StaticResource commentTemplate}" 
                           ItemContainerStyle="{StaticResource commentStyle}"  
                           SelectionMode="None" IsItemClickEnabled="False" 
                           ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListView.Header>
-                <Grid>
-                    <Grid x:Name="hot">
-                        <TextBlock Margin="12 8" FontSize="18">热门评论</TextBlock>
-                        <HyperlinkButton x:Name="btn_NewSort" Margin="8" Padding="0" VerticalAlignment="Center"  Click="btn_NewSort_Click"  HorizontalAlignment="Right">
-                            <TextBlock>按最新排序</TextBlock>
-                        </HyperlinkButton>
-                    </Grid>
-                    <Grid x:Name="_new">
-                        <TextBlock Margin="12 8" FontSize="18">最新评论</TextBlock>
-                        <HyperlinkButton x:Name="btn_HotSort"  Margin="8" Padding="0" VerticalAlignment="Center" HorizontalAlignment="Right"  Click="btn_HotSort_Click" >
-                            <TextBlock>按热门排序</TextBlock>
-                        </HyperlinkButton>
-                    </Grid>
-                </Grid>
-            </ListView.Header>
+          
             <ListView.Footer>
                 <StackPanel>
                     <ProgressBar    x:Name="pr_load" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
@@ -308,7 +313,7 @@
                 </StackPanel>
             </ListView.Footer>
         </ListView>
-        <local:RoundButton x:Name="btnOpenSendComment" Click="btnOpenSendComment_Click" VerticalAlignment="Bottom" Background="{ThemeResource HighLightColor}" Padding="12" Margin="16" HorizontalAlignment="Right">
+        <local:RoundButton x:Name="btnOpenSendComment" Grid.Row="1" Click="btnOpenSendComment_Click" VerticalAlignment="Bottom" Background="{ThemeResource HighLightColor}" Padding="12" Margin="16" HorizontalAlignment="Right">
             <fa:FontAwesome Icon="Regular_CommentAlt" Foreground="White"></fa:FontAwesome>
         </local:RoundButton>
     </Grid>
