@@ -119,7 +119,7 @@ namespace BiliLite.Modules
 
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelFlv(PlayInfo playInfo, int qn)
         {
-            var noVIP = !SettingHelper.Account.Logined || (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.type == 0);
+            var noVIP = !(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
             var data = await GetBiliBiliFlv(playInfo, qn);
             if (data.code == 0)
             {
@@ -167,7 +167,7 @@ namespace BiliLite.Modules
         }
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelDash(PlayInfo playInfo, int qn, int mode)
         {
-            var noVIP = !SettingHelper.Account.Logined || (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.type == 0);
+            var noVIP =!(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status!= 0);
             var data = await GetBiliBiliDash(playInfo, qn);
             if (data.code == 0 && data.data.dash != null)
             {
@@ -237,16 +237,17 @@ namespace BiliLite.Modules
                         HttpHeader = GetDefualtHeader()
                     });
                 }
-                var current = qualityWithPlayUrlInfos.FirstOrDefault(x => x.quality == qn);
-                if (current == null)
-                {
-                    current = qualityWithPlayUrlInfos.OrderByDescending(x => x.quality).FirstOrDefault(x => x.playUrlInfo != null);
-                }
                 if (noVIP)
                 {
                     //非大会员，去除大会员专享清晰度
                     qualityWithPlayUrlInfos = qualityWithPlayUrlInfos.Where(x => x.quality != 74 && x.quality <= 80).ToList();
                 }
+                var current = qualityWithPlayUrlInfos.FirstOrDefault(x => x.quality == qn);
+                if (current == null)
+                {
+                    current = qualityWithPlayUrlInfos.OrderByDescending(x => x.quality).FirstOrDefault(x => x.playUrlInfo != null);
+                }
+               
                 return new ReturnModel<PlayUrlReturnInfo>()
                 {
                     success = true,
@@ -268,7 +269,7 @@ namespace BiliLite.Modules
         }
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelGrpcDash(PlayInfo playInfo, int qn, int mode)
         {
-            var noVIP = !SettingHelper.Account.Logined || (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.type == 0);
+            var noVIP = !(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
             var data = await GetGrpcDash(playInfo, qn, mode);
             if (data.code == 0 && data.data.dash != null)
             {
@@ -355,7 +356,7 @@ namespace BiliLite.Modules
         }
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelGrpcFlv(PlayInfo playInfo, int qn)
         {
-            var noVIP = !SettingHelper.Account.Logined || (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.type == 0);
+            var noVIP = !(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
             var data = await GetGrpcFlv(playInfo, qn);
             if (data.code == 0)
             {
@@ -822,6 +823,14 @@ namespace BiliLite.Modules
                     if (data.code == 0)
                     {
                         data.data = await result.GetJson<DashModel>();
+                    }
+                    else
+                    {
+                        return new ApiDataModel<DashModel>()
+                        {
+                            code = -998,
+                            message = data.message
+                        };
                     }
 
                     //foreach (var item in data.data.dash.video)

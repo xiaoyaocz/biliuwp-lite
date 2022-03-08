@@ -154,7 +154,7 @@ namespace BiliLite.Modules.User
                 data.Photo = item.desc.user_profile.info.face;
                 if (item.desc.user_profile.vip != null)
                 {
-                    data.IsYearVip = item.desc.user_profile.vip.vipType == 2;
+                    data.IsYearVip = item.desc.user_profile.vip.vipStatus==1&&item.desc.user_profile.vip.vipType == 2;
                 }
                 switch (item.desc.user_profile.card?.official_verify?.type ?? 3)
                 {
