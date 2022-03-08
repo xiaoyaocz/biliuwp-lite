@@ -617,6 +617,7 @@ namespace BiliLite.Pages
                 return;
             }
             var item = BottomCBQuality.SelectedItem as LiveRoomWebUrlQualityDescriptionItemModel;
+            SettingHelper.SetValue(SettingHelper.Live.DEFAULT_QUALITY, item.qn);
             await liveRoomVM.GetPlayUrl(liveRoomVM.RoomID, item.qn);
         }
 
