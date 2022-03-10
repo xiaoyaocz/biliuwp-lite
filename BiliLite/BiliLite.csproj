@@ -210,9 +210,6 @@
     <Compile Include="Dialogs\EditFavFolderDialog.xaml.cs">
       <DependentUpon>EditFavFolderDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\LoginDialog.xaml.cs">
-      <DependentUpon>LoginDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MessageToast.xaml.cs">
       <DependentUpon>MessageToast.xaml</DependentUpon>
     </Compile>
@@ -251,6 +248,9 @@
     <Compile Include="Converters\ProgressToTimeConverter.cs" />
     <Compile Include="Converters\RankColorConvert.cs" />
     <Compile Include="Converters\TimeSpanToDoubleConvert.cs" />
+    <Compile Include="Dialogs\LoginDialog.xaml.cs">
+      <DependentUpon>LoginDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\ControlHelper.cs" />
     <Compile Include="Helpers\DownloadHelper.cs" />
@@ -302,6 +302,7 @@
     <Compile Include="Modules\Home\LiveVM.cs" />
     <Compile Include="Modules\User\DynamicRepostVM.cs" />
     <Compile Include="Modules\User\DynamicVM.cs" />
+    <Compile Include="Modules\User\LoginVM.cs" />
     <Compile Include="Modules\User\SendDynamic\AtVM.cs" />
     <Compile Include="Modules\User\HistoryVM.cs" />
     <Compile Include="Modules\User\MyFollowSeasonVM.cs" />
@@ -623,10 +624,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\LoginDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\MessageToast.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -660,6 +657,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\SendReviewDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LoginDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

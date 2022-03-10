@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Api;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using FFmpegInterop;
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -102,6 +103,16 @@ namespace BiliLite
             {
                 SYEngine.Core.Initialize();
             }
+            try
+            {
+                var systemId = Windows.System.Profile.SystemIdentification.GetSystemIdForPublisher();
+                var deviceId = Windows.Security.Cryptography.CryptographicBuffer.EncodeToHexString(systemId.Id).ToUpper();
+                ApiHelper.deviceId = deviceId ?? "";
+            }
+            catch (Exception)
+            {
+            }
+          
             InitBili();
             Frame rootFrame = Window.Current.Content as Frame;
 

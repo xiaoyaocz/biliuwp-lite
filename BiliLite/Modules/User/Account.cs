@@ -26,7 +26,7 @@ namespace BiliLite.Modules
             settingVM = new SettingVM();
             guid = Guid.NewGuid().ToString();
         }
-        private async Task<string> EncryptedPassword(string passWord)
+        public async Task<string> EncryptedPassword(string passWord)
         {
             string base64String;
             try
@@ -73,10 +73,10 @@ namespace BiliLite.Modules
                     SettingHelper.SetValue(SettingHelper.Account.REFRESH_KEY, m.data.refresh_token);
 
                     //执行SSO
-                    await accountApi.SSO(m.data.access_token).Request();
+                    //await accountApi.SSO(m.data.access_token).Request();
                     //读取个人资料
                     await GetProfile();
-                   
+
                     //发送登录成功事件
                     MessageCenter.SendLogined();
 
@@ -127,27 +127,27 @@ namespace BiliLite.Modules
         /// 登录V3
         /// </summary>
         /// <returns></returns>
-        public async Task<LoginCallbackModel> LoginV3(string username, string password)
+        public async Task<LoginCallbackModel> LoginV3(string username, string password, string seccode = "", string validate = "", string recaptcha_token = "", string challenge = "", int gee_type = 10)
         {
             try
             {
 
-                var results = await accountApi.LoginV3(username, await EncryptedPassword(password)).Request();
+                var results = await accountApi.LoginV3(username, await EncryptedPassword(password), seccode, validate, challenge, recaptcha_token).Request();
                 if (results.status)
                 {
                     var m = await results.GetData<LoginDataV3Model>();
                     if (m.code == 0)
                     {
-                        if (m.data.status==0)
+                        if (m.data.status == 0)
                         {
-                            await SaveLogin(m.data.token_info.access_token, m.data.token_info.refresh_token, m.data.token_info.expires_in, m.data.token_info.mid);
+                            await SaveLogin(m.data.token_info.access_token, m.data.token_info.refresh_token, m.data.token_info.expires_in, m.data.token_info.mid, null);
                             return new LoginCallbackModel()
                             {
                                 status = LoginStatus.Success,
                                 message = "登录成功"
                             };
                         }
-                        if (m.data.status == 1)
+                        if (m.data.status == 1 || m.data.status == 2)
                         {
                             return new LoginCallbackModel()
                             {
@@ -189,7 +189,7 @@ namespace BiliLite.Modules
                         message = results.message
                     };
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -211,7 +211,7 @@ namespace BiliLite.Modules
         /// <param name="expires"></param>
         /// <param name="userid"></param>
         /// <returns></returns>
-        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid)
+        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid, List<string> sso)
         {
             try
             {
@@ -229,9 +229,25 @@ namespace BiliLite.Modules
                     mid = userid,
                     refresh_token = refresh_token
                 };
+                if (sso == null)
+                {
+                    sso = new List<string>() {
+                        "https://passport.bilibili.com/api/v2/sso",
+                        "https://passport.biligame.com/api/v2/sso",
+                        "https://passport.im9.com/api/v2/sso",
+                        "https://passport.bigfunapp.cn/api/v2/sso"
+                    };
+                }
+                try
+                {
+                    //执行SSO
+                    await accountApi.SSO(access_key).Request();
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Log($"SSO失败", LogType.ERROR, ex);
+                }
 
-                //执行SSO
-                await accountApi.SSO(access_key).Request();
                 //读取个人资料
                 await GetProfile();
                 MessageCenter.SendLogined();
@@ -271,7 +287,7 @@ namespace BiliLite.Modules
 
         public async Task<HomeUserCardModel> GetHomeUserCard()
         {
-           
+
             try
             {
                 var mine_api = accountApi.MineProfile();
@@ -383,7 +399,7 @@ namespace BiliLite.Modules
                     var data = await result.GetData<LoginTokenInfo>();
                     if (data.success)
                     {
-                        await SaveLogin(data.data.access_token, data.data.refresh_token, data.data.expires_in, data.data.mid);
+                        await SaveLogin(data.data.access_token, data.data.refresh_token, data.data.expires_in, data.data.mid, null);
                         return new LoginCallbackModel()
                         {
                             status = LoginStatus.Success,
@@ -428,7 +444,7 @@ namespace BiliLite.Modules
             try
             {
                 var req = await accountApi.GetOAuth2Info().Request();
-                if (req.status )
+                if (req.status)
                 {
                     var obj = req.GetJObject();
                     return obj["code"].ToInt32() == 0;
@@ -455,14 +471,14 @@ namespace BiliLite.Modules
             try
             {
                 var req = await accountApi.RefreshToken().Request();
-              
+
                 if (req.status)
                 {
                     var obj = req.GetJObject();
                     if (obj["code"].ToInt32() == 0)
                     {
                         var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
-                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid);
+                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid, null);
                         return true;
                     }
                     else
@@ -473,7 +489,7 @@ namespace BiliLite.Modules
                 else
                 {
                     throw new Exception(req.message);
-                   // return false;
+                    // return false;
                 }
             }
             catch (Exception ex)

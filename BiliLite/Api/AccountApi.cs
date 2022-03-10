@@ -51,18 +51,67 @@ namespace BiliLite.Api
         /// <param name="password">密码</param>
         /// <param name="gee_type"></param>
         /// <returns></returns>
-        public  ApiModel LoginV3(string username, string password, int gee_type = 10)
+        public  ApiModel LoginV3(string username, string password,string seesionId="",string seccode="",string validate="",string challenge="",string recaptcha_token="", int gee_type = 10)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = "https://passport.bilibili.com/api/v3/oauth2/login",
-                body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}&gee_type={gee_type}&" + ApiHelper.MustParameter(ApiHelper.AndroidTVKey)
+                baseUrl = "https://passport.bilibili.com/x/passport-login/oauth2/login",
+                body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}&login_session_id={seesionId}&gee_type={gee_type}&gee_seccode={seccode}&gee_validate={validate}&gee_challenge={challenge}&recaptcha_token={recaptcha_token}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidTVKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
             return api;
         }
 
+        /// <summary>
+        /// 获取登录国家地区
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel Country()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/country",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
+        public ApiModel SendSMS(string cid, string phone, string session_id)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/sms/send",
+                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+            };
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
+            return api;
+        }
+
+        public ApiModel SendSMSWithCaptcha(string cid, string phone, string session_id,string seccode = "", string validate = "", string challenge = "", string recaptcha_token = "")
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/sms/send",
+                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&gee_seccode={seccode}&gee_validate={validate}&gee_challenge={challenge}&recaptcha_token={recaptcha_token}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+            };
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
+            return api;
+        }
+        public ApiModel SMSLogin(string cid, string phone, string code,string session_id,string captcha_key)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/login/sms",
+                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&captcha_key={captcha_key}&code={code}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+            };
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
+            return api;
+        }
         /// <summary>
         /// SSO
         /// </summary>
@@ -74,7 +123,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://passport.bilibili.com/api/login/sso",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,false) + $"&gourl=https%3A%2F%2Faccount.bilibili.com%2Faccount%2Fhome&access_key={access_key}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,false) + $"&access_key={access_key}",
                 headers = ApiHelper.GetDefaultHeaders()
             };
             api.parameter += ApiHelper.GetSign(api.parameter,ApiHelper.AndroidKey);
@@ -232,7 +281,7 @@ namespace BiliLite.Api
                 baseUrl = "https://passport.bilibili.com/api/oauth2/refreshToken",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey)+ $"&access_token={SettingHelper.Account.AccessKey}&refresh_token={SettingHelper.GetValue<string>(SettingHelper.Account.REFRESH_KEY, "")}"
             };
-            api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
     }

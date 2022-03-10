@@ -2,90 +2,133 @@
     x:Class="BiliLite.Dialogs.LoginDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:BiliLite.Controls"
+    xmlns:local="using:BiliLite.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-     Title="登录"
+    Title="{x:Bind Path=loginVM.Title,Mode=OneWay}"
     PrimaryButtonText="登录"
     SecondaryButtonText="取消"
+    xmlns:user="using:BiliLite.Modules.User"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    IsPrimaryButtonEnabled="{x:Bind Path=loginVM.PrimaryButtonEnable,Mode=OneWay}"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
     <Grid>
-        <StackPanel x:Name="pwdLogin" Visibility="Collapsed">
-            <Grid>
-                <Grid x:Name="show" VerticalAlignment="Top" >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="ms-appx:///Assets/Login/ic_22.png" Height="48" HorizontalAlignment="Left"></Image>
-                    <Image Source="ms-appx:///Assets/Login/ic_33.png"  Height="48" Grid.Column="1" HorizontalAlignment="Right"></Image>
-                </Grid>
-                <Grid x:Name="hide" Visibility="Collapsed"  VerticalAlignment="Top">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="ms-appx:///Assets/Login/ic_22_hide.png"  Height="48" HorizontalAlignment="Left"></Image>
-                    <Image Source="ms-appx:///Assets/Login/ic_33_hide.png" Grid.Column="1"  Height="48" HorizontalAlignment="Right"></Image>
-                </Grid>
-            </Grid>
-
-            <TextBlock Margin="0 4">用户名</TextBlock>
-            <TextBox x:Name="txt_Username" PlaceholderText="请输入用户名"></TextBox>
-            <TextBlock  Margin="0 4">密码</TextBlock>
-            <PasswordBox x:Name="txt_Password" PlaceholderText="请输入密码" GotFocus="txt_Password_GotFocus"  LostFocus="txt_Password_LostFocus"></PasswordBox>
-            <CheckBox x:Name="cb_AuthBP" Visibility="Collapsed" Margin="0 4" Content="授权BiliPlus(可以解除地区限制)" ></CheckBox>
-
-            <StackPanel x:Name="chatcha" Visibility="Collapsed">
-                <TextBlock Margin="0 4">验证码</TextBlock>
+        <StackPanel>
+            <!--密码登录-->
+            <StackPanel Visibility="{x:Bind Path=loginVM.LoginType,Mode=OneWay,Converter={StaticResource display},ConverterParameter=0}">
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="140"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox PlaceholderText="请输入验证码" x:Name="txt_captcha" VerticalAlignment="Center"></TextBox>
-                    <Image Height="50" x:Name="img_Captcha" Tapped="Image_Tapped" Grid.Column="1" ></Image>
+                    <Grid x:Name="show" VerticalAlignment="Top" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="ms-appx:///Assets/Login/ic_22.png" Height="48" HorizontalAlignment="Left"></Image>
+                        <Image Source="ms-appx:///Assets/Login/ic_33.png"  Height="48" Grid.Column="1" HorizontalAlignment="Right"></Image>
+                    </Grid>
+                    <Grid x:Name="hide" Visibility="Collapsed"  VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="ms-appx:///Assets/Login/ic_22_hide.png"  Height="48" HorizontalAlignment="Left"></Image>
+                        <Image Source="ms-appx:///Assets/Login/ic_33_hide.png" Grid.Column="1"  Height="48" HorizontalAlignment="Right"></Image>
+                    </Grid>
                 </Grid>
-            </StackPanel>
 
-            <!--<HyperlinkButton x:Name="btnWebLogin" Click="BtnWebLogin_Click">
-                <TextBlock>切换至网页登录(可以扫码登录)</TextBlock>
-            </HyperlinkButton>-->
-            <HyperlinkButton x:Name="btnQRLogin" Click="btnQRLogin_Click">
-                <TextBlock>切换至扫码登录</TextBlock>
-            </HyperlinkButton>
-            <StackPanel Orientation="Horizontal">
-                <HyperlinkButton NavigateUri="https://passport.bilibili.com/register/phone.html#/phone">
-                    <TextBlock>注册账号</TextBlock>
-                </HyperlinkButton>
-                <TextBlock VerticalAlignment="Center" Margin="4 0">/</TextBlock>
-                <HyperlinkButton NavigateUri="https://passport.bilibili.com/register/findpassword.html">
-                    <TextBlock>忘记密码</TextBlock>
-                </HyperlinkButton>
-                <TextBlock VerticalAlignment="Center" Margin="4 0">/</TextBlock>
-                <HyperlinkButton NavigateUri="https://www.bilibili.com/blackboard/help.html#%E8%B4%A6%E5%8F%B7%E7%9B%B8%E5%85%B3">
-                    <TextBlock>无法登录</TextBlock>
-                </HyperlinkButton>
+                <TextBlock Margin="0 4">用户名/手机号</TextBlock>
+                <TextBox x:Name="txtUsername" PlaceholderText="请输入用户名/手机号" Text="{x:Bind Path=loginVM.UserName,Mode=TwoWay}"></TextBox>
+                <TextBlock  Margin="0 4">密码</TextBlock>
+                <PasswordBox x:Name="txtPassword" PlaceholderText="请输入密码" Password="{x:Bind Path=loginVM.Password,Mode=TwoWay}" GotFocus="txt_Password_GotFocus"  LostFocus="txt_Password_LostFocus"></PasswordBox>
+                <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                    <HyperlinkButton Command="{x:Bind Path=loginVM.LoginTypeCommand}">
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>2</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至二维码登录</TextBlock>
+                    </HyperlinkButton>
+                    <TextBlock Margin="4 0" VerticalAlignment="Center">/</TextBlock>
+                    <HyperlinkButton Command="{x:Bind Path=loginVM.LoginTypeCommand}"  >
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>1</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至短信登录</TextBlock>
+                    </HyperlinkButton>
+                </StackPanel>
             </StackPanel>
-           
-        </StackPanel>
-        <StackPanel x:Name="qrLogin" Visibility="Visible">
-            <Image x:Name="imgQR" Width="200" Height="200"></Image>
+            <!--短信登录-->
+            <StackPanel Visibility="{x:Bind Path=loginVM.LoginType,Mode=OneWay,Converter={StaticResource display},ConverterParameter=1}">
+                <!--地区-->
+                <TextBlock Margin="0 4">国家/地区</TextBlock>
+                <ComboBox  PlaceholderText="请选择国家/地区" ItemsSource="{x:Bind Path=loginVM.Countries,Mode=OneWay}" SelectedItem="{x:Bind Path=loginVM.CurrentCountry,Mode=OneWay}" HorizontalAlignment="Stretch">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate >
+                            <TextBlock><Run Text="{Binding Path=cname}"></Run> +<Run Text="{Binding Path=country_code}"></Run></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <!--手机号-->
+                <TextBlock  Margin="0 4">手机号</TextBlock>
+                <TextBox x:Name="txt_Password" MaxLength="11" PlaceholderText="请输入手机号" Text="{x:Bind Path=loginVM.Phone,Mode=TwoWay}"></TextBox>
+                <!--验证码-->
+                <TextBlock  Margin="0 4">验证码</TextBlock>
+                <Grid>
+                    <TextBox PlaceholderText="请输入验证码" Text="{x:Bind Path=loginVM.Code,Mode=TwoWay}"></TextBox>
+                    <HyperlinkButton HorizontalAlignment="Right" IsEnabled="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay}" Command="{x:Bind Path=loginVM.SendSMSCommand}">
+                        <Grid>
+                            <TextBlock Margin="8 0" Visibility="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay}">发送验证码</TextBlock>
+                            <TextBlock Margin="8 0" Visibility="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay,Converter={StaticResource display}}"><Run Text="{x:Bind Path=loginVM.SMSCountDown,Mode=OneWay}"/>秒后可再发送</TextBlock>
+                        </Grid>
+                    </HyperlinkButton>
+                </Grid>
 
-            <!--<HyperlinkButton x:Name="btnWebLogin" Click="BtnWebLogin_Click">
-                <TextBlock>切换至网页登录(可以扫码登录)</TextBlock>
-            </HyperlinkButton>-->
-            <TextBlock HorizontalAlignment="Center">请使用哔哩哔哩手机客户端扫描上方二维码登录</TextBlock>
-            <HyperlinkButton x:Name="btnRefreshQR" HorizontalAlignment="Center" Click="btnRefreshQR_Click">
-                <TextBlock>刷新二维码</TextBlock>
-            </HyperlinkButton>
-            <HyperlinkButton x:Name="btnPasswordLogin" HorizontalAlignment="Center" Click="btnPasswordLogin_Click">
-                <TextBlock>切换至密码登录</TextBlock>
-            </HyperlinkButton>
+                <StackPanel Orientation="Horizontal" Margin="0 8 0 0">
+                    <HyperlinkButton Command="{x:Bind Path=loginVM.LoginTypeCommand}">
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>2</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至二维码登录</TextBlock>
+                    </HyperlinkButton>
+                    <TextBlock Margin="4 0" VerticalAlignment="Center">/</TextBlock>
+                    <HyperlinkButton  Command="{x:Bind Path=loginVM.LoginTypeCommand}"  >
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>0</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至密码登录</TextBlock>
+                    </HyperlinkButton>
+                </StackPanel>
+            </StackPanel>
+            <!--二维码登录-->
+            <StackPanel Visibility="{x:Bind Path=loginVM.LoginType,Mode=OneWay,Converter={StaticResource display},ConverterParameter=2}">
+                <Grid>
+                    <Image x:Name="imgQR" Width="200" Height="200" Source="{x:Bind Path=loginVM.QRImageSource,Mode=OneWay}" ></Image>
+                    <ProgressRing Visibility="{x:Bind Path=loginVM.QRLoadding,Mode=OneWay}" Width="48" Height="48" IsActive="True"></ProgressRing>
+                </Grid>
+                
+                <TextBlock HorizontalAlignment="Center">请使用哔哩哔哩手机客户端扫描上方二维码登录</TextBlock>
+                <HyperlinkButton x:Name="btnRefreshQR" HorizontalAlignment="Center" Command="{x:Bind Path=loginVM.RefreshQRCommand}">
+                    <TextBlock>刷新二维码</TextBlock>
+                </HyperlinkButton>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 8 0 0">
+                    <HyperlinkButton Command="{x:Bind Path=loginVM.LoginTypeCommand}">
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>0</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至密码登录</TextBlock>
+                    </HyperlinkButton>
+                    <TextBlock Margin="4 0" VerticalAlignment="Center">/</TextBlock>
+                    <HyperlinkButton Command="{x:Bind Path=loginVM.LoginTypeCommand}"  >
+                        <HyperlinkButton.CommandParameter>
+                            <x:Int32>1</x:Int32>
+                        </HyperlinkButton.CommandParameter>
+                        <TextBlock>切换至短信登录</TextBlock>
+                    </HyperlinkButton>
+                </StackPanel>
+            </StackPanel>
+         
         </StackPanel>
-        <WebView x:Name="webView" NavigationStarting="webView_NavigationStarting" NavigationCompleted="WebView_NavigationCompleted" ScriptNotify="webView_ScriptNotify" Height="360" Visibility="Collapsed"></WebView>
+        <!--WebView-->
+        <WebView x:Name="webView" NavigationStarting="webView_NavigationStarting" NavigationCompleted="WebView_NavigationCompleted"  Height="360" Width="320" Visibility="Collapsed"></WebView>
     </Grid>
-
+  
 </ContentDialog>

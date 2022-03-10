@@ -1196,6 +1196,7 @@ namespace BiliLite.Controls
             }
             if (result.result)
             {
+                VideoLoading.Visibility = Visibility.Collapsed;
                 Player.Play();
             }
             else

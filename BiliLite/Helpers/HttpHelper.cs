@@ -12,6 +12,7 @@ using Windows.Storage.Streams;
 using Windows.Web.Http.Filters;
 using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Diagnostics;
 
 namespace BiliLite.Helpers
 {
@@ -31,6 +32,7 @@ namespace BiliLite.Helpers
         {
             try
             {
+                Debug.WriteLine("GET:" + url);
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
 
                 fiter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
@@ -74,7 +76,6 @@ namespace BiliLite.Helpers
 
 
             }
-
             catch (Exception ex)
             {
                 LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
@@ -96,6 +97,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<Stream> GetStream(string url, IDictionary<string, string> headers = null)
         {
+            Debug.WriteLine("GET:" + url);
             try
             {
                 using (var client = new HttpClient())
@@ -134,6 +136,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<IBuffer> GetBuffer(string url, IDictionary<string, string> headers = null)
         {
+            Debug.WriteLine("GET:" + url);
             try
             {
                 using (var client = new HttpClient())
@@ -172,6 +175,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<String> GetString(string url, IDictionary<string, string> headers = null, IDictionary<string, string> cookie = null)
         {
+            Debug.WriteLine("GET:"+url);
             try
             {
                 using (var client = new HttpClient())
@@ -215,6 +219,8 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<HttpResults> Post(string url, string body, IDictionary<string, string> headers = null, string contentType = "application/x-www-form-urlencoded")
         {
+            Debug.WriteLine("POST:" + url+"\r\nBODY:"+ body);
+
             try
             {
                 using (var client = new HttpClient())
