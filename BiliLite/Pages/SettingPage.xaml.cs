@@ -185,15 +185,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.UI.MOUSE_BACK, swMouseClosePage.IsOn);
                 });
             });
-            //隐藏赞助图标
-            swHideSponsor.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_SPONSOR, false);
-            swHideSponsor.Loaded += new RoutedEventHandler((sender, e) =>
-            {
-                swHideSponsor.Toggled += new RoutedEventHandler((obj, args) =>
-                {
-                    SettingHelper.SetValue(SettingHelper.UI.HIDE_SPONSOR, swHideSponsor.IsOn);
-                });
-            });
+            
             //动态显示
             cbDetailDisplay.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
             cbDetailDisplay.Loaded += new RoutedEventHandler((sender, e) =>

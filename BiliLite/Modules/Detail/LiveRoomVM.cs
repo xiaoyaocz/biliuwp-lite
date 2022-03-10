@@ -541,7 +541,7 @@ namespace BiliLite.Modules
                         if (Liveing)
                         {
                             timer.Start();
-                            await GetPlayUrl(RoomID, 0);
+                            await GetPlayUrl(RoomID, SettingHelper.GetValue(SettingHelper.Live.DEFAULT_QUALITY,10000));
                             //GetFreeSilverTime(); 
                             await LoadSuperChat();
                             if (ReceiveLotteryMsg)

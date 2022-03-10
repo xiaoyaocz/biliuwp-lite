@@ -1,8 +1,12 @@
-﻿using System;
+﻿using BiliLite.Helpers;
+using BiliLite.Modules.User;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -12,14 +16,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Newtonsoft.Json.Linq;
-using Windows.UI.Xaml.Media.Imaging;
-using System.Text.RegularExpressions;
-using BiliLite.Helpers;
-using BiliLite.Modules;
-using BiliLite.Models;
-using System.Threading.Tasks;
-using System.Timers;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -27,161 +23,77 @@ namespace BiliLite.Dialogs
 {
     public sealed partial class LoginDialog : ContentDialog
     {
-        Account account;
+        JSBridge.biliapp _biliapp = new JSBridge.biliapp();
+        JSBridge.secure _secure = new JSBridge.secure();
+        private LoginVM loginVM;
         public LoginDialog()
         {
             this.InitializeComponent();
-            account = new Account();
+            this.Loaded += SMSLoginDialog_Loaded;
+            loginVM=new LoginVM();
+            loginVM.OpenWebView += LoginVM_OpenWebView;
+            loginVM.CloseDialog += LoginVM_CloseDialog;
+            loginVM.SetWebViewVisibility += LoginVM_SetWebViewVisibility;
             _biliapp.CloseBrowserEvent += _biliapp_CloseBrowserEvent;
             _biliapp.ValidateLoginEvent += _biliapp_ValidateLoginEvent;
-            _secure.CloseCaptchaEvent += _biliapp_CloseCaptchaEvent;
-            _secure.CaptchaEvent += _biliapp_CaptchaEvent;
-            GetQRAuthInfo();
+           
         }
 
-        private void _biliapp_CaptchaEvent(object sender, string e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        private void _biliapp_CloseCaptchaEvent(object sender, string e)
-        {
-            //throw new NotImplementedException();
-        }
-
-        JSBridge.biliapp _biliapp = new JSBridge.biliapp();
-        JSBridge.secure _secure = new JSBridge.secure();
-        private void _biliapp_CloseBrowserEvent(object sender, string e)
+        private void LoginVM_CloseDialog(object sender, EventArgs e)
         {
             this.Hide();
         }
 
-        private async void _biliapp_ValidateLoginEvent(object sender, string e)
+        private void LoginVM_SetWebViewVisibility(object sender, bool e)
         {
-            try
-            {
-                JObject jObject = JObject.Parse(e);
-                if (jObject["access_token"] != null)
-                {
-                    var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()));
+            webView.Visibility = e ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-                    if (m)
-                    {
-                        this.Hide();
-                        Utils.ShowMessageToast("登录成功");
-                    }
-                    else
-                    {
-                        Title = "登录";
-                        IsPrimaryButtonEnabled = true;
-                        webView.Visibility = Visibility.Collapsed;
-                        Utils.ShowMessageToast("登录失败,请重试");
-                    }
-                    //await UserManage.LoginSucess(jObject["access_token"].ToString());
-                }
-                else
-                {
-                    Title = "登录";
-                    IsPrimaryButtonEnabled = true;
-                    webView.Visibility = Visibility.Collapsed;
-                    Utils.ShowMessageToast("登录失败,请重试");
-                }
-
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("登录二次验证失败", LogType.ERROR, ex);
-            }
+        private void _biliapp_CloseBrowserEvent(object sender, string e)
+        {
+            this.Hide();
+        }
+        private  void _biliapp_ValidateLoginEvent(object sender, string e)
+        {
+            loginVM.ValidateLogin(JObject.Parse(e));
 
         }
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void LoginVM_OpenWebView(object sender, Uri e)
+        {
+            webView.Source=e;
+        }
+
+        private void SMSLoginDialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            _ = loginVM.LoadCountry();
+        }
+
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
-            if (qrLogin.Visibility == Visibility.Visible)
-            {
-                btnPasswordLogin_Click(sender, null);
-                return;
-            }
-            if (txt_Username.Text.Length == 0)
-            {
-                txt_Username.Focus(FocusState.Pointer);
-                Utils.ShowMessageToast("请输入用户名");
-                return;
-            }
-            if (txt_Password.Password.Length == 0)
-            {
-                txt_Password.Focus(FocusState.Pointer);
-                Utils.ShowMessageToast("请输入密码");
-                return;
-            }
-            if (chatcha.Visibility == Visibility.Visible && txt_captcha.Text.Length == 0)
-            {
-                txt_Password.Focus(FocusState.Pointer);
-                Utils.ShowMessageToast("请输入验证码");
-                return;
-            }
-            IsPrimaryButtonEnabled = false;
-            //var results = await account.LoginV3(txt_Username.Text, txt_Password.Password);
-            var results = await account.LoginV3(txt_Username.Text, txt_Password.Password);
-            switch (results.status)
-            {
-                case LoginStatus.Success:
-                    this.Hide();
-                    break;
-                case LoginStatus.Fail:
-                case LoginStatus.Error:
-                    IsPrimaryButtonEnabled = true;
-                    break;
-                case LoginStatus.NeedCaptcha:
-                    //V2
-                    //chatcha.Visibility = Visibility.Visible;
-                    //IsPrimaryButtonEnabled = true;
-                    //GetCaptcha();
-                    Utils.ShowMessageToast("登录需要验证码，请扫描二维码登录");
-                    break;
-                case LoginStatus.NeedValidate:
-                    Title = "安全验证";
-                    webView.Visibility = Visibility.Visible;
-                    webView.Source = new Uri(results.url.Replace("&ticket=1", ""));
-                    break;
-                default:
-                    break;
-            }
-            Utils.ShowMessageToast(results.message);
+            loginVM.DoLogin();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if(webView.Visibility == Visibility.Visible)
+            {
+                webView.Visibility=Visibility.Collapsed;
+                args.Cancel = true;
+                return;
+            }
         }
+
+       
 
         private void txt_Password_GotFocus(object sender, RoutedEventArgs e)
         {
             hide.Visibility = Visibility.Visible;
         }
+
         private void txt_Password_LostFocus(object sender, RoutedEventArgs e)
         {
             hide.Visibility = Visibility.Collapsed;
-        }
-
-        private void Image_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            GetCaptcha();
-        }
-        private async void GetCaptcha()
-        {
-            try
-            {
-                var steam = await HttpHelper.GetStream(account.accountApi.Captcha().url);
-                var img = new BitmapImage();
-                await img.SetSourceAsync(steam.AsRandomAccessStream());
-                img_Captcha.Source = img;
-            }
-            catch (Exception)
-            {
-                Utils.ShowMessageToast("无法加载验证码");
-            }
-
-
         }
 
         private async void webView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -190,8 +102,46 @@ namespace BiliLite.Dialogs
             {
                 var access = Regex.Match(args.Uri.AbsoluteUri, "access_key=(.*?)&").Groups[1].Value;
                 var mid = Regex.Match(args.Uri.AbsoluteUri, "mid=(.*?)&").Groups[1].Value;
-                await account.SaveLogin(access, "", 0, long.Parse(mid));
+                await loginVM.account.SaveLogin(access, "", 0, long.Parse(mid),null);
                 this.Hide();
+                return;
+            }
+            if (args.Uri.AbsoluteUri.Contains("geetest.result"))
+            {
+                var success = (Regex.Match(args.Uri.AbsoluteUri, @"success=(\d)&").Groups[1].Value).ToInt32();
+                if (success == 0)
+                {
+                    //验证失败
+                    webView.Visibility = Visibility.Collapsed;
+                    Utils.ShowMessageToast("验证失败");
+                }
+                else if (success == 1)
+                {
+                    webView.Visibility = Visibility.Collapsed;
+                    //验证成功
+                    var challenge = Regex.Match(args.Uri.AbsoluteUri, "geetest_challenge=(.*?)&").Groups[1].Value;
+                    var validate = Regex.Match(args.Uri.AbsoluteUri, "geetest_validate=(.*?)&").Groups[1].Value;
+                    var seccode = Regex.Match(args.Uri.AbsoluteUri, "geetest_seccode=(.*?)&").Groups[1].Value;
+                    var recaptcha_token = Regex.Match(args.Uri.AbsoluteUri, "recaptcha_token=(.*?)&").Groups[1].Value;
+                    //重新登录
+                    if (loginVM.LoginType == 0)
+                    {
+                        loginVM.DoPasswordLogin(seccode, validate, challenge, recaptcha_token);
+                    }
+                    //发送短信
+                    if (loginVM.LoginType==1)
+                    {
+                        loginVM.SendSMSCodeWithCaptcha(seccode, validate, challenge, recaptcha_token);
+                    }
+                    //Login(seccode, validate, challenge, recaptcha_token);
+                }
+                else if (success == 2)
+                {
+                    //关闭验证码
+                    IsPrimaryButtonEnabled = true;
+                   
+                    webView.Visibility = Visibility.Collapsed;
+                }
                 return;
             }
             try
@@ -203,22 +153,6 @@ namespace BiliLite.Dialogs
             {
                 LogHelper.Log("注入JS对象失败", LogType.ERROR, ex);
             }
-
-        }
-
-        private void webView_ScriptNotify(object sender, NotifyEventArgs e)
-        {
-
-        }
-
-        private void BtnWebLogin_Click(object sender, RoutedEventArgs e)
-        {
-            Title = "网页登录";
-            webView.Visibility = Visibility.Visible;
-            webView.Source = new Uri("https://passport.bilibili.com/ajax/miniLogin/minilogin");
-            IsPrimaryButtonEnabled = false;
-            webView.Width = 440;
-            webView.Height = 480;
         }
 
         private async void WebView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
@@ -238,89 +172,5 @@ namespace BiliLite.Dialogs
                 return;
             }
         }
-
-        private void btnQRLogin_Click(object sender, RoutedEventArgs e)
-        {
-            pwdLogin.Visibility = Visibility.Collapsed;
-            qrLogin.Visibility = Visibility.Visible;
-            GetQRAuthInfo();
-        }
-        bool qr_loading = false;
-        QRAuthInfo authInfo;
-        Timer timer;
-        private async void GetQRAuthInfo()
-        {
-            try
-            {
-                qr_loading = true;
-                if (timer != null)
-                {
-                    timer.Stop();
-                    timer.Dispose();
-                }
-                var result = await account.GetQRAuthInfo();
-                if (result.success)
-                {
-                    authInfo = result.data;
-                    ZXing.BarcodeWriter barcodeWriter = new ZXing.BarcodeWriter();
-                    barcodeWriter.Format = ZXing.BarcodeFormat.QR_CODE;
-                    barcodeWriter.Options = new ZXing.Common.EncodingOptions()
-                    {
-                        Margin = 1,
-                        Height = 200,
-                        Width = 200
-                    };
-                    var img = barcodeWriter.Write(authInfo.url);
-                    imgQR.Source = img;
-                    timer = new Timer();
-                    timer.Interval = 3000;
-                    timer.Elapsed += Timer_Elapsed;
-                    timer.Start();
-                }
-                else
-                {
-                    Utils.ShowMessageToast(result.message);
-                }
-                qr_loading = false;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
-                Utils.ShowMessageToast("加载二维码失败");
-            }
-
-        }
-
-        private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-
-            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
-               async () =>
-               {
-                   var result = await account.PollQRAuthInfo(authInfo.auth_code);
-                   if (result.status == LoginStatus.Success)
-                   {
-                       timer.Stop();
-                       this.Hide();
-                   }
-               });
-
-        }
-
-        private void btnPasswordLogin_Click(object sender, RoutedEventArgs e)
-        {
-            pwdLogin.Visibility = Visibility.Visible;
-            qrLogin.Visibility = Visibility.Collapsed;
-            Utils.ShowMessageToast("为了您的账号安全，推荐使用扫码登录");
-        }
-
-        private void btnRefreshQR_Click(object sender, RoutedEventArgs e)
-        {
-            if (qr_loading)
-                return;
-            GetQRAuthInfo();
-        }
-
-
     }
 }

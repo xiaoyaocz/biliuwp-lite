@@ -72,7 +72,7 @@
                             <GridView.ItemContainerStyle>
                                 <Style TargetType="GridViewItem">
                                     <Setter Property="Margin" Value="4"></Setter>
-                                    <Setter Property="Height" Value="196"></Setter>
+                                    <Setter Property="Height" Value="210"></Setter>
                                     <Setter Property="Width" Value="260"></Setter>
                                 </Style>
                             </GridView.ItemContainerStyle>
@@ -91,7 +91,7 @@
                                         </Grid.RowDefinitions>
                                         <Border CornerRadius="{StaticResource ImageCornerRadius}">
                                             <Grid>
-                                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
+                                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Height="160" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
                                                 <Grid VerticalAlignment="Bottom" Padding="8">
                                                     <Grid.Background>
                                                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -153,7 +153,7 @@
                                         <GridView.ItemContainerStyle>
                                             <Style TargetType="GridViewItem">
                                                 <Setter Property="Margin" Value="4"></Setter>
-                                                <Setter Property="Height" Value="196"></Setter>
+                                                <Setter Property="Height" Value="210"></Setter>
                                                 <Setter Property="Width" Value="260"></Setter>
                                             </Style>
                                         </GridView.ItemContainerStyle>
@@ -172,7 +172,7 @@
                                                     </Grid.RowDefinitions>
                                                     <Border CornerRadius="{StaticResource ImageCornerRadius}">
                                                         <Grid>
-                                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="140" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
+                                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Height="160" Width="260" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='460w_260h_1c'}"></toolkit:ImageEx>
                                                             <Grid VerticalAlignment="Bottom" Padding="8">
                                                                 <Grid.Background>
                                                                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

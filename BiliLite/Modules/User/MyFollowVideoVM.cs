@@ -65,6 +65,10 @@ namespace BiliLite.Modules
                         if (data.data["space_infos"][0]["mediaListResponse"]!=null)
                         {
                             MyFavorite =await data.data["space_infos"][0]["mediaListResponse"]["list"].ToString().DeserializeJson<ObservableCollection<FavoriteItemModel>>();
+                            if (MyFavorite == null)
+                            {
+                                MyFavorite = new ObservableCollection<FavoriteItemModel>();
+                            }
                             MyFavorite.Insert(0,await data.data["default_folder"]["folder_detail"].ToString().DeserializeJson<FavoriteItemModel>());
                             HasMore = (bool)data.data["space_infos"][0]["mediaListResponse"]["has_more"];
                             Page ++;

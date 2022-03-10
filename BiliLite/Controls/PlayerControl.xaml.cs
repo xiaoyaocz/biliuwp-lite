@@ -291,7 +291,6 @@ namespace BiliLite.Controls
                     break;
             }
         }
-
         private async void PlayerControl_KeyDown(CoreWindow sender, KeyEventArgs args)
         {
             var elent = FocusManager.GetFocusedElement();
@@ -421,6 +420,7 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.Z:
                 case Windows.System.VirtualKey.N:
+                case (Windows.System.VirtualKey)188:
                     if (EpisodeList.SelectedIndex == 0)
                     {
                         Utils.ShowMessageToast("已经是第一P了");
@@ -432,6 +432,7 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.X:
                 case Windows.System.VirtualKey.M:
+                case (Windows.System.VirtualKey)190:
                     if (EpisodeList.SelectedIndex == EpisodeList.Items.Count - 1)
                     {
                         Utils.ShowMessageToast("已经是最后一P了");
@@ -441,11 +442,45 @@ namespace BiliLite.Controls
                         await SetPlayItem(EpisodeList.SelectedIndex + 1);
                     }
                     break;
+                case Windows.System.VirtualKey.F1:
+                case (Windows.System.VirtualKey)186:
+                    //慢速播放
+                    if (BottomCBSpeed.SelectedIndex == 5)
+                    {
+                        Utils.ShowMessageToast("不能再慢啦");
+                        return;
+                    }
+                   
+                    BottomCBSpeed.SelectedIndex += 1;
+                   
+                    break;
+                case Windows.System.VirtualKey.F2:
+                case (Windows.System.VirtualKey)222:
+                    //加速播放
+                    if (BottomCBSpeed.SelectedIndex == 0)
+                    {
+                        Utils.ShowMessageToast("不能再快啦");
+                        return;
+                    }
+                    BottomCBSpeed.SelectedIndex -= 1;
+                    break;
+                case Windows.System.VirtualKey.F3:
+                case Windows.System.VirtualKey.V:
+                    //静音
+                    if (Player.Volume >= 0)
+                    {
+                        Player.Volume = 0;
+                    }
+                    else
+                    {
+                        Player.Volume = 1;
+                    }
+                    break;
                 default:
                     break;
             }
         }
-
+      
 
         private void LoadDanmuSetting()
         {
@@ -653,7 +688,8 @@ namespace BiliLite.Controls
                 if (PlayerSettingABPlayMode.IsOn)
                 {
                     PlayerSettingABPlaySetPointA.Visibility = Visibility.Visible;
-                } else
+                }
+                else
                 {
                     Player.ABPlay = null;
                     VideoPlayHistoryHelper.SetABPlayHistory(CurrentPlayItem, null);
@@ -814,7 +850,7 @@ namespace BiliLite.Controls
                 {
                 }
             });
-            if (Player.PlayState== PlayState.Pause)
+            if (Player.PlayState == PlayState.Pause)
             {
                 DanmuControl.PauseDanmaku();
             }
@@ -887,7 +923,8 @@ namespace BiliLite.Controls
             if (Player.ABPlay == null)
             {
                 PlayerSettingABPlayMode.IsOn = false;
-            } else
+            }
+            else
             {
                 PlayerSettingABPlayMode.IsOn = true;
                 PlayerSettingABPlaySetPointA.Visibility = Visibility.Visible;
@@ -1194,11 +1231,12 @@ namespace BiliLite.Controls
             }
             if (result.result)
             {
+                VideoLoading.Visibility = Visibility.Collapsed;
                 Player.Play();
             }
             else
             {
-                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
+                ShowErrorDialog(result.message + "[LocalFile]");
             }
         }
 
@@ -1347,10 +1385,13 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog($"播放失败:{result.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、在播放设置打开/关闭硬解视频\r\n3、在播放设置中更换视频类型\r\n4、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n5、如果是付费视频，请在手机或网页端购买后观看\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
+                ShowErrorDialog(result.message + "[ChangeQuality]");
             }
         }
-
+        private void ShowErrorDialog(string message)
+        {
+            ShowDialog($"播放失败:{message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、在播放设置打开/关闭硬解视频\r\n3、在播放设置中更换视频类型\r\n4、如果你的视频编码选择了HEVC，请检查是否安装了HEVC扩展\r\n5、如果你的视频编码选择了AV1，请检查是否安装了AV1扩展\r\n6、如果是付费视频，请在手机或网页端购买后观看\r\n7、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
+        }
         private async void ShowDialog(string content, string title)
         {
             MessageDialog dislog = new MessageDialog(content, title);
@@ -1874,7 +1915,7 @@ namespace BiliLite.Controls
         {
             if (CurrentPlayItem.is_interaction)
             {
-                if (interactionVideoVM.Info.is_leaf==1)
+                if (interactionVideoVM.Info.is_leaf == 1)
                 {
                     Utils.ShowMessageToast("播放完毕，请点击右下角节点，重新开始");
                     return;
@@ -1910,7 +1951,7 @@ namespace BiliLite.Controls
                     {
                         Utils.ShowMessageToast("本P播放完成");
                     }
-                    
+
                 }
                 return;
             }
@@ -1993,7 +2034,8 @@ namespace BiliLite.Controls
         {
             if (!e.need_change)
             {
-                ShowDialog($"播放失败:{e.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
+                ShowErrorDialog(e.message + "[ChangeEngine]");
+                //ShowDialog($"播放失败:{e.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
                 return;
             }
             VideoLoading.Visibility = Visibility.Visible;
@@ -2207,11 +2249,11 @@ namespace BiliLite.Controls
             MessageCenter.SetMiniWindow(mini);
         }
 
-        public  void Pause()
+        public void Pause()
         {
             DanmuControl.PauseDanmaku();
             Player.Pause();
-           
+
         }
 
         public void PlayerSettingABPlaySetPointA_Click(object sender, RoutedEventArgs e)
@@ -2223,9 +2265,10 @@ namespace BiliLite.Controls
                 PlayerSettingABPlaySetPointA.Content = "设置A点";
                 PlayerSettingABPlaySetPointB.Content = "设置B点";
                 PlayerSettingABPlaySetPointB.Visibility = Visibility.Collapsed;
-                
+
                 Utils.ShowMessageToast("已取消设置A点");
-            } else
+            }
+            else
             {
                 Player.ABPlay = new VideoPlayHistoryHelper.ABPlayHistoryEntry()
                 {
@@ -2233,7 +2276,7 @@ namespace BiliLite.Controls
                 };
                 PlayerSettingABPlaySetPointA.Content = "A: " + TimeSpan.FromSeconds(Player.ABPlay.PointA).ToString(@"hh\:mm\:ss\.fff");
                 PlayerSettingABPlaySetPointB.Visibility = Visibility.Visible;
-                
+
                 Utils.ShowMessageToast("已设置A点, 再次点击可取消设置");
             }
         }
@@ -2244,19 +2287,21 @@ namespace BiliLite.Controls
             {
                 Player.ABPlay.PointB = double.MaxValue;
                 PlayerSettingABPlaySetPointB.Content = "设置B点";
-                
+
                 Utils.ShowMessageToast("已取消设置B点");
-            } else
+            }
+            else
             {
                 if (Player.Position <= Player.ABPlay.PointA)
                 {
                     Utils.ShowMessageToast("B点必须在A点之后");
-                } else
+                }
+                else
                 {
                     Player.ABPlay.PointB = Player.Position;
                     VideoPlayHistoryHelper.SetABPlayHistory(CurrentPlayItem, Player.ABPlay);
                     PlayerSettingABPlaySetPointB.Content = "B: " + TimeSpan.FromSeconds(Player.ABPlay.PointB).ToString(@"hh\:mm\:ss\.fff");
-                    
+
                     Utils.ShowMessageToast("已设置B点, 再次点击可取消设置");
                 }
             }

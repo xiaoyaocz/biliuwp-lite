@@ -250,6 +250,10 @@ namespace BiliLite.Helpers
         public class Live
         {
             /// <summary>
+            /// 直播默认清晰度
+            /// </summary>
+            public const string DEFAULT_QUALITY = "LiveDefaultQuality";
+            /// <summary>
             /// 显示弹幕 Visibility
             /// </summary>
             public const string SHOW = "LiveDanmuShow";

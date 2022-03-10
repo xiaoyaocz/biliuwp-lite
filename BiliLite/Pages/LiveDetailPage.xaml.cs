@@ -303,22 +303,38 @@ namespace BiliLite.Pages
                 //    break;
 
                 case Windows.System.VirtualKey.Up:
-                    mediaPlayer.Volume += 0.1;
-                    TxtToolTip.Text = "音量:" + mediaPlayer.Volume.ToString("P");
+                    if (SliderVolume.Value + 0.1>1)
+                    {
+                        SliderVolume.Value = 1;
+                    }
+                    else
+                    {
+                        SliderVolume.Value += 0.1;
+                    }
+                 
+                    TxtToolTip.Text = "音量:" + SliderVolume.Value.ToString("P");
                     ToolTip.Visibility = Visibility.Visible;
                     await Task.Delay(2000);
                     ToolTip.Visibility = Visibility.Collapsed;
                     break;
 
                 case Windows.System.VirtualKey.Down:
-                    mediaPlayer.Volume -= 0.1;
-                    if (mediaPlayer.Volume == 0)
+                  
+                    if (SliderVolume.Value - 0.1<0)
+                    {
+                        SliderVolume.Value = 0;
+                    }
+                    else
+                    {
+                        SliderVolume.Value -= 0.1;
+                    }
+                    if (SliderVolume.Value == 0)
                     {
                         TxtToolTip.Text = "静音";
                     }
                     else
                     {
-                        TxtToolTip.Text = "音量:" + mediaPlayer.Volume.ToString("P");
+                        TxtToolTip.Text = "音量:" + SliderVolume.Value.ToString("P");
                     }
                     ToolTip.Visibility = Visibility.Visible;
                     await Task.Delay(2000);
@@ -617,6 +633,7 @@ namespace BiliLite.Pages
                 return;
             }
             var item = BottomCBQuality.SelectedItem as LiveRoomWebUrlQualityDescriptionItemModel;
+            SettingHelper.SetValue(SettingHelper.Live.DEFAULT_QUALITY, item.qn);
             await liveRoomVM.GetPlayUrl(liveRoomVM.RoomID, item.qn);
         }
 
