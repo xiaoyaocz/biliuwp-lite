@@ -269,6 +269,7 @@ namespace BiliLite.Modules.User
                         }
                         else
                         {
+                            captchaKey = data.data.captcha_key;
                             EnableSendSMS = false;
                             //验证码发送成功，倒计时
                             SMSCountDown = 60;
