@@ -51,8 +51,8 @@
                                         <StackPanel >
                                             <Image Visibility="{Binding Path=showImage}"  Source="{Binding url}" Width="36" Margin="4 0"></Image>
                                             <TextBlock Width="90" TextAlignment="Center" Visibility="{Binding Path=showImage,Converter={StaticResource display}}" FontSize="12" HorizontalAlignment="Center" Text="{Binding text}"></TextBlock>
-                                          
-                                         
+
+
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
@@ -81,6 +81,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <HyperlinkButton  Click="btn_User_Click" Tag="{x:Bind mid}" Padding="0" Margin="0" Grid.RowSpan="2">
                     <Grid>
@@ -99,26 +100,55 @@
                     <TextBlock  Text="{x:Bind Path=member.uname}" 
                                 Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
                     <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=member.LV}"></Image>
-                    <Border Margin="0 4 0 0" Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}" VerticalAlignment="Center" BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                    <Border Margin="0 4 0 0" Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}" VerticalAlignment="Center" BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
+                                <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color_end,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
-                            <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
-                            <TextBlock Margin="4 0" FontSize="10" Grid.Column="2" Foreground="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                            <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color_name,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
+                            <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
+                            <Grid Background="White" Grid.Column="2">
+
+
+                                <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=member.fans_detail.medal_color_level,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                            </Grid>
                         </Grid>
                     </Border>
                 </StackPanel>
-                <AppBarButton Grid.Column="1" Height="36" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More" Grid.RowSpan="2" Width="48" ></AppBarButton>
-                <TextBlock Grid.Column="1" Grid.Row="1"  FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}"><!--#<Run Text="{Binding Path=floor}"></Run>--> <Run Text="{x:Bind Path=time}"></Run> <Run Text="{x:Bind Path=content.plat_str}"></Run></TextBlock>
+                <StackPanel Grid.Column="2" VerticalAlignment="Top"  Grid.RowSpan="2" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind Path=member.ShowCardBg,Mode=OneWay}"  VerticalAlignment="Center">
+                        <Grid Height="48" Width="40">
+                            <Image  Height="48" Width="288" Margin="-192 0 0 0" Stretch="UniformToFill"  Source="{x:Bind Path=member.user_sailing.cardbg.image,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}" ></Image>
+                        </Grid>
+                        <StackPanel  Margin="8 0 0 0"  VerticalAlignment="Center" Visibility="{x:Bind Path=member.user_sailing.cardbg.show,Mode=OneWay}">
+                            <TextBlock FontSize="10" 
+                                   FontFamily="{StaticResource FansNum}" 
+                                   Foreground="{x:Bind Path=member.user_sailing.cardbg.fan.color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
+                                   Text="NO."></TextBlock>
+                            <TextBlock FontSize="10" 
+                                   FontFamily="{StaticResource FansNum}"  
+                                   Foreground="{x:Bind Path=member.user_sailing.cardbg.fan.color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
+                                   Text="{x:Bind Path=member.user_sailing.cardbg.fan.num_desc,Mode=OneWay}"></TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                    <AppBarButton Visibility="Collapsed" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More"  Width="48" ></AppBarButton>
+                </StackPanel>
 
-                <ContentControl  Grid.Row="2" Grid.Column="1" Margin="4 0" Content="{x:Bind Path=content.text}">
+                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}"><!--#<Run Text="{Binding Path=floor}"></Run>--> <Run Text="{x:Bind Path=time}"></Run> <Run Text="{x:Bind Path=content.plat_str}"></Run></TextBlock>
+
+                <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=content.text}">
 
                 </ContentControl>
-                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.Row="3">
+                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
                         <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
@@ -150,8 +180,8 @@
                         <TextBlock FontSize="12" Margin="8 4" Foreground="Gray">UP主觉得很赞</TextBlock>
                     </Border>
                 </Grid>
-              
-                <StackPanel Grid.Column="1" Grid.Row="4" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
+
+                <StackPanel Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
 
                     <StackPanel  Visibility="{x:Bind Path=showReplyBox,Mode=OneWay}" Margin="0 0 0 4">
                         <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
@@ -281,13 +311,13 @@
         </Grid.RowDefinitions>
         <Grid  BorderThickness="0 0 0 1" BorderBrush="#33808080">
             <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="hot" >
-                <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" FontWeight="Bold">热门评论</TextBlock>
+                <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" >热门评论</TextBlock>
                 <HyperlinkButton x:Name="btn_NewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="btn_NewSort_Click"  HorizontalAlignment="Right">
                     <TextBlock>按最新排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="_new">
-                <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" FontWeight="Bold">最新评论</TextBlock>
+                <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" >最新评论</TextBlock>
                 <HyperlinkButton x:Name="btn_HotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="btn_HotSort_Click" >
                     <TextBlock>按热门排序</TextBlock>
                 </HyperlinkButton>
@@ -301,7 +331,7 @@
                           ItemContainerStyle="{StaticResource commentStyle}"  
                           SelectionMode="None" IsItemClickEnabled="False" 
                           ScrollViewer.VerticalScrollBarVisibility="Auto">
-          
+
             <ListView.Footer>
                 <StackPanel>
                     <ProgressBar    x:Name="pr_load" IsIndeterminate="True" Background="#00000000" ></ProgressBar>

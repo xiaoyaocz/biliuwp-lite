@@ -380,7 +380,6 @@ namespace BiliLite.Modules.User
 
         #endregion
 
-
         #region 密码登录
 
         private string userName;

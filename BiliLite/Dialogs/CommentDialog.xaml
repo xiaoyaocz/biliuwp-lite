@@ -9,8 +9,8 @@
     d:DesignHeight="800"
     d:DesignWidth="1000">
 
-    <Grid  >
-        <Grid x:Name="RootBorder" BorderThickness="1" BorderBrush="#31808080" Margin="24 64" Background="{ThemeResource SystemControlChromeLowAcrylicElementBrush}"  MaxWidth="600"  CornerRadius="8" >
+    <Grid Background="#00FFFFFF" Tapped="Grid_Tapped">
+        <Grid x:Name="RootBorder" Tapped="RootBorder_Tapped" BorderThickness="1" BorderBrush="#31808080" Margin="24 64" Background="{ThemeResource SystemControlChromeLowAcrylicElementBrush}"  MaxWidth="600"  CornerRadius="8" >
 
             <controls:CommentControl x:Name="comment" HorizontalAlignment="Stretch"></controls:CommentControl>
 

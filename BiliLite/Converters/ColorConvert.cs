@@ -21,7 +21,7 @@ namespace BiliLite.Converters
             try
             {
                 var obj = value.ToString().Replace("#", "");
-                if (int.TryParse(obj, out var c))
+                if (long.TryParse(obj, out var c))
                 {
                     obj = c.ToString("X2");
                 }
@@ -48,7 +48,10 @@ namespace BiliLite.Converters
             {
                 color = Colors.Transparent;
             }
-          
+            if (parameter !=null)
+            {
+                return color;
+            }
             return new SolidColorBrush(color);
         }
 

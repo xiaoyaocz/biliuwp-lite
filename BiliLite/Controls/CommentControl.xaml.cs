@@ -217,7 +217,7 @@ namespace BiliLite.Controls
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Utils.ShowMessageToast("加载评论失败");
             }
@@ -987,6 +987,7 @@ namespace BiliLite.Controls
 
         public CommentMemberModel level_info { get; set; }
         public CommentMemberFansDetailModel fans_detail { get; set; }
+        public CommentMemberUserSailingModel user_sailing { get; set; }
         public bool ShowFansDetail
         {
             get
@@ -994,6 +995,15 @@ namespace BiliLite.Controls
                 return fans_detail != null;
             }
         }
+
+        public bool ShowCardBg
+        {
+            get
+            {
+                return user_sailing != null&& user_sailing.cardbg!=null&& user_sailing.cardbg.fan!=null;
+            }
+        }
+
         public int current_level { get; set; }
         public string LV
         {
@@ -1095,6 +1105,38 @@ namespace BiliLite.Controls
         public int medal_id { get; set; }
         public string medal_name { get; set; }
         public int level { get; set; }
-        public int medal_color { get; set; }
+        public long medal_color { get; set; }
+        public long medal_color_end { get; set; }
+        public long medal_color_border { get; set; }
+        public long medal_color_name { get; set; }
+        public long medal_color_level { get; set; }
+    }
+    public class CommentMemberUserSailingModel
+    {
+        public CommentMemberUserSailingPendantModel pendant{ get; set; }
+        public CommentMemberUserSailingCardbgModel cardbg { get; set; }
+    }
+    public class CommentMemberUserSailingPendantModel
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string image { get; set; }
+    }
+    public class CommentMemberUserSailingCardbgModel
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string image { get; set; }
+        public string jump_url { get; set; }
+        public bool show { get { return fan != null && fan.num_desc != null && fan.num_desc!=""; } }
+        public CommentMemberUserSailingCardbgFanModel fan { get; set; }
+    }
+    public class CommentMemberUserSailingCardbgFanModel
+    {
+        public int is_fan { get; set; }
+        public int number { get; set; }
+        public string color { get; set; }
+        public string name { get; set; }
+        public string num_desc { get; set; }
     }
 }

@@ -73,5 +73,15 @@ namespace BiliLite.Dialogs
         {
             this.Close(); 
         }
+
+        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void RootBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }
