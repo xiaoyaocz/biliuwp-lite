@@ -291,7 +291,6 @@ namespace BiliLite.Controls
                     break;
             }
         }
-
         private async void PlayerControl_KeyDown(CoreWindow sender, KeyEventArgs args)
         {
             var elent = FocusManager.GetFocusedElement();
@@ -421,6 +420,7 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.Z:
                 case Windows.System.VirtualKey.N:
+                case (Windows.System.VirtualKey)188:
                     if (EpisodeList.SelectedIndex == 0)
                     {
                         Utils.ShowMessageToast("已经是第一P了");
@@ -432,6 +432,7 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.X:
                 case Windows.System.VirtualKey.M:
+                case (Windows.System.VirtualKey)190:
                     if (EpisodeList.SelectedIndex == EpisodeList.Items.Count - 1)
                     {
                         Utils.ShowMessageToast("已经是最后一P了");
@@ -441,11 +442,45 @@ namespace BiliLite.Controls
                         await SetPlayItem(EpisodeList.SelectedIndex + 1);
                     }
                     break;
+                case Windows.System.VirtualKey.F1:
+                case (Windows.System.VirtualKey)186:
+                    //慢速播放
+                    if (BottomCBSpeed.SelectedIndex == 5)
+                    {
+                        Utils.ShowMessageToast("不能再慢啦");
+                        return;
+                    }
+                   
+                    BottomCBSpeed.SelectedIndex += 1;
+                   
+                    break;
+                case Windows.System.VirtualKey.F2:
+                case (Windows.System.VirtualKey)222:
+                    //加速播放
+                    if (BottomCBSpeed.SelectedIndex == 0)
+                    {
+                        Utils.ShowMessageToast("不能再快啦");
+                        return;
+                    }
+                    BottomCBSpeed.SelectedIndex -= 1;
+                    break;
+                case Windows.System.VirtualKey.F3:
+                case Windows.System.VirtualKey.V:
+                    //静音
+                    if (Player.Volume >= 0)
+                    {
+                        Player.Volume = 0;
+                    }
+                    else
+                    {
+                        Player.Volume = 1;
+                    }
+                    break;
                 default:
                     break;
             }
         }
-
+      
 
         private void LoadDanmuSetting()
         {

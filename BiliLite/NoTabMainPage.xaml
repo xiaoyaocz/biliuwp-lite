@@ -33,18 +33,5 @@
         <Grid x:Name="gridViewer" Grid.RowSpan="2" Visibility="Collapsed" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}" >
             <controls:ImageViewerControl x:Name="imgViewer" CloseEvent="imgViewer_CloseEvent"></controls:ImageViewerControl>
         </Grid>
-
-        <Grid Grid.Row="1" Width="300" Height="200" Background="White">
-            <Grid Width="48" Height="48" Background="Gray">
-
-                <Image Height="48" Width="288" Margin="-196 4 0 0" Stretch="UniformToFill" Source="http://i0.hdslb.com/bfs/garb/item/f60bf8bc475f38372bd99e8f3aab31b682089f10.png"></Image>
-
-
-            </Grid>
-
-
-
-
-        </Grid>
     </Grid>
 </Page>
