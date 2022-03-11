@@ -132,12 +132,11 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (Banner == null || Banner.Count == 0)
+                if (Banner != null || Banner.Count == 0)
                 {
                     Banner = new ObservableCollection<RecommendBannerItemModel>();
                     foreach (var item in banner.banner_item)
                     {
-                        Banner = new ObservableCollection<RecommendBannerItemModel>();
                         if (item["type"].ToString() == "static")
                         {
                             Banner.Add(JsonConvert.DeserializeObject<RecommendBannerItemModel>(item["static_banner"].ToString()));
