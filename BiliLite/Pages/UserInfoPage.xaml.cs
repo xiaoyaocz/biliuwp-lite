@@ -102,6 +102,10 @@ namespace BiliLite.Pages
                 case Controls.Dynamic.DynamicDisplayType.Article:
                     commentType = Api.CommentApi.CommentType.Article;
                     break;
+                case Controls.Dynamic.DynamicDisplayType.MediaList:
+                    if (e.OneRowInfo.Tag != "收藏夹")
+                        commentType = Api.CommentApi.CommentType.Video;
+                    break;
                 default:
                     id = e.DynamicID;
                     break;

@@ -200,12 +200,13 @@ namespace BiliLite.Controls.Dynamic
                     return info;
                 case DynamicDisplayType.Web:
                     {
+                        var cover = obj["sketch"]["cover_url"]?.ToString() ?? "";
                         info = new DynamicItemDisplayOneRowInfo()
                         {
-                            Cover = obj["sketch"]["cover_url"].ToString() + "@200w.jpg",
+                            Cover = cover==""?"": cover + "@200w.jpg",
                             Subtitle = obj["sketch"]["desc_text"]?.ToString()??"",
-                            ID = obj["sketch"]["target_url"].ToString(),
-                            Title = obj["sketch"]["title"].ToString(),
+                            ID = obj["sketch"]["target_url"]?.ToString()??"",
+                            Title = obj["sketch"]["title"]?.ToString()??"",
                             CoverWidth = 80,
                         };
                         info.Url =  info.ID.ToString();
@@ -258,6 +259,12 @@ namespace BiliLite.Controls.Dynamic
                     return info;
                 case DynamicDisplayType.MediaList:
                     {
+                        //TODO 合集这部分需要重写
+                        //https://t.bilibili.com/625835271145782341
+                        if (obj["videos"].ToInt32()==1)
+                        {
+                            return ParseOneRowInfo( DynamicDisplayType.Video,obj);
+                        }
                         info = new DynamicItemDisplayOneRowInfo()
                         {
                             Cover = obj["cover"].ToString() + "@412w_232h_1c.jpg",
