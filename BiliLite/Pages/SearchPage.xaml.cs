@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,8 +112,22 @@ namespace BiliLite.Pages
                 item.HasData = false;
             }
             searchVM.SelectItem.Refresh();
+            ChangeTitle("搜索:"+txtKeyword.Text);
         }
-       
+        public void ChangeTitle(string title)
+        {
+            if ((this.Parent as Frame).Parent is TabViewItem)
+            {
+                if (this.Parent != null)
+                {
+                    ((this.Parent as Frame).Parent as TabViewItem).Header = title;
+                }
+            }
+            else
+            {
+                MessageCenter.ChangeTitle(title);
+            }
+        }
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (pivot.SelectedItem != null)

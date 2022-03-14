@@ -168,16 +168,16 @@
                                 <ToggleSwitch x:Name="swPreviewImageNavigateToPage" ></ToggleSwitch>
                             </StackPanel>
                             <StackPanel Margin="0 0 0 8">
-                                <TextBlock  Margin="0 8" FontSize="16">首页推荐显示方式</TextBlock>
+                                <TextBlock  Margin="0 8" FontSize="16">推荐页显示方式(重启应用生效)</TextBlock>
                                 <ComboBox x:Name="cbRecommendDisplayMode" SelectedIndex="0" MinWidth="200">
                                     <ComboBox.Items>
                                         <ComboBoxItem>网格</ComboBoxItem>
-                                        <ComboBoxItem>列表(宽屏)</ComboBoxItem>
+                                        <ComboBoxItem>列表</ComboBoxItem>
                                     </ComboBox.Items>
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Margin="0 0 0 8">
-                                <TextBlock  Margin="0 8"  FontSize="16">关注动态显示方式</TextBlock>
+                                <TextBlock  Margin="0 8"  FontSize="16">关注动态显示方式(重启应用生效)</TextBlock>
                                 <ComboBox x:Name="cbDynamicDisplayMode" SelectedIndex="0" MinWidth="200">
                                     <ComboBox.Items>
                                         <ComboBoxItem>列表</ComboBoxItem>
