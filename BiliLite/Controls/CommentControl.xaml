@@ -10,6 +10,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:convert="using:BiliLite.Converters" xmlns:modules="using:BiliLite.Modules"
     d:DesignHeight="300"
+    x:Name="comment"
     d:DesignWidth="400">
 
     <UserControl.Resources>
@@ -83,7 +84,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton  Click="btn_User_Click" Tag="{x:Bind mid}" Padding="0" Margin="0" Grid.RowSpan="2">
+                <HyperlinkButton HorizontalAlignment="Center" Click="btn_User_Click" Tag="{x:Bind mid}" VerticalAlignment="Top" Padding="0" Margin="0" Grid.RowSpan="2">
                     <Grid>
                         <Ellipse Width="36" Height="36" Margin="12">
                             <Ellipse.Fill>
@@ -94,13 +95,9 @@
                         <Image Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="8" Height="16" Source="{x:Bind Path=member.Verify}"></Image>
                     </Grid>
                 </HyperlinkButton>
-
-                <StackPanel Orientation="Horizontal" Margin="4 0" Grid.Column="1" >
-                    <TextBlock VerticalAlignment="Center" Visibility="{x:Bind showTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
-                    <TextBlock  Text="{x:Bind Path=member.uname}" 
-                                Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
-                    <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=member.LV}"></Image>
-                    <Border Margin="0 4 0 0" Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}" VerticalAlignment="Center" BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                <!--粉丝牌-->
+                <Grid x:Name="FansNarrow" Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay,Converter={StaticResource display}}" Margin="8 0"  Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Top">
+                    <Border  Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
                         <Border.Background>
                             <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
                                 <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
@@ -117,17 +114,48 @@
                             <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color_name,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
                             <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
                             <Grid Background="White" Grid.Column="2">
-
-
                                 <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=member.fans_detail.medal_color_level,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
                             </Grid>
                         </Grid>
                     </Border>
+                </Grid>
+                
+                <StackPanel Orientation="Horizontal" Margin="4 0" Grid.Column="1" >
+                    <TextBlock VerticalAlignment="Center" Visibility="{x:Bind showTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
+                    <TextBlock  Text="{x:Bind Path=member.uname}" 
+                                Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
+                    <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=member.LV}"></Image>
+                    <!--粉丝牌-->
+                    <Grid Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay}" Margin="0 4 0 0" VerticalAlignment="Center">
+                        <Border  Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                    <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
+                                    <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color_end,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color_name,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
+                                <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
+                                <Grid Background="White" Grid.Column="2">
+                                    <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=member.fans_detail.medal_color_level,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                   
+               
                 </StackPanel>
                 <StackPanel Grid.Column="2" VerticalAlignment="Top"  Grid.RowSpan="2" Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Visibility="{x:Bind Path=member.ShowCardBg,Mode=OneWay}"  VerticalAlignment="Center">
                         <Grid Height="48" Width="40">
-                            <Image  Height="48" Width="288" Margin="-192 0 0 0" Stretch="UniformToFill"  Source="{x:Bind Path=member.user_sailing.cardbg.image,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}" ></Image>
+                            <Image  Height="48" Width="288" Margin="-200 0 0 0" Stretch="UniformToFill"  Source="{x:Bind Path=member.user_sailing.cardbg.image,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}" ></Image>
                         </Grid>
                         <StackPanel  Margin="8 0 0 0"  VerticalAlignment="Center" Visibility="{x:Bind Path=member.user_sailing.cardbg.show,Mode=OneWay}">
                             <TextBlock FontSize="10" 

@@ -41,6 +41,24 @@ namespace BiliLite.Controls
             this.InitializeComponent();
             commentApi = new CommentApi();
             emoteVM = new EmoteVM();
+            this.SizeChanged += CommentControl_SizeChanged;
+        }
+
+
+
+        public bool IsWide
+        {
+            get { return (bool)GetValue(IsWideProperty); }
+            set { SetValue(IsWideProperty, value); }
+        }
+        public static readonly DependencyProperty IsWideProperty =
+            DependencyProperty.Register("IsWide", typeof(bool), typeof(CommentControl), new PropertyMetadata(false));
+
+
+
+        private void CommentControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            IsWide = e.NewSize.Width >= 500;
         }
 
         private void btn_User_Click(object sender, RoutedEventArgs e)
