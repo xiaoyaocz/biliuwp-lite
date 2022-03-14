@@ -138,7 +138,7 @@ namespace BiliLite.Modules
                 qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
                 {
                     multi_flv_url = data.data.durl,
-                    url = data.data.durl[0]?.url??"",
+                    url = data.data.durl[0]?.url ?? "",
                     mode = data.data.durl.Count > 1 ? VideoPlayMode.MultiFlv : VideoPlayMode.SingleFlv,
                     codec_name = "h264_flv"
                 };
@@ -167,12 +167,12 @@ namespace BiliLite.Modules
         }
         private async Task<ReturnModel<PlayUrlReturnInfo>> HandelDash(PlayInfo playInfo, int qn, int mode)
         {
-            var noVIP =!(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status!= 0);
+            var noVIP = !(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
             var data = await GetBiliBiliDash(playInfo, qn);
             if (data.code == 0 && data.data.dash != null)
             {
                 var h264 = data.data.dash.video.Where(x => x.codecs.Contains("avc"));
-                var h265 = data.data.dash.video.Where(x => x.codecs.Contains("hev"));
+                var h265 = data.data.dash.video.Where(x => x.codecs.Contains("hev")||x.codecs.Contains("hvc"));
                 var av01 = data.data.dash.video.Where(x => x.codecs.Contains("av01"));
                 if (qn > data.data.accept_quality.Max())
                 {
@@ -187,23 +187,28 @@ namespace BiliLite.Modules
                 {
                     PlayUrlInfo info = null;
                     var video = h264.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
-
-                    if (mode == 2)
+                    var h265_video = h265.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
+                    var av1_video = av01.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
+                    //h265处理
+                    if (mode == 2 && h265_video != null)
                     {
-                        var h265_video = h265.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
-                        if (h265_video != null)
-                        {
-                            video = h265_video;
-                        }
+                        video = h265_video;
                     }
-                    if (mode == 3)
+                    //av1处理
+                    if (mode == 3 )
                     {
-                        var av1_video = av01.FirstOrDefault(x => x.id == data.data.accept_quality[i]);
+                        //部分清晰度可能没有av1编码，切换至hevc
                         if (av1_video != null)
                         {
                             video = av1_video;
                         }
+                        else if(h265_video!=null)
+                        {
+                            video = h265_video;
+                        }
                     }
+
+                    //如果无法读取到播放器地址则跳过这个清晰度
                     if (video != null)
                     {
                         DashItemModel audio = null;
@@ -228,14 +233,15 @@ namespace BiliLite.Modules
                             dash_audio_url = audio,
                             mode = VideoPlayMode.Dash
                         };
+                        qualityWithPlayUrlInfos.Add(new QualityWithPlayUrlInfo()
+                        {
+                            quality = data.data.accept_quality[i],
+                            quality_description = data.data.accept_description[i],
+                            playUrlInfo = info,
+                            HttpHeader = GetDefualtHeader()
+                        });
                     }
-                    qualityWithPlayUrlInfos.Add(new QualityWithPlayUrlInfo()
-                    {
-                        quality = data.data.accept_quality[i],
-                        quality_description = data.data.accept_description[i],
-                        playUrlInfo = info,
-                        HttpHeader = GetDefualtHeader()
-                    });
+
                 }
                 if (noVIP)
                 {
@@ -247,7 +253,7 @@ namespace BiliLite.Modules
                 {
                     current = qualityWithPlayUrlInfos.OrderByDescending(x => x.quality).FirstOrDefault(x => x.playUrlInfo != null);
                 }
-               
+
                 return new ReturnModel<PlayUrlReturnInfo>()
                 {
                     success = true,
@@ -923,7 +929,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                var api = PlayerAPI.SeasonHistoryReport(playInfo.avid, playInfo.cid,Math.Floor(progress).ToInt32(), playInfo.season_id, playInfo.ep_id, playInfo.play_mode == VideoPlayType.Video ? 3 : 4);
+                var api = PlayerAPI.SeasonHistoryReport(playInfo.avid, playInfo.cid, Math.Floor(progress).ToInt32(), playInfo.season_id, playInfo.ep_id, playInfo.play_mode == VideoPlayType.Video ? 3 : 4);
                 await api.Request();
                 Debug.WriteLine(progress);
             }
@@ -984,14 +990,14 @@ namespace BiliLite.Modules
             }
         }
 
-        public async Task<List<NSDanmaku.Model.DanmakuModel>> GetDanmaku(string cid, int segment_index=1)
+        public async Task<List<NSDanmaku.Model.DanmakuModel>> GetDanmaku(string cid, int segment_index = 1)
         {
             List<NSDanmaku.Model.DanmakuModel> danmuList = new List<NSDanmaku.Model.DanmakuModel>();
             try
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-               
+
                 var data = await HttpHelper.GetStream(PlayerAPI.SegDanmaku(cid, segment_index).url);
                 var result = Proto.Reply.DmSegMobileReply.Parser.ParseFrom(data);
                 foreach (var item in result.Elems)
