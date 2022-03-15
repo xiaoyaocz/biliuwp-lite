@@ -221,6 +221,7 @@
                             <Paragraph>
                                 <Run>视频编码为AV1时系统需要</Run>
                                 <Hyperlink NavigateUri="ms-windows-store://pdp/?productid=9MVZQVXJBQ9V">安装AV1扩展</Hyperlink>
+                                <Run>,部分清晰度可能也需要HEVC扩展</Run>
                             </Paragraph>
                         </RichTextBlock>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">硬解视频</TextBlock>
