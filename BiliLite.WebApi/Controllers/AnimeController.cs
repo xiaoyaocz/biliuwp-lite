@@ -185,7 +185,7 @@ namespace BiliLite.WebApi.Controllers
                 List<BannerModel> banners = new List<BannerModel>();
                 foreach (var item in nodes)
                 {
-                    var img = item.SelectSingleNode("img");
+                    var img = item.SelectSingleNode("picture/img");
                     banners.Add(new BannerModel()
                     {
                         img = img.Attributes["src"].Value.Split('@')[0].Replace("//", "https://"),
