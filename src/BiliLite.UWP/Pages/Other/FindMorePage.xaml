@@ -18,9 +18,7 @@
                     DesiredWidth="400" 
                     Padding="8"
                     SelectionMode="None" IsItemClickEnabled="True">
-            <toolkit:AdaptiveGridView.Header>
-                <TextBlock Margin="12">这里会放一些不重要及实验性的功能入口</TextBlock>
-            </toolkit:AdaptiveGridView.Header>
+           
             <toolkit:AdaptiveGridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Margin" Value="8 4"></Setter>
@@ -29,9 +27,10 @@
             </toolkit:AdaptiveGridView.ItemContainerStyle>
             <toolkit:AdaptiveGridView.ItemTemplate>
                 <DataTemplate>
-                    <Border Background="WhiteSmoke" CornerRadius="4">
-                        <StackPanel Margin="12" Orientation="Horizontal">
-                            <SymbolIcon Symbol="{Binding Symbol}"></SymbolIcon>
+                    <Border Background="WhiteSmoke" CornerRadius="8">
+                        <StackPanel Margin="8" Orientation="Horizontal">
+                            <Image Source="http://i0.hdslb.com/bfs/bangumi/image/1b3aedf05ccaf873265a5cafc63cbdd647586997.png@200w.png" Width="64" Height="64" ></Image>
+                          
                             <TextBlock Margin="12 0" Text="{Binding Name}"></TextBlock>
                         </StackPanel>
                     </Border>

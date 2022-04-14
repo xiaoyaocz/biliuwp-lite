@@ -16,7 +16,7 @@ namespace BiliLite.Api
         public const string ROMAING_PROXY_URL = "https://bp.nsapps.cn";
 
         // 详情页使用的代理
-        public static string[] DETAIL_PROXY_URL =new string[] { "https://bp.nsapps.cn", "https://biliproxy.iill.moe", "https://service-k02mde2w-1251411860.hk.apigw.tencentcs.com" };
+        public static string[] DETAIL_PROXY_URL =new string[] { "https://bp.nsapps.cn",  "https://service-k02mde2w-1251411860.hk.apigw.tencentcs.com" };
       
 
         public static ApiKeyInfo AndroidKey = new ApiKeyInfo("1d8b6e7d45233436", "560c52ccd288fed045859ed18bffd973");

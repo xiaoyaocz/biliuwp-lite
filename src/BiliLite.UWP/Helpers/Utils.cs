@@ -221,11 +221,12 @@ namespace BiliLite.Helpers
             });
         }
         public static string ToSimplifiedChinese(string content)
-        {
-            var result=  Chinese.ChineseConverter.ToSimplified(content);
+        { 
             //部分字符没有转换
             //临时解决方法
-            result = result.Replace("麼", "么").Replace("後", "么");
+            content = content.Replace("麼", "么").Replace("後", "后").Replace("幹", "干");
+            var result=  Chinese.ChineseConverter.ToSimplified(content);
+           
           
             return result;
         }

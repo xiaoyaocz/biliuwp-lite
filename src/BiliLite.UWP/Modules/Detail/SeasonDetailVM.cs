@@ -214,6 +214,11 @@ namespace BiliLite.Modules
                     objText = objText.Replace("\"staff\"", "staff1");
                     var model= JsonConvert.DeserializeObject<SeasonDetailModel>(objText);
                     model.episodes = await Utils.DeserializeJson<List<SeasonDetailEpisodeModel>>(data["result"]["episodes"].ToString());
+                    model.user_status = new SeasonDetailUserStatusModel()
+                    {
+                        follow_status=0,
+                        follow=0
+                    };
                     return new ApiResultModel<SeasonDetailModel>() { code=0,message="",result=model,};
                 }
             }
