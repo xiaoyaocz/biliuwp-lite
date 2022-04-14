@@ -830,6 +830,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Chinese">
+      <Version>0.4.6</Version>
+    </PackageReference>
     <PackageReference Include="FFmpegInteropX">
       <Version>0.9.4</Version>
     </PackageReference>

@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Api;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace BiliLite.Dialogs
                     var downloadInfo = new DownloadInfo()
                     {
                         CoverUrl = downloadItem.Cover,
-                        DanmakuUrl = "https://api.bilibili.com/x/v1/dm/list.so?oid=" + item.CID,
+                        DanmakuUrl = $"{ApiHelper.API_BASE_URL}/x/v1/dm/list.so?oid=" + item.CID,
                         EpisodeID =item.EpisodeID,
                         CID= item.CID,
                         AVID = downloadItem.ID,

@@ -10,31 +10,24 @@ namespace BiliLite.Api
     public class SeasonApi
     {
        
-        public ApiModel Detail(string season_id)
+        public ApiModel Detail(string season_id,bool proxy=false)
         {
+            var baseUrl = ApiHelper.API_BASE_URL;
+            if (proxy)
+            {
+                baseUrl = ApiHelper.RandomProxyUrl();
+            }
+
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/pgc/view/app/season",
+                baseUrl = $"{baseUrl}/pgc/view/app/season",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel DetailProxy(string season_id)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/pgc/view/app/season",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}"
-            };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
-            var apiUrl = Uri.EscapeDataString(api.url);
-            api.baseUrl = "https://biliproxy.iill.moe";
-            api.parameter = "url="+ apiUrl;
-            return api;
-        }
+       
         public ApiModel DetailWeb(string season_id)
         {
             ApiModel api = new ApiModel()
@@ -56,7 +49,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/pgc/review/short/list",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/review/short/list",
                 parameter = $"media_id={media_id}&ps=20&sort={sort}&cursor={next}"
             };
             if (SettingHelper.Account.Logined)

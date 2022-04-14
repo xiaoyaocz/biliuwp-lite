@@ -29,45 +29,49 @@ namespace BiliLite.Pages.Other
             this.InitializeComponent();
             navigatorItems = new List<NavigatorItem>() {
                 new NavigatorItem(){
-                    Name="二维码扫描",
-                    Symbol= Symbol.Camera,
+                    Name="2022年4月港澳台片单",
+                    Symbol= Symbol.Link,
                     NavigationInfo=new NavigationInfo()
                     {
-                        icon= Symbol.Camera,
-                        page=typeof(BlankPage),
-                        title="二维码扫描"
+                        icon= Symbol.Link,
+                        page=typeof(WebPage),
+                        title="2022年4月港澳台片单",
+                        parameters="https://www.bilibili.com/bangumi/list/sl59578"
                     }
                 },
                 new NavigatorItem(){
-                    Name="随机视频",
-                    Symbol= Symbol.Refresh,
+                    Name="2022年1月港澳台片单",
+                    Symbol= Symbol.Link,
                     NavigationInfo=new NavigationInfo()
                     {
-                        icon= Symbol.Camera,
-                        page=typeof(BlankPage),
-                        title="二维码扫描"
+                        icon= Symbol.Link,
+                        page=typeof(WebPage),
+                        title="2022年1月港澳台片单",
+                        parameters="https://www.bilibili.com/bangumi/list/sl58464"
                     }
                 },
-                new NavigatorItem(){
-                        Name="NS Plugin",
-                        Symbol= Symbol.World,
-                        NavigationInfo=new NavigationInfo()
-                        {
-                            icon= Symbol.Camera,
-                            page=typeof(BlankPage),
-                            title="测试"
-                        }
-                    },
-                new NavigatorItem(){
-                        Name="活动中心",
-                        Symbol= Symbol.Tag,
-                        NavigationInfo=new NavigationInfo()
-                        {
-                            icon= Symbol.Camera,
-                            page=typeof(BlankPage),
-                            title="二维码扫描"
-                        }
-                 },
+                 new NavigatorItem(){
+                    Name="2021年10月港澳台片单",
+                    Symbol= Symbol.Link,
+                    NavigationInfo=new NavigationInfo()
+                    {
+                        icon= Symbol.Link,
+                        page=typeof(WebPage),
+                        title="2021年10月港澳台片单",
+                        parameters="https://www.bilibili.com/bangumi/list/sl56740"
+                    }
+                },
+                  new NavigatorItem(){
+                    Name="2021年7月港澳台片单",
+                    Symbol= Symbol.Link,
+                    NavigationInfo=new NavigationInfo()
+                    {
+                        icon= Symbol.Link,
+                        page=typeof(WebPage),
+                        title="2021年7月港澳台片单",
+                        parameters="https://www.bilibili.com/bangumi/list/sl55865"
+                    }
+                },
             };
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

@@ -220,7 +220,15 @@ namespace BiliLite.Helpers
                 return JsonConvert.DeserializeObject<T>(results);
             });
         }
-
+        public static string ToSimplifiedChinese(string content)
+        {
+            var result=  Chinese.ChineseConverter.ToSimplified(content);
+            //部分字符没有转换
+            //临时解决方法
+            result = result.Replace("麼", "么").Replace("後", "么");
+          
+            return result;
+        }
         public static bool SetClipboard(string content)
         {
             try

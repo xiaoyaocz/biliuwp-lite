@@ -121,7 +121,7 @@ namespace BiliLite.Modules
         {
             var noVIP = !(SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
             var data = await GetBiliBiliFlv(playInfo, qn);
-            if (data.code == 0)
+            if (data != null && data.code == 0)
             {
 
                 List<QualityWithPlayUrlInfo> qualityWithPlayUrlInfos = new List<QualityWithPlayUrlInfo>();
@@ -135,6 +135,19 @@ namespace BiliLite.Modules
                     });
                 }
                 var index = data.data.accept_quality.IndexOf(data.data.quality);
+
+                //使用Akamai CDN链接
+                if (data.proxy&& SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true))
+                {
+                    foreach (var item in data.data.durl)
+                    {
+                        var akamaizedUrl = item.backup_url.FirstOrDefault(x => x.Contains("akamaized.net"));
+                        if (!item.url.Contains("akamaized.net") && akamaizedUrl != null)
+                        {
+                            item.url = akamaizedUrl;
+                        }
+                    }
+                }
                 qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
                 {
                     multi_flv_url = data.data.durl,
@@ -172,7 +185,7 @@ namespace BiliLite.Modules
             if (data.code == 0 && data.data.dash != null)
             {
                 var h264 = data.data.dash.video.Where(x => x.codecs.Contains("avc"));
-                var h265 = data.data.dash.video.Where(x => x.codecs.Contains("hev")||x.codecs.Contains("hvc"));
+                var h265 = data.data.dash.video.Where(x => x.codecs.Contains("hev") || x.codecs.Contains("hvc"));
                 var av01 = data.data.dash.video.Where(x => x.codecs.Contains("av01"));
                 if (qn > data.data.accept_quality.Max())
                 {
@@ -195,14 +208,14 @@ namespace BiliLite.Modules
                         video = h265_video;
                     }
                     //av1处理
-                    if (mode == 3 )
+                    if (mode == 3)
                     {
                         //部分清晰度可能没有av1编码，切换至hevc
                         if (av1_video != null)
                         {
                             video = av1_video;
                         }
-                        else if(h265_video!=null)
+                        else if (h265_video != null)
                         {
                             video = h265_video;
                         }
@@ -225,6 +238,24 @@ namespace BiliLite.Modules
                                 audio = audios.FirstOrDefault();
                             }
                         }
+
+                        //使用Akamai CDN链接
+                        if (data.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true))
+                        {
+                            var akamaizedVideoUrl = video.backupUrl.FirstOrDefault(x => x.Contains("akamaized.net"));
+                            var akamaizedAudioUrl = audio.backupUrl.FirstOrDefault(x => x.Contains("akamaized.net"));
+                            if (!video.baseUrl.Contains("akamaized.net") && akamaizedVideoUrl != null)
+                            {
+                                video.baseUrl = akamaizedVideoUrl;
+                                video.base_url = akamaizedVideoUrl;
+                            }
+                            if (!audio.baseUrl.Contains("akamaized.net") && akamaizedAudioUrl != null)
+                            {
+                                audio.baseUrl = akamaizedAudioUrl;
+                                audio.base_url = akamaizedAudioUrl;
+                            }
+                        }
+
 
                         info = new PlayUrlInfo()
                         {
@@ -498,7 +529,7 @@ namespace BiliLite.Modules
                 var data = HandelError<object>(ex);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    return await GetBiliPlusDash(playInfo, qn);
+                    return await GetBiliBiliDash(playInfo, qn, true);
                 }
                 return new ApiDataModel<DashModel>()
                 {
@@ -556,7 +587,7 @@ namespace BiliLite.Modules
                 var data = HandelError<object>(ex);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    return await GetBiliPlusFlv(playInfo, qn);
+                    return await GetBiliBiliFlv(playInfo, qn, true);
                 }
                 return new ApiDataModel<FlvModel>()
                 {
@@ -602,30 +633,32 @@ namespace BiliLite.Modules
                 };
             }
         }
-        private async Task<ApiDataModel<FlvModel>> GetBiliBiliFlv(PlayInfo playInfo, int qn)
+        private async Task<ApiDataModel<FlvModel>> GetBiliBiliFlv(PlayInfo playInfo, int qn, bool proxy = false)
         {
             try
             {
-                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, false);
+                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, false, proxy);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, false);
+                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, false, proxy);
                 }
                 var result = await api.Request();
                 if (result.status)
                 {
                     var obj = result.GetJObject();
                     FlvModel flvData = null;
-                    if (obj["code"].ToInt32() != 0 || result.results.Contains("8986943"))
+                    if ((obj["code"].ToInt32() != 0 || result.results.Contains("8986943")) && !proxy)
                     {
-                        var bp = await GetBiliPlusFlv(playInfo, qn);
+                        var bp = await GetBiliBiliFlv(playInfo, qn, true);
                         return new ApiDataModel<FlvModel>()
                         {
                             code = bp.code,
                             message = bp.message,
-                            data = bp.data
+                            data = bp.data,
+                            proxy = proxy
                         };
                     }
+
                     if (obj["data"] != null)
                     {
                         flvData = JsonConvert.DeserializeObject<FlvModel>(obj["data"].ToString());
@@ -638,12 +671,27 @@ namespace BiliLite.Modules
                     {
                         flvData = JsonConvert.DeserializeObject<FlvModel>(obj.ToString());
                     }
-                    return new ApiDataModel<FlvModel>()
+                    if (flvData != null)
                     {
-                        code = 0,
-                        message = "",
-                        data = flvData
-                    };
+                        return new ApiDataModel<FlvModel>()
+                        {
+                            code = 0,
+                            message = "",
+                            data = flvData,
+                            proxy = proxy
+                        };
+                    }
+                    else
+                    {
+                        return new ApiDataModel<FlvModel>()
+                        {
+                            code = -997,
+                            message = result.message,
+                            proxy = proxy
+                        };
+
+                    }
+
                     //var data = await result.GetJson<ApiDataModel<FlvModel>>();
                     //if (data.code != 0|| result.results.Contains("8986943"))
                     //{
@@ -658,20 +706,22 @@ namespace BiliLite.Modules
                 }
                 else
                 {
-                    if (playInfo.play_mode == VideoPlayType.Season)
+                    if (playInfo.play_mode == VideoPlayType.Season && !proxy)
                     {
-                        var bp = await GetBiliPlusFlv(playInfo, qn);
+                        var bp = await GetBiliBiliFlv(playInfo, qn, true);
                         return new ApiDataModel<FlvModel>()
                         {
                             code = bp.code,
                             message = bp.message,
-                            data = bp.data
+                            data = bp.data,
+                            proxy = proxy
                         };
                     }
                     return new ApiDataModel<FlvModel>()
                     {
                         code = -998,
-                        message = result.message
+                        message = result.message,
+                        proxy = proxy
                     };
                 }
             }
@@ -681,74 +731,76 @@ namespace BiliLite.Modules
                 return new ApiDataModel<FlvModel>()
                 {
                     code = -999,
-                    message = data.message
+                    message = data.message,
+                    proxy = proxy
                 };
             }
         }
-        private async Task<ApiDataModel<FlvModel>> GetBiliPlusFlv(PlayInfo playInfo, int qn)
-        {
-            try
-            {
-                if (SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
-                {
-                    return new ApiDataModel<FlvModel>()
-                    {
-                        code = -990,
-                        message = "开启了站外视频替换"
-                    };
-                }
+        //private async Task<ApiDataModel<FlvModel>> GetBiliPlusFlv(PlayInfo playInfo, int qn)
+        //{
+        //    try
+        //    {
+        //        if (SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
+        //        {
+        //            return new ApiDataModel<FlvModel>()
+        //            {
+        //                code = -990,
+        //                message = "开启了站外视频替换"
+        //            };
+        //        }
 
-                var api = PlayerAPI.SeasonPlayUrlBiliPlus(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, false);
-                var result = await api.Request();
-                if (result.status)
-                {
-                    var data = await result.GetJson<ApiDataModel<FlvModel>>();
-                    if (data.code == 0)
-                    {
-                        data.data = await result.GetJson<FlvModel>();
-                    }
-                    //foreach (var item in data.data.durl)
-                    //{
-                    //    item.url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.url);
-                    //}
-                    return data;
-                }
-                else
-                {
-                    return new ApiDataModel<FlvModel>()
-                    {
-                        code = -998,
-                        message = result.message
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                var data = HandelError<object>(ex);
-                return new ApiDataModel<FlvModel>()
-                {
-                    code = -999,
-                    message = data.message
-                };
-            }
-        }
-        private async Task<ApiDataModel<DashModel>> GetBiliBiliDash(PlayInfo playInfo, int qn)
+        //        var api = PlayerAPI.SeasonPlayUrlBiliPlus(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, false);
+        //        var result = await api.Request();
+        //        if (result.status)
+        //        {
+        //            var data = await result.GetJson<ApiDataModel<FlvModel>>();
+        //            if (data.code == 0)
+        //            {
+        //                data.data = await result.GetJson<FlvModel>();
+        //            }
+        //            //foreach (var item in data.data.durl)
+        //            //{
+        //            //    item.url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.url);
+        //            //}
+        //            return data;
+        //        }
+        //        else
+        //        {
+        //            return new ApiDataModel<FlvModel>()
+        //            {
+        //                code = -998,
+        //                message = result.message
+        //            };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var data = HandelError<object>(ex);
+        //        return new ApiDataModel<FlvModel>()
+        //        {
+        //            code = -999,
+        //            message = data.message
+        //        };
+        //    }
+        //}
+        private async Task<ApiDataModel<DashModel>> GetBiliBiliDash(PlayInfo playInfo, int qn, bool proxy = false)
         {
             try
             {
-                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, true);
+                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, true, proxy);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, true);
+                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, true, proxy);
                 }
                 var result = await api.Request();
                 if (result.status)
                 {
                     DashModel dashModel = null;
                     var obj = result.GetJObject();
-                    if (obj["code"].ToInt32() != 0 || result.results.Contains("8986943"))
+                    if ((obj["code"].ToInt32() != 0 || result.results.Contains("8986943")) && !proxy)
                     {
-                        return await GetBiliPlusDash(playInfo, qn);
+                        //使用代理
+                        return await GetBiliBiliDash(playInfo, qn, true);
                     }
                     if (obj.ContainsKey("data"))
                     {
@@ -777,25 +829,28 @@ namespace BiliLite.Modules
                         return new ApiDataModel<DashModel>()
                         {
                             code = -910,
-                            message = "需要使用FLV"
+                            message = "需要使用FLV",
+                            proxy = proxy
                         };
                     }
                     return new ApiDataModel<DashModel>()
                     {
                         code = 0,
-                        data = dashModel
+                        data = dashModel,
+                        proxy = proxy
                     };
                 }
                 else
                 {
-                    if (playInfo.play_mode == VideoPlayType.Season)
+                    if (playInfo.play_mode == VideoPlayType.Season && !proxy)
                     {
-                        return await GetBiliPlusDash(playInfo, qn);
+                        return await GetBiliBiliDash(playInfo, qn, true);
                     }
                     return new ApiDataModel<DashModel>()
                     {
                         code = -998,
-                        message = result.message
+                        message = result.message,
+                        proxy = proxy
                     };
                 }
             }
@@ -805,73 +860,74 @@ namespace BiliLite.Modules
                 return new ApiDataModel<DashModel>()
                 {
                     code = -999,
-                    message = data.message
+                    message = data.message,
+                    proxy = proxy
                 };
             }
         }
-        private async Task<ApiDataModel<DashModel>> GetBiliPlusDash(PlayInfo playInfo, int qn)
-        {
-            try
-            {
-                if (SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
-                {
-                    return new ApiDataModel<DashModel>()
-                    {
-                        code = -990,
-                        message = "开启了站外视频替换"
-                    };
-                }
-                var api = PlayerAPI.SeasonPlayUrlBiliPlus(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, true);
-                var result = await api.Request();
-                if (result.status)
-                {
-                    var data = await result.GetJson<ApiDataModel<DashModel>>();
-                    if (data.code == 0)
-                    {
-                        data.data = await result.GetJson<DashModel>();
-                    }
-                    else
-                    {
-                        return new ApiDataModel<DashModel>()
-                        {
-                            code = -998,
-                            message = data.message
-                        };
-                    }
+        //private async Task<ApiDataModel<DashModel>> GetBiliPlusDash(PlayInfo playInfo, int qn)
+        //{
+        //    try
+        //    {
+        //        if (SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
+        //        {
+        //            return new ApiDataModel<DashModel>()
+        //            {
+        //                code = -990,
+        //                message = "开启了站外视频替换"
+        //            };
+        //        }
+        //        var api = PlayerAPI.SeasonPlayUrlBiliPlus(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, true);
+        //        var result = await api.Request();
+        //        if (result.status)
+        //        {
+        //            var data = await result.GetJson<ApiDataModel<DashModel>>();
+        //            if (data.code == 0)
+        //            {
+        //                data.data = await result.GetJson<DashModel>();
+        //            }
+        //            else
+        //            {
+        //                return new ApiDataModel<DashModel>()
+        //                {
+        //                    code = -998,
+        //                    message = data.message
+        //                };
+        //            }
 
-                    //foreach (var item in data.data.dash.video)
-                    //{
-                    //    item.baseUrl = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.baseUrl);
-                    //    item.base_url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.base_url);
-                    //}
-                    foreach (var item in data.data.dash.audio.Where(x => x.id <= 30280))
-                    {
-                        item.mimeType = "audio/mp4";
-                        item.mime_type = "audio/mp4";
-                        //item.baseUrl = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.baseUrl);
-                        //item.base_url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.base_url);
-                    }
-                    return data;
-                }
-                else
-                {
-                    return new ApiDataModel<DashModel>()
-                    {
-                        code = -998,
-                        message = result.message
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                var data = HandelError<object>(ex);
-                return new ApiDataModel<DashModel>()
-                {
-                    code = -999,
-                    message = data.message
-                };
-            }
-        }
+        //            //foreach (var item in data.data.dash.video)
+        //            //{
+        //            //    item.baseUrl = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.baseUrl);
+        //            //    item.base_url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.base_url);
+        //            //}
+        //            foreach (var item in data.data.dash.audio.Where(x => x.id <= 30280))
+        //            {
+        //                item.mimeType = "audio/mp4";
+        //                item.mime_type = "audio/mp4";
+        //                //item.baseUrl = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.baseUrl);
+        //                //item.base_url = "http://bilibili.iill.moe/" + Uri.EscapeDataString(item.base_url);
+        //            }
+        //            return data;
+        //        }
+        //        else
+        //        {
+        //            return new ApiDataModel<DashModel>()
+        //            {
+        //                code = -998,
+        //                message = result.message
+        //            };
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var data = HandelError<object>(ex);
+        //        return new ApiDataModel<DashModel>()
+        //        {
+        //            code = -999,
+        //            message = data.message
+        //        };
+        //    }
+        //}
 
 
 

@@ -360,7 +360,7 @@ namespace BiliLite.Helpers
             /// 默认视频类型 int flv=0, dash=1,dash_hevc=2
             /// </summary>
             public const string DEFAULT_VIDEO_TYPE = "PlayerDefaultVideoType";
-            public static List<double> VideoSpeed =new List<double>() { 2.0d, 1.5d, 1.25d, 1.0d,0.75d,0.5d };
+            public static List<double> VideoSpeed = new List<double>() { 2.0d, 1.5d, 1.25d, 1.0d, 0.75d, 0.5d };
 
             /// <summary>
             /// 默认视频类型 int 1.0
@@ -412,7 +412,7 @@ namespace BiliLite.Helpers
             /// <summary>
             /// 自动铺满窗口
             /// </summary>
-            public const string AUTO_FULL_WINDOW= "PlayerAutoToFullWindow";
+            public const string AUTO_FULL_WINDOW = "PlayerAutoToFullWindow";
             /// <summary>
             /// 自动铺满全屏
             /// </summary>
@@ -423,7 +423,25 @@ namespace BiliLite.Helpers
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
 
         }
-
+        public class Roaming
+        {
+            /// <summary>
+            /// 自定义服务器
+            /// </summary>
+            public const string CUSTOM_SERVER = "RoamingCustomServer";
+            /// <summary>
+            /// 自定义服务器链接
+            /// </summary>
+            public const string CUSTOM_SERVER_URL = "RoamingCustomServerUrl";
+            /// <summary>
+            /// 简体中文
+            /// </summary>
+            public const string TO_SIMPLIFIED = "RoamingSubtitleToSimplified";
+            /// <summary>
+            /// 只使用AkamaiCDN链接
+            /// </summary>
+            public const string AKAMAI_CDN = "RoamingAkamaiCDN";
+        }
         public class Download
         {
             /// <summary>

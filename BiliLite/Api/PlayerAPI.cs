@@ -9,12 +9,18 @@ namespace BiliLite.Api
 {
     public class PlayerAPI
     {
-        public ApiModel VideoPlayUrl(string aid, string cid, int qn,bool dash)
+        public ApiModel VideoPlayUrl(string aid, string cid, int qn,bool dash,bool proxy=false)
         {
+            var baseUrl = ApiHelper.API_BASE_URL;
+            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            if (proxy)
+            {
+                baseUrl = proxyUrl;
+            }
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/x/player/playurl",
+                baseUrl = $"{baseUrl}/x/player/playurl",
                 parameter = ApiHelper.MustParameter(ApiHelper.WebVideoKey, true) + $"&avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingHelper.Account.Logined? SettingHelper.Account.Profile.mid.ToString():"")}"
             };
             if (dash)
@@ -24,13 +30,18 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
         }
-        public ApiModel SeasonPlayUrl(string aid, string cid, int qn,int season_type, bool dash)
+        public ApiModel SeasonPlayUrl(string aid, string cid, int qn,int season_type, bool dash, bool proxy = false)
         {
+            var baseUrl = ApiHelper.API_BASE_URL;
+            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            if (proxy)
+            {
+                baseUrl = proxyUrl;
+            }
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                //baseUrl = $"https://bangumi.bilibili.com/player/web_api/v2/playurl",
-                baseUrl = $"https://api.bilibili.com/pgc/player/web/playurl",
+                baseUrl = $"{baseUrl}/pgc/player/web/playurl",
                 parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
@@ -44,12 +55,12 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
         }
-        public ApiModel SeasonAdnroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)
+        public ApiModel SeasonAndroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/pgc/player/web/playurl",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/player/web/playurl",
                 parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
@@ -118,7 +129,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/x/stein/edgeinfo_v2",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/stein/edgeinfo_v2",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}&graph_version={graph_version}&edge_id={edge_id}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
@@ -140,7 +151,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = $"https://api.bilibili.com/x/v2/history/report",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/report",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true) + $"&aid={aid}&cid={cid}&epid={epid}&sid={sid}&progress={progress}&realtime={progress}&sub_type=1&type={type}"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidVideoKey);
@@ -162,7 +173,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = $"https://api.bilibili.com/x/v2/dm/post",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/dm/post",
                 parameter= ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true)+$"&aid={aid}",
                 body =   $"msg={Uri.EscapeDataString(msg)}&mode={mode}&screen_state=1&color={color}&pool=0&progress={Convert.ToInt32(position*1000)}&fontsize=25&rnd={Utils.GetTimestampS()}&from=7&oid={cid}&plat={plat}&type=1"
             };
@@ -180,7 +191,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/player/v2",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/v2",
                 parameter = $"cid={cid}&aid={aid}&bvid={bvid}",
             };
             return api;
@@ -195,7 +206,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"https://api.bilibili.com/x/dm/filter/user",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/dm/filter/user",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true) 
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
@@ -212,7 +223,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = $"https://api.bilibili.com/x/dm/filter/user/add",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/dm/filter/user/add",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true)+ $"&filter={Uri.EscapeDataString(word)}&type={type}"
             };
             api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);

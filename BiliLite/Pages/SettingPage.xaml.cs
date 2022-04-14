@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Api;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.UI;
@@ -9,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Networking.BackgroundTransfer;
@@ -40,6 +42,7 @@ namespace BiliLite.Pages
             settingVM = new SettingVM();
             LoadUI();
             LoadPlayer();
+            LoadRoaming();
             LoadDanmu();
             LoadLiveDanmu();
             LoadDownlaod();
@@ -318,6 +321,54 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, swPlayerSettingDoubleClickFullScreen.IsOn);
                 });
             });
+        }
+        private void LoadRoaming()
+        {
+            //使用自定义服务器
+            RoamingSettingSetDefault.Click += RoamingSettingSetDefault_Click;
+            RoamingSettingCustomServer.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            RoamingSettingCustomServer.Loaded += new RoutedEventHandler((sender, e) => {
+                 RoamingSettingCustomServer.QuerySubmitted += RoamingSettingCustomServer_QuerySubmitted;
+             });
+
+            //Akamai
+            RoamingSettingAkamaized.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true);
+            RoamingSettingAkamaized.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingAkamaized.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Roaming.AKAMAI_CDN, RoamingSettingAkamaized.IsOn);
+                });
+            });
+            //转简体
+            RoamingSettingToSimplified.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true);
+            RoamingSettingToSimplified.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingToSimplified.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Roaming.TO_SIMPLIFIED, RoamingSettingToSimplified.IsOn);
+                });
+            });
+        }
+
+        private void RoamingSettingSetDefault_Click(object sender, RoutedEventArgs e)
+        {
+            SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            RoamingSettingCustomServer.Text = ApiHelper.ROMAING_PROXY_URL;
+            Utils.ShowMessageToast("保存成功");
+        }
+
+        private void RoamingSettingCustomServer_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            var text = sender.Text;
+            if (!Regex.IsMatch(text, @"^(http(s)?:\/\/)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*$"))
+            {
+                Utils.ShowMessageToast("输入服务器链接有误");
+                sender.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+                return;
+            }
+            SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, text);
+            Utils.ShowMessageToast("保存成功");
         }
 
         private void LoadDanmu()

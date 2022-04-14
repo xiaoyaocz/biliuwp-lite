@@ -18,7 +18,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/space/acc/info",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/acc/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)+$"&mid={mid}",
             };
 
@@ -50,7 +50,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/relation/stat",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/stat",
                 parameter =  $"vmid={mid}",
             };
          
@@ -69,7 +69,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/space/arc/search",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/arc/search",
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
             };
             return api;
@@ -86,7 +86,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/space/article",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/article",
                 parameter = $"mid={mid}&ps={pagesize}&pn={page}&sort={order.ToString()}",
             };
             return api;
@@ -100,7 +100,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/relation/tags",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/tags",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
@@ -118,17 +118,17 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/relation/followings",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followings",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true) + $"&vmid={mid}&ps={pagesize}&pn={page}&order=desc&order_type={(order== FollowingsOrder.attention? "attention":"")}",
             };
             if (tid==-1&& keyword != "")
             {
-                api.baseUrl = "https://api.bilibili.com/x/relation/followings/search";
+                api.baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followings/search";
                 api.parameter += $"&name={keyword}";
             }
             if (tid != -1)
             {
-                api.baseUrl = "https://api.bilibili.com/x/relation/tag";
+                api.baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/tag";
                 api.parameter += $"&tagid={tid}&mid={mid}";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
@@ -147,7 +147,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/relation/followers",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followers",
                 parameter = $"vmid={mid}&ps={pagesize}&pn={page}&order=desc",
             };
             return api;
@@ -163,7 +163,7 @@ namespace BiliLite.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/v3/fav/folder/created/list-all",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v3/fav/folder/created/list-all",
                 parameter = $"up_mid={mid}",
             };
             return api;

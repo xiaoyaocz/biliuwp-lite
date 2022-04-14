@@ -180,6 +180,11 @@ namespace BiliLite.Controls
         SystemMediaTransportControls _systemMediaTransportControls;
         DispatcherTimer timer_focus;
         public Player PlayerInstance { get { return Player; } }
+        /// <summary>
+        /// 当前选中的字幕名称
+        /// </summary>
+        private string CurrentSubtitleName { get; set; }="无";
+
         public PlayerControl()
         {
             this.InitializeComponent();
@@ -957,6 +962,7 @@ namespace BiliLite.Controls
                 item.IsChecked = false;
             }
             var menuitem = (sender as ToggleMenuFlyoutItem);
+            CurrentSubtitleName = menuitem.Text;
             if (menuitem.Text == "无")
             {
                 ClearSubTitle();
@@ -978,6 +984,14 @@ namespace BiliLite.Controls
                 subtitles = await playerHelper.GetSubtitle(url);
                 if (subtitles != null)
                 {
+                    //转为简体
+                    if (SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED,true)&&CurrentSubtitleName== "中文（繁体）")
+                    {
+                        foreach (var item in subtitles.body)
+                        {
+                            item.content = Utils.ToSimplifiedChinese(item.content);
+                        }
+                    }
                     subtitleTimer = new DispatcherTimer();
                     subtitleTimer.Interval = TimeSpan.FromMilliseconds(100);
                     subtitleTimer.Tick += SubtitleTimer_Tick;
@@ -1204,7 +1218,7 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog(info.message, "读取视频播放地址失败");
+                ShowDialog("请稍后再试，或者到设置中自定义漫游服务器", "读取视频播放地址失败");
             }
 
         }
@@ -1257,6 +1271,7 @@ namespace BiliLite.Controls
                     noneItem.Click += Menuitem_Click;
                     menu.Items.Add(noneItem);
                     (menu.Items[0] as ToggleMenuFlyoutItem).IsChecked = true;
+                    CurrentSubtitleName = (menu.Items[0] as ToggleMenuFlyoutItem).Text;
                     SetSubTitle((menu.Items[0] as ToggleMenuFlyoutItem).Tag.ToString());
                     BottomBtnSelctSubtitle.Flyout = menu;
                     BottomBtnSelctSubtitle.Visibility = Visibility.Visible;
@@ -1266,6 +1281,7 @@ namespace BiliLite.Controls
                 {
                     var menu = new MenuFlyout();
                     menu.Items.Add(new ToggleMenuFlyoutItem() { Text = "无", IsChecked = true });
+                    CurrentSubtitleName = "无";
                     BottomBtnSelctSubtitle.Flyout = menu;
                     BottomBtnSelctSubtitle.Visibility = Visibility.Collapsed;
                     BorderSubtitle.Visibility = Visibility.Collapsed;
@@ -1286,6 +1302,7 @@ namespace BiliLite.Controls
                 noneItem.Click += Menuitem_Click;
                 menu.Items.Add(noneItem);
                 (menu.Items[0] as ToggleMenuFlyoutItem).IsChecked = true;
+                CurrentSubtitleName = (menu.Items[0] as ToggleMenuFlyoutItem).Text;
                 SetSubTitle((menu.Items[0] as ToggleMenuFlyoutItem).Tag.ToString());
                 BottomBtnSelctSubtitle.Flyout = menu;
                 BottomBtnSelctSubtitle.Visibility = Visibility.Visible;
@@ -1295,6 +1312,7 @@ namespace BiliLite.Controls
             {
                 var menu = new MenuFlyout();
                 menu.Items.Add(new ToggleMenuFlyoutItem() { Text = "无", IsChecked = true });
+                CurrentSubtitleName = "无";
                 BottomBtnSelctSubtitle.Flyout = menu;
                 BottomBtnSelctSubtitle.Visibility = Visibility.Collapsed;
                 BorderSubtitle.Visibility = Visibility.Collapsed;

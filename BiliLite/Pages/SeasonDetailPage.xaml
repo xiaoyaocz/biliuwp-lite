@@ -418,7 +418,7 @@
                 </PivotItem>
             </Pivot>
         </Grid>
-        <Grid Visibility="{x:Bind Path=seasonDetailVM.ShowError,Mode=OneWay}" >
+        <Border Visibility="{x:Bind Path=seasonDetailVM.ShowError,Mode=OneWay}" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="48 24" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <StackPanel VerticalAlignment="Center">
                 <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
                 <TextBlock Text="{x:Bind Path=seasonDetailVM.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>
@@ -426,7 +426,7 @@
                     <TextBlock>点击刷新</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-        </Grid>
+        </Border>
         <ProgressRing IsActive="True"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=seasonDetailVM.Loading,Mode=OneWay}"></ProgressRing>
     </Grid>
 

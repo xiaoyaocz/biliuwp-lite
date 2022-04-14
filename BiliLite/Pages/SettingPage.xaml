@@ -257,6 +257,38 @@
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
+                    <TextBlock FontSize="15">漫游</TextBlock>
+                </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        
+                       
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">漫游服务器</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="RoamingSettingCustomServer" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                            <Button Margin="8 0 0 0" x:Name="RoamingSettingSetDefault">恢复默认</Button>
+                        </StackPanel>
+                        <RichTextBlock Margin="0 8 0 0">
+                            <Paragraph>
+                                自带服务器只支持香港地区番剧，且不稳定，建议自定义服务器
+                                <Hyperlink NavigateUri="https://github.com/yujincheng08/BiliRoaming/wiki/%E5%85%AC%E5%85%B1%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8">查看公共服务器</Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">仅使用Akamai的CDN链接</TextBlock>
+                        <ToggleSwitch x:Name="RoamingSettingAkamaized" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
+                        <RichTextBlock>
+                            <Paragraph>
+                                如果开启后还是卡顿，建议
+                                <Hyperlink NavigateUri="https://github.com/miyouzi/akamTester">测速后修改HOST</Hyperlink>
+                            </Paragraph>
+                        </RichTextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">繁体字幕转简体</TextBlock>
+                        <ToggleSwitch x:Name="RoamingSettingToSimplified" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
                     <TextBlock FontSize="15">视频弹幕</TextBlock>
                 </PivotItem.Header>
                 <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">

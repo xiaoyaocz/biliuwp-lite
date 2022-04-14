@@ -34,6 +34,8 @@ namespace BiliLite.Models
             }
         }
         public T data { get; set; }
+
+        public bool proxy { get; set; } = false;
     }
     public class ApiResultModel<T>
     {

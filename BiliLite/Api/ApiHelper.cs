@@ -10,7 +10,15 @@ namespace BiliLite.Api
     public static class ApiHelper
     {
         //public static string baseUrl = "http://localhost:5000";
-        public static string baseUrl = "http://biliapi.iliili.cn";
+        public const string IL_BASE_URL = "http://biliapi.iliili.cn";
+        public const string API_BASE_URL = "https://api.bilibili.com";
+        //漫游默认的服务器
+        public const string ROMAING_PROXY_URL = "https://bp.nsapps.cn";
+
+        // 详情页使用的代理
+        public static string[] DETAIL_PROXY_URL =new string[] { "https://bp.nsapps.cn", "https://biliproxy.iill.moe", "https://service-k02mde2w-1251411860.hk.apigw.tencentcs.com" };
+      
+
         public static ApiKeyInfo AndroidKey = new ApiKeyInfo("1d8b6e7d45233436", "560c52ccd288fed045859ed18bffd973");
         public static ApiKeyInfo AndroidVideoKey = new ApiKeyInfo("iVGUTjsxvpLeuDCf", "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt");
         public static ApiKeyInfo WebVideoKey = new ApiKeyInfo("84956560bc028eb7", "94aba54af9065f71de72f5508f1cd42e");
@@ -20,7 +28,7 @@ namespace BiliLite.Api
         private const string _mobi_app = "android";
         private const string _platform = "android";
         public static string deviceId = "";
-        public static string GetSign(string url, ApiKeyInfo apiKeyInfo,string par= "&sign=")
+        public static string GetSign(string url, ApiKeyInfo apiKeyInfo, string par = "&sign=")
         {
             string result;
             string str = url.Substring(url.IndexOf("?", 4) + 1);
@@ -36,7 +44,7 @@ namespace BiliLite.Api
             result = Utils.ToMD5(stringBuilder.ToString()).ToLower();
             return par + result;
         }
-       
+
         public static string GetSign(IDictionary<string, string> pars, ApiKeyInfo apiKeyInfo)
         {
             StringBuilder sb = new StringBuilder();
@@ -76,6 +84,17 @@ namespace BiliLite.Api
             headers.Add("user-agent", "Mozilla/5.0 BiliDroid/5.44.2 (bbcallen@gmail.com)");
             headers.Add("Referer", "https://www.bilibili.com/");
             return headers;
+        }
+
+        /// <summary>
+        /// 随机返回一个详情代理服务器
+        /// 伪负载均衡？
+        /// </summary>
+        /// <returns></returns>
+        public static string RandomProxyUrl()
+        {
+            var rnd=new Random().Next(0, DETAIL_PROXY_URL.Length);
+            return DETAIL_PROXY_URL[rnd];
         }
     }
     public class ApiKeyInfo

@@ -101,16 +101,23 @@ namespace BiliLite.Modules
                 var results = await seasonApi.Detail(season_id).Request();
                 if (results.status)
                 {
-                    var data = await results.GetJson<ApiResultModel<SeasonDetailModel>>();
 
+                    //通过代理访问番剧详情
+                    var data = await results.GetJson<ApiResultModel<SeasonDetailModel>>();
                     if (!data.success)
                     {
-                        var result_proxy = await seasonApi.DetailProxy(season_id).Request();
+                        var result_proxy = await seasonApi.Detail(season_id,true).Request();
                         if (result_proxy.status)
                         {
                             data = await result_proxy.GetJson<ApiResultModel<SeasonDetailModel>>();
                         }
                     }
+                    //代理访问失败，使用Web的Api访问
+                    if (!data.success)
+                    {
+                        data = await GetWebSeasonDetail(season_id);
+                    }
+                   
                     if (data.success)
                     {
                         if (data.result.limit != null)
@@ -122,8 +129,6 @@ namespace BiliLite.Modules
                                 if (data_2["code"].ToInt32() == 0)
                                 {
                                     data.result.episodes = await Utils.DeserializeJson<List<SeasonDetailEpisodeModel>>(data_2["result"]["episodes"].ToString());
-
-
                                 }
                             }
                         }
@@ -195,6 +200,29 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
+
+        public async Task<ApiResultModel<SeasonDetailModel>> GetWebSeasonDetail(string season_id)
+        {
+            var reulsts_web = await seasonApi.DetailWeb(season_id).Request();
+            if (reulsts_web.status)
+            {
+                var data= reulsts_web.GetJObject();
+                if (data["code"].ToInt32() == 0)
+                {
+                    var objText = data["result"].ToString();
+                    //处理下会出错的字段
+                    objText = objText.Replace("\"staff\"", "staff1");
+                    var model= JsonConvert.DeserializeObject<SeasonDetailModel>(objText);
+                    model.episodes = await Utils.DeserializeJson<List<SeasonDetailEpisodeModel>>(data["result"]["episodes"].ToString());
+                    return new ApiResultModel<SeasonDetailModel>() { code=0,message="",result=model,};
+                }
+            }
+            return new ApiResultModel<SeasonDetailModel>() { 
+                code=-101,
+                message="无法读取内容"
+            };
+        }
+
 
         public async void DoFollow()
         {

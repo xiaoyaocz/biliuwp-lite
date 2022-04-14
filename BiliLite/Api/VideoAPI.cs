@@ -29,7 +29,7 @@ namespace BiliLite.Api
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             var apiUrl = Uri.EscapeDataString(api.url);
-            api.baseUrl = "https://biliproxy.iill.moe";
+            api.baseUrl = "https://biliproxy.iill.moe/app.php";
             api.parameter = "url=" + apiUrl;
             return api;
         }
@@ -106,7 +106,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = $"https://api.bilibili.com/x/relation/modify",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/modify",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&act={mode}&fid={mid}&re_src=32"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);

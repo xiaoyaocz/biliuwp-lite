@@ -15,7 +15,7 @@
                         ItemClick="AdaptiveGridView_ItemClick"
                     StretchContentForSingleRow="False"
                    x:Name="list"
-                    DesiredWidth="200" 
+                    DesiredWidth="400" 
                     Padding="8"
                     SelectionMode="None" IsItemClickEnabled="True">
             <toolkit:AdaptiveGridView.Header>

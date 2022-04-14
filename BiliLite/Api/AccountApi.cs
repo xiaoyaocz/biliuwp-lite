@@ -200,7 +200,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = "https://api.bilibili.com/x/v2/history",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={pn}&ps={ps}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
@@ -211,7 +211,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
-                baseUrl = "https://api.bilibili.com/x/v2/history/delete",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/delete",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&kid={id}"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
