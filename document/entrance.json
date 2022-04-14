@@ -1,35 +1,35 @@
 [
   {
-    "name": "2022Äê4ÔÂ¸Û°ÄÌ¨Æ¬µ¥",
-    "desc": "¡¶SPY¡ÁFAMILY égÕ™¼Ò¼Ò¾Æ¡·¡¢¡¶,İxÒ¹¼§Ïë×ŒÈË¸æ°×¡·¡¢¡¶ÅÉŒ¦¿§¿×Ã÷¡·¡¢¡¶½Ö½ÇµÄÄ§×åÅ®º¢¡·",
+    "name": "2022å¹´4æœˆæ¸¯æ¾³å°ç‰‡å•",
+    "desc": "ã€ŠSPYÃ—FAMILY é–“è«œå®¶å®¶é…’ã€‹ã€ã€Š,è¼å¤œå§¬æƒ³è®“äººå‘Šç™½ã€‹ã€ã€Šæ´¾å°å’–å­”æ˜ã€‹ã€ã€Šè¡—è§’çš„é­”æ—å¥³å­©ã€‹",
     "type": 0,
     "link": "https://www.bilibili.com/bangumi/list/sl59578",
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/1b3aedf05ccaf873265a5cafc63cbdd647586997.png@200w.jpg"
   },
   {
-    "name": "2022Äê1ÔÂ¸Û°ÄÌ¨Æ¬µ¥",
-    "desc": "¡¶ßM“ôµÄ¾ŞÈË The Final Season Part 2¡·¡¢¡¶‘ÙÉÏ“QÑbÍŞÍŞ¡·¡¢¡¶Ã÷ÈÕÍ¬ŒWµÄË®ÊÖ·ş¡·",
+    "name": "2022å¹´1æœˆæ¸¯æ¾³å°ç‰‡å•",
+    "desc": "ã€Šé€²æ“Šçš„å·¨äºº The Final Season Part 2ã€‹ã€ã€Šæˆ€ä¸Šæ›è£å¨ƒå¨ƒã€‹ã€ã€Šæ˜æ—¥åŒå­¸çš„æ°´æ‰‹æœã€‹",
     "type": 0,
     "link": "https://www.bilibili.com/bangumi/list/sl58464",
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/af600cde8bf6620ba36df7b2e438f35f523c3b81.jpg@200w.jpg"
   },
   {
-    "name": "2021Äê10ÔÂ¸Û°ÄÌ¨Æ¬µ¥",
-    "desc": "¡¶86£­²»´æÔÚµÄ‘ğ…^¡·¡¢¡¶êê–ÑÛÒŠ×Ó¡·¡¢¡¶ĞÇÆÚÒ»µÄØSMS2¡·¡¢¡¶ÙZÏ£´óÈË²»šâğH£¡¡·",
+    "name": "2021å¹´10æœˆæ¸¯æ¾³å°ç‰‡å•",
+    "desc": "ã€Š86ï¼ä¸å­˜åœ¨çš„æˆ°å€ã€‹ã€ã€Šé™°é™½çœ¼è¦‹å­ã€‹ã€ã€Šæ˜ŸæœŸä¸€çš„è±æ»¿S2ã€‹ã€ã€Šè³ˆå¸Œå¤§äººä¸æ°£é¤’ï¼ã€‹",
     "type": 0,
     "link": "https://www.bilibili.com/bangumi/list/sl56740",
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/56d45e56bea3874bc131f1a7f3c33e6cc7276b52.png@200w.jpg"
   },
   {
-    "name": "2021Äê7ÔÂ¸Û°ÄÌ¨Æ¬µ¥",
-    "desc": "¡¶Ğ¡ÁÖ¼ÒµÄıˆÅ®ƒWS¡·¡¢¡¶Å®ÉñËŞÉáµÄ¹ÜÀí†T¡·¡¢¡¶Æ¯Á÷ÉÙÄê¡·¡¢¡¶–|¾©Í³ğÕß¡·",
+    "name": "2021å¹´7æœˆæ¸¯æ¾³å°ç‰‡å•",
+    "desc": "ã€Šå°æ—å®¶çš„é¾å¥³åƒ•Sã€‹ã€ã€Šå¥³ç¥å®¿èˆçš„ç®¡ç†å“¡ã€‹ã€ã€Šæ¼‚æµå°‘å¹´ã€‹ã€ã€Šæ±äº¬å¾©ä»‡è€…ã€‹",
     "type": 0,
     "link": "https://www.bilibili.com/bangumi/list/sl55865",
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/45bb6906f945b15d31e4f650f850b95d0c08462a.png@200w.jpg"
   },
   {
-    "name": "¾ÛºÏÖ±²¥ UWP",
-    "desc": "¾ÛºÏ¶à¸öÖ±²¥Æ½Ì¨£¬¼ò¼òµ¥µ¥¿´Ö±²¥",
+    "name": "èšåˆç›´æ’­ UWP",
+    "desc": "èšåˆå¤šä¸ªç›´æ’­å¹³å°ï¼Œç®€ç®€å•å•çœ‹ç›´æ’­",
     "type": 1,
     "link": "ms-windows-store://pdp/?productid=9N1TWG2G84VD",
     "pic": "https://vip1.loli.io/2022/04/14/rVEmA7MqzXb5cG8.png"
