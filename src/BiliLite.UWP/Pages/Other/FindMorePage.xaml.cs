@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Modules.Other;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,73 +25,38 @@ namespace BiliLite.Pages.Other
     /// </summary>
     public sealed partial class FindMorePage : BasePage
     {
-        readonly List<NavigatorItem> navigatorItems;
+        readonly FindMoreVM findMoreVM;
         public FindMorePage()
         {
             this.InitializeComponent();
-            navigatorItems = new List<NavigatorItem>() {
-                new NavigatorItem(){
-                    Name="2022年4月港澳台片单",
-                    Symbol= Symbol.Link,
-                    NavigationInfo=new NavigationInfo()
-                    {
-                        icon= Symbol.Link,
-                        page=typeof(WebPage),
-                        title="2022年4月港澳台片单",
-                        parameters="https://www.bilibili.com/bangumi/list/sl59578"
-                    }
-                },
-                new NavigatorItem(){
-                    Name="2022年1月港澳台片单",
-                    Symbol= Symbol.Link,
-                    NavigationInfo=new NavigationInfo()
-                    {
-                        icon= Symbol.Link,
-                        page=typeof(WebPage),
-                        title="2022年1月港澳台片单",
-                        parameters="https://www.bilibili.com/bangumi/list/sl58464"
-                    }
-                },
-                 new NavigatorItem(){
-                    Name="2021年10月港澳台片单",
-                    Symbol= Symbol.Link,
-                    NavigationInfo=new NavigationInfo()
-                    {
-                        icon= Symbol.Link,
-                        page=typeof(WebPage),
-                        title="2021年10月港澳台片单",
-                        parameters="https://www.bilibili.com/bangumi/list/sl56740"
-                    }
-                },
-                  new NavigatorItem(){
-                    Name="2021年7月港澳台片单",
-                    Symbol= Symbol.Link,
-                    NavigationInfo=new NavigationInfo()
-                    {
-                        icon= Symbol.Link,
-                        page=typeof(WebPage),
-                        title="2021年7月港澳台片单",
-                        parameters="https://www.bilibili.com/bangumi/list/sl55865"
-                    }
-                },
-            };
+            findMoreVM=new FindMoreVM();
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            list.ItemsSource = navigatorItems;
+            if (e.NavigationMode == NavigationMode.New && findMoreVM.Items == null)
+            {
+                findMoreVM.LoadEntrance();
+            }
         }
 
-        private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            MessageCenter.NavigateToPage(this, (e.ClickedItem as NavigatorItem).NavigationInfo);
+            var item = e.ClickedItem as FindMoreEntranceModel;
+            if (item.type == 0)
+            {
+                MessageCenter.NavigateToPage(this, new NavigationInfo() { 
+                    icon =Symbol.Link,
+                    title =item.name,
+                    page=typeof(WebPage),
+                    parameters=item.link
+                });
+            }
+            else if(item.type == 1)
+            {
+                await Launcher.LaunchUriAsync(new Uri(item.link));
+            }
+           
         }
-    }
-
-    public class NavigatorItem
-    {
-        public string Name { get; set; }
-        public Symbol Symbol { get; set; }
-        public NavigationInfo NavigationInfo { get; set; }
     }
 }

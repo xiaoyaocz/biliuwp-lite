@@ -130,6 +130,7 @@
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="Api\CommentApi.cs" />
     <Compile Include="Api\EmoteApi.cs" />
+    <Compile Include="Api\GitApi.cs" />
     <Compile Include="Api\Home\AnimeAPI.cs" />
     <Compile Include="Api\Home\ChannelAPI.cs" />
     <Compile Include="Api\Home\CinemaAPI.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Modules\Live\LiveDanmaku.cs" />
     <Compile Include="Modules\Live\LiveMessage.cs" />
     <Compile Include="Modules\Live\LiveRecommendVM.cs" />
+    <Compile Include="Modules\Other\FindMoreVM.cs" />
     <Compile Include="Modules\Player\InteractionVideoVM.cs" />
     <Compile Include="Modules\RegionDetailVM.cs" />
     <Compile Include="Modules\SearchVM.cs" />

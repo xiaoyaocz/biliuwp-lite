@@ -276,9 +276,8 @@ namespace BiliLite.Helpers
         {
             try
             {
-                var url = $"https://cdn.jsdelivr.net/gh/xiaoyaocz/biliuwp-lite@master/document/new_version.json?ts={Utils.GetTimestampS()}";
-                var result = await HttpHelper.GetString(url);
-                var ver = JsonConvert.DeserializeObject<NewVersion>(result);
+                var result = await new GitApi().CheckUpdate().Request();
+                var ver = JsonConvert.DeserializeObject<NewVersion>(result.results);
                 var num = $"{ SystemInformation.ApplicationVersion.Major }{ SystemInformation.ApplicationVersion.Minor.ToString("00")}{ SystemInformation.ApplicationVersion.Build.ToString("00")}";
                 var v= int.Parse(num);
                 if (ver.version_num>v)

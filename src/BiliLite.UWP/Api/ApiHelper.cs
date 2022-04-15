@@ -8,10 +8,17 @@ using System.Threading.Tasks;
 namespace BiliLite.Api
 {
     public static class ApiHelper
-    {
+    { 
+        // BiliLite.WebApi 项目部署的服务器
         //public static string baseUrl = "http://localhost:5000";
-        public const string IL_BASE_URL = "http://biliapi.iliili.cn";
+        public const string IL_BASE_URL = "https://biliapi.iliili.cn";
+
+        // GIT RAW路径
+        public const string GIT_RAW_URL = "https://git.nsapps.cn/xiaoyaocz/BiliLite/raw/master/";
+
+        // 哔哩哔哩API
         public const string API_BASE_URL = "https://api.bilibili.com";
+
         //漫游默认的服务器
         public const string ROMAING_PROXY_URL = "https://bp.nsapps.cn";
 
