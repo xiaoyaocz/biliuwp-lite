@@ -511,7 +511,8 @@
                             </PivotItem.Header>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
-
+                                    <TextBlock Margin="0 8">字幕加粗</TextBlock>
+                                    <ToggleSwitch x:Name="SubtitleSettingBold" OnContent="开启" OffContent="关闭"></ToggleSwitch>
                                     <TextBlock Margin="0 8">字幕颜色</TextBlock>
                                     <ComboBox SelectedIndex="1" x:Name="SubtitleSettingColor">
                                         <ComboBox.Items>
@@ -521,14 +522,28 @@
                                             <ComboBoxItem Tag="#ff7a45">橙色</ComboBoxItem>
                                             <ComboBoxItem Tag="#9254de">紫色</ComboBoxItem>
                                             <ComboBoxItem Tag="#f5222d">红色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#000000">黑色</ComboBoxItem>
+                                        </ComboBox.Items>
+                                    </ComboBox>
+                                    <TextBlock Margin="0 8">边框颜色</TextBlock>
+                                    <ComboBox SelectedIndex="0" x:Name="SubtitleSettingBorderColor">
+                                        <ComboBox.Items>
+                                            <ComboBoxItem Tag="#000000">黑色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#bfbfbf">灰色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#40a9ff">蓝色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#ff7a45">橙色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#9254de">紫色</ComboBoxItem>
+                                            <ComboBoxItem Tag="#f5222d">红色</ComboBoxItem>
                                         </ComboBox.Items>
                                     </ComboBox>
                                     <TextBlock Margin="0 8">字幕大小</TextBlock>
-                                    <Slider x:Name="SubtitleSettingSize" Value="25" Minimum="4" Maximum="48" StepFrequency="1"></Slider>
+                                    <Slider x:Name="SubtitleSettingSize" Value="25" Minimum="4" Maximum="72" StepFrequency="1"></Slider>
                                     <TextBlock Margin="0 8">透明度</TextBlock>
                                     <Slider x:Name="SubtitleSettingOpacity" Value="20" Minimum="0.1"  Maximum="1" StepFrequency="0.1"></Slider>
                                     <TextBlock Margin="0 8">底部距离</TextBlock>
                                     <Slider x:Name="SubtitleSettingBottom" Value="20" Minimum="4" Maximum="200" StepFrequency="4"></Slider>
+                                    <TextBlock Margin="0 8">繁体字幕转简体</TextBlock>
+                                    <ToggleSwitch x:Name="SubtitleSettingToSimplified" OnContent="开启" OffContent="关闭"></ToggleSwitch>
                                 </StackPanel>
                             </ScrollViewer>
                         </PivotItem>
@@ -553,8 +568,8 @@
                 <local:Player x:Name="Player"  PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
                
                 <!--字幕-->
-                <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24" Background="#7F000000">
-                    <TextBlock x:Name="TxtSubtitle" TextWrapping="Wrap" FontSize="{Binding ElementName=SubtitleSettingSize,Path=Value,Mode=OneWay}" Foreground="White"></TextBlock>
+                <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24">
+                   
                 </Border>
                 <!--弹幕-->
                 <Grid >

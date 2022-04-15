@@ -389,6 +389,10 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string SUBTITLE_COLOR = "subtitleColor";
             /// <summary>
+            /// 字幕背景颜色
+            /// </summary>
+            public const string SUBTITLE_BORDER_COLOR = "subtitleBorderColor";
+            /// <summary>
             /// 字幕大小
             /// </summary>
             public const string SUBTITLE_SIZE = "subtitleSize";
@@ -404,6 +408,10 @@ namespace BiliLite.Helpers
             /// 字幕底部距离
             /// </summary>
             public const string SUBTITLE_BOTTOM = "subtitleBottom";
+            /// <summary>
+            /// 字幕加粗
+            /// </summary>
+            public const string SUBTITLE_BOLD = "subtitleBold";
 
             /// <summary>
             /// 自动跳转进度

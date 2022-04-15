@@ -32,6 +32,12 @@ using System.Text.RegularExpressions;
 using Windows.UI.Core;
 using BiliLite.Dialogs;
 using BiliLite.Modules.Player;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
+using Windows.UI;
+using Windows.Storage.Streams;
+using Windows.UI.Text;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -184,6 +190,8 @@ namespace BiliLite.Controls
         /// 当前选中的字幕名称
         /// </summary>
         private string CurrentSubtitleName { get; set; }="无";
+
+        DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
 
         public PlayerControl()
         {
@@ -707,6 +715,13 @@ namespace BiliLite.Controls
         }
         private void LoadSutitleSetting()
         {
+            //字幕加粗
+            SubtitleSettingBold.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.SUBTITLE_BOLD, false);
+            SubtitleSettingBold.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<bool>(SettingHelper.Player.SUBTITLE_BOLD, SubtitleSettingBold.IsOn);
+                UpdateSubtitle();
+            });
 
             //字幕大小
             SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
@@ -714,14 +729,21 @@ namespace BiliLite.Controls
             {
                 if (miniWin) return;
                 SettingHelper.SetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, SubtitleSettingSize.Value);
+                UpdateSubtitle();
+            });
+            //字幕边框颜色
+            SubtitleSettingBorderColor.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.SUBTITLE_BORDER_COLOR, 0);
+            SubtitleSettingBorderColor.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<int>(SettingHelper.Player.SUBTITLE_BORDER_COLOR, SubtitleSettingBorderColor.SelectedIndex);
+                UpdateSubtitle();
             });
             //字幕颜色
             SubtitleSettingColor.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.SUBTITLE_COLOR, 0);
-            TxtSubtitle.Foreground = new SolidColorBrush(Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString()));
             SubtitleSettingColor.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
-                TxtSubtitle.Foreground = new SolidColorBrush(Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString()));
                 SettingHelper.SetValue<int>(SettingHelper.Player.SUBTITLE_COLOR, SubtitleSettingColor.SelectedIndex);
+                UpdateSubtitle();
             });
             //字幕透明度
             SubtitleSettingOpacity.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_OPACITY, 1.0);
@@ -736,6 +758,17 @@ namespace BiliLite.Controls
             {
                 BorderSubtitle.Margin = new Thickness(0, 0, 0, SubtitleSettingBottom.Value);
                 SettingHelper.SetValue<double>(SettingHelper.Player.SUBTITLE_BOTTOM, SubtitleSettingBottom.Value);
+            });
+            //字幕转换
+            SubtitleSettingToSimplified.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, false);
+            SubtitleSettingToSimplified.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, SubtitleSettingToSimplified.IsOn);
+                if (SubtitleSettingToSimplified.IsOn)
+                {
+                    currentSubtitleText = Utils.ToSimplifiedChinese(currentSubtitleText);
+                    UpdateSubtitle();
+                }
             });
         }
 
@@ -950,6 +983,10 @@ namespace BiliLite.Controls
         /// </summary>
         DispatcherTimer subtitleTimer;
         /// <summary>
+        /// 当前显示的字幕文本
+        /// </summary>
+        string currentSubtitleText = "";
+        /// <summary>
         /// 选择字幕
         /// </summary>
         /// <param name="sender"></param>
@@ -1006,7 +1043,7 @@ namespace BiliLite.Controls
 
         }
 
-        private void SubtitleTimer_Tick(object sender, object e)
+        private async void SubtitleTimer_Tick(object sender, object e)
         {
             if (Player.PlayState == PlayState.Playing)
             {
@@ -1018,18 +1055,82 @@ namespace BiliLite.Controls
                 var first = subtitles.body.FirstOrDefault(x => x.from <= time && x.to >= time);
                 if (first != null)
                 {
-                    if (first.content != TxtSubtitle.Text)
+                    if (first.content != currentSubtitleText)
                     {
                         BorderSubtitle.Visibility = Visibility.Visible;
-                        TxtSubtitle.Text = first.content;
+                        BorderSubtitle.Child=await GenerateSubtitleItem(first.content);
+                        currentSubtitleText = first.content;
+
                     }
                 }
                 else
                 {
                     BorderSubtitle.Visibility = Visibility.Collapsed;
+                    currentSubtitleText = "";
                 }
             }
         }
+
+        private async void UpdateSubtitle()
+        {
+            if (BorderSubtitle.Visibility== Visibility.Visible&& currentSubtitleText!="")
+            {
+                BorderSubtitle.Child = await GenerateSubtitleItem(currentSubtitleText);
+            }
+           
+           
+        }
+
+        private async Task<Grid> GenerateSubtitleItem(string text)
+        {
+            var fontSize = (float)SubtitleSettingSize.Value;
+            var color = Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString());
+            var borderColor = Utils.ToColor((SubtitleSettingBorderColor.SelectedItem as ComboBoxItem).Tag.ToString());
+            CanvasDevice device = CanvasDevice.GetSharedDevice();
+
+            CanvasTextFormat fmt = new CanvasTextFormat() { FontSize = fontSize };
+            var tb = new TextBlock { Text =text, FontSize = fontSize, };
+            if (SubtitleSettingBold.IsOn)
+            {
+                fmt.FontWeight = FontWeights.Bold;
+                tb.FontWeight = FontWeights.Bold;
+            }
+
+            tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+
+            var myBitmap = new CanvasRenderTarget(device, (float)tb.DesiredSize.Width, (float)tb.DesiredSize.Height, displayInformation.LogicalDpi);
+
+            CanvasTextLayout canvasTextLayout = new CanvasTextLayout(device, text, fmt, (float)tb.DesiredSize.Width, (float)tb.DesiredSize.Height);
+
+            CanvasGeometry combinedGeometry = CanvasGeometry.CreateText(canvasTextLayout);
+
+            using (var ds = myBitmap.CreateDrawingSession())
+            {
+                ds.Clear(Colors.Transparent);
+                ds.DrawGeometry(combinedGeometry, borderColor, 2f, new CanvasStrokeStyle()
+                {
+                    DashStyle = CanvasDashStyle.Solid
+                });
+                ds.FillGeometry(combinedGeometry, color);
+            }
+            Image image = new Image();
+            BitmapImage im = new BitmapImage();
+            using (InMemoryRandomAccessStream oStream = new InMemoryRandomAccessStream())
+            {
+                await myBitmap.SaveAsync(oStream, CanvasBitmapFileFormat.Png, 1.0f);
+                await im.SetSourceAsync(oStream);
+            }
+            image.Source = im;
+            image.Stretch = Stretch.Uniform;
+            Grid grid = new Grid();
+            grid.Height = fontSize + 4;
+            grid.Tag = text;
+            grid.Children.Add(image);
+
+            return grid;
+        }
+
+
         /// <summary>
         /// 清除字幕
         /// </summary>
@@ -2035,8 +2136,8 @@ namespace BiliLite.Controls
                         BitmapAlphaMode.Ignore,
                          (uint)bitmap.PixelWidth,
                          (uint)bitmap.PixelHeight,
-                         DisplayInformation.GetForCurrentView().LogicalDpi,
-                         DisplayInformation.GetForCurrentView().LogicalDpi,
+                         displayInformation.LogicalDpi,
+                         displayInformation.LogicalDpi,
                          pixelBuffer.ToArray());
                     await encoder.FlushAsync();
                 }
