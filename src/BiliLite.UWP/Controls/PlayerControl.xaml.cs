@@ -716,7 +716,7 @@ namespace BiliLite.Controls
         private void LoadSutitleSetting()
         {
             //字幕加粗
-            SubtitleSettingBold.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.SUBTITLE_BOLD, false);
+            SubtitleSettingBold.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.SUBTITLE_BOLD, true);
             SubtitleSettingBold.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue<bool>(SettingHelper.Player.SUBTITLE_BOLD, SubtitleSettingBold.IsOn);
@@ -724,7 +724,7 @@ namespace BiliLite.Controls
             });
 
             //字幕大小
-            SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
+            SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 40);
             SubtitleSettingSize.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
@@ -752,7 +752,7 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<double>(SettingHelper.Player.SUBTITLE_OPACITY, SubtitleSettingOpacity.Value);
             });
             //字幕底部距离
-            SubtitleSettingBottom.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_BOTTOM, 24);
+            SubtitleSettingBottom.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_BOTTOM, 40);
             BorderSubtitle.Margin = new Thickness(0, 0, 0, SubtitleSettingBottom.Value);
             SubtitleSettingBottom.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
@@ -1083,6 +1083,7 @@ namespace BiliLite.Controls
 
         private async Task<Grid> GenerateSubtitleItem(string text)
         {
+            text = " " + text;
             var fontSize = (float)SubtitleSettingSize.Value;
             var color = Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString());
             var borderColor = Utils.ToColor((SubtitleSettingBorderColor.SelectedItem as ComboBoxItem).Tag.ToString());
@@ -1098,16 +1099,16 @@ namespace BiliLite.Controls
 
             tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 
-            var myBitmap = new CanvasRenderTarget(device, (float)tb.DesiredSize.Width, (float)tb.DesiredSize.Height, displayInformation.LogicalDpi);
+            var myBitmap = new CanvasRenderTarget(device, (float)tb.DesiredSize.Width+4, (float)tb.DesiredSize.Height, displayInformation.LogicalDpi);
 
-            CanvasTextLayout canvasTextLayout = new CanvasTextLayout(device, text, fmt, (float)tb.DesiredSize.Width, (float)tb.DesiredSize.Height);
+            CanvasTextLayout canvasTextLayout = new CanvasTextLayout(device, text, fmt, (float)tb.DesiredSize.Width+4, (float)tb.DesiredSize.Height);
 
             CanvasGeometry combinedGeometry = CanvasGeometry.CreateText(canvasTextLayout);
 
             using (var ds = myBitmap.CreateDrawingSession())
             {
                 ds.Clear(Colors.Transparent);
-                ds.DrawGeometry(combinedGeometry, borderColor, 2f, new CanvasStrokeStyle()
+                ds.DrawGeometry(combinedGeometry,borderColor, 4f, new CanvasStrokeStyle()
                 {
                     DashStyle = CanvasDashStyle.Solid
                 });
@@ -1120,10 +1121,11 @@ namespace BiliLite.Controls
                 await myBitmap.SaveAsync(oStream, CanvasBitmapFileFormat.Png, 1.0f);
                 await im.SetSourceAsync(oStream);
             }
+            image.Width= tb.DesiredSize.Width;
             image.Source = im;
             image.Stretch = Stretch.Uniform;
             Grid grid = new Grid();
-            grid.Height = fontSize + 4;
+           
             grid.Tag = text;
             grid.Children.Add(image);
 
@@ -1319,7 +1321,7 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog("请稍后再试，或者到设置中自定义漫游服务器", "读取视频播放地址失败");
+                ShowDialog("请稍后再试，或者到设置中自定义代理服务器", "读取视频播放地址失败");
             }
 
         }
