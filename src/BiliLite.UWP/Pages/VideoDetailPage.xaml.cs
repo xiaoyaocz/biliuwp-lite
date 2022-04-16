@@ -196,7 +196,8 @@ namespace BiliLite.Pages
                         is_interaction = videoDetailVM.VideoInfo.interaction != null,
                         order = i,
                         play_mode = VideoPlayType.Video,
-                        title = "P" + item.page + " " + item.part
+                        title = "P" + item.page + " " + item.part,
+                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title)
                     });
                     i++;
                 }

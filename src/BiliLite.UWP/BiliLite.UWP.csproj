@@ -20,7 +20,7 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>

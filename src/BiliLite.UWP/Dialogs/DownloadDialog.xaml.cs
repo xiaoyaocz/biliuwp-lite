@@ -64,7 +64,8 @@ namespace BiliLite.Dialogs
                 ep_id = episode.EpisodeID,
                 play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                 season_id = downloadItem.SeasonID,
-                season_type = downloadItem.SeasonType
+                season_type = downloadItem.SeasonType,
+                area=Utils.ParseArea(downloadItem.Title)
             }, 0);
             if (!data.success)
             {
@@ -135,7 +136,8 @@ namespace BiliLite.Dialogs
                         ep_id = item.EpisodeID,
                         play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                         season_id = downloadItem.SeasonID,
-                        season_type = downloadItem.SeasonType
+                        season_type = downloadItem.SeasonType,
+                        area = Utils.ParseArea(downloadItem.Title)
                     }, qn: (cbQuality.SelectedItem as QualityWithPlayUrlInfo).quality);
                     if (!playUrl.success)
                     {

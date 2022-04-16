@@ -9,7 +9,7 @@ namespace BiliLite.Api
 {
     public class PlayerAPI
     {
-        public ApiModel VideoPlayUrl(string aid, string cid, int qn,bool dash,bool proxy=false)
+        public ApiModel VideoPlayUrl(string aid, string cid, int qn,bool dash,bool proxy=false,string area="")
         {
             var baseUrl = ApiHelper.API_BASE_URL;
             var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
@@ -27,10 +27,15 @@ namespace BiliLite.Api
             {
                 api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
+           
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
+            if (proxy)
+            {
+                api.parameter += $"&area={area}";
+            }
             return api;
         }
-        public ApiModel SeasonPlayUrl(string aid, string cid, int qn,int season_type, bool dash, bool proxy = false)
+        public ApiModel SeasonPlayUrl(string aid, string cid, string ep_id, int qn,int season_type, bool dash, bool proxy = false, string area = "")
         {
             var baseUrl = ApiHelper.API_BASE_URL;
             var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
@@ -42,7 +47,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{baseUrl}/pgc/player/web/playurl",
-                parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
+                parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
             {
@@ -52,7 +57,12 @@ namespace BiliLite.Api
             {
                 api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
+            
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
+            if (proxy)
+            {
+                api.parameter += $"&area={area}";
+            }
             return api;
         }
         public ApiModel SeasonAndroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)

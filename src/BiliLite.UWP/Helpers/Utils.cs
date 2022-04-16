@@ -380,6 +380,19 @@ namespace BiliLite.Helpers
                 }
             }
         }
+    
+        public static string ParseArea(string title)
+        {
+            if(Regex.IsMatch(title, @"僅.*港.*地區"))
+            {
+                return "hk";
+            }
+            else if (Regex.IsMatch(title, @"僅.*台.*地區"))
+            {
+                return "tw";
+            }
+            return "";
+        }
     }
     public class NewVersion
     {

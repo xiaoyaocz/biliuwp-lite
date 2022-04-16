@@ -637,10 +637,10 @@ namespace BiliLite.Modules
         {
             try
             {
-                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, false, proxy);
+                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, false, proxy, playInfo.area);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, false, proxy);
+                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid,ep_id: playInfo.ep_id, qn: qn, season_type: playInfo.season_type, false, proxy, playInfo.area);
                 }
                 var result = await api.Request();
                 if (result.status)
@@ -787,10 +787,10 @@ namespace BiliLite.Modules
         {
             try
             {
-                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, true, proxy);
+                var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, true, proxy, playInfo.area);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, season_type: playInfo.season_type, true, proxy);
+                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, ep_id: playInfo.ep_id, qn: qn, season_type: playInfo.season_type, true, proxy, playInfo.area);
                 }
                 var result = await api.Request();
                 if (result.status)

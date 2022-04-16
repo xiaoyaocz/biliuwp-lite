@@ -361,13 +361,18 @@ namespace BiliLite.Pages
         private void RoamingSettingCustomServer_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             var text = sender.Text;
-            if (!Regex.IsMatch(text, @"^(http(s)?:\/\/)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*$"))
+            if (text.Length==0||!text.Contains("."))
             {
                 Utils.ShowMessageToast("输入服务器链接有误");
                 sender.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
                 return;
             }
+            if (!text.Contains("http"))
+            {
+                text = "https://" + text;
+            }
             SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, text);
+            sender.Text = text;
             Utils.ShowMessageToast("保存成功");
         }
 

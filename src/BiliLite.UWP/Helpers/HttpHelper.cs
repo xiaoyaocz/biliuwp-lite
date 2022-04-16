@@ -45,7 +45,7 @@ namespace BiliLite.Helpers
                             client.DefaultRequestHeaders.Add(item.Key, item.Value);
                         }
                     }
-                    if (url.Contains("bilibili.com"))
+                    if (url.Contains("bilibili.com")||url.Contains("pgc/player/"))
                     {
                         client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
                     }

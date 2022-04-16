@@ -117,6 +117,7 @@ namespace BiliLite.Controls
         public LocalPlayInfo LocalPlayInfo { get; set; }
         public object parameter { get; set; }
 
+        public string area { get; set; } = "";
     }
     public class LocalPlayInfo
     {
@@ -760,7 +761,7 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<double>(SettingHelper.Player.SUBTITLE_BOTTOM, SubtitleSettingBottom.Value);
             });
             //字幕转换
-            SubtitleSettingToSimplified.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, false);
+            SubtitleSettingToSimplified.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true);
             SubtitleSettingToSimplified.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, SubtitleSettingToSimplified.IsOn);
@@ -1022,7 +1023,7 @@ namespace BiliLite.Controls
                 if (subtitles != null)
                 {
                     //转为简体
-                    if (SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED,true)&&CurrentSubtitleName== "中文（繁体）")
+                    if (SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true) &&CurrentSubtitleName== "中文（繁体）")
                     {
                         foreach (var item in subtitles.body)
                         {
@@ -1321,7 +1322,7 @@ namespace BiliLite.Controls
             }
             else
             {
-                ShowDialog("请稍后再试，或者到设置中自定义代理服务器", "读取视频播放地址失败");
+                ShowDialog("请稍后再试，或者到「设置」-「播放」中自定义代理服务器", "读取视频播放地址失败");
             }
 
         }

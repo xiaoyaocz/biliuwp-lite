@@ -179,7 +179,8 @@ namespace BiliLite.Pages
                     is_interaction = false,
                     order = i,
                     play_mode = VideoPlayType.Season,
-                    title = item.title + " " + item.long_title
+                    title = item.title + " " + item.long_title,
+                    area = Utils.ParseArea(seasonDetailVM.Detail.title)
                 });
                 i++;
             }
@@ -209,7 +210,8 @@ namespace BiliLite.Pages
                     is_interaction = false,
                     order = i,
                     play_mode = VideoPlayType.Season,
-                    title = item.title + " " + item.long_title
+                    title = item.title + " " + item.long_title,
+                    area=Utils.ParseArea(seasonDetailVM.Detail.title)
                 });
                 i++;
             }
