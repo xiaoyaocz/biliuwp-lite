@@ -2365,7 +2365,7 @@ namespace BiliLite.Controls
                 DanmuControl.DanmakuDuration = SettingHelper.GetValue<int>(SettingHelper.VideoDanmaku.SPEED, 10);
                 DanmuControl.ClearAll();
                 DanmuControl.Visibility = SettingHelper.GetValue<Visibility>(SettingHelper.VideoDanmaku.SHOW, Visibility.Visible);
-                SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 25);
+                SubtitleSettingSize.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_SIZE, 40);
             }
             BtnFoucs.Focus(FocusState.Programmatic);
             MessageCenter.SetMiniWindow(mini);

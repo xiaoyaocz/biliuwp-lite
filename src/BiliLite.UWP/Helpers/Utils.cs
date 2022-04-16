@@ -23,6 +23,7 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter;
 
 namespace BiliLite.Helpers
 {
@@ -225,10 +226,10 @@ namespace BiliLite.Helpers
             //部分字符没有转换
             //临时解决方法
             content = content.Replace("麼", "么").Replace("後", "后").Replace("幹", "干");
-            var result=  Chinese.ChineseConverter.ToSimplified(content);
-           
-          
-            return result;
+            content= ChineseConverter.Convert(content, ChineseConversionDirection.TraditionalToSimplified);
+    
+
+            return content;
         }
         public static bool SetClipboard(string content)
         {
