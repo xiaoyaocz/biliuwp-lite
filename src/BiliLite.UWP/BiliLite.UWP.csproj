@@ -564,7 +564,6 @@
     <Content Include="Assets\Fonts\biliicon.ttf" />
     <None Include="Assets\Text\new_version.json" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Assets\zfb.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
