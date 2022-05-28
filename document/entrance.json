@@ -28,10 +28,17 @@
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/45bb6906f945b15d31e4f650f850b95d0c08462a.png@200w.jpg"
   },
   {
-    "name": "聚合直播 UWP",
-    "desc": "聚合多个直播平台，简简单单看直播",
-    "type": 1,
-    "link": "ms-windows-store://pdp/?productid=9N1TWG2G84VD",
-    "pic": "https://vip1.loli.io/2022/04/14/rVEmA7MqzXb5cG8.png"
+    "name": "橙猫服饰 - 淘宝店",
+    "desc": "👉橙子服装店开业啦！纯棉T恤，超级特惠！单价￥29.8，两件仅需￥54.8！",
+    "type": 0,
+    "link": "https://shop344472972.taobao.com/",
+    "pic": "https://vip2.loli.io/2022/05/28/beT3HyLvcXiKQ98.png"
+  },
+  {
+    "name": "橙猫服饰 - 拼多多店",
+    "desc": "👉橙子服装店开业啦！纯棉T恤，超级特惠！单价￥29.8，两件仅需￥54.8！",
+    "type": 0,
+    "link": "http://mobile.yangkeduo.com/goods.html?goods_id=367590868305",
+    "pic": "https://vip2.loli.io/2022/05/28/beT3HyLvcXiKQ98.png"
   }
 ]
