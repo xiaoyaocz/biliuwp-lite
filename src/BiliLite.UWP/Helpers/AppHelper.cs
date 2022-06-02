@@ -70,5 +70,18 @@ namespace BiliLite.Helpers
                 LogHelper.Log("读取分区失败" + ex.Message, LogType.ERROR, ex);
             }
         }
+
+        public  static async Task LaunchConverter(string title,List<string> inputFiles, string outFile, List<string> subtitle,bool isDash)
+        {
+            ApplicationData.Current.LocalSettings.Values["VideoConverterInfo"] =JsonConvert.SerializeObject( new {
+                title= title,
+                inputFiles= inputFiles,
+                outFile = outFile,
+                subtitle= subtitle ,
+                isDash=isDash
+            });
+            await Windows.ApplicationModel.FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
+
     }
 }
