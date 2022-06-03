@@ -24,6 +24,7 @@ using Windows.System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter;
+using Newtonsoft.Json.Linq;
 
 namespace BiliLite.Helpers
 {
@@ -148,25 +149,13 @@ namespace BiliLite.Helpers
         /// 根据Epid取番剧ID
         /// </summary>
         /// <returns></returns>
-        public async static Task<string> BangumiEpidToSid(string url)
+        public async static Task<string> BangumiEpidToSid(string epid)
         {
             try
             {
-                if (!url.Contains("http"))
-                {
-                    url = "https://www.bilibili.com/bangumi/play/ep" + url;
-                }
-
-                var re = await HttpHelper.GetString(url);
-                var data = RegexMatch(re, @"ss(\d+)");
-                if (data != "")
-                {
-                    return data;
-                }
-                else
-                {
-                    return "";
-                }
+                var re = await HttpHelper.GetString($"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}");
+                var obj = JObject.Parse(re);
+               return obj["result"]["season_id"].ToString();
             }
             catch (Exception)
             {
