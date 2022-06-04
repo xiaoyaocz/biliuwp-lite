@@ -381,7 +381,27 @@ namespace BiliLite.Helpers
             {
                 return "tw";
             }
-            return "";
+            return "cn";
+        }
+        public static string ChooseProxyServer(string area)
+        {
+            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            var proxyUrlCN = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, "");
+            var proxyUrlHK = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
+            var proxyUrlTW = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, "");
+            if (area == "cn")
+            {
+                return string.IsNullOrEmpty(proxyUrlCN) ? proxyUrl : proxyUrlCN;
+            }
+            if (area == "hk")
+            {
+                return string.IsNullOrEmpty(proxyUrlHK) ? proxyUrl : proxyUrlHK;
+            }
+            if (area == "tw")
+            {
+                return string.IsNullOrEmpty(proxyUrlTW) ? proxyUrl : proxyUrlTW;
+            }
+            return proxyUrl;
         }
     }
     public class NewVersion

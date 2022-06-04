@@ -1,9 +1,9 @@
-﻿<Window x:Class="BiliLite.VideoConverter.MainWindow"
+﻿<Window x:Class="BiliLite.Win32Tools.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BiliLite.VideoConverter"
+        xmlns:local="clr-namespace:BiliLite.Win32Tools"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Background="WhiteSmoke"
@@ -23,7 +23,7 @@
                 <ProgressBar x:Name="progressBar" Height="24" Width="240" IsIndeterminate="True"></ProgressBar>
                 <TextBlock TextAlignment="Center" Margin="0 12" x:Name="txtStatus"></TextBlock>
             </StackPanel>
-            
+
         </Grid>
     </Grid>
 </Window>

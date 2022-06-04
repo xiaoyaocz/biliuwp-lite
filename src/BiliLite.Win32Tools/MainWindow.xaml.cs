@@ -5,7 +5,6 @@ using SharpCompress.Archives.SevenZip;
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BiliLite.VideoConverter
+namespace BiliLite.Win32Tools
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -78,7 +77,7 @@ namespace BiliLite.VideoConverter
             {
                 try
                 {
-                   
+
                     var ffmpeg7ZipPath = System.IO.Path.Combine(zipDir, "ffmpeg.7z");
                     ffmpegFile = System.IO.Path.Combine(currentDir, "ffmpeg.exe");
                     //检查文件是否存在
@@ -165,7 +164,7 @@ namespace BiliLite.VideoConverter
                     info = info.AddFileInput(convertFileInfo.subtitle.FirstOrDefault());
                 }
                 var processor = info.OutputToFile(convertFileInfo.outFile, true, options =>
-                        options.WithArgument(new FFMpegCore.Arguments.CustomArgument(convertFileInfo.subtitle.Count > 0? "-c copy -c:s mov_text": "-c copy"))
+                        options.WithArgument(new FFMpegCore.Arguments.CustomArgument(convertFileInfo.subtitle.Count > 0 ? "-c copy -c:s mov_text" : "-c copy"))
                         .WithFastStart()
                 );
                 await processor.ProcessAsynchronously();

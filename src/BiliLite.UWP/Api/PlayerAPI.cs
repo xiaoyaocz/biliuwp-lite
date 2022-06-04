@@ -12,10 +12,10 @@ namespace BiliLite.Api
         public ApiModel VideoPlayUrl(string aid, string cid, int qn,bool dash,bool proxy=false,string area="")
         {
             var baseUrl = ApiHelper.API_BASE_URL;
-            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+
             if (proxy)
             {
-                baseUrl = proxyUrl;
+                baseUrl = Utils.ChooseProxyServer(area);
             }
             ApiModel api = new ApiModel()
             {
@@ -35,13 +35,15 @@ namespace BiliLite.Api
             }
             return api;
         }
+
+       
+
         public ApiModel SeasonPlayUrl(string aid, string cid, string ep_id, int qn,int season_type, bool dash, bool proxy = false, string area = "")
         {
             var baseUrl = ApiHelper.API_BASE_URL;
-            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
             if (proxy)
             {
-                baseUrl = proxyUrl;
+                baseUrl = Utils.ChooseProxyServer(area);
             }
             ApiModel api = new ApiModel()
             {

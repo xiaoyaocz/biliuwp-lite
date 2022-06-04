@@ -253,10 +253,21 @@
                         <TextBlock  Margin="0 16 0 8" FontSize="16">双击播放器全屏(默认双击暂停)</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingDoubleClickFullScreen" ></ToggleSwitch>
 
+                       
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">代理</TextBlock>
+                </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        
                         <!--<TextBlock  Margin="0 16 0 8" FontSize="16">启用代理服务器</TextBlock>
                         <ToggleSwitch x:Name="RoamingSettingEnable" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
                         <TextBlock FontSize="15">当遇到无法播放的视频时，尝试使用代理服务器访问</TextBlock>-->
-                        <TextBlock  Margin="0 16 0 8" FontSize="16">代理服务器</TextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">首选代理服务器</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <AutoSuggestBox x:Name="RoamingSettingCustomServer" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
                             <Button Margin="8 0 0 0" x:Name="RoamingSettingSetDefault">恢复默认</Button>
@@ -267,7 +278,20 @@
                                 <Hyperlink NavigateUri="https://github.com/yujincheng08/BiliRoaming/wiki/%E5%85%AC%E5%85%B1%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8">查看公共服务器</Hyperlink>
                             </Paragraph>
                         </RichTextBlock>
-                        <TextBlock>低调使用，乱宣传可能会被拉黑哦</TextBlock> 
+                        <TextBlock>低调使用，乱宣传可能会被拉黑哦</TextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">自定义香港代理服务器</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="RoamingSettingCustomServerHK" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                        </StackPanel>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">自定义台湾代理服务器</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="RoamingSettingCustomServerTW" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                        </StackPanel>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">自定义大陆代理服务器</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="RoamingSettingCustomServerCN" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                        </StackPanel>
+                        
                         <TextBlock  Margin="0 16 0 8" FontSize="16">仅使用Akamai的CDN链接</TextBlock>
                         <ToggleSwitch x:Name="RoamingSettingAkamaized" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
                         <RichTextBlock>
@@ -281,7 +305,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-           
             <PivotItem Margin="0">
                 <PivotItem.Header>
                     <TextBlock FontSize="15">视频弹幕</TextBlock>

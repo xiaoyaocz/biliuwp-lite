@@ -34,6 +34,8 @@ namespace BiliLite.Modules
         public ICommand LoadMoreCommand { get; private set; }
         public ICommand RefreshCommand { get; private set; }
 
+        public string Area { get; set; } = "";
+
         public int Page { get; set; } = 1;
         private bool _loading = false;
 
@@ -69,7 +71,6 @@ namespace BiliLite.Modules
 
         public async virtual Task LoadData()
         {
-
         }
     }
 
@@ -77,21 +78,25 @@ namespace BiliLite.Modules
     {
         public SearchVM()
         {
+            Area = Areas[0];
             SearchItems = new ObservableCollection<ISearchVM>() {
                 new SearchVideoVM()
                 {
                     Title="视频",
-                    SearchType= SearchType.Video
+                    SearchType= SearchType.Video,
+                    Area= Area.area
                 },
                 new SearchAnimeVM()
                 {
                     Title="番剧",
-                    SearchType= SearchType.Anime
+                    SearchType= SearchType.Anime,
+                    Area= Area.area
                 },
                 new SearchLiveRoomVM()
                 {
                     Title="直播",
-                    SearchType= SearchType.Live
+                    SearchType= SearchType.Live,
+                    Area= Area.area
                 },
                 //new SearchLiveRoomVM()
                 //{
@@ -101,25 +106,30 @@ namespace BiliLite.Modules
                 new SearchUserVM()
                 {
                     Title="用户",
-                    SearchType= SearchType.User
+                    SearchType= SearchType.User,
+                    Area= Area.area
                 },
                 new SearchAnimeVM()
                 {
                     Title="影视",
-                    SearchType= SearchType.Movie
+                    SearchType= SearchType.Movie,
+                    Area= Area.area
                 },
                 new SearchArticleVM()
                 {
                     Title="专栏",
-                    SearchType= SearchType.Article
+                    SearchType= SearchType.Article,
+                    Area= Area.area
                 },
                 new SearchTopicVM()
                 {
                     Title="话题",
-                    SearchType= SearchType.Topic
+                    SearchType= SearchType.Topic,
+                    Area= Area.area
                 }
             };
             SelectItem = SearchItems[0];
+           
         }
         private ObservableCollection<ISearchVM> _items;
         public ObservableCollection<ISearchVM> SearchItems
@@ -127,6 +137,15 @@ namespace BiliLite.Modules
             get { return _items; }
             set { _items = value; DoPropertyChanged("SearchItems"); }
         }
+
+        public List<SearchArea> Areas { get; set; } = new List<SearchArea>()
+        {
+            new SearchArea("默认地区",""),
+            new SearchArea("大陆地区","cn"),
+            new SearchArea("香港地区","hk"),
+            new SearchArea("台湾地区","tw"),
+        };
+        public SearchArea Area { get; set; }
 
         private ISearchVM _SelectItem;
         public ISearchVM SelectItem
@@ -206,7 +225,7 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await searchAPI.WebSearchVideo(Keyword, Page, SelectOrder.value, SelectDuration.value, SelectRegion.value).Request();
+                var results = await searchAPI.WebSearchVideo(Keyword, Page, SelectOrder.value, SelectDuration.value, SelectRegion.value,Area).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -325,7 +344,7 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await searchAPI.WebSearchArticle(Keyword, Page, SelectOrder.value, SelectRegion.value).Request();
+                var results = await searchAPI.WebSearchArticle(Keyword, Page, SelectOrder.value, SelectRegion.value, Area).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -403,10 +422,10 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var api = searchAPI.WebSearchAnime(Keyword, Page);
+                var api = searchAPI.WebSearchAnime(Keyword, Page, Area);
                 if (this.SearchType == SearchType.Movie)
                 {
-                    api = searchAPI.WebSearchMovie(Keyword, Page);
+                    api = searchAPI.WebSearchMovie(Keyword, Page, Area);
                 }
                 var results = await api.Request();
                 if (results.status)
@@ -521,7 +540,7 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await searchAPI.WebSearchUser(Keyword, Page, SelectOrder.value, SelectType.value).Request();
+                var results = await searchAPI.WebSearchUser(Keyword, Page, SelectOrder.value, SelectType.value, Area).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -600,7 +619,7 @@ namespace BiliLite.Modules
                 Loading = true;
                 Nothing = false;
 
-                var results = await searchAPI.WebSearchLive(Keyword, Page).Request();
+                var results = await searchAPI.WebSearchLive(Keyword, Page, Area).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -679,7 +698,7 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await searchAPI.WebSearchTopic(Keyword, Page).Request();
+                var results = await searchAPI.WebSearchTopic(Keyword, Page, Area).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -747,6 +766,16 @@ namespace BiliLite.Modules
         }
         public string name { get; set; }
         public string value { get; set; }
+    }
+    
+    public class SearchArea
+    {
+        public SearchArea(string name,string area) { 
+            this.name = name;
+            this.area = area;
+        }
+        public string name { get; set; }
+        public string area { get; set; }
     }
     public class SearchVideoItem
     {

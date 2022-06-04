@@ -10,14 +10,18 @@
 
 ## 参考及引用
 
-[SYEngine](https://github.com/ShanYe/SYEngine)
+[SYEngine@ShanYe](https://github.com/ShanYe/SYEngine)
 
-[FFmpegInteropX](https://github.com/ffmpeginteropx/FFmpegInteropX)
+[FFmpegInteropX@ffmpeginteropx](https://github.com/ffmpeginteropx/FFmpegInteropX)
 
-[bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
+[bilibili-API-collect@SocialSisterYi](https://github.com/SocialSisterYi/bilibili-API-collect)
 
-[bilibili-grpc-api](https://github.com/SeeFlowerX/bilibili-grpc-api)
+[bilibili-grpc-api@SeeFlowerX](https://github.com/SeeFlowerX/bilibili-grpc-api)
 
-[FontAwesome5](https://github.com/MartinTopfstedt/FontAwesome5)
+[FontAwesome5@MartinTopfstedt](https://github.com/MartinTopfstedt/FontAwesome5)
 
-[waslibs](https://github.com/wasteam/waslibs)
+[waslibs@wasteam](https://github.com/wasteam/waslibs)
+
+[bilibili-helper@ipcjs](https://github.com/ipcjs/bilibili-helper)
+
+[BiliRoaming@yujincheng08](https://github.com/yujincheng08/BiliRoaming)

@@ -1,8 +1,8 @@
-﻿<Application x:Class="BiliLite.VideoConverter.App"
+﻿<Application x:Class="BiliLite.Win32Tools.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:BiliLite.VideoConverter"
-             Startup="Application_Startup">
+             xmlns:local="clr-namespace:BiliLite.Win32Tools"
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
          
     </Application.Resources>
