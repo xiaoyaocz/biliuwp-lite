@@ -89,6 +89,7 @@ namespace BiliLite.Pages
             foreach (var item in searchVM.SearchItems)
             {
                 item.Keyword = par.keyword;
+                item.Area = searchVM.Area.area;
             }
             pivot.SelectedIndex = (int)par.searchType;
         }
@@ -108,6 +109,7 @@ namespace BiliLite.Pages
             foreach (var item in searchVM.SearchItems)
             {
                 item.Keyword = txtKeyword.Text;
+                item.Area= searchVM.Area.area;
                 item.Page = 1;
                 item.HasData = false;
             }
@@ -225,8 +227,20 @@ namespace BiliLite.Pages
                 return;
             }
         }
-     
-       
+
+        private void cbArea_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbArea.SelectedItem!=null)
+            {
+                foreach (var item in searchVM.SearchItems)
+                {
+                    item.Area = searchVM.Area.area;
+                    item.Page = 1;
+                    item.HasData = false;
+                }
+                searchVM.SelectItem.Refresh();
+            }
+        }
     }
     public class SearchDataTemplateSelector : DataTemplateSelector
     {

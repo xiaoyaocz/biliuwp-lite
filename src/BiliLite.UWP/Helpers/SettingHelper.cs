@@ -112,6 +112,10 @@ namespace BiliLite.Helpers
             /// 隐藏赞助按钮
             /// </summary>
             public const string HIDE_SPONSOR = "HideSponsor";
+            /// <summary>
+            /// 隐藏广告按钮
+            /// </summary>
+            public const string HIDE_AD = "HideAD";
         }
         public class Account
         {
@@ -441,6 +445,22 @@ namespace BiliLite.Helpers
             /// 自定义服务器链接
             /// </summary>
             public const string CUSTOM_SERVER_URL = "RoamingCustomServerUrl";
+
+            /// <summary>
+            /// 自定义香港服务器链接
+            /// </summary>
+            public const string CUSTOM_SERVER_URL_HK = "RoamingCustomServerUrlHK";
+
+            /// <summary>
+            /// 自定义台湾服务器链接
+            /// </summary>
+            public const string CUSTOM_SERVER_URL_TW = "RoamingCustomServerUrlTW";
+
+            /// <summary>
+            /// 自定义大陆服务器链接
+            /// </summary>
+            public const string CUSTOM_SERVER_URL_CN= "RoamingCustomServerUrlCN";
+
             /// <summary>
             /// 简体中文
             /// </summary>

@@ -389,8 +389,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid  Background="{ThemeResource TopPaneBackground}">
-            <AutoSuggestBox x:Name="txtKeyword" VerticalAlignment="Center" QuerySubmitted="txtKeyword_QuerySubmitted" PlaceholderText="随便搜索点什么东西吧" Margin="8 8 8 0" QueryIcon="Find"></AutoSuggestBox>
+        <Grid  Background="{ThemeResource TopPaneBackground}" Padding="8 8 8 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="cbArea" SelectionChanged="cbArea_SelectionChanged" ItemsSource="{x:Bind Path=searchVM.Areas}" SelectedItem="{x:Bind Path=searchVM.Area,Mode=TwoWay}" DisplayMemberPath="name" SelectedValuePath="area" VerticalAlignment="Center" Margin="0 0 8 0" >
+                <ComboBoxItem>默认地区</ComboBoxItem>
+                <ComboBoxItem>大陆地区</ComboBoxItem>
+                <ComboBoxItem>香港地区</ComboBoxItem>
+                <ComboBoxItem>台湾地区</ComboBoxItem>
+            </ComboBox>
+            <AutoSuggestBox x:Name="txtKeyword" Grid.Column="1" VerticalAlignment="Center" QuerySubmitted="txtKeyword_QuerySubmitted" PlaceholderText="随便搜索点什么东西吧"  QueryIcon="Find"></AutoSuggestBox>
         </Grid>
         <Pivot Grid.Row="1" x:Name="pivot" ItemsSource="{x:Bind Path=searchVM.SearchItems}" ItemTemplateSelector="{StaticResource ResourceKey=tplSelect}" SelectedItem="{x:Bind Path=searchVM.SelectItem,Mode=TwoWay}" SelectionChanged="pivot_SelectionChanged">
             <Pivot.HeaderTemplate>

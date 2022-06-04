@@ -219,6 +219,16 @@ namespace BiliLite.Pages
                 });
             });
 
+            //鼠标侧键返回
+            swHideADBtn.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_AD, false);
+            swHideADBtn.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swHideADBtn.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.HIDE_AD, swHideADBtn.IsOn);
+                });
+            });
+
             gridHomeCustom.ItemsSource = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, HomeVM.GetAllNavItems());
             ExceptHomeNavItems();
 
@@ -331,6 +341,72 @@ namespace BiliLite.Pages
                  RoamingSettingCustomServer.QuerySubmitted += RoamingSettingCustomServer_QuerySubmitted;
              });
 
+            //自定义HK服务器
+            RoamingSettingCustomServerHK.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
+            RoamingSettingCustomServerHK.Loaded += new RoutedEventHandler((sender, e) => {
+                RoamingSettingCustomServerHK.QuerySubmitted +=new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
+                {
+                    var text = sender2.Text;
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        Utils.ShowMessageToast("已取消自定义香港代理服务器");
+                        SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
+                        return;
+                    }
+                    if (!text.Contains("http"))
+                    {
+                        text = "https://" + text;
+                    }
+                    SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, text);
+                    sender2.Text = text;
+                    Utils.ShowMessageToast("保存成功");
+                });
+            });
+
+            //自定义TW服务器
+            RoamingSettingCustomServerTW.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, "");
+            RoamingSettingCustomServerTW.Loaded += new RoutedEventHandler((sender, e) => {
+                RoamingSettingCustomServerTW.QuerySubmitted += new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
+                {
+                    var text = sender2.Text;
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        Utils.ShowMessageToast("已取消自定义台湾代理服务器");
+                        SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, "");
+                        return;
+                    }
+                    if (!text.Contains("http"))
+                    {
+                        text = "https://" + text;
+                    }
+                    SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, text);
+                    sender2.Text = text;
+                    Utils.ShowMessageToast("保存成功");
+                });
+            });
+
+            //自定义大陆服务器
+            RoamingSettingCustomServerCN.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, "");
+            RoamingSettingCustomServerCN.Loaded += new RoutedEventHandler((sender, e) => {
+                RoamingSettingCustomServerCN.QuerySubmitted += new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
+                {
+                    var text = sender2.Text;
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        Utils.ShowMessageToast("已取消自定义大陆代理服务器");
+                        SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, "");
+                        return;
+                    }
+                    if (!text.Contains("http"))
+                    {
+                        text = "https://" + text;
+                    }
+                    SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, text);
+                    sender2.Text = text;
+                    Utils.ShowMessageToast("保存成功");
+                });
+            });
+
             //Akamai
             RoamingSettingAkamaized.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true);
             RoamingSettingAkamaized.Loaded += new RoutedEventHandler((sender, e) =>
@@ -350,6 +426,8 @@ namespace BiliLite.Pages
                 });
             });
         }
+
+     
 
         private void RoamingSettingSetDefault_Click(object sender, RoutedEventArgs e)
         {

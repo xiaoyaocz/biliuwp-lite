@@ -176,15 +176,17 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Title}"></TextBlock>
-                                                    <AppBarButton Visibility="Collapsed" Click="btnEpisodesPlay_Click" Width="40" Height="40" Grid.Column="1" Icon="Play"></AppBarButton>
-                                                    <AppBarButton ToolTipService.ToolTip="打开目录" Click="btnEpisodesFolder_Click" Width="40" Height="40" Grid.Column="2" >
+                                                    <AppBarButton  Click="btnEpisodesOutput_Click" Width="40" Height="40" Grid.Column="1" Icon="Save"></AppBarButton>
+                                                    <AppBarButton Visibility="Collapsed" Click="btnEpisodesPlay_Click" Width="40" Height="40" Grid.Column="2" Icon="Play"></AppBarButton>
+                                                    <AppBarButton ToolTipService.ToolTip="打开目录" Click="btnEpisodesFolder_Click" Width="40" Height="40" Grid.Column="3" >
                                                         <AppBarButton.Icon>
                                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8B7;" />
                                                         </AppBarButton.Icon>
                                                     </AppBarButton>
-                                                    <AppBarButton ToolTipService.ToolTip="删除" Click="btnEpisodesDelete_Click" Width="40" Height="40" Grid.Column="3" Icon="Delete"></AppBarButton>
+                                                    <AppBarButton ToolTipService.ToolTip="删除" Click="btnEpisodesDelete_Click" Width="40" Height="40" Grid.Column="4" Icon="Delete"></AppBarButton>
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -217,6 +219,7 @@
                                             <Grid.ContextFlyout>
                                                 <MenuFlyout>
                                                     <MenuFlyoutItem x:Name="btnMenuPlay" Click="btnMenuPlay_Click" Icon="Play" Text="播放"></MenuFlyoutItem>
+                                                    <MenuFlyoutItem x:Name="btnMenuOutputFile" Click="btnMenuOutputFile_Click" Icon="Save" Text="导出视频"></MenuFlyoutItem>
                                                     <MenuFlyoutItem x:Name="btnMenuDetail" Click="btnMenuDetail_Click" Icon="NewWindow" Text="打开详情"></MenuFlyoutItem>
                                                     <MenuFlyoutItem x:Name="btnMenuFolder" Click="btnMenuFolder_Click" Text="打开目录">
                                                         <MenuFlyoutItem.Icon>

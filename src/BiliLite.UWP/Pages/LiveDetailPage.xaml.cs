@@ -136,8 +136,16 @@ namespace BiliLite.Pages
                 {
                     if (settingVM.LiveWords.FirstOrDefault(x => e.Contains(x)) != null) return;
                 }
-
-                DanmuControl.AddLiveDanmu(e, false, Colors.White);
+                try
+                {
+                    DanmuControl.AddLiveDanmu(e, false, Colors.White);
+                }
+                catch (Exception ex)
+                {
+                    //记录错误，不弹出通知
+                    LogHelper.Log(ex.Message, LogType.ERROR, ex);
+                }
+               
             }
 
         }

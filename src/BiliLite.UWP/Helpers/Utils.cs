@@ -24,6 +24,7 @@ using Windows.System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter;
+using Newtonsoft.Json.Linq;
 
 namespace BiliLite.Helpers
 {
@@ -148,25 +149,13 @@ namespace BiliLite.Helpers
         /// 根据Epid取番剧ID
         /// </summary>
         /// <returns></returns>
-        public async static Task<string> BangumiEpidToSid(string url)
+        public async static Task<string> BangumiEpidToSid(string epid)
         {
             try
             {
-                if (!url.Contains("http"))
-                {
-                    url = "https://www.bilibili.com/bangumi/play/ep" + url;
-                }
-
-                var re = await HttpHelper.GetString(url);
-                var data = RegexMatch(re, @"ss(\d+)");
-                if (data != "")
-                {
-                    return data;
-                }
-                else
-                {
-                    return "";
-                }
+                var re = await HttpHelper.GetString($"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}");
+                var obj = JObject.Parse(re);
+               return obj["result"]["season_id"].ToString();
             }
             catch (Exception)
             {
@@ -392,7 +381,27 @@ namespace BiliLite.Helpers
             {
                 return "tw";
             }
-            return "";
+            return "cn";
+        }
+        public static string ChooseProxyServer(string area)
+        {
+            var proxyUrl = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            var proxyUrlCN = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, "");
+            var proxyUrlHK = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
+            var proxyUrlTW = SettingHelper.GetValue(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, "");
+            if (area == "cn")
+            {
+                return string.IsNullOrEmpty(proxyUrlCN) ? proxyUrl : proxyUrlCN;
+            }
+            if (area == "hk")
+            {
+                return string.IsNullOrEmpty(proxyUrlHK) ? proxyUrl : proxyUrlHK;
+            }
+            if (area == "tw")
+            {
+                return string.IsNullOrEmpty(proxyUrlTW) ? proxyUrl : proxyUrlTW;
+            }
+            return proxyUrl;
         }
     }
     public class NewVersion

@@ -15,7 +15,7 @@
                                   ItemClick="AdaptiveGridView_ItemClick"
                                   StretchContentForSingleRow="False"
                                   x:Name="list"
-                                  DesiredWidth="400" 
+                                  DesiredWidth="600" 
                                   Padding="8"
                                   ItemsSource="{x:Bind Path=findMoreVM.Items,Mode=OneWay}"
                                   SelectionMode="None" 
@@ -35,7 +35,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Image Source="{x:Bind Path=pic}" Width="64" Height="64" ></Image>
+                            <Image Source="{x:Bind Path=pic}" Width="80" Height="80" ></Image>
                             <StackPanel Grid.Column="1" Margin="12 0" Orientation="Vertical">
                                 <TextBlock  Text="{x:Bind name}" FontSize="15" MaxLines="1" TextTrimming="CharacterEllipsis"></TextBlock>
                                 <TextBlock Text="{x:Bind desc}" FontSize="12" Margin="0 4 0 0" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Foreground="Gray">《SPY×FAMILY 間諜家家酒》、《輝夜姬想讓人告白》、《派對咖孔明》、《街角的魔族女孩》</TextBlock>

@@ -33,12 +33,12 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             Title = "下载";
         }
-        protected  override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.New)
             {
-                 downloadVM.RefreshDownloaded();
+                downloadVM.RefreshDownloaded();
             }
         }
         private void listDowned_ItemClick(object sender, ItemClickEventArgs e)
@@ -77,7 +77,7 @@ namespace BiliLite.Pages
                     info.mode = VideoPlayMode.Dash;
                     info.dash_video_url = new DashItemModel()
                     {
-                        baseUrl = item.Paths.FirstOrDefault(x=>x.Contains("video.m4s")),
+                        baseUrl = item.Paths.FirstOrDefault(x => x.Contains("video.m4s")),
                         base_url = item.Paths.FirstOrDefault(x => x.Contains("video.m4s")),
                     };
                     info.dash_audio_url = new DashItemModel()
@@ -95,7 +95,7 @@ namespace BiliLite.Pages
                 {
                     info.mode = VideoPlayMode.MultiFlv;
                     info.multi_flv_url = new List<FlvDurlModel>();
-                    foreach (var item2 in item.Paths.OrderBy(x=>x))
+                    foreach (var item2 in item.Paths.OrderBy(x => x))
                     {
                         info.multi_flv_url.Add(new FlvDurlModel()
                         {
@@ -225,7 +225,7 @@ namespace BiliLite.Pages
                 Utils.ShowMessageToast("目录删除失败，请检查是否文件是否被占用");
                 LogHelper.Log("删除下载视频失败", LogType.FATAL, ex);
             }
-           
+
 
         }
 
@@ -233,5 +233,65 @@ namespace BiliLite.Pages
         {
             await Launcher.LaunchUriAsync(new Uri("https://iliili.cn/index.php/bili-merge.html"));
         }
+
+        private void btnEpisodesOutput_Click(object sender, RoutedEventArgs e)
+        {
+            var data = Pane.DataContext as DownloadedItem;
+            var item = (sender as AppBarButton).DataContext as DownloadedSubItem;
+            OutputFile(data, item);
+        }
+
+        private void btnMenuOutputFile_Click(object sender, RoutedEventArgs e)
+        {
+            var data = (sender as MenuFlyoutItem).DataContext as DownloadedItem;
+            if (data.Epsidoes == null || data.Epsidoes.Count == 0)
+            {
+                Utils.ShowMessageToast("没有可以导出的视频");
+                return;
+            }
+            OutputFile(data, data.Epsidoes.First());
+        }
+
+        private async void OutputFile(DownloadedItem data, DownloadedSubItem item)
+        {
+            List<string> subtitles=new List<string>();
+            //处理字幕
+            if (item.SubtitlePath != null && item.SubtitlePath.Count > 0)
+            {
+                try
+                {
+                    var toSimplified = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true);
+                    CCToSrt ccToSrt = new CCToSrt();
+                    var folder = await StorageFolder.GetFolderFromPathAsync(item.Path);
+                    foreach (var subtitle in item.SubtitlePath)
+                    {
+                        var outSrtFile = await folder.CreateFileAsync(subtitle.Name + ".srt", CreationCollisionOption.ReplaceExisting);
+                        var subtitleFile = await StorageFile.GetFileFromPathAsync(Path.Combine(item.Path, subtitle.Url));
+                        var content = await FileIO.ReadTextAsync(subtitleFile);
+                        var result = ccToSrt.ConvertToSrt(content, toSimplified&&subtitle.Name.Contains("繁体"));
+                        await FileIO.WriteTextAsync(outSrtFile, result);
+                        subtitles.Add(outSrtFile.Path);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Utils.ShowMessageToast("转换SRT字幕失败");
+                    LogHelper.Log("转换字幕失败", LogType.ERROR, ex);
+                }
+
+            }
+            
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            savePicker.SuggestedStartLocation =
+                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            savePicker.FileTypeChoices.Add("MP4", new List<string>() {".mp4" });
+            savePicker.SuggestedFileName = "导出的视频";
+            var file = await savePicker.PickSaveFileAsync();
+            if (file == null)
+                return;
+            await AppHelper.LaunchConverter(data.Title + "-" + item.Title, item.Paths, file.Path, subtitles,item.IsDash);
+        }
+
+
     }
 }
