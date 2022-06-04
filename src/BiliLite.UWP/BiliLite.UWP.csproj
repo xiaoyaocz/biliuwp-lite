@@ -477,6 +477,7 @@
     <Content Include="Assets\Icon\我的.png" />
     <Content Include="Assets\Icon\时间表.png" />
     <Content Include="Assets\Icon\榜单.png" />
+    <Content Include="Assets\Icon\tb.png" />
     <Content Include="Assets\Icon\片单.png" />
     <Content Include="Assets\Icon\电影.png" />
     <Content Include="Assets\Icon\电视剧.png" />

@@ -219,6 +219,16 @@ namespace BiliLite.Pages
                 });
             });
 
+            //鼠标侧键返回
+            swHideADBtn.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_AD, false);
+            swHideADBtn.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swHideADBtn.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.HIDE_AD, swHideADBtn.IsOn);
+                });
+            });
+
             gridHomeCustom.ItemsSource = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, HomeVM.GetAllNavItems());
             ExceptHomeNavItems();
 

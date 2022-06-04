@@ -112,6 +112,10 @@ namespace BiliLite.Helpers
             /// 隐藏赞助按钮
             /// </summary>
             public const string HIDE_SPONSOR = "HideSponsor";
+            /// <summary>
+            /// 隐藏广告按钮
+            /// </summary>
+            public const string HIDE_AD = "HideAD";
         }
         public class Account
         {

@@ -58,7 +58,10 @@ namespace BiliLite.Pages
                 CheckLoginStatus();
                 //await homeVM.LoginUserCard();
             }
-
+            if (SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_AD, false))
+            {
+                btnAD.Visibility = Visibility.Collapsed;
+            }
         }
         private async void CheckLoginStatus()
         {
@@ -316,6 +319,23 @@ namespace BiliLite.Pages
                     Tab = UserTab.Dynamic
                 }
             });
+        }
+
+        private void btnAD_Click(object sender, RoutedEventArgs e)
+        {
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Symbol.World,
+                page = typeof(WebPage),
+                title = "橙猫服饰",
+                parameters = "https://nsapps.cn/index.php/ad.html"
+            });
+        }
+
+        private void btnHideAD_Click(object sender, RoutedEventArgs e)
+        {
+            btnAD.Visibility = Visibility.Collapsed;
+            SettingHelper.SetValue<bool>(SettingHelper.UI.HIDE_AD, true);
         }
     }
 

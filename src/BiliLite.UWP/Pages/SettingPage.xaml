@@ -190,6 +190,11 @@
                                 <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键关闭页面</TextBlock>
                                 <ToggleSwitch x:Name="swMouseClosePage" ></ToggleSwitch>
                             </StackPanel>
+
+                            <StackPanel Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">隐藏首页右上角广告按钮</TextBlock>
+                                <ToggleSwitch x:Name="swHideADBtn" ></ToggleSwitch>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
 
