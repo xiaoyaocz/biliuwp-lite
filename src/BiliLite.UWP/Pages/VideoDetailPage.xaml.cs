@@ -197,7 +197,7 @@ namespace BiliLite.Pages
                         order = i,
                         play_mode = VideoPlayType.Video,
                         title = "P" + item.page + " " + item.part,
-                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title)
+                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title,videoDetailVM.VideoInfo.owner.mid)
                     });
                     i++;
                 }
@@ -543,7 +543,8 @@ namespace BiliLite.Pages
                 Episodes =new List<DownloadEpisodeItem>(),
                 Subtitle= videoDetailVM.VideoInfo.bvid,
                 Title=videoDetailVM.VideoInfo.title,
-                Type= DownloadType.Video
+                Type= DownloadType.Video,
+                UpMid = videoDetailVM.VideoInfo.owner.mid.ToInt32(),
             };
             int i = 0;
             foreach (var item in videoDetailVM.VideoInfo.pages)

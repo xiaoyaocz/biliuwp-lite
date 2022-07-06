@@ -306,6 +306,7 @@ namespace BiliLite.Modules
         public int media_id { get; set; }
         public int mode { get; set; }
         public JArray modules { get; set; }
+        public SeasonDetailUpInfoModel up_info { get; set; }
         public SeasonDetailActorModel actor { get; set; }
         public SeasonDetailActorModel staff { get; set; }
         public List<SeasonDetailAreaItemModel> areas { get; set; }
@@ -379,6 +380,11 @@ namespace BiliLite.Modules
                 return payment != null && payment.dialog != null;
             }
         }
+    }
+    public class SeasonDetailUpInfoModel
+    {
+        public int mid{ get; set; }
+        public string uname { get; set; }
     }
     public class SeasonDetailPaymentModel
     {

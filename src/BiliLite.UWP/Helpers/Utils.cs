@@ -370,8 +370,8 @@ namespace BiliLite.Helpers
                 }
             }
         }
-    
-        public static string ParseArea(string title)
+       
+        public static string ParseArea(string title,int mid)
         {
             if(Regex.IsMatch(title, @"僅.*港.*地區"))
             {
@@ -381,7 +381,17 @@ namespace BiliLite.Helpers
             {
                 return "tw";
             }
+            //如果是哔哩哔哩番剧出差这个账号上传的
+            //且标题不含僅**地區，返回地区设置为港澳台
+            if (mid == 11783021)
+            {
+                return "hk";
+            }
             return "cn";
+        }
+        public static string ParseArea(string title, string mid)
+        {
+            return ParseArea(title, mid.ToInt32());
         }
         public static string ChooseProxyServer(string area)
         {
