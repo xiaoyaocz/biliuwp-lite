@@ -257,8 +257,10 @@
                         <ToggleSwitch x:Name="swPlayerSettingAutoFullWindows" ></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">双击播放器全屏(默认双击暂停)</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingDoubleClickFullScreen" ></ToggleSwitch>
-
-                       
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">自动打开AI字幕</TextBlock>
+                        <ToggleSwitch  x:Name="swPlayerSettingAutoOpenAISubtitle"></ToggleSwitch>
+                        <TextBlock>部分自动生成的AI字幕会与视频自带字幕冲突</TextBlock>
+                        <TextBlock>建议关闭，有需要时再手动打开字幕</TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

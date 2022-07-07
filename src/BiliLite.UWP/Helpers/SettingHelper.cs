@@ -433,7 +433,10 @@ namespace BiliLite.Helpers
             /// 双击全屏
             /// </summary>
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
-
+            /// <summary>
+            /// 自动打开AI字幕
+            /// </summary>
+            public const string AUTO_OPEN_AI_SUBTITLE = "PlayerAutoOpenAISubtitle";
         }
         public class Roaming
         {
