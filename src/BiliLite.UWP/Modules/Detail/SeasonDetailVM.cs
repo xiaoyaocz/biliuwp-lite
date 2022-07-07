@@ -104,14 +104,14 @@ namespace BiliLite.Modules
 
                     //通过代理访问番剧详情
                     var data = await results.GetJson<ApiResultModel<SeasonDetailModel>>();
-                    if (!data.success)
-                    {
-                        var result_proxy = await seasonApi.Detail(season_id,true).Request();
-                        if (result_proxy.status)
-                        {
-                            data = await result_proxy.GetJson<ApiResultModel<SeasonDetailModel>>();
-                        }
-                    }
+                    //if (!data.success)
+                    //{
+                    //    var result_proxy = await seasonApi.Detail(season_id,true).Request();
+                    //    if (result_proxy.status)
+                    //    {
+                    //        data = await result_proxy.GetJson<ApiResultModel<SeasonDetailModel>>();
+                    //    }
+                    //}
                     //代理访问失败，使用Web的Api访问
                     if (!data.success)
                     {

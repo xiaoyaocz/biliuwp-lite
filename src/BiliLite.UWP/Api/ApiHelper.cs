@@ -20,11 +20,7 @@ namespace BiliLite.Api
         public const string API_BASE_URL = "https://api.bilibili.com";
 
         //漫游默认的服务器
-        public const string ROMAING_PROXY_URL = "https://bp.nsapps.cn";
-
-        // 详情页使用的代理
-        public static string[] DETAIL_PROXY_URL =new string[] { "https://bp.nsapps.cn",  "https://service-k02mde2w-1251411860.hk.apigw.tencentcs.com" };
-      
+        public const string ROMAING_PROXY_URL = "https://b.chuchai.vip";
 
         public static ApiKeyInfo AndroidKey = new ApiKeyInfo("1d8b6e7d45233436", "560c52ccd288fed045859ed18bffd973");
         public static ApiKeyInfo AndroidVideoKey = new ApiKeyInfo("iVGUTjsxvpLeuDCf", "aHRmhWMLkdeMuILqORnYZocwMBpMEOdt");
@@ -93,16 +89,6 @@ namespace BiliLite.Api
             return headers;
         }
 
-        /// <summary>
-        /// 随机返回一个详情代理服务器
-        /// 伪负载均衡？
-        /// </summary>
-        /// <returns></returns>
-        public static string RandomProxyUrl()
-        {
-            var rnd=new Random().Next(0, DETAIL_PROXY_URL.Length);
-            return DETAIL_PROXY_URL[rnd];
-        }
     }
     public class ApiKeyInfo
     {
