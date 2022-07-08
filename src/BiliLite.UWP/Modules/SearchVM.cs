@@ -221,7 +221,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
@@ -340,7 +343,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
@@ -418,7 +424,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
@@ -536,7 +545,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
@@ -614,7 +626,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
@@ -694,7 +709,10 @@ namespace BiliLite.Modules
         {
             try
             {
-
+                if (Loading)
+                {
+                    return;
+                }
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;

@@ -23,7 +23,6 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
-using Microsoft.International.Converters.TraditionalChineseToSimplifiedConverter;
 using Newtonsoft.Json.Linq;
 
 namespace BiliLite.Helpers
@@ -212,12 +211,7 @@ namespace BiliLite.Helpers
         }
         public static string ToSimplifiedChinese(string content)
         { 
-            //部分字符没有转换
-            //临时解决方法
-            content = content.Replace("麼", "么").Replace("後", "后").Replace("幹", "干");
-            content= ChineseConverter.Convert(content, ChineseConversionDirection.TraditionalToSimplified);
-    
-
+            content= ChineseConverter.TraditionalToSimplified(content);
             return content;
         }
         public static bool SetClipboard(string content)
@@ -370,8 +364,8 @@ namespace BiliLite.Helpers
                 }
             }
         }
-    
-        public static string ParseArea(string title)
+       
+        public static string ParseArea(string title,int mid)
         {
             if(Regex.IsMatch(title, @"僅.*港.*地區"))
             {
@@ -381,7 +375,17 @@ namespace BiliLite.Helpers
             {
                 return "tw";
             }
+            //如果是哔哩哔哩番剧出差这个账号上传的
+            //且标题不含僅**地區，返回地区设置为港澳台
+            if (mid == 11783021)
+            {
+                return "hk";
+            }
             return "cn";
+        }
+        public static string ParseArea(string title, string mid)
+        {
+            return ParseArea(title, mid.ToInt32());
         }
         public static string ChooseProxyServer(string area)
         {

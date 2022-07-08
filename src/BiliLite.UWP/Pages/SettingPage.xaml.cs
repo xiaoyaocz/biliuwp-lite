@@ -229,6 +229,16 @@ namespace BiliLite.Pages
                 });
             });
 
+            //浏览器打开无法处理的链接
+            swOpenUrlWithBrowser.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.OPEN_URL_BROWSER, false);
+            swOpenUrlWithBrowser.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swOpenUrlWithBrowser.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.OPEN_URL_BROWSER, swOpenUrlWithBrowser.IsOn);
+                });
+            });
+
             gridHomeCustom.ItemsSource = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, HomeVM.GetAllNavItems());
             ExceptHomeNavItems();
 
@@ -329,6 +339,16 @@ namespace BiliLite.Pages
                 swPlayerSettingDoubleClickFullScreen.Toggled += new RoutedEventHandler((obj, args) =>
                 {
                     SettingHelper.SetValue(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, swPlayerSettingDoubleClickFullScreen.IsOn);
+                });
+            });
+
+            //自动打开AI字幕
+            swPlayerSettingAutoOpenAISubtitle.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_OPEN_AI_SUBTITLE, false);
+            swPlayerSettingAutoOpenAISubtitle.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swPlayerSettingAutoOpenAISubtitle.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.AUTO_OPEN_AI_SUBTITLE, swPlayerSettingAutoOpenAISubtitle.IsOn);
                 });
             });
         }

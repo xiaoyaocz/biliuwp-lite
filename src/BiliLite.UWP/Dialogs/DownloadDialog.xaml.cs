@@ -65,7 +65,7 @@ namespace BiliLite.Dialogs
                 play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                 season_id = downloadItem.SeasonID,
                 season_type = downloadItem.SeasonType,
-                area=Utils.ParseArea(downloadItem.Title)
+                area=Utils.ParseArea(downloadItem.Title,downloadItem.UpMid)
             }, 0);
             if (!data.success)
             {
@@ -137,7 +137,7 @@ namespace BiliLite.Dialogs
                         play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                         season_id = downloadItem.SeasonID,
                         season_type = downloadItem.SeasonType,
-                        area = Utils.ParseArea(downloadItem.Title)
+                        area = Utils.ParseArea(downloadItem.Title, downloadItem.UpMid)
                     }, qn: (cbQuality.SelectedItem as QualityWithPlayUrlInfo).quality);
                     if (!playUrl.success)
                     {
@@ -274,6 +274,7 @@ namespace BiliLite.Dialogs
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Cover { get; set; }
+        public int UpMid { get; set; } = 0;
         public Helpers.DownloadType Type { get; set; }
         private List<DownloadEpisodeItem> _episodes;
 

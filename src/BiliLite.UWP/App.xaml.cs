@@ -45,6 +45,7 @@ namespace BiliLite
             App.Current.UnhandledException += App_UnhandledException;
             FFmpegInteropLogging.SetLogLevel(LogLevel.Info);
             FFmpegInteropLogging.SetLogProvider(this);
+            SqlHelper.InitDB();
             this.Suspending += OnSuspending;
         }
         private void RegisterExceptionHandlingSynchronizationContext()

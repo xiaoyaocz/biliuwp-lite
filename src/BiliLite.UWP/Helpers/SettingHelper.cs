@@ -116,6 +116,10 @@ namespace BiliLite.Helpers
             /// 隐藏广告按钮
             /// </summary>
             public const string HIDE_AD = "HideAD";
+            /// <summary>
+            /// 浏览器打开无法处理的链接
+            /// </summary>
+            public const string OPEN_URL_BROWSER = "OpenUrlWithBrowser";
         }
         public class Account
         {
@@ -416,7 +420,11 @@ namespace BiliLite.Helpers
             /// 字幕加粗
             /// </summary>
             public const string SUBTITLE_BOLD = "subtitleBold";
-
+            /// <summary>
+            /// 字幕对齐
+            /// 0=居中对齐，1=左对齐，2=右对齐
+            /// </summary>
+            public const string SUBTITLE_ALIGN = "subtitleAlign";
             /// <summary>
             /// 自动跳转进度
             /// </summary>
@@ -433,7 +441,10 @@ namespace BiliLite.Helpers
             /// 双击全屏
             /// </summary>
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
-
+            /// <summary>
+            /// 自动打开AI字幕
+            /// </summary>
+            public const string AUTO_OPEN_AI_SUBTITLE = "PlayerAutoOpenAISubtitle";
         }
         public class Roaming
         {

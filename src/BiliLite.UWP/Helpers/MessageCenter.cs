@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -461,6 +462,11 @@ namespace BiliLite.Helpers
 
             if (url.Contains("http://") || url.Contains("https://"))
             {
+                if (SettingHelper.GetValue<bool>(SettingHelper.UI.OPEN_URL_BROWSER, false))
+                {
+                    await Launcher.LaunchUriAsync(new Uri(url));
+                    return true;
+                }
                 NavigateToPage(null, new NavigationInfo()
                 {
                     icon = Symbol.World,

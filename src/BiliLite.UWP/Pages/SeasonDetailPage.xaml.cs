@@ -180,7 +180,7 @@ namespace BiliLite.Pages
                     order = i,
                     play_mode = VideoPlayType.Season,
                     title = item.title + " " + item.long_title,
-                    area = Utils.ParseArea(seasonDetailVM.Detail.title)
+                    area = Utils.ParseArea(seasonDetailVM.Detail.title, seasonDetailVM.Detail.up_info?.mid??0)
                 });
                 i++;
             }
@@ -211,7 +211,7 @@ namespace BiliLite.Pages
                     order = i,
                     play_mode = VideoPlayType.Season,
                     title = item.title + " " + item.long_title,
-                    area=Utils.ParseArea(seasonDetailVM.Detail.title)
+                    area=Utils.ParseArea(seasonDetailVM.Detail.title, seasonDetailVM.Detail.up_info?.mid ?? 0)
                 });
                 i++;
             }
@@ -503,6 +503,7 @@ namespace BiliLite.Pages
                 Episodes = new List<DownloadEpisodeItem>(),
                 Subtitle = seasonDetailVM.Detail.subtitle,
                 Title = seasonDetailVM.Detail.title,
+                UpMid=seasonDetailVM.Detail.up_info?.mid??0,
                 Type = DownloadType.Season
             };
             int i = 0;

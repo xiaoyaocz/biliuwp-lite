@@ -13,10 +13,6 @@ namespace BiliLite.Api
         public ApiModel Detail(string season_id,bool proxy=false)
         {
             var baseUrl = ApiHelper.API_BASE_URL;
-            if (proxy)
-            {
-                baseUrl = ApiHelper.RandomProxyUrl();
-            }
 
             ApiModel api = new ApiModel()
             {
