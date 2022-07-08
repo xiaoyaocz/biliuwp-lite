@@ -1,7 +1,7 @@
 {
-  "version": "4.4.0",
-  "version_num": 40400,
-  "version_desc": "更新内容:\r\n\r\n* 支持导出下载的视频为MP4文件\r\n\r\n* 支持按地区设置代理\r\n\r\n* 支持按地区搜索\r\n\r\n* 修复一些问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
+  "version": "4.4.1",
+  "version_num": 40410,
+  "version_desc": "更新内容:\r\n\r\n* 修复部分新番无法观看的问题\r\n\r\n* 修复单P视频列表循环无效问题\r\n\r\n* 修复专栏图片无法加载问题\r\n\r\n* 修复部分排行榜无法加载问题\r\n\r\n* 修复设置右侧详情宽度无效的问题\r\n\r\n* 修复搜索结果重复加载的问题\r\n\r\n* 修复繁体转简体字幕不完整问题\r\n\r\n* 增加AI字幕默认开关选项，防止与视频字幕冲突\r\n\r\n* 增加多行字幕对齐方式选项\r\n\r\n* 增加使用浏览器打开无法处理的链接选项\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
   "url": "https://b.nsapps.cn",
   "download_url": "https://b.nsapps.cn"
 }
