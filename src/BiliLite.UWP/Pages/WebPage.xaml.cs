@@ -52,7 +52,7 @@ namespace BiliLite.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if(e.NavigationMode== NavigationMode.New)
+            if (e.NavigationMode == NavigationMode.New)
             {
                 var uri = e.Parameter.ToString();
                 if (uri.Contains("h5/vlog"))
@@ -66,13 +66,13 @@ namespace BiliLite.Pages
                     webView.Visibility = Visibility.Collapsed;
                 }
                 webView.Navigate(new Uri(uri));
-                
+
             }
-           
+
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if(e.NavigationMode== NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
             {
                 NavigationCacheMode = NavigationCacheMode.Disabled;
                 webView.NavigateToString("");
@@ -86,7 +86,7 @@ namespace BiliLite.Pages
 
         private void btnForword_Click(object sender, RoutedEventArgs e)
         {
-           if (webView.CanGoForward)
+            if (webView.CanGoForward)
             {
                 webView.GoForward();
             }
@@ -107,7 +107,7 @@ namespace BiliLite.Pages
 
         private async void webView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            if(this.Parent != null)
+            if (this.Parent != null)
             {
                 if ((this.Parent as Frame).Parent is TabViewItem)
                 {
@@ -123,7 +123,7 @@ namespace BiliLite.Pages
             }
             try
             {
-               
+
                 //专栏阅读设置
                 if (args.Uri != null && args.Uri.AbsoluteUri.Contains("read/cv"))
                 {
@@ -138,12 +138,24 @@ $('.no-login').hide();
 $('.author-container').show();
 $('.author-container').css('margin','12px 0px -12px 0px');"
                 });
+                    //将专栏图片替换成jpg
+                    await webView?.InvokeScriptAsync("eval", new List<string>() {
+                        @"document.getElementsByClassName('img-box').forEach(element => {
+                element.getElementsByTagName('img').forEach(image => {
+                    image.src=image.getAttribute('data-src')+'@progressive.jpg';
+               });
+            });"
+                    });
                 }
+
 
 
                 await webView?.InvokeScriptAsync("eval", new List<string>() {
                     "$('.h5-download-bar').hide()"
                 });
+
+
+
             }
             catch (Exception)
             {
@@ -151,7 +163,7 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
             }
             finally
             {
-                if(webView!=null) webView.Visibility = Visibility.Visible;
+                if (webView != null) webView.Visibility = Visibility.Visible;
             }
         }
 
@@ -180,10 +192,10 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
 
         private void webView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            if (args.Uri!=null&&args.Uri.AbsoluteUri.Contains("read/cv") )
+            if (args.Uri != null && args.Uri.AbsoluteUri.Contains("read/cv"))
             {
-               // args.Cancel = true;
-               // return;
+                // args.Cancel = true;
+                // return;
             }
         }
 
@@ -208,7 +220,7 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
 
         private void btnInfo_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ShowMessageToast("虽然看起来像个浏览器，但这完全这不是个浏览器啊！ ╰（‵□′）╯" );
+            Utils.ShowMessageToast("虽然看起来像个浏览器，但这完全这不是个浏览器啊！ ╰（‵□′）╯");
         }
     }
 }
