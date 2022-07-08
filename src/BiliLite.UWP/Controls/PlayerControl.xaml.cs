@@ -1178,6 +1178,8 @@ namespace BiliLite.Controls
 
         public void ChangePlayIndex(int index)
         {
+            ClearSubTitle();
+            DanmuControl.ClearAll();
             EpisodeList.SelectedIndex = index;
         }
         private async void EpisodeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2124,6 +2126,8 @@ namespace BiliLite.Controls
             //单P循环
             if (PlayerSettingPlayMode.SelectedIndex == 1)
             {
+                ClearSubTitle();
+                DanmuControl.ClearAll();
                 Player.Play();
                 return;
             }
@@ -2133,6 +2137,14 @@ namespace BiliLite.Controls
                 if (!PlayerSettingAutoNext.IsOn)
                 {
                     Utils.ShowMessageToast("本P播放完成");
+                    return;
+                }
+                //只有一P,重新播放
+                if (PlayInfos.Count == 1)
+                {
+                    ClearSubTitle();
+                    DanmuControl.ClearAll();
+                    Player.Play();
                     return;
                 }
                 _autoPlay = true;
@@ -2149,7 +2161,6 @@ namespace BiliLite.Controls
 
 
         }
-
         private void Player_PlayMediaError(object sender, string e)
         {
             ShowDialog(e, "播放失败");
