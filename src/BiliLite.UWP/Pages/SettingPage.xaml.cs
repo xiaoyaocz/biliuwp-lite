@@ -229,6 +229,16 @@ namespace BiliLite.Pages
                 });
             });
 
+            //浏览器打开无法处理的链接
+            swOpenUrlWithBrowser.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.OPEN_URL_BROWSER, false);
+            swOpenUrlWithBrowser.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swOpenUrlWithBrowser.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.OPEN_URL_BROWSER, swOpenUrlWithBrowser.IsOn);
+                });
+            });
+
             gridHomeCustom.ItemsSource = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, HomeVM.GetAllNavItems());
             ExceptHomeNavItems();
 

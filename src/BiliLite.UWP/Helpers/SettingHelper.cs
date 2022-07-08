@@ -116,6 +116,10 @@ namespace BiliLite.Helpers
             /// 隐藏广告按钮
             /// </summary>
             public const string HIDE_AD = "HideAD";
+            /// <summary>
+            /// 浏览器打开无法处理的链接
+            /// </summary>
+            public const string OPEN_URL_BROWSER = "OpenUrlWithBrowser";
         }
         public class Account
         {
