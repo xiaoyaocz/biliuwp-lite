@@ -56,8 +56,8 @@
     <Grid>
         <Grid Visibility="{x:Bind Path=videoDetailVM.Loaded,Mode=OneWay}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition  MaxWidth="320" x:Name="RightInfo"/>
+                <ColumnDefinition/>
+                <ColumnDefinition  Width="320" x:Name="RightInfo"/>
             </Grid.ColumnDefinitions>
             <Grid  Background="{ThemeResource NavigationViewTopPaneBackground}" x:Name="playerGrid" >
                 <Grid.RowDefinitions>
