@@ -645,8 +645,8 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_VOLUME, SliderVolume.Value);
             });
             //亮度
-            _brightness = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, 0);
-            BrightnessShield.Opacity = _brightness;
+            //_brightness = SettingHelper.GetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, 0);
+            //BrightnessShield.Opacity = _brightness;
 
             //播放模式
             PlayerSettingMode.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.DEFAULT_VIDEO_TYPE, 1);
@@ -746,6 +746,15 @@ namespace BiliLite.Controls
                 SettingHelper.SetValue<int>(SettingHelper.Player.SUBTITLE_COLOR, SubtitleSettingColor.SelectedIndex);
                 UpdateSubtitle();
             });
+
+            //字幕对齐
+            SubtitleSettingAlign.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.SUBTITLE_ALIGN, 0);
+            SubtitleSettingAlign.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue<int>(SettingHelper.Player.SUBTITLE_ALIGN, SubtitleSettingAlign.SelectedIndex);
+                UpdateSubtitle();
+            });
+
             //字幕透明度
             SubtitleSettingOpacity.Value = SettingHelper.GetValue<double>(SettingHelper.Player.SUBTITLE_OPACITY, 1.0);
             SubtitleSettingOpacity.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
@@ -1084,14 +1093,28 @@ namespace BiliLite.Controls
 
         private async Task<Grid> GenerateSubtitleItem(string text)
         {
-            text = " " + text;
+            //行首行尾加空格，防止字体描边超出
+            text = " " + text.Replace("\n", " \n ")+" ";
+           
             var fontSize = (float)SubtitleSettingSize.Value;
             var color = Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString());
             var borderColor = Utils.ToColor((SubtitleSettingBorderColor.SelectedItem as ComboBoxItem).Tag.ToString());
+            
+            CanvasHorizontalAlignment canvasHorizontalAlignment = CanvasHorizontalAlignment.Center;
+            TextAlignment textAlignment = TextAlignment.Center;
+            if (SubtitleSettingAlign.SelectedIndex==1)
+            {
+                canvasHorizontalAlignment = CanvasHorizontalAlignment.Left;
+                textAlignment = TextAlignment.Left;
+            }
+            else if(SubtitleSettingAlign.SelectedIndex==2)
+            {
+                canvasHorizontalAlignment = CanvasHorizontalAlignment.Right;
+                textAlignment = TextAlignment.Right;
+            }
             CanvasDevice device = CanvasDevice.GetSharedDevice();
-
-            CanvasTextFormat fmt = new CanvasTextFormat() { FontSize = fontSize };
-            var tb = new TextBlock { Text = text, FontSize = fontSize, };
+            CanvasTextFormat fmt = new CanvasTextFormat() { FontSize = fontSize ,HorizontalAlignment= canvasHorizontalAlignment, };
+            var tb = new TextBlock { Text = text, FontSize = fontSize,TextAlignment= textAlignment };
             if (SubtitleSettingBold.IsOn)
             {
                 fmt.FontWeight = FontWeights.Bold;
@@ -1872,7 +1895,7 @@ namespace BiliLite.Controls
 
         }
 
-        double _brightness;
+        double _brightness=0;
         double Brightness
         {
             get => _brightness;
@@ -1880,7 +1903,7 @@ namespace BiliLite.Controls
             {
                 _brightness = value;
                 BrightnessShield.Opacity = value;
-                SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, _brightness);
+                //SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, _brightness);
                 //}
             }
         }

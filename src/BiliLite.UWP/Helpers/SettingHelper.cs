@@ -416,7 +416,11 @@ namespace BiliLite.Helpers
             /// 字幕加粗
             /// </summary>
             public const string SUBTITLE_BOLD = "subtitleBold";
-
+            /// <summary>
+            /// 字幕对齐
+            /// 0=居中对齐，1=左对齐，2=右对齐
+            /// </summary>
+            public const string SUBTITLE_ALIGN = "subtitleAlign";
             /// <summary>
             /// 自动跳转进度
             /// </summary>

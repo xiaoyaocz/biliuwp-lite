@@ -141,16 +141,6 @@
                             <TextBlock  FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Text="{x:Bind Path=downloadVM.Downloadings.Count,Mode=OneWay}"></TextBlock>
                         </Border>
                     </Grid>
-                    <Button x:Name="btnAD" Click="btnAD_Click" BorderThickness="0"  Width="48" Height="40" Background="Transparent">
-                        <Button.Content>
-                            <Image Source="ms-appx:///Assets/Icon/tb.png" Width="20"></Image>
-                        </Button.Content>
-                        <Button.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem x:Name="btnHideAD" Click="btnHideAD_Click">隐藏此图标</MenuFlyoutItem>
-                            </MenuFlyout>
-                        </Button.ContextFlyout>
-                    </Button>
                     <AppBarButton x:Name="btnSetting" Height="48" Click="btnSetting_Click" Width="48" Icon="Setting" ></AppBarButton>
                 </StackPanel>
             </winui:NavigationView.PaneFooter>
