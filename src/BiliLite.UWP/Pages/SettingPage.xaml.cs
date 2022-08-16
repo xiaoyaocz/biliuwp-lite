@@ -105,7 +105,7 @@ namespace BiliLite.Pages
                 cbDisplayMode.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
                     SettingHelper.SetValue(SettingHelper.UI.DISPLAY_MODE, cbDisplayMode.SelectedIndex);
-                    if (cbDisplayMode.SelectedIndex==2)
+                    if (cbDisplayMode.SelectedIndex == 2)
                     {
                         Utils.ShowMessageToast("多窗口模式正在开发测试阶段，可能会有一堆问题");
                     }
@@ -113,7 +113,7 @@ namespace BiliLite.Pages
                     {
                         Utils.ShowMessageToast("重启生效");
                     }
-                    
+
                 });
             });
             //加载原图
@@ -188,7 +188,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.UI.MOUSE_BACK, swMouseClosePage.IsOn);
                 });
             });
-            
+
             //动态显示
             cbDetailDisplay.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
             cbDetailDisplay.Loaded += new RoutedEventHandler((sender, e) =>
@@ -294,14 +294,14 @@ namespace BiliLite.Pages
                 });
             });
             //使用其他网站
-            swPlayerSettingUseOtherSite.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false);
-            swPlayerSettingUseOtherSite.Loaded += new RoutedEventHandler((sender, e) =>
-            {
-                swPlayerSettingUseOtherSite.Toggled += new RoutedEventHandler((obj, args) =>
-                {
-                    SettingHelper.SetValue(SettingHelper.Player.USE_OTHER_SITEVIDEO, swPlayerSettingUseOtherSite.IsOn);
-                });
-            });
+            //swPlayerSettingUseOtherSite.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false);
+            //swPlayerSettingUseOtherSite.Loaded += new RoutedEventHandler((sender, e) =>
+            //{
+            //    swPlayerSettingUseOtherSite.Toggled += new RoutedEventHandler((obj, args) =>
+            //    {
+            //        SettingHelper.SetValue(SettingHelper.Player.USE_OTHER_SITEVIDEO, swPlayerSettingUseOtherSite.IsOn);
+            //    });
+            //});
 
             //自动跳转进度
             swPlayerSettingAutoToPosition.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_TO_POSITION, true);
@@ -330,7 +330,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_FULL_SCREEN, swPlayerSettingAutoFullScreen.IsOn);
                 });
             });
-           
+
 
             //双击全屏
             swPlayerSettingDoubleClickFullScreen.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.DOUBLE_CLICK_FULL_SCREEN, false);
@@ -351,41 +351,53 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_OPEN_AI_SUBTITLE, swPlayerSettingAutoOpenAISubtitle.IsOn);
                 });
             });
+            //禁用PCDN
+            swPlayerDisablePCDN.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true);
+            swPlayerDisablePCDN.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swPlayerDisablePCDN.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Player.DISABLE_PCDN, swPlayerDisablePCDN.IsOn);
+                });
+            });
         }
         private void LoadRoaming()
         {
             //使用自定义服务器
             RoamingSettingSetDefault.Click += RoamingSettingSetDefault_Click;
             RoamingSettingCustomServer.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
-            RoamingSettingCustomServer.Loaded += new RoutedEventHandler((sender, e) => {
-                 RoamingSettingCustomServer.QuerySubmitted += RoamingSettingCustomServer_QuerySubmitted;
-             });
+            RoamingSettingCustomServer.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingCustomServer.QuerySubmitted += RoamingSettingCustomServer_QuerySubmitted;
+            });
 
             //自定义HK服务器
             RoamingSettingCustomServerHK.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
-            RoamingSettingCustomServerHK.Loaded += new RoutedEventHandler((sender, e) => {
-                RoamingSettingCustomServerHK.QuerySubmitted +=new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
-                {
-                    var text = sender2.Text;
-                    if (string.IsNullOrEmpty(text))
-                    {
-                        Utils.ShowMessageToast("已取消自定义香港代理服务器");
-                        SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
-                        return;
-                    }
-                    if (!text.Contains("http"))
-                    {
-                        text = "https://" + text;
-                    }
-                    SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, text);
-                    sender2.Text = text;
-                    Utils.ShowMessageToast("保存成功");
-                });
+            RoamingSettingCustomServerHK.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingCustomServerHK.QuerySubmitted += new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
+                 {
+                     var text = sender2.Text;
+                     if (string.IsNullOrEmpty(text))
+                     {
+                         Utils.ShowMessageToast("已取消自定义香港代理服务器");
+                         SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, "");
+                         return;
+                     }
+                     if (!text.Contains("http"))
+                     {
+                         text = "https://" + text;
+                     }
+                     SettingHelper.SetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_HK, text);
+                     sender2.Text = text;
+                     Utils.ShowMessageToast("保存成功");
+                 });
             });
 
             //自定义TW服务器
             RoamingSettingCustomServerTW.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_TW, "");
-            RoamingSettingCustomServerTW.Loaded += new RoutedEventHandler((sender, e) => {
+            RoamingSettingCustomServerTW.Loaded += new RoutedEventHandler((sender, e) =>
+            {
                 RoamingSettingCustomServerTW.QuerySubmitted += new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
                 {
                     var text = sender2.Text;
@@ -407,7 +419,8 @@ namespace BiliLite.Pages
 
             //自定义大陆服务器
             RoamingSettingCustomServerCN.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL_CN, "");
-            RoamingSettingCustomServerCN.Loaded += new RoutedEventHandler((sender, e) => {
+            RoamingSettingCustomServerCN.Loaded += new RoutedEventHandler((sender, e) =>
+            {
                 RoamingSettingCustomServerCN.QuerySubmitted += new TypedEventHandler<AutoSuggestBox, AutoSuggestBoxQuerySubmittedEventArgs>((sender2, args) =>
                 {
                     var text = sender2.Text;
@@ -445,9 +458,32 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Roaming.TO_SIMPLIFIED, RoamingSettingToSimplified.IsOn);
                 });
             });
+            //替换CDN
+            RoamingSettingReplaceCDN.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false);
+            RoamingSettingReplaceCDN.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingReplaceCDN.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.Roaming.REPLACE_CDN, RoamingSettingReplaceCDN.IsOn);
+                });
+            });
+            //CDN服务器
+            var cdnServer = SettingHelper.GetValue<string>(SettingHelper.Roaming.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
+            RoamingSettingCDNServer.SelectedIndex = settingVM.CDNServers.FindIndex(x => x.Server == cdnServer);
+            RoamingSettingCDNServer.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingCDNServer.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                {
+                    var server = settingVM.CDNServers[RoamingSettingCDNServer.SelectedIndex];
+                    SettingHelper.SetValue(SettingHelper.Roaming.CDN_SERVER, server.Server);
+
+                });
+            });
+
+
         }
 
-     
+
 
         private void RoamingSettingSetDefault_Click(object sender, RoutedEventArgs e)
         {
@@ -459,7 +495,7 @@ namespace BiliLite.Pages
         private void RoamingSettingCustomServer_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             var text = sender.Text;
-            if (text.Length==0||!text.Contains("."))
+            if (text.Length == 0 || !text.Contains("."))
             {
                 Utils.ShowMessageToast("输入服务器链接有误");
                 sender.Text = SettingHelper.GetValue<string>(SettingHelper.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
@@ -797,8 +833,13 @@ namespace BiliLite.Pages
 
         private async void btnCleanImageCache_Click(object sender, RoutedEventArgs e)
         {
-           await ImageCache.Instance.ClearAsync();
+            await ImageCache.Instance.ClearAsync();
             Utils.ShowMessageToast("已清除图片缓存");
+        }
+
+        private void RoamingSettingTestCDN_Click(object sender, RoutedEventArgs e)
+        {
+            settingVM.CDNServerDelayTest();
         }
     }
 }

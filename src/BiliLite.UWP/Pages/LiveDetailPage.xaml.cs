@@ -2,7 +2,7 @@
 using BiliLite.Helpers;
 using BiliLite.Modules;
 using BiliLite.Modules.LiveRoomDetailModels;
-using FFmpegInterop;
+using FFmpegInteropX;
 using Microsoft.UI.Xaml.Controls;
 using NSDanmaku.Model;
 using System;
@@ -41,8 +41,8 @@ namespace BiliLite.Pages
     public sealed partial class LiveDetailPage : BasePage
     {
         DisplayRequest dispRequest;
-        readonly FFmpegInteropConfig _config;
-        FFmpegInterop.FFmpegInteropMSS interopMSS;
+        readonly MediaSourceConfig _config;
+        FFmpegInteropX.FFmpegMediaSource interopMSS;
         LiveRoomVM liveRoomVM;
         SettingVM settingVM;
         readonly MediaPlayer mediaPlayer;
@@ -56,7 +56,7 @@ namespace BiliLite.Pages
             dispRequest = new DisplayRequest();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            _config = new FFmpegInteropConfig();
+            _config = new MediaSourceConfig();
             _config.FFmpegOptions.Add("rtsp_transport", "tcp");
             _config.FFmpegOptions.Add("user_agent", "Mozilla/5.0 BiliDroid/1.12.0 (bbcallen@gmail.com)");
             _config.FFmpegOptions.Add("referer", "https://live.bilibili.com/");
@@ -622,7 +622,7 @@ namespace BiliLite.Pages
                     interopMSS.Dispose();
                     interopMSS = null;
                 }
-                interopMSS = await FFmpegInteropMSS.CreateFromUriAsync(url, _config);
+                interopMSS = await FFmpegMediaSource.CreateFromUriAsync(url, _config);
                 mediaPlayer.AutoPlay = true;
                 mediaPlayer.Source = interopMSS.CreateMediaPlaybackItem();
                 player.SetMediaPlayer(mediaPlayer);

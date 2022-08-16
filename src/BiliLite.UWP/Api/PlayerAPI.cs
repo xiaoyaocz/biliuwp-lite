@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -257,5 +258,18 @@ namespace BiliLite.Api
             };
             return api;
         }
+
+        /// <summary>
+        /// 生成一个MPD文件链接
+        /// </summary>
+        /// <param name="generate"></param>
+        /// <returns></returns>
+        public string GenerateMPD(GenerateMPDModel generate)
+        {
+            var par=Newtonsoft.Json.JsonConvert.SerializeObject(generate);
+            return $"{ApiHelper.IL_BASE_URL}/api/player/generatempd?par={Uri.EscapeDataString(par)}";
+        }
+
+
     }
 }

@@ -15,7 +15,6 @@ using Windows.UI.Xaml.Navigation;
 using BiliLite.Modules;
 using Microsoft.UI.Xaml.Controls;
 using BiliLite.Helpers;
-using FFmpegInterop;
 using Windows.Media.Playback;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;

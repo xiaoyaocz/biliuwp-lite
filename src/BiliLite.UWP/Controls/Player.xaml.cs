@@ -1,6 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
-using FFmpegInterop;
+using FFmpegInteropX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,15 +69,15 @@ namespace BiliLite.Controls
         private DashItemModel _dash_audio;
         private PlayEngine current_engine;
 
-        private FFmpegInteropMSS _ffmpegMSSVideo;
+        private FFmpegMediaSource _ffmpegMSSVideo;
         private MediaPlayer _playerVideo;
         //音视频分离
-        private FFmpegInteropMSS _ffmpegMSSAudio;
+        private FFmpegMediaSource _ffmpegMSSAudio;
         private MediaPlayer _playerAudio;
         private MediaTimelineController _mediaTimelineController;
 
         //多段FLV
-        private List<FFmpegInteropMSS> _ffmpegMSSItems;
+        private List<FFmpegMediaSource> _ffmpegMSSItems;
         private MediaPlaybackList _mediaPlaybackList;
 
 
@@ -814,19 +814,19 @@ namespace BiliLite.Controls
                 {
                    
                     var videoFile = await StorageFile.GetFileFromPathAsync(videoUrl.base_url);
-                    _ffmpegMSSVideo = await FFmpegInteropMSS.CreateFromStreamAsync(await videoFile.OpenAsync(FileAccessMode.Read), _ffmpegConfig);
+                    _ffmpegMSSVideo = await FFmpegMediaSource.CreateFromStreamAsync(await videoFile.OpenAsync(FileAccessMode.Read), _ffmpegConfig);
                     if (audioUrl != null)
                     {
                         var audioFile = await StorageFile.GetFileFromPathAsync(audioUrl.base_url);
-                        _ffmpegMSSAudio = await FFmpegInteropMSS.CreateFromStreamAsync(await audioFile.OpenAsync(FileAccessMode.Read), _ffmpegConfig);
+                        _ffmpegMSSAudio = await FFmpegMediaSource.CreateFromStreamAsync(await audioFile.OpenAsync(FileAccessMode.Read), _ffmpegConfig);
                     }
                 }
                 else
                 {
-                    _ffmpegMSSVideo = await FFmpegInteropMSS.CreateFromUriAsync(videoUrl.base_url, _ffmpegConfig);
+                    _ffmpegMSSVideo = await FFmpegMediaSource.CreateFromUriAsync(videoUrl.base_url, _ffmpegConfig);
                     if (audioUrl != null)
                     {
-                        _ffmpegMSSAudio = await FFmpegInteropMSS.CreateFromUriAsync(audioUrl.base_url, _ffmpegConfig);
+                        _ffmpegMSSAudio = await FFmpegMediaSource.CreateFromUriAsync(audioUrl.base_url, _ffmpegConfig);
                     }
                    
                 }
@@ -997,7 +997,148 @@ namespace BiliLite.Controls
                 };
             }
         }
+        /// <summary>
+        /// 使用FFmpeg解码播放单FLV视频
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="positon"></param>
+        /// <param name="needConfig"></param>
+        /// <returns></returns>
+        public async Task<PlayerOpenResult> PlayDashUrlUseFFmpegInterop(string url, IDictionary<string, string> header, double positon = 0, bool needConfig = true)
+        {
 
+            try
+            {
+                mediaPlayerVideo.Visibility = Visibility.Visible;
+                Opening = true;
+                current_engine = PlayEngine.FFmpegInteropMSS;
+
+                PlayMediaType = PlayMediaType.Single;
+                //加载中
+                PlayState = PlayState.Loading;
+                PlayStateChanged?.Invoke(this, PlayState);
+                //关闭正在播放的视频
+                ClosePlay();
+
+                var _ffmpegConfig = CreateFFmpegInteropConfig(header);
+                _ffmpegMSSVideo = await FFmpegMediaSource.CreateFromUriAsync(url, _ffmpegConfig);
+
+
+                //设置时长
+                Duration = _ffmpegMSSVideo.Duration.TotalSeconds;
+                //设置播放器
+                _playerVideo = new MediaPlayer();
+                var mediaSource = _ffmpegMSSVideo.CreateMediaPlaybackItem();
+                _playerVideo.Source = mediaSource;
+
+                _playerVideo.MediaOpened += new TypedEventHandler<MediaPlayer, object>(async (e, arg) =>
+                {
+                    Opening = false;
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        PlayMediaOpened?.Invoke(this, new EventArgs());
+                    });
+                });
+                //播放完成
+                _playerVideo.MediaEnded += new TypedEventHandler<MediaPlayer, object>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        //加个判断，是否真的播放完成了
+                        if (Position.ToInt32() >= Duration.ToInt32())
+                        {
+                            PlayState = PlayState.End;
+                            Position = 0;
+                            PlayStateChanged?.Invoke(this, PlayState);
+                            PlayMediaEnded?.Invoke(this, new EventArgs());
+                        }
+                    });
+                });
+                //播放错误
+                _playerVideo.MediaFailed += new TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        PlayState = PlayState.Error;
+                        PlayStateChanged?.Invoke(this, PlayState);
+                        ChangeEngine?.Invoke(this, new ChangePlayerEngine()
+                        {
+                            change_engine = PlayEngine.SYEngine,
+                            current_mode = PlayEngine.FFmpegInteropMSS,
+                            need_change = true,
+                            play_type = PlayMediaType.Single
+                        });
+                    });
+                });
+                //缓冲开始
+                _playerVideo.PlaybackSession.BufferingStarted += new TypedEventHandler<MediaPlaybackSession, object>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Buffering = true;
+                    });
+                });
+                //缓冲进行中
+                _playerVideo.PlaybackSession.BufferingProgressChanged += new TypedEventHandler<MediaPlaybackSession, object>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Buffering = true;
+                        BufferCache = e.BufferingProgress;
+                    });
+                });
+                //缓冲进行中
+                _playerVideo.PlaybackSession.BufferingEnded += new TypedEventHandler<MediaPlaybackSession, object>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Buffering = false;
+                    });
+                });
+                //进度变更
+                _playerVideo.PlaybackSession.PositionChanged += new TypedEventHandler<MediaPlaybackSession, object>(async (e, arg) =>
+                {
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        try
+                        {
+                            Position = e.Position.TotalSeconds;
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    });
+                });
+
+                PlayState = PlayState.Pause;
+                PlayStateChanged?.Invoke(this, PlayState);
+                //设置音量
+                _playerVideo.Volume = Volume;
+                //设置速率
+                _playerVideo.PlaybackSession.PlaybackRate = Rate;
+                ////设置进度
+                //if (positon != 0)
+                //{
+                //    _playerVideo.PlaybackSession.Position = TimeSpan.FromSeconds(positon);
+                //}
+                //绑定MediaPlayer
+                mediaPlayerVideo.SetMediaPlayer(_playerVideo);
+                return new PlayerOpenResult()
+                {
+                    result = true
+                };
+            }
+            catch (Exception ex)
+            {
+                //PlayMediaError?.Invoke(this, "视频加载时出错:" + ex.Message);
+                return new PlayerOpenResult()
+                {
+                    result = false,
+                    message = ex.Message,
+                    detail_message = ex.StackTrace
+                };
+            }
+        }
         /// <summary>
         /// 使用FFmpeg解码播放单FLV视频
         /// </summary>
@@ -1023,7 +1164,7 @@ namespace BiliLite.Controls
                 ClosePlay();
 
                 var _ffmpegConfig = CreateFFmpegInteropConfig(header);
-                _ffmpegMSSVideo = await FFmpegInteropMSS.CreateFromUriAsync(url, _ffmpegConfig);
+                _ffmpegMSSVideo = await FFmpegMediaSource.CreateFromUriAsync(url, _ffmpegConfig);
 
 
                 //设置时长
@@ -1805,11 +1946,11 @@ namespace BiliLite.Controls
             }
 
         }
-        private FFmpegInteropConfig CreateFFmpegInteropConfig(IDictionary<string, string> httpHeader)
+        private MediaSourceConfig CreateFFmpegInteropConfig(IDictionary<string, string> httpHeader)
         {
 
             var passthrough = SettingHelper.GetValue<bool>(SettingHelper.Player.HARDWARE_DECODING, true);
-            var _ffmpegConfig = new FFmpegInteropConfig();
+            var _ffmpegConfig = new MediaSourceConfig();
             if (httpHeader != null && httpHeader.ContainsKey("User-Agent"))
             {
                 _ffmpegConfig.FFmpegOptions.Add("user_agent", httpHeader["User-Agent"]);

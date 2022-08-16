@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net.Http;
 
 namespace BiliLite.Modules
 {
@@ -60,8 +62,21 @@ namespace BiliLite.Modules
                     theme="Purple",
                 }
             };
+            CDNServers = new List<CDNServerItem>()
+            {
+                new CDNServerItem("upos-sz-mirrorhwo1.bilivideo.com","华为云"),
+                new CDNServerItem("upos-sz-mirrorcos.bilivideo.com","腾讯云"),
+                new CDNServerItem("upos-sz-mirrorali.bilivideo.com","阿里云"),
+                new CDNServerItem("upos-sz-mirrorhw.bilivideo.com","华为云"),
+                new CDNServerItem("upos-sz-mirrorks3.bilivideo.com","金山云"),
+                new CDNServerItem("upos-tf-all-js.bilivideo.com","JS"),
+                new CDNServerItem("cn-hk-eq-bcache-01.bilivideo.com","香港"),
+                new CDNServerItem("cn-hk-eq-bcache-16.bilivideo.com","香港"),
+                new CDNServerItem("upos-hz-mirrorakam.akamaized.net","Akamaized"),
+            };
             LoadShieldSetting();
         }
+
         /// <summary>
         /// 弹幕屏蔽关键词列表
         /// </summary>
@@ -69,12 +84,12 @@ namespace BiliLite.Modules
         public ObservableCollection<string> LiveWords { get; set; }
         public ObservableCollection<string> ShieldUsers { get; set; }
         public ObservableCollection<string> ShieldRegulars { get; set; }
-
+        public List<CDNServerItem> CDNServers { get; set; }
         public List<AppThemeColor> ThemeColors { get; set; }
 
         public void LoadShieldSetting()
         {
-            LiveWords= SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.Live.SHIELD_WORD, new ObservableCollection<string>() { });
+            LiveWords = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.Live.SHIELD_WORD, new ObservableCollection<string>() { });
             ShieldWords = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.VideoDanmaku.SHIELD_WORD, new ObservableCollection<string>() { });
 
             //正则关键词
@@ -158,6 +173,72 @@ namespace BiliLite.Modules
                 return false;
             }
         }
+        /// <summary>
+        /// CDN延迟测试
+        /// </summary>
+        public async void CDNServerDelayTest()
+        {
+            foreach (var item in CDNServers)
+            {
+                var time = await GetDelay(item.Server);
+                item.Delay = time;
+            }
+        }
+        private HttpClient _httpClient = new HttpClient()
+        {
+            Timeout = TimeSpan.FromSeconds(2)
+        };
+        private async Task<long> GetDelay(string server)
+        {
+            //随便整个链接
+            var testUrl = $"https://{server}/upgcxcode/76/62/729206276/729206276_nb2-1-30112.m4s";
+
+            try
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                var res = await _httpClient.GetAsync(new Uri(testUrl));
+                sw.Stop();
+                return sw.ElapsedMilliseconds;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+
+        }
+
+        //傻逼微软，UWP连个Ping都不支持
+        //private async Task<long> GetPing(string address)
+        //{
+        //    try
+        //    {
+        //        Ping ping = new Ping();
+        //        PingOptions options = new PingOptions();
+        //        options.DontFragment = true;
+        //        byte[] buffer = new byte[32];
+        //        for (int i = 0; i < 32; i++)
+        //        {
+        //            buffer[i] = 0;
+        //        }
+        //        int timeout = 3000;
+        //        PingReply reply = await ping.SendPingAsync(address, timeout, buffer, options);
+        //        if (reply.Status == IPStatus.Success)
+        //        {
+        //            return reply.RoundtripTime;
+        //        }
+        //        else
+        //        {
+        //            return -1;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Debug.WriteLine(ex);
+        //        return -1;
+        //    }
+
+
+        //}
 
     }
     public class DanmuFilterItem
@@ -177,5 +258,43 @@ namespace BiliLite.Modules
         public string color { get; set; }
         public string name { get; set; }
         public string theme { get; set; }
+    }
+    public class CDNServerItem : IModules
+    {
+        public CDNServerItem(string server, string remark)
+        {
+            this.Server = server;
+            this.Remark = remark;
+        }
+        public string Server { get; set; }
+        public string Remark { get; set; }
+
+        public bool ShowDelay
+        {
+            get
+            {
+                return Delay > 0;
+            }
+        }
+        public bool ShowTimeOut
+        {
+            get
+            {
+                return Delay < 0;
+            }
+        }
+        private long _Delay = 0;
+        public long Delay
+        {
+            get { return _Delay; }
+            set
+            {
+                _Delay = value;
+                DoPropertyChanged("Delay");
+                DoPropertyChanged("ShowDelay");
+                DoPropertyChanged("ShowTimeOut");
+            }
+        }
+
     }
 }

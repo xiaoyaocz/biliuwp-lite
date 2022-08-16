@@ -1,6 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
-using FFmpegInterop;
+using FFmpegInteropX;
 using NSDanmaku.Model;
 using System;
 using System.Collections.Generic;
@@ -1094,27 +1094,27 @@ namespace BiliLite.Controls
         private async Task<Grid> GenerateSubtitleItem(string text)
         {
             //行首行尾加空格，防止字体描边超出
-            text = " " + text.Replace("\n", " \n ")+" ";
-           
+            text = " " + text.Replace("\n", " \n ") + " ";
+
             var fontSize = (float)SubtitleSettingSize.Value;
             var color = Utils.ToColor((SubtitleSettingColor.SelectedItem as ComboBoxItem).Tag.ToString());
             var borderColor = Utils.ToColor((SubtitleSettingBorderColor.SelectedItem as ComboBoxItem).Tag.ToString());
-            
+
             CanvasHorizontalAlignment canvasHorizontalAlignment = CanvasHorizontalAlignment.Center;
             TextAlignment textAlignment = TextAlignment.Center;
-            if (SubtitleSettingAlign.SelectedIndex==1)
+            if (SubtitleSettingAlign.SelectedIndex == 1)
             {
                 canvasHorizontalAlignment = CanvasHorizontalAlignment.Left;
                 textAlignment = TextAlignment.Left;
             }
-            else if(SubtitleSettingAlign.SelectedIndex==2)
+            else if (SubtitleSettingAlign.SelectedIndex == 2)
             {
                 canvasHorizontalAlignment = CanvasHorizontalAlignment.Right;
                 textAlignment = TextAlignment.Right;
             }
             CanvasDevice device = CanvasDevice.GetSharedDevice();
-            CanvasTextFormat fmt = new CanvasTextFormat() { FontSize = fontSize ,HorizontalAlignment= canvasHorizontalAlignment, };
-            var tb = new TextBlock { Text = text, FontSize = fontSize,TextAlignment= textAlignment };
+            CanvasTextFormat fmt = new CanvasTextFormat() { FontSize = fontSize, HorizontalAlignment = canvasHorizontalAlignment, };
+            var tb = new TextBlock { Text = text, FontSize = fontSize, TextAlignment = textAlignment };
             if (SubtitleSettingBold.IsOn)
             {
                 fmt.FontWeight = FontWeights.Bold;
@@ -1402,7 +1402,7 @@ namespace BiliLite.Controls
                     noneItem.Click += Menuitem_Click;
                     menu.Items.Add(noneItem);
                     var firstMenuItem = (menu.Items[0] as ToggleMenuFlyoutItem);
-                    if (firstMenuItem.Text.Contains("自动生成") && !autoAISubtitle)
+                    if ((firstMenuItem.Text.Contains("自动") || firstMenuItem.Text.Contains("AI")) && !autoAISubtitle)
                     {
                         noneItem.IsChecked = true;
                         CurrentSubtitleName = noneItem.Text;
@@ -1442,7 +1442,7 @@ namespace BiliLite.Controls
                 noneItem.Click += Menuitem_Click;
                 menu.Items.Add(noneItem);
                 var firstMenuItem = (menu.Items[0] as ToggleMenuFlyoutItem);
-                if (firstMenuItem.Text.Contains("自动生成") && !autoAISubtitle)
+                if ((firstMenuItem.Text.Contains("自动") || firstMenuItem.Text.Contains("AI")) && !autoAISubtitle)
                 {
                     noneItem.IsChecked = true;
                     CurrentSubtitleName = noneItem.Text;
@@ -1513,10 +1513,61 @@ namespace BiliLite.Controls
             };
             if (quality.playUrlInfo.mode == VideoPlayMode.Dash)
             {
+                var audio = quality.playUrlInfo.dash_audio_url;
+                var video = quality.playUrlInfo.dash_video_url;
+                //替换CDN
+                if (quality.playUrlInfo.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false))
+                {
+                    var videoUrl = await PlayerVM.ReplaceCDN(video.baseUrl ?? video.base_url, quality.HttpHeader);
+                    video.baseUrl = videoUrl;
+                    video.base_url = videoUrl;
+                    if (audio != null)
+                    {
+                        var audioUrl = await PlayerVM.ReplaceCDN(audio.baseUrl ?? audio.base_url, quality.HttpHeader);
+                        audio.baseUrl = audioUrl;
+                        audio.base_url = audioUrl;
+                    }
+                }
+                //替换PCDN
+                //如果backupUrl有非PCDN链接，则使用backupUrl
+                //如果没有，尝试替换链接，测试下链接是否有效
+                if (SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true))
+                {
+                    var videoUrl = await PlayerVM.ReplacePCDN(video.baseUrl ?? video.base_url, video.backupUrl ?? video.backup_url, quality.HttpHeader);
+                    video.baseUrl = videoUrl;
+                    video.base_url = videoUrl;
+                    if (audio != null)
+                    {
+                        var audioUrl = await PlayerVM.ReplacePCDN(audio.baseUrl ?? audio.base_url, audio.backupUrl ?? audio.backup_url, quality.HttpHeader);
+                        audio.baseUrl = audioUrl;
+                        audio.base_url = audioUrl;
+                    }
+                }
+              
+             
+
+
                 result = await Player.PlayerDashUseNative(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
                 if (!result.result)
                 {
-                    result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
+                    var mpd_url = new Api.PlayerAPI().GenerateMPD(new Models.GenerateMPDModel()
+                    {
+                        AudioBandwidth = audio.bandwidth.ToString(),
+                        AudioCodec = audio.codecs,
+                        AudioID = audio.id.ToString(),
+                        AudioUrl = audio.baseUrl,
+                        Duration = quality.playUrlInfo?.duration ?? 0,
+                        DurationMS = quality.playUrlInfo?.timelength ?? 0,
+                        VideoBandwidth = video.bandwidth.ToString(),
+                        VideoCodec = video.codecs,
+                        VideoID = video.id.ToString(),
+                        VideoFrameRate = video.frameRate.ToString(),
+                        VideoHeight = video.height,
+                        VideoWidth = video.width,
+                        VideoUrl = video.baseUrl,
+                    });
+                    result = await Player.PlayDashUrlUseFFmpegInterop(mpd_url, quality.HttpHeader, positon: _postion);
+                    //result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
                     //if (!result.result)
                     //{
                     //    result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, positon: _postion);
@@ -1897,7 +1948,7 @@ namespace BiliLite.Controls
 
         }
 
-        double _brightness=0;
+        double _brightness = 0;
         double Brightness
         {
             get => _brightness;

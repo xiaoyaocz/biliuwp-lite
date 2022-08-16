@@ -445,6 +445,10 @@ namespace BiliLite.Helpers
             /// 自动打开AI字幕
             /// </summary>
             public const string AUTO_OPEN_AI_SUBTITLE = "PlayerAutoOpenAISubtitle";
+            /// <summary>
+            /// 替换PCDN链接
+            /// </summary>
+            public const string DISABLE_PCDN = "PlayerDisablePCDN";
         }
         public class Roaming
         {
@@ -480,6 +484,17 @@ namespace BiliLite.Helpers
             /// 只使用AkamaiCDN链接
             /// </summary>
             public const string AKAMAI_CDN = "RoamingAkamaiCDN";
+
+            /// <summary>
+            /// 替换CDN
+            /// </summary>
+            public const string REPLACE_CDN = "RoamingReplaceCDN";
+            
+            /// <summary>
+            /// CDN服务器
+            /// </summary>
+            public const string CDN_SERVER = "RoamingCDNServer";
+
         }
         public class Download
         {

@@ -41,7 +41,7 @@ namespace BiliLite.Converters
                 }
             }
             //如果是数字，则内容与parameter相等时返回显示
-            if (value is int)
+            if (value is int||value is long)
             {
                 if (value.ToString()== parameter.ToString())
                 {
