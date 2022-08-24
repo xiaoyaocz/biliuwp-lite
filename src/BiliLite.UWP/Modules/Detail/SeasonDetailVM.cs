@@ -383,7 +383,7 @@ namespace BiliLite.Modules
     }
     public class SeasonDetailUpInfoModel
     {
-        public int mid{ get; set; }
+        public long mid{ get; set; }
         public string uname { get; set; }
     }
     public class SeasonDetailPaymentModel

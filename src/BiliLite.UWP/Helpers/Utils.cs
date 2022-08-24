@@ -365,7 +365,7 @@ namespace BiliLite.Helpers
             }
         }
        
-        public static string ParseArea(string title,int mid)
+        public static string ParseArea(string title,long mid)
         {
             if(Regex.IsMatch(title, @"僅.*港.*地區"))
             {

@@ -24,7 +24,7 @@ namespace BiliLite.Models.Dynamic
     public class DynamicCardDescModel
     {
         public DynamicCardDescUserProfileModel user_profile { get; set; }
-        public int uid { get; set; }
+        public long uid { get; set; }
         public int type { get; set; }
         public string rid { get; set; }
         public string dynamic_id_str { get; set; }

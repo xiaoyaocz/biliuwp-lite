@@ -9,7 +9,7 @@ namespace BiliLite.Models.Dynamic
    
     public class DynamicCardDescUserProfileInfoModel
     {
-        public int uid { get; set; }
+        public long uid { get; set; }
         public string uname { get; set; }
         public string face { get; set; }
     }

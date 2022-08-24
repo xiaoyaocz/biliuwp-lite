@@ -140,7 +140,7 @@ namespace BiliLite.Api.Live
         /// 赠送背包礼物
         /// </summary>
         /// <returns></returns>
-        public ApiModel SendBagGift(int ruid,int gift_id,int num,int bag_id,int roomId)
+        public ApiModel SendBagGift(long ruid,int gift_id,int num,int bag_id,int roomId)
         {
             ApiModel api = new ApiModel()
             {
@@ -157,7 +157,7 @@ namespace BiliLite.Api.Live
         /// 赠送礼物
         /// </summary>
         /// <returns></returns>
-        public ApiModel SendGift(int ruid, int gift_id, int num, int roomId,string coin_type,int price)
+        public ApiModel SendGift(long ruid, int gift_id, int num, int roomId,string coin_type,int price)
         {
             ApiModel api = new ApiModel()
             {
@@ -191,7 +191,7 @@ namespace BiliLite.Api.Live
         /// 主播详细信息
         /// </summary>
         /// <returns></returns>
-        public ApiModel AnchorProfile(int uid)
+        public ApiModel AnchorProfile(long uid)
         {
             ApiModel api = new ApiModel()
             {
@@ -211,7 +211,7 @@ namespace BiliLite.Api.Live
         /// <param name="roomId">房间号</param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        public ApiModel GuardList(int ruid, int roomId,int page)
+        public ApiModel GuardList(long ruid, int roomId,int page)
         {
             ApiModel api = new ApiModel()
             {
@@ -230,7 +230,7 @@ namespace BiliLite.Api.Live
         /// <param name="roomId">房间号</param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        public ApiModel FansList(int ruid, int roomId, int page)
+        public ApiModel FansList(long ruid, int roomId, int page)
         {
             ApiModel api = new ApiModel()
             {
@@ -251,7 +251,7 @@ namespace BiliLite.Api.Live
         /// <param name="rank_type"></param>
         /// <param name="next_offset">gold-rank=金瓜子排行，today-rank=今日礼物排行，seven-rank=7日礼物排行</param>
         /// <returns></returns>
-        public ApiModel RoomRankList(int ruid, int roomId,string rank_type,int next_offset=0)
+        public ApiModel RoomRankList(long ruid, int roomId,string rank_type,int next_offset=0)
         {
             ApiModel api = new ApiModel()
             {

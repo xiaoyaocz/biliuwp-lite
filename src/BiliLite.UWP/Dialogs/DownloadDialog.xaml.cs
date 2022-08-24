@@ -274,7 +274,7 @@ namespace BiliLite.Dialogs
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Cover { get; set; }
-        public int UpMid { get; set; } = 0;
+        public long UpMid { get; set; } = 0;
         public Helpers.DownloadType Type { get; set; }
         private List<DownloadEpisodeItem> _episodes;
 

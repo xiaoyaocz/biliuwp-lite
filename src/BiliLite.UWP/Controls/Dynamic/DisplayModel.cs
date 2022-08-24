@@ -36,7 +36,7 @@ namespace BiliLite.Controls.Dynamic
         /// <summary>
         /// 用户ID
         /// </summary>
-        public int Mid { get; set; }
+        public long Mid { get; set; }
         /// <summary>
         /// 用户名
         /// </summary>

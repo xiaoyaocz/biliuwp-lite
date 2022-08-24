@@ -250,7 +250,7 @@ namespace BiliLite.Modules.User
     }
     public class UserCenterInfoStatModel
     {
-        public int mid { get; set; }
+        public long mid { get; set; }
         public int following { get; set; }
         public int whisper { get; set; }
         public int black { get; set; }
@@ -302,7 +302,7 @@ namespace BiliLite.Modules.User
     }
     public class UserCenterInfoModel:IModules
     {
-        public int mid { get; set; }
+        public long mid { get; set; }
         public string name { get; set; }
         public string sex { get; set; }
         public string face { get; set; }

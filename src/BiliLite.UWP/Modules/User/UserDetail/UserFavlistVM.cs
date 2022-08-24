@@ -140,7 +140,7 @@ namespace BiliLite.Modules.User.UserDetail
     {
         public int id { get; set; }
         public int fid { get; set; }
-        public int mid { get; set; }
+        public long mid { get; set; }
         public int media_count { get; set; }
         public string title { get; set; }
     }

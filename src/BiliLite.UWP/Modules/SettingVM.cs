@@ -163,7 +163,7 @@ namespace BiliLite.Modules
     public class DanmuFilterItem
     {
         public int id { get; set; }
-        public int mid { get; set; }
+        public long mid { get; set; }
         public int type { get; set; }
         public string filter { get; set; }
         public string comment { get; set; }

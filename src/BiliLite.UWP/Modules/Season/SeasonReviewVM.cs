@@ -242,7 +242,7 @@ namespace BiliLite.Modules.Season
     public class SeasonShortReviewItemModel
     {
         public long ctime { get; set; }
-        public int mid { get; set; }
+        public long mid { get; set; }
         public int review_id { get; set; }
         public string content { get; set; }
         public string progress { get; set; }
@@ -258,7 +258,7 @@ namespace BiliLite.Modules.Season
     {
         public string avatar { get; set; }
         public string uname { get; set; }
-        public int mid { get; set; }
+        public long mid { get; set; }
         public SeasonShortReviewItemVIPModel vip { get; set; }
     }
     public class SeasonShortReviewItemVIPModel

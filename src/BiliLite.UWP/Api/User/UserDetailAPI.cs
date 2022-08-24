@@ -19,7 +19,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/acc/info",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)+$"&mid={mid}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,needAccesskey:true)+$"&mid={mid}",
             };
 
             return api;
@@ -35,7 +35,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/space",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey) + $"&vmid={mid}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,needAccesskey:true) + $"&vmid={mid}",
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

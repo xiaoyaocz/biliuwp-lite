@@ -1216,7 +1216,7 @@ namespace BiliLite.Modules
     public class LiveRoomRankVM : IModules
     {
         readonly LiveRoomAPI liveRoomAPI;
-        public LiveRoomRankVM(int roomid, int uid, string title, string type)
+        public LiveRoomRankVM(int roomid, long uid, string title, string type)
         {
             liveRoomAPI = new LiveRoomAPI();
             RankType = type;
@@ -1228,7 +1228,7 @@ namespace BiliLite.Modules
         }
         public ICommand LoadMoreCommand { get; private set; }
         public int RoomID { get; set; }
-        public int Uid { get; set; }
+        public long Uid { get; set; }
         public string Title { get; set; }
         public string RankType { get; set; }
         private bool _loading = false;
@@ -1482,7 +1482,7 @@ namespace BiliLite.Modules
 
         public class LiveRoomInfoModel
         {
-            public int uid { get; set; }
+            public long uid { get; set; }
             public int room_id { get; set; }
             public int short_id { get; set; }
             public string title { get; set; }
@@ -1661,7 +1661,7 @@ namespace BiliLite.Modules
 
         public class LiveAnchorProfile
         {
-            public int uid { get; set; }
+            public long uid { get; set; }
             public string uname { get; set; }
             public string face { get; set; }
             public int verify_type { get; set; }
@@ -1700,7 +1700,7 @@ namespace BiliLite.Modules
         public class LiveGuardRankItem
         {
             public string username { get; set; }
-            public int uid { get; set; }
+            public long uid { get; set; }
             public int ruid { get; set; }
             public string face { get; set; }
             public int guard_level { get; set; }
@@ -1717,7 +1717,7 @@ namespace BiliLite.Modules
         public class LiveRoomRankItemModel
         {
             public int rank { get; set; }
-            public int uid { get; set; }
+            public long uid { get; set; }
             public string uname { get; set; }
             public string face { get; set; }
             public int score { get; set; }
@@ -1797,7 +1797,7 @@ namespace BiliLite.Modules
         }
         public class LiveRoomEndAnchorLotteryInfoUserModel
         {
-            public int uid { get; set; }
+            public long uid { get; set; }
             public int level { get; set; }
             public string uname { get; set; }
             public string face { get; set; }
@@ -1820,7 +1820,7 @@ namespace BiliLite.Modules
         public class LiveRoomSuperChatModel
         {
             public int id { get; set; }
-            public int uid { get; set; }
+            public long uid { get; set; }
             public string background_image { get; set; }
             public string background_color { get; set; }
             public string background_icon { get; set; }

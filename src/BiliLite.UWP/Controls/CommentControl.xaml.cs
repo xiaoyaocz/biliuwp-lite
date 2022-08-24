@@ -1119,7 +1119,7 @@ namespace BiliLite.Controls
     }
     public class CommentMemberFansDetailModel
     {
-        public int uid { get; set; }
+        public long uid { get; set; }
         public int medal_id { get; set; }
         public string medal_name { get; set; }
         public int level { get; set; }
