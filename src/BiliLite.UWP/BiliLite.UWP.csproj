@@ -272,6 +272,7 @@
     <Compile Include="Models\ApiModel.cs" />
     <Compile Include="Models\Dynamic\DynamicModel.cs" />
     <Compile Include="Models\Dynamic\DynamicUserProfileModel.cs" />
+    <Compile Include="Models\GenerateMPDModel.cs" />
     <Compile Include="Models\PageEntranceModel.cs" />
     <Compile Include="Models\ReturnModel.cs" />
     <Compile Include="Models\UserModels.cs" />
@@ -834,7 +835,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FFmpegInteropX">
-      <Version>0.9.4</Version>
+      <Version>1.0.0</Version>
     </PackageReference>
     <PackageReference Include="FFmpegInteropX.FFmpegUWP">
       <Version>5.0.0</Version>

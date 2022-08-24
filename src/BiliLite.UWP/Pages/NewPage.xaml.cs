@@ -1,6 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Pages.Bangumi;
-using FFmpegInterop;
+using FFmpegInteropX;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;

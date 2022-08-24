@@ -232,9 +232,11 @@
                                 <Run>,部分清晰度可能也需要HEVC扩展</Run>
                             </Paragraph>
                         </RichTextBlock>
-                        <TextBlock  Margin="0 16 0 8" FontSize="16">硬解视频</TextBlock>
-                        
-                        <ToggleSwitch x:Name="swHardwareDecode"></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16" Visibility="Collapsed">优先使用FFmpeg播放器</TextBlock>
+                        <ToggleSwitch x:Name="swPriorityFFmpeg" Visibility="Collapsed"></ToggleSwitch>
+
+                        <TextBlock  Margin="0 16 0 8" FontSize="16" Visibility="Collapsed">使用FFmpeg播放时硬解视频</TextBlock>
+                        <ToggleSwitch x:Name="swHardwareDecode" Visibility="Collapsed"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8"  FontSize="16">视频默认倍速</TextBlock>
                         <ComboBox x:Name="cbVideoSpeed" SelectedIndex="0" MinWidth="200">
                             <ComboBox.Items>
@@ -250,8 +252,8 @@
                         <ToggleSwitch  x:Name="swAutoPlay"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">播放完成自动切换下一P</TextBlock>
                         <ToggleSwitch  x:Name="swAutoNext"></ToggleSwitch>
-                        <TextBlock  Margin="0 16 0 8" FontSize="16">使用外站视频替换无法播放的视频</TextBlock>
-                        <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ToolTipService.ToolTip="打开后支持观看部分大陆无版权番剧"></ToggleSwitch>
+                        <!--<TextBlock  Margin="0 16 0 8" FontSize="16">使用外站视频替换无法播放的视频</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerSettingUseOtherSite" ToolTipService.ToolTip="打开后支持观看部分大陆无版权番剧"></ToggleSwitch>-->
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动跳转至上次观看进度</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingAutoToPosition" ></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">进入播放自动全屏</TextBlock>
@@ -263,7 +265,28 @@
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动打开AI字幕</TextBlock>
                         <ToggleSwitch  x:Name="swPlayerSettingAutoOpenAISubtitle"></ToggleSwitch>
                         <TextBlock>部分自动生成的AI字幕会与视频自带字幕冲突</TextBlock>
-                        <TextBlock>建议关闭，有需要时再手动打开字幕</TextBlock>
+                        <TextBlock Margin="0 0 0 16">建议关闭，有需要时再手动打开字幕</TextBlock>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">替换PCDN链接</TextBlock>
+                        <ToggleSwitch  x:Name="swPlayerDisablePCDN"></ToggleSwitch>
+
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">替换CDN服务器选择</TextBlock>
+                        <Button x:Name="RoamingSettingTestCDN"  Click="RoamingSettingTestCDN_Click">测试服务器延迟</Button>
+                        <ComboBox x:Name="RoamingSettingCDNServer" 
+                                  ItemsSource="{x:Bind Path=settingVM.CDNServers,Mode=OneWay}"
+                                  Margin="0 8 0 8" HorizontalAlignment="Left" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate >
+                                    <StackPanel>
+                                        <TextBlock Margin="0 0 0 4" TextTrimming="CharacterEllipsis">
+                                           【<Run Text="{Binding Path=Remark}"></Run>】
+                                            <Run Text="{Binding Path=Server}"></Run>
+                                        </TextBlock>
+                                        <TextBlock FontSize="12" Foreground="Red" Visibility="{Binding Path=ShowTimeOut,Mode=OneWay}">超时</TextBlock>
+                                        <TextBlock FontSize="12" Foreground="Green" Visibility="{Binding Path=ShowDelay,Mode=OneWay}"><Run Text="{Binding Path=Delay,Mode=OneWay}"/> ms</TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -284,7 +307,8 @@
                                 <Hyperlink NavigateUri="https://github.com/yujincheng08/BiliRoaming/wiki/%E5%85%AC%E5%85%B1%E8%A7%A3%E6%9E%90%E6%9C%8D%E5%8A%A1%E5%99%A8">查看公共服务器</Hyperlink>
                             </Paragraph>
                         </RichTextBlock>
-                        <TextBlock>低调使用，乱宣传可能会被拉黑哦</TextBlock>
+                        <TextBlock>部分解析服务器需要登录后才能使用，请选择自己信任的服务器</TextBlock>
+
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自定义香港代理服务器</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <AutoSuggestBox x:Name="RoamingSettingCustomServerHK" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
@@ -297,17 +321,17 @@
                         <StackPanel Orientation="Horizontal">
                             <AutoSuggestBox x:Name="RoamingSettingCustomServerCN" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
                         </StackPanel>
-                        
-                        <TextBlock  Margin="0 16 0 8" FontSize="16">仅使用Akamai的CDN链接</TextBlock>
-                        <ToggleSwitch x:Name="RoamingSettingAkamaized" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
-                        <RichTextBlock>
-                            <Paragraph>
-                                如果开启后还是卡顿，建议
-                                <Hyperlink NavigateUri="https://www.bilibili.com/read/cv3118508">测速后修改HOST</Hyperlink>
-                            </Paragraph>
-                        </RichTextBlock>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">繁体字幕转简体</TextBlock>
                         <ToggleSwitch x:Name="RoamingSettingToSimplified" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">仅使用Akamai的CDN链接</TextBlock>
+                        <TextBlock>海外用户建议打开此选项</TextBlock>
+                        <ToggleSwitch x:Name="RoamingSettingAkamaized" OnContent="打开" OffContent="关闭" ></ToggleSwitch>
+                        
+                        
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">尝试替换视频的CDN</TextBlock>
+                        <TextBlock>国内用户建议打开此选项,并到「播放」设置中选择延迟较低的CDN服务器</TextBlock>
+                        <ToggleSwitch x:Name="RoamingSettingReplaceCDN"  OnContent="打开" OffContent="关闭" ></ToggleSwitch>
+                       
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

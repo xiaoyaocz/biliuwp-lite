@@ -2366,6 +2366,7 @@ namespace BiliLite.Helpers
 {'閒','闲'},
 {'僱','雇'},
 {'爲','为'},
+            {'囉','啰' }
         };
         static readonly Dictionary<char, char> chsDictionary = new Dictionary<char, char>() {{'货','貨'},
 {'骁','驍'},
@@ -4699,6 +4700,7 @@ namespace BiliLite.Helpers
 {'龟','龜'},
 {'鸹','鴰'},
 {'钞','鈔'},
+{'啰','囉' }
  };
 
         public static string SimplifiedToTraditional(string input)

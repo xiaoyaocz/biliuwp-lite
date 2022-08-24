@@ -145,6 +145,38 @@ namespace BiliLite.Dialogs
                         item.ErrorMessage = playUrl.message;
                         continue;
                     }
+                    var quality = playUrl.data.current;
+                    var audio = playUrl.data.current.playUrlInfo.dash_audio_url;
+                    var video = playUrl.data.current.playUrlInfo.dash_video_url;
+                    //替换CDN
+                    if (quality.playUrlInfo.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false))
+                    {
+                        var videoUrl = await PlayerVM.ReplaceCDN(video.baseUrl ?? video.base_url, quality.HttpHeader);
+                        video.baseUrl = videoUrl;
+                        video.base_url = videoUrl;
+                        if (audio != null)
+                        {
+                            var audioUrl = await PlayerVM.ReplaceCDN(audio.baseUrl ?? audio.base_url, quality.HttpHeader);
+                            audio.baseUrl = audioUrl;
+                            audio.base_url = audioUrl;
+                        }
+                    }
+                    //替换PCDN
+                    //如果backupUrl有非PCDN链接，则使用backupUrl
+                    //如果没有，尝试替换链接，测试下链接是否有效
+                    if (SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true))
+                    {
+                        var videoUrl = await PlayerVM.ReplacePCDN(video.baseUrl ?? video.base_url, video.backupUrl ?? video.backup_url, quality.HttpHeader);
+                        video.baseUrl = videoUrl;
+                        video.base_url = videoUrl;
+                        if (audio != null)
+                        {
+                            var audioUrl = await PlayerVM.ReplacePCDN(audio.baseUrl ?? audio.base_url, audio.backupUrl ?? audio.backup_url, quality.HttpHeader);
+                            audio.baseUrl = audioUrl;
+                            audio.base_url = audioUrl;
+                        }
+                    }
+
                     downloadInfo.QualityID = playUrl.data.current.quality;
                     downloadInfo.QualityName = playUrl.data.current.quality_description;
                     downloadInfo.Urls = new List<DownloadUrlInfo>();

@@ -1,7 +1,7 @@
 ﻿using BiliLite.Api;
 using BiliLite.Helpers;
 using BiliLite.Modules;
-using FFmpegInterop;
+using FFmpegInteropX;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;

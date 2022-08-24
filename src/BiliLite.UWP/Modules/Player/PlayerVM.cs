@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -76,10 +77,7 @@ namespace BiliLite.Modules
                     {
                         return data;
                     }
-                    if (!data.success && playInfo.play_mode == VideoPlayType.Season && SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
-                    {
-                        data = await Handel23Moe(playInfo, qn);
-                    }
+                    
                     return data;
                 }
                 else
@@ -104,10 +102,7 @@ namespace BiliLite.Modules
                     {
                         return data;
                     }
-                    if (!data.success && playInfo.play_mode == VideoPlayType.Season && SettingHelper.GetValue<bool>(SettingHelper.Player.USE_OTHER_SITEVIDEO, false))
-                    {
-                        data = await Handel23Moe(playInfo, qn);
-                    }
+
                     return data;
                 }
             }
@@ -137,7 +132,7 @@ namespace BiliLite.Modules
                 var index = data.data.accept_quality.IndexOf(data.data.quality);
 
                 //使用Akamai CDN链接
-                if (data.proxy&& SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true))
+                if (data.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true))
                 {
                     foreach (var item in data.data.durl)
                     {
@@ -148,12 +143,33 @@ namespace BiliLite.Modules
                         }
                     }
                 }
+                //替换CDN
+                if (data.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false))
+                {
+                    foreach (var item in data.data.durl)
+                    {
+
+                        item.url = await ReplaceCDN(item.url, GetDefualtHeader());
+                    }
+                }
+                //替换PCDN
+                //如果backupUrl有非PCDN链接，则使用backupUrl
+                //如果没有，尝试替换链接，测试下链接是否有效
+                if (SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true))
+                {
+                    foreach (var item in data.data.durl)
+                    {
+                        item.url = await PlayerVM.ReplacePCDN(item.url,item.backup_url, GetDefualtHeader());
+                    }
+                }
+
                 qualityWithPlayUrlInfos[index].playUrlInfo = new PlayUrlInfo()
                 {
                     multi_flv_url = data.data.durl,
                     url = data.data.durl[0]?.url ?? "",
                     mode = data.data.durl.Count > 1 ? VideoPlayMode.MultiFlv : VideoPlayMode.SingleFlv,
-                    codec_name = "h264_flv"
+                    codec_name = "h264_flv",
+                    proxy = data.proxy,
                 };
                 if (noVIP)
                 {
@@ -249,7 +265,7 @@ namespace BiliLite.Modules
                                 video.baseUrl = akamaizedVideoUrl;
                                 video.base_url = akamaizedVideoUrl;
                             }
-                            if (!audio.baseUrl.Contains("akamaized.net") && akamaizedAudioUrl != null)
+                            if (audio != null && !audio.baseUrl.Contains("akamaized.net") && akamaizedAudioUrl != null)
                             {
                                 audio.baseUrl = akamaizedAudioUrl;
                                 audio.base_url = akamaizedAudioUrl;
@@ -262,7 +278,10 @@ namespace BiliLite.Modules
                             codec_name = video.codecid == 7 ? "h264_m4s" : "h265_m4s",
                             dash_video_url = video,
                             dash_audio_url = audio,
-                            mode = VideoPlayMode.Dash
+                            mode = VideoPlayMode.Dash,
+                            duration = data.data.dash.duration,
+                            timelength = data.data.timelength,
+                            proxy = data.proxy,
                         };
                         qualityWithPlayUrlInfos.Add(new QualityWithPlayUrlInfo()
                         {
@@ -596,43 +615,7 @@ namespace BiliLite.Modules
                 };
             }
         }
-        private async Task<ReturnModel<PlayUrlReturnInfo>> Handel23Moe(PlayInfo playInfo, int qn)
-        {
-            var data = await Get23Moe(playInfo, qn);
-            if (data.code == 0)
-            {
-                var quality = new List<QualityWithPlayUrlInfo>()
-                {
-                    new QualityWithPlayUrlInfo()
-                    {
-                        quality=80,
-                        quality_description="默认清晰度",
-                        playUrlInfo=new PlayUrlInfo()
-                        {
-                            url=data.data,
-                            mode= VideoPlayMode.SingleMp4
-                        }
-                    }
-                };
-                return new ReturnModel<PlayUrlReturnInfo>()
-                {
-                    success = true,
-                    data = new PlayUrlReturnInfo()
-                    {
-                        quality = quality,
-                        current = quality[0]
-                    }
-                };
-            }
-            else
-            {
-                return new ReturnModel<PlayUrlReturnInfo>()
-                {
-                    success = false,
-                    message = data.message
-                };
-            }
-        }
+
         private async Task<ApiDataModel<FlvModel>> GetBiliBiliFlv(PlayInfo playInfo, int qn, bool proxy = false)
         {
             try
@@ -640,7 +623,7 @@ namespace BiliLite.Modules
                 var api = PlayerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qn, false, proxy, playInfo.area);
                 if (playInfo.play_mode == VideoPlayType.Season)
                 {
-                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid,ep_id: playInfo.ep_id, qn: qn, season_type: playInfo.season_type, false, proxy, playInfo.area);
+                    api = PlayerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, ep_id: playInfo.ep_id, qn: qn, season_type: playInfo.season_type, false, proxy, playInfo.area);
                 }
                 var result = await api.Request();
                 if (result.status)
@@ -929,58 +912,6 @@ namespace BiliLite.Modules
         //    }
         //}
 
-
-
-        private async Task<ApiDataModel<string>> Get23Moe(PlayInfo playInfo, int qn)
-        {
-            try
-            {
-                var api = PlayerAPI.SeasonPlayUrl23Moe(playInfo.season_id, playInfo.cid, playInfo.ep_id);
-                var result = await api.Request();
-                if (result.status)
-                {
-                    var data = await result.GetJson<ApiDataModel<JArray>>();
-                    if (data.code == 0)
-                    {
-                        return new ApiDataModel<string>()
-                        {
-                            code = 0,
-                            message = "",
-                            data = data.data[0]["url"].ToString()
-                        };
-                    }
-                    else
-                    {
-                        return new ApiDataModel<string>()
-                        {
-                            code = data.code,
-                            message = data.message
-                        };
-                    }
-
-
-
-                }
-                else
-                {
-                    return new ApiDataModel<string>()
-                    {
-                        code = -998,
-                        message = result.message
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                var data = HandelError<object>(ex);
-                return new ApiDataModel<string>()
-                {
-                    code = -999,
-                    message = data.message
-                };
-            }
-        }
-
         public async Task ReportHistory(PlayInfo playInfo, double progress)
         {
             try
@@ -1152,6 +1083,94 @@ namespace BiliLite.Modules
             //header.Add("Referer", "https://www.bilibili.com/");
             return header;
         }
+
+        /// <summary>
+        /// 检查视频链接是否可用
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
+        private static async Task<bool> CheckVideoUrlAvailable(string url, IDictionary<string, string> headers)
+        {
+            using (HttpClient client = new HttpClient() { Timeout = TimeSpan.FromSeconds(2) })
+            {
+                try
+                {
+                    foreach (var item in headers)
+                    {
+                        client.DefaultRequestHeaders.Add(item.Key, item.Value);
+                    }
+                    client.DefaultRequestHeaders.Add("Range", "bytes=0-9");
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+        }
+        /// <summary>
+        /// 替换CDN
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
+        public static async Task<string> ReplaceCDN(string url, IDictionary<string, string> headers)
+        {
+            var cdnServer = SettingHelper.GetValue<string>(SettingHelper.Roaming.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
+            Regex regex = new Regex(@"http://|https://?([^/]*)");
+            var host = regex.Match(url).Groups[1].Value;
+            var replaceUrl = url.Replace(host, cdnServer);
+            if (await CheckVideoUrlAvailable(replaceUrl, headers))
+            {
+                return replaceUrl;
+            }
+            else
+            {
+                return url;
+            }
+        }
+
+        /// <summary>
+        /// 替换PCDN
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="headers"></param>
+        /// <returns></returns>
+        public static async Task<string> ReplacePCDN(string url, List<string> backupUrls, IDictionary<string, string> headers)
+        {
+            var uri = new Uri(url);
+            //检查是否PCDN链接
+            if (uri.Host.Contains("bilivideo.com") || uri.Host.Contains("akamaized.net"))
+            {
+                return url;
+            }
+            //检查备用链接
+            foreach (var item in backupUrls)
+            {
+                var _host = new Uri(item).Host;
+                if (_host.Contains("bilivideo.com") || _host.Contains("akamaized.net"))
+                {
+                    return item;
+                }
+            }
+
+            var cdnServer = SettingHelper.GetValue<string>(SettingHelper.Roaming.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
+            Regex regex = new Regex(@"http://|https://?([^/]*)");
+            var host = regex.Match(url).Groups[1].Value;
+            var replaceUrl = url.Replace(host, cdnServer);
+            if (await CheckVideoUrlAvailable(replaceUrl, headers))
+            {
+                return replaceUrl;
+            }
+            else
+            {
+                return url;
+            }
+        }
     }
 
     public enum VideoPlayMode
@@ -1223,8 +1242,11 @@ namespace BiliLite.Modules
         public List<FlvDurlModel> multi_flv_url { get; set; }
         public DashItemModel dash_video_url { get; set; }
         public DashItemModel dash_audio_url { get; set; }
-        public string codec_name { get; set; }
 
+        public long timelength { get; set; }
+        public long duration { get; set; }
+        public string codec_name { get; set; }
+        public bool proxy { get; set; } = false;
     }
 
     public class FlvModel
