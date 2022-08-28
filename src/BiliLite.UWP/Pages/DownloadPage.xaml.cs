@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Modules;
+using BiliLite.Modules.Player.Playurl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,35 +72,42 @@ namespace BiliLite.Pages
                 {
                     subtitles.Add(subtitle.Name, subtitle.Url);
                 }
-                PlayUrlInfo info = new PlayUrlInfo();
+                BiliPlayUrlInfo info = new BiliPlayUrlInfo();
                 if (item.IsDash)
                 {
-                    info.mode = VideoPlayMode.Dash;
-                    info.dash_video_url = new DashItemModel()
+                    info.PlayUrlType = BiliPlayUrlType.DASH;
+                    info.DashInfo = new BiliDashPlayUrlInfo();
+                    info.DashInfo.Video = new BiliDashItem()
                     {
-                        baseUrl = item.Paths.FirstOrDefault(x => x.Contains("video.m4s")),
-                        base_url = item.Paths.FirstOrDefault(x => x.Contains("video.m4s")),
+                        Url = item.Paths.FirstOrDefault(x => x.Contains("video.m4s"))
                     };
-                    info.dash_audio_url = new DashItemModel()
+                    info.DashInfo.Audio = new BiliDashItem()
                     {
-                        baseUrl = item.Paths.FirstOrDefault(x => x.Contains("audio.m4s")),
-                        base_url = item.Paths.FirstOrDefault(x => x.Contains("audio.m4s")),
+                        Url = item.Paths.FirstOrDefault(x => x.Contains("audio.m4s")),
                     };
                 }
                 else if (item.Paths.Count == 1)
                 {
-                    info.mode = VideoPlayMode.SingleMp4;
-                    info.url = item.Paths[0];
+                    info.PlayUrlType = BiliPlayUrlType.SingleFLV;
+                    info.FlvInfo =new List<BiliFlvPlayUrlInfo>() { new BiliFlvPlayUrlInfo() { 
+                        Url=item.Paths[0],
+                        Length = 0,
+                        Order=0,
+                        Size=0,
+                    } };
                 }
                 else
                 {
-                    info.mode = VideoPlayMode.MultiFlv;
-                    info.multi_flv_url = new List<FlvDurlModel>();
+                    info.PlayUrlType = BiliPlayUrlType.MultiFLV;
+                    info.FlvInfo = new List<BiliFlvPlayUrlInfo>();
                     foreach (var item2 in item.Paths.OrderBy(x => x))
                     {
-                        info.multi_flv_url.Add(new FlvDurlModel()
+                        info.FlvInfo.Add(new BiliFlvPlayUrlInfo()
                         {
-                            url = item2
+                            Url = item2,
+                            Length = 0,
+                            Order = 0,
+                            Size = 0,
                         });
                     }
                 }
@@ -254,7 +262,7 @@ namespace BiliLite.Pages
 
         private async void OutputFile(DownloadedItem data, DownloadedSubItem item)
         {
-            List<string> subtitles=new List<string>();
+            List<string> subtitles = new List<string>();
             //处理字幕
             if (item.SubtitlePath != null && item.SubtitlePath.Count > 0)
             {
@@ -268,7 +276,7 @@ namespace BiliLite.Pages
                         var outSrtFile = await folder.CreateFileAsync(subtitle.Name + ".srt", CreationCollisionOption.ReplaceExisting);
                         var subtitleFile = await StorageFile.GetFileFromPathAsync(Path.Combine(item.Path, subtitle.Url));
                         var content = await FileIO.ReadTextAsync(subtitleFile);
-                        var result = ccToSrt.ConvertToSrt(content, toSimplified&&subtitle.Name.Contains("繁体"));
+                        var result = ccToSrt.ConvertToSrt(content, toSimplified && subtitle.Name.Contains("繁体"));
                         await FileIO.WriteTextAsync(outSrtFile, result);
                         subtitles.Add(outSrtFile.Path);
                     }
@@ -280,16 +288,16 @@ namespace BiliLite.Pages
                 }
 
             }
-            
+
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();
             savePicker.SuggestedStartLocation =
                 Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
-            savePicker.FileTypeChoices.Add("MP4", new List<string>() {".mp4" });
+            savePicker.FileTypeChoices.Add("MP4", new List<string>() { ".mp4" });
             savePicker.SuggestedFileName = "导出的视频";
             var file = await savePicker.PickSaveFileAsync();
             if (file == null)
                 return;
-            await AppHelper.LaunchConverter(data.Title + "-" + item.Title, item.Paths, file.Path, subtitles,item.IsDash);
+            await AppHelper.LaunchConverter(data.Title + "-" + item.Title, item.Paths, file.Path, subtitles, item.IsDash);
         }
 
 

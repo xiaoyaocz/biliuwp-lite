@@ -786,7 +786,7 @@
                                         </Button.Flyout>
                                     </Button>
 
-                                    <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="quality_description" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+                                    <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="QualityName" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
 
                                     </ComboBox>
                                     <ComboBox x:Name="BottomCBSpeed" ToolTipService.ToolTip="倍速" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">

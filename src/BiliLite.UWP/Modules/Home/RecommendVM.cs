@@ -73,7 +73,7 @@ namespace BiliLite.Modules
                         }
                         for (int i = items.Count - 1; i >= 0; i--)
                         {
-                            if (items[i].card_goto.Contains("ad_web"))
+                            if (items[i].showAD)
                             {
                                 items.Remove(items[i]);
                                 continue;

@@ -351,13 +351,25 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Player.AUTO_OPEN_AI_SUBTITLE, swPlayerSettingAutoOpenAISubtitle.IsOn);
                 });
             });
-            //禁用PCDN
-            swPlayerDisablePCDN.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true);
-            swPlayerDisablePCDN.Loaded += new RoutedEventHandler((sender, e) =>
+            //替换CDN
+            cbPlayerReplaceCDN.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.Player.REPLACE_CDN, 3);
+            cbPlayerReplaceCDN.Loaded += new RoutedEventHandler((sender, e) =>
             {
-                swPlayerDisablePCDN.Toggled += new RoutedEventHandler((obj, args) =>
+                cbPlayerReplaceCDN.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
-                    SettingHelper.SetValue(SettingHelper.Player.DISABLE_PCDN, swPlayerDisablePCDN.IsOn);
+                    SettingHelper.SetValue(SettingHelper.Player.REPLACE_CDN, cbPlayerReplaceCDN.SelectedIndex);
+                });
+            });
+            //CDN服务器
+            var cdnServer = SettingHelper.GetValue<string>(SettingHelper.Player.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
+            RoamingSettingCDNServer.SelectedIndex = settingVM.CDNServers.FindIndex(x => x.Server == cdnServer);
+            RoamingSettingCDNServer.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                RoamingSettingCDNServer.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                {
+                    var server = settingVM.CDNServers[RoamingSettingCDNServer.SelectedIndex];
+                    SettingHelper.SetValue(SettingHelper.Player.CDN_SERVER, server.Server);
+
                 });
             });
         }
@@ -441,14 +453,14 @@ namespace BiliLite.Pages
             });
 
             //Akamai
-            RoamingSettingAkamaized.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, true);
-            RoamingSettingAkamaized.Loaded += new RoutedEventHandler((sender, e) =>
-            {
-                RoamingSettingAkamaized.Toggled += new RoutedEventHandler((obj, args) =>
-                {
-                    SettingHelper.SetValue(SettingHelper.Roaming.AKAMAI_CDN, RoamingSettingAkamaized.IsOn);
-                });
-            });
+            //RoamingSettingAkamaized.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, false);
+            //RoamingSettingAkamaized.Loaded += new RoutedEventHandler((sender, e) =>
+            //{
+            //    RoamingSettingAkamaized.Toggled += new RoutedEventHandler((obj, args) =>
+            //    {
+            //        SettingHelper.SetValue(SettingHelper.Roaming.AKAMAI_CDN, RoamingSettingAkamaized.IsOn);
+            //    });
+            //});
             //转简体
             RoamingSettingToSimplified.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true);
             RoamingSettingToSimplified.Loaded += new RoutedEventHandler((sender, e) =>
@@ -458,29 +470,7 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.Roaming.TO_SIMPLIFIED, RoamingSettingToSimplified.IsOn);
                 });
             });
-            //替换CDN
-            RoamingSettingReplaceCDN.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false);
-            RoamingSettingReplaceCDN.Loaded += new RoutedEventHandler((sender, e) =>
-            {
-                RoamingSettingReplaceCDN.Toggled += new RoutedEventHandler((obj, args) =>
-                {
-                    SettingHelper.SetValue(SettingHelper.Roaming.REPLACE_CDN, RoamingSettingReplaceCDN.IsOn);
-                });
-            });
-            //CDN服务器
-            var cdnServer = SettingHelper.GetValue<string>(SettingHelper.Roaming.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
-            RoamingSettingCDNServer.SelectedIndex = settingVM.CDNServers.FindIndex(x => x.Server == cdnServer);
-            RoamingSettingCDNServer.Loaded += new RoutedEventHandler((sender, e) =>
-            {
-                RoamingSettingCDNServer.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
-                {
-                    var server = settingVM.CDNServers[RoamingSettingCDNServer.SelectedIndex];
-                    SettingHelper.SetValue(SettingHelper.Roaming.CDN_SERVER, server.Server);
-
-                });
-            });
-
-
+          
         }
 
 

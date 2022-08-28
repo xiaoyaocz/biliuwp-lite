@@ -39,7 +39,7 @@ namespace BiliLite.Helpers
         {
             NavigateToPageEvent?.Invoke(sender, navigationInfo);
         }
-        public static void SetMiniWindow (bool mini)
+        public static void SetMiniWindow(bool mini)
         {
             MiniWindowEvent?.Invoke(null, mini);
         }
@@ -78,6 +78,11 @@ namespace BiliLite.Helpers
             if (url.First() == '@')
             {
                 return false;
+            }
+            //短链接处理
+            if (url.Contains("b23.tv"))
+            {
+                url = await Utils.GetShortLinkLocation(url);
             }
             /*
              * 视频
@@ -400,7 +405,7 @@ namespace BiliLite.Helpers
                     title = "收藏夹",
                     parameters = new FavoriteDetailArgs()
                     {
-                        Id= medialist_id,
+                        Id = medialist_id,
                     }
                 });
 
@@ -458,6 +463,19 @@ namespace BiliLite.Helpers
                 });
                 return true;
             }
+            if (url.Contains("bilibili://pegasus/channel/v2/9222"))
+            {
+                NavigateToPage(null, new NavigationInfo()
+                {
+                    icon = Symbol.World,
+                    page = typeof(WebPage),
+                    title = "赛事",
+                    parameters = "https://www.bilibili.com/v/game/match"
+                });
+                return true;
+            }
+
+
 
 
             if (url.Contains("http://") || url.Contains("https://"))
@@ -515,7 +533,7 @@ namespace BiliLite.Helpers
         }
         public async static void OpenWindow(Type page, object par)
         {
-            
+
             CoreApplicationView newView = CoreApplication.CreateNewView();
             int newViewId = 0;
 

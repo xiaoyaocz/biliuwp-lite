@@ -38,6 +38,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.UI;
 using Windows.Storage.Streams;
 using Windows.UI.Text;
+using BiliLite.Modules.Player.Playurl;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -121,7 +122,7 @@ namespace BiliLite.Controls
     }
     public class LocalPlayInfo
     {
-        public PlayUrlInfo Info { get; set; }
+        public BiliPlayUrlInfo Info { get; set; }
         public IDictionary<string, string> Subtitles { get; set; }
         public string DanmakuPath { get; set; }
         public string Quality { get; set; }
@@ -166,11 +167,11 @@ namespace BiliLite.Controls
         public PlayInfo CurrentPlayItem { get; set; }
         readonly PlayerVM playerHelper;
         readonly NSDanmaku.Helper.DanmakuParse danmakuParse;
-        private PlayUrlReturnInfo _playUrlInfo;
+        private BiliPlayUrlQualitesInfo _playUrlInfo;
         /// <summary>
         /// 播放地址信息
         /// </summary>
-        public PlayUrlReturnInfo playUrlInfo
+        public BiliPlayUrlQualitesInfo playUrlInfo
         {
             get { return _playUrlInfo; }
             set { _playUrlInfo = value; DoPropertyChanged("playUrlInfo"); }
@@ -1319,9 +1320,9 @@ namespace BiliLite.Controls
         private async Task SetQuality()
         {
             VideoLoading.Visibility = Visibility.Visible;
-            if (playUrlInfo != null && playUrlInfo.current != null)
+            if (playUrlInfo != null && playUrlInfo.CurrentQuality != null)
             {
-                playUrlInfo.current = null;
+                playUrlInfo.CurrentQuality = null;
             }
 
             if (CurrentPlayItem.play_mode == VideoPlayType.Download)
@@ -1335,19 +1336,19 @@ namespace BiliLite.Controls
             var qn = SettingHelper.GetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, 80);
             var info = await playerHelper.GetPlayUrls(CurrentPlayItem, qn);
 
-            if (info.success)
+            if (info.Success)
             {
-                playUrlInfo = info.data;
-                BottomCBQuality.ItemsSource = playUrlInfo.quality;
+                playUrlInfo = info;
+                BottomCBQuality.ItemsSource = playUrlInfo.Qualites;
                 BottomCBQuality.SelectionChanged -= BottomCBQuality_SelectionChanged;
-                BottomCBQuality.SelectedItem = info.data.current;
+                BottomCBQuality.SelectedItem = info.CurrentQuality;
                 //SettingHelper.SetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, info.data.current.quality);
                 BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
-                ChangeQuality(info.data.current);
+                ChangeQuality(info.CurrentQuality);
             }
             else
             {
-                ShowDialog("请稍后再试，或者到「设置」-「播放」中自定义代理服务器", "读取视频播放地址失败");
+                ShowDialog($"请求信息:\r\n{info.Message}", "读取视频播放地址失败");
             }
 
         }
@@ -1360,17 +1361,18 @@ namespace BiliLite.Controls
                 result = false
             };
             var info = CurrentPlayItem.LocalPlayInfo.Info;
-            if (info.mode == VideoPlayMode.Dash)
+            if (info.PlayUrlType ==  BiliPlayUrlType.DASH)
             {
-                result = await Player.PlayDashUseFFmpegInterop(info.dash_video_url, info.dash_audio_url, null, positon: _postion, isLocal: true);
+                result = await Player.PlayDashUseFFmpegInterop(info.DashInfo, "","", positon: _postion, isLocal: true);
             }
-            else if (CurrentPlayItem.LocalPlayInfo.Info.mode == VideoPlayMode.SingleMp4)
+            else if (CurrentPlayItem.LocalPlayInfo.Info.PlayUrlType == BiliPlayUrlType.SingleFLV)
             {
-                result = await Player.PlayerSingleMp4UseNativeAsync(info.url, positon: _postion, isLocal: true);
+                result = await Player.PlayerSingleMp4UseNativeAsync(info.FlvInfo.First().Url, positon: _postion, isLocal: true);
             }
-            else if (CurrentPlayItem.LocalPlayInfo.Info.mode == VideoPlayMode.MultiFlv)
+            else if (CurrentPlayItem.LocalPlayInfo.Info.PlayUrlType == BiliPlayUrlType.MultiFLV)
             {
-                result = await Player.PlayVideoUseSYEngine(info.multi_flv_url, null, positon: _postion, epId: CurrentPlayItem.ep_id, isLocal: true);
+                //TODO 本地播放
+               result = await Player.PlayVideoUseSYEngine(info.FlvInfo, "","", positon: _postion, epId: CurrentPlayItem.ep_id, isLocal: true);
             }
             if (result.result)
             {
@@ -1483,8 +1485,8 @@ namespace BiliLite.Controls
             }
         }
 
-        QualityWithPlayUrlInfo current_quality_info = null;
-        private async Task ChangeQuality(QualityWithPlayUrlInfo quality)
+        BiliPlayUrlInfo current_quality_info = null;
+        private async Task ChangeQuality(BiliPlayUrlInfo quality)
         {
             VideoLoading.Visibility = Visibility.Visible;
             if (quality == null)
@@ -1492,81 +1494,51 @@ namespace BiliLite.Controls
                 return;
             }
             current_quality_info = quality;
-            if (quality.playUrlInfo == null)
+            if (!quality.HasPlayUrl)
             {
-                var info = await playerHelper.GetPlayUrls(CurrentPlayItem, quality.quality);
-                if (!info.success)
+                var info = await playerHelper.GetPlayUrls(CurrentPlayItem, quality.QualityID);
+                if (!info.Success)
                 {
-                    ShowDialog(info.message, "切换清晰度失败");
+                    ShowDialog(info.Message, "切换清晰度失败");
                     return;
                 }
-                if (info.data.current.playUrlInfo == null)
+                if (!info.CurrentQuality.HasPlayUrl)
                 {
                     ShowDialog("无法读取到播放地址，试试换个清晰度?", "播放失败");
                     return;
                 }
-                quality.playUrlInfo = info.data.current.playUrlInfo;
+                quality = info.CurrentQuality;
             }
             PlayerOpenResult result = new PlayerOpenResult()
             {
                 result = false
             };
-            if (quality.playUrlInfo.mode == VideoPlayMode.Dash)
+            if (quality.PlayUrlType == BiliPlayUrlType.DASH)
             {
-                var audio = quality.playUrlInfo.dash_audio_url;
-                var video = quality.playUrlInfo.dash_video_url;
-                //替换CDN
-                if (quality.playUrlInfo.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false))
-                {
-                    var videoUrl = await PlayerVM.ReplaceCDN(video.baseUrl ?? video.base_url, quality.HttpHeader);
-                    video.baseUrl = videoUrl;
-                    video.base_url = videoUrl;
-                    if (audio != null)
-                    {
-                        var audioUrl = await PlayerVM.ReplaceCDN(audio.baseUrl ?? audio.base_url, quality.HttpHeader);
-                        audio.baseUrl = audioUrl;
-                        audio.base_url = audioUrl;
-                    }
-                }
-                //替换PCDN
-                //如果backupUrl有非PCDN链接，则使用backupUrl
-                //如果没有，尝试替换链接，测试下链接是否有效
-                if (SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true))
-                {
-                    var videoUrl = await PlayerVM.ReplacePCDN(video.baseUrl ?? video.base_url, video.backupUrl ?? video.backup_url, quality.HttpHeader);
-                    video.baseUrl = videoUrl;
-                    video.base_url = videoUrl;
-                    if (audio != null)
-                    {
-                        var audioUrl = await PlayerVM.ReplacePCDN(audio.baseUrl ?? audio.base_url, audio.backupUrl ?? audio.backup_url, quality.HttpHeader);
-                        audio.baseUrl = audioUrl;
-                        audio.base_url = audioUrl;
-                    }
-                }
-              
-             
+                var audio = quality.DashInfo.Audio;
+                var video = quality.DashInfo.Video;
 
+                result = await Player.PlayerDashUseNative(quality.DashInfo, quality.UserAgent,quality.Referer, positon: _postion);
 
-                result = await Player.PlayerDashUseNative(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
                 if (!result.result)
                 {
                     var mpd_url = new Api.PlayerAPI().GenerateMPD(new Models.GenerateMPDModel()
                     {
-                        AudioBandwidth = audio.bandwidth.ToString(),
-                        AudioCodec = audio.codecs,
-                        AudioID = audio.id.ToString(),
-                        AudioUrl = audio.baseUrl,
-                        Duration = quality.playUrlInfo?.duration ?? 0,
-                        DurationMS = quality.playUrlInfo?.timelength ?? 0,
-                        VideoBandwidth = video.bandwidth.ToString(),
-                        VideoCodec = video.codecs,
-                        VideoID = video.id.ToString(),
-                        VideoFrameRate = video.frameRate.ToString(),
-                        VideoHeight = video.height,
-                        VideoWidth = video.width,
-                        VideoUrl = video.baseUrl,
+                        AudioBandwidth = audio.BandWidth.ToString(),
+                        AudioCodec = audio.Codecs,
+                        AudioID = audio.ID.ToString(),
+                        AudioUrl = audio.Url,
+                        Duration = quality.DashInfo.Duration,
+                        DurationMS = quality.Timelength,
+                        VideoBandwidth = video.BandWidth.ToString(),
+                        VideoCodec = video.Codecs,
+                        VideoID = video.ID.ToString(),
+                        VideoFrameRate = video.FrameRate.ToString(),
+                        VideoHeight = video.Height,
+                        VideoWidth = video.Width,
+                        VideoUrl = video.Url,
                     });
-                    result = await Player.PlayDashUrlUseFFmpegInterop(mpd_url, quality.HttpHeader, positon: _postion);
+                    result = await Player.PlayDashUrlUseFFmpegInterop(mpd_url, quality.UserAgent,quality.Referer, positon: _postion);
                     //result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
                     //if (!result.result)
                     //{
@@ -1574,25 +1546,25 @@ namespace BiliLite.Controls
                     //}
                 }
             }
-            else if (quality.playUrlInfo.mode == VideoPlayMode.SingleFlv)
+            else if (quality.PlayUrlType ==  BiliPlayUrlType.SingleFLV)
             {
-                result = await Player.PlaySingleFlvUseSYEngine(quality.playUrlInfo.multi_flv_url[0].url, quality.HttpHeader, positon: _postion, epId: CurrentPlayItem.ep_id);
+                result = await Player.PlaySingleFlvUseSYEngine(quality.FlvInfo.First().Url, quality.UserAgent,quality.Referer, positon: _postion, epId: CurrentPlayItem.ep_id);
                 if (!result.result)
                 {
-                    result = await Player.PlaySingleFlvUseFFmpegInterop(quality.playUrlInfo.multi_flv_url[0].url, quality.HttpHeader, positon: _postion);
+                    result = await Player.PlaySingleFlvUseFFmpegInterop(quality.FlvInfo.First().Url, quality.UserAgent, quality.Referer, positon: _postion);
                 }
             }
-            else if (quality.playUrlInfo.mode == VideoPlayMode.SingleMp4)
+            //else if (quality.PlayUrlType == VideoPlayMode.SingleMp4)
+            //{
+            //    result = await Player.PlayerSingleMp4UseNativeAsync(quality.playUrlInfo.url, positon: _postion);
+            //    if (!result.result)
+            //    {
+            //        result = await Player.PlaySingleFlvUseSYEngine(quality.playUrlInfo.url, quality.HttpHeader, positon: _postion);
+            //    }
+            //}
+            else if (quality.PlayUrlType == BiliPlayUrlType.MultiFLV)
             {
-                result = await Player.PlayerSingleMp4UseNativeAsync(quality.playUrlInfo.url, positon: _postion);
-                if (!result.result)
-                {
-                    result = await Player.PlaySingleFlvUseSYEngine(quality.playUrlInfo.url, quality.HttpHeader, positon: _postion);
-                }
-            }
-            else if (quality.playUrlInfo.mode == VideoPlayMode.MultiFlv)
-            {
-                result = await Player.PlayVideoUseSYEngine(quality.playUrlInfo.multi_flv_url, quality.HttpHeader, positon: _postion, epId: CurrentPlayItem.ep_id);
+                result = await Player.PlayVideoUseSYEngine(quality.FlvInfo, quality.UserAgent, quality.Referer, positon: _postion, epId: CurrentPlayItem.ep_id);
             }
             if (result.result)
             {
@@ -1609,7 +1581,16 @@ namespace BiliLite.Controls
         }
         private void ShowErrorDialog(string message)
         {
-            ShowDialog($"播放失败:{message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、在播放设置打开/关闭硬解视频\r\n3、在播放设置中更换视频类型\r\n4、如果你的视频编码选择了HEVC，请检查是否安装了HEVC扩展\r\n5、如果你的视频编码选择了AV1，请检查是否安装了AV1扩展\r\n6、如果是付费视频，请在手机或网页端购买后观看\r\n7、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
+            ShowDialog($@"播放失败:{message}
+你可以进行以下尝试:
+1、切换视频清晰度
+2、到⌈设置⌋-⌈播放⌋中修改⌈优先视频编码⌋选项
+3、到⌈设置⌋-⌈播放⌋中打开或关闭⌈替换PCDN链接⌋选项
+4、到⌈设置⌋-⌈代理⌋中打开或关闭⌈尝试替换视频的CDN⌋选项
+5、如果视频编码选择了HEVC，请检查是否安装了HEVC扩展
+6、如果视频编码选择了AV1，请检查是否安装了AV1扩展
+7、如果是付费视频，请在手机或网页端购买后观看
+8、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
         }
         private async void ShowDialog(string content, string title)
         {
@@ -2012,8 +1993,8 @@ namespace BiliLite.Controls
             }
 
             _postion = Player.Position;
-            var data = BottomCBQuality.SelectedItem as QualityWithPlayUrlInfo;
-            SettingHelper.SetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, data.quality);
+            var data = BottomCBQuality.SelectedItem as BiliPlayUrlInfo;
+            SettingHelper.SetValue<int>(SettingHelper.Player.DEFAULT_QUALITY, data.QualityID);
             _autoPlay = Player.PlayState == PlayState.Playing;
             await ChangeQuality(data);
 
@@ -2263,7 +2244,6 @@ namespace BiliLite.Controls
             if (!e.need_change)
             {
                 ShowErrorDialog(e.message + "[ChangeEngine]");
-                //ShowDialog($"播放失败:{e.message}\r\n你可以进行以下尝试:\r\n1、更换视频清晰度\r\n2、尝试重新登录\r\n3、在播放设置打开/关闭硬解视频\r\n4、在播放设置中更换视频类型\r\n5、如果你的视频类型选择了MP4-HEVC，请检查是否安装了HEVC扩展\r\n6、尝试更新您的显卡驱动或使用核显打开应用", "播放失败");
                 return;
             }
             VideoLoading.Visibility = Visibility.Visible;
@@ -2274,11 +2254,11 @@ namespace BiliLite.Controls
             };
             if (e.play_type == PlayMediaType.Dash && e.change_engine == PlayEngine.FFmpegInteropMSS)
             {
-                result = await Player.PlayDashUseFFmpegInterop(current_quality_info.playUrlInfo.dash_video_url, current_quality_info.playUrlInfo.dash_audio_url, positon: _postion);
+                result = await Player.PlayDashUseFFmpegInterop(current_quality_info.DashInfo, current_quality_info.UserAgent, current_quality_info.Referer, positon: _postion);
             }
             if (e.play_type == PlayMediaType.Single && e.change_engine == PlayEngine.SYEngine)
             {
-                result = await Player.PlaySingleFlvUseSYEngine(current_quality_info.playUrlInfo.multi_flv_url[0].url, current_quality_info.HttpHeader, positon: _postion);
+                result = await Player.PlaySingleFlvUseSYEngine(current_quality_info.FlvInfo.First().Url, current_quality_info.UserAgent, current_quality_info.Referer, positon: _postion);
             }
             if (!result.result)
             {

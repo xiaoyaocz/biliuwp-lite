@@ -291,6 +291,9 @@
     <Compile Include="Modules\Live\LiveRecommendVM.cs" />
     <Compile Include="Modules\Other\FindMoreVM.cs" />
     <Compile Include="Modules\Player\InteractionVideoVM.cs" />
+    <Compile Include="Modules\Player\Playurl\BiliPayUrlRequest.cs" />
+    <Compile Include="Modules\Player\Playurl\BiliPlayUrl.cs" />
+    <Compile Include="Modules\Player\Playurl\BiliPlayUrlInfo.cs" />
     <Compile Include="Modules\RegionDetailVM.cs" />
     <Compile Include="Modules\SearchVM.cs" />
     <Compile Include="Modules\Season\SeasonRankVM.cs" />

@@ -1,6 +1,7 @@
 ﻿using BiliLite.Api;
 using BiliLite.Helpers;
 using BiliLite.Modules;
+using BiliLite.Modules.Player.Playurl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -67,16 +68,16 @@ namespace BiliLite.Dialogs
                 season_type = downloadItem.SeasonType,
                 area=Utils.ParseArea(downloadItem.Title,downloadItem.UpMid)
             }, 0);
-            if (!data.success)
+            if (!data.Success)
             {
-                Utils.ShowMessageToast("读取可下载清晰度时失败：" + data.message);
+                Utils.ShowMessageToast("读取可下载清晰度时失败：" + data.Message);
                 return;
             }
-            if (data.data.quality == null || data.data.quality.Count < 1)
+            if (data.Qualites == null || data.Qualites.Count < 1)
             {
                 return;
             }
-            cbQuality.ItemsSource = data.data.quality;
+            cbQuality.ItemsSource = data.Qualites;
             cbQuality.SelectedIndex = 0;
         }
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -138,64 +139,36 @@ namespace BiliLite.Dialogs
                         season_id = downloadItem.SeasonID,
                         season_type = downloadItem.SeasonType,
                         area = Utils.ParseArea(downloadItem.Title, downloadItem.UpMid)
-                    }, qn: (cbQuality.SelectedItem as QualityWithPlayUrlInfo).quality);
-                    if (!playUrl.success)
+                    }, qn: (cbQuality.SelectedItem as BiliPlayUrlInfo).QualityID);
+                    if (!playUrl.Success)
                     {
                         item.State = 99;
-                        item.ErrorMessage = playUrl.message;
+                        item.ErrorMessage = playUrl.Message;
                         continue;
                     }
-                    var quality = playUrl.data.current;
-                    var audio = playUrl.data.current.playUrlInfo.dash_audio_url;
-                    var video = playUrl.data.current.playUrlInfo.dash_video_url;
-                    //替换CDN
-                    if (quality.playUrlInfo.proxy && SettingHelper.GetValue<bool>(SettingHelper.Roaming.REPLACE_CDN, false))
-                    {
-                        var videoUrl = await PlayerVM.ReplaceCDN(video.baseUrl ?? video.base_url, quality.HttpHeader);
-                        video.baseUrl = videoUrl;
-                        video.base_url = videoUrl;
-                        if (audio != null)
-                        {
-                            var audioUrl = await PlayerVM.ReplaceCDN(audio.baseUrl ?? audio.base_url, quality.HttpHeader);
-                            audio.baseUrl = audioUrl;
-                            audio.base_url = audioUrl;
-                        }
-                    }
-                    //替换PCDN
-                    //如果backupUrl有非PCDN链接，则使用backupUrl
-                    //如果没有，尝试替换链接，测试下链接是否有效
-                    if (SettingHelper.GetValue<bool>(SettingHelper.Player.DISABLE_PCDN, true))
-                    {
-                        var videoUrl = await PlayerVM.ReplacePCDN(video.baseUrl ?? video.base_url, video.backupUrl ?? video.backup_url, quality.HttpHeader);
-                        video.baseUrl = videoUrl;
-                        video.base_url = videoUrl;
-                        if (audio != null)
-                        {
-                            var audioUrl = await PlayerVM.ReplacePCDN(audio.baseUrl ?? audio.base_url, audio.backupUrl ?? audio.backup_url, quality.HttpHeader);
-                            audio.baseUrl = audioUrl;
-                            audio.base_url = audioUrl;
-                        }
-                    }
-
-                    downloadInfo.QualityID = playUrl.data.current.quality;
-                    downloadInfo.QualityName = playUrl.data.current.quality_description;
+                    
+                    downloadInfo.QualityID = playUrl.CurrentQuality.QualityID;
+                    downloadInfo.QualityName = playUrl.CurrentQuality.QualityName;
                     downloadInfo.Urls = new List<DownloadUrlInfo>();
-                    if (playUrl.data.current.playUrlInfo.mode == VideoPlayMode.Dash)
+                    if (playUrl.CurrentQuality.PlayUrlType ==  Modules.Player.Playurl.BiliPlayUrlType.DASH)
                     {
+                        var quality = playUrl.CurrentQuality;
+                        var audio = playUrl.CurrentQuality.DashInfo.Audio;
+                        var video = playUrl.CurrentQuality.DashInfo.Video;
                        
-                        if (playUrl.data.current.playUrlInfo.dash_audio_url != null)
+                        if (audio != null)
                         {
                             downloadInfo.Urls.Add(new DownloadUrlInfo()
                             {
                                 FileName = "video.m4s",
-                                HttpHeader = playUrl.data.current.HttpHeader,
-                                Url = playUrl.data.current.playUrlInfo.dash_video_url.baseUrl
-                            });
+                                HttpHeader = quality.GetHttpHeader(),
+                                Url = video.Url
+                            }); ;
                             downloadInfo.Urls.Add(new DownloadUrlInfo()
                             {
                                 FileName = "audio.m4s",
-                                HttpHeader = playUrl.data.current.HttpHeader,
-                                Url = playUrl.data.current.playUrlInfo.dash_audio_url.baseUrl
+                                HttpHeader = quality.GetHttpHeader(),
+                                Url = audio.Url
                             });
                         }
                         else
@@ -204,32 +177,32 @@ namespace BiliLite.Dialogs
                             downloadInfo.Urls.Add(new DownloadUrlInfo()
                             {
                                 FileName = "0.blv",
-                                HttpHeader = playUrl.data.current.HttpHeader,
-                                Url = playUrl.data.current.playUrlInfo.dash_video_url.baseUrl
+                                HttpHeader = quality.GetHttpHeader(),
+                                Url = video.Url
                             });
                         }
                       
                     }
-                    if (playUrl.data.current.playUrlInfo.mode == VideoPlayMode.MultiFlv)
+                    if (playUrl.CurrentQuality.PlayUrlType == Modules.Player.Playurl.BiliPlayUrlType.MultiFLV)
                     {
                         int i = 0;
-                        foreach (var videoItem in playUrl.data.current.playUrlInfo.multi_flv_url)
+                        foreach (var videoItem in playUrl.CurrentQuality.FlvInfo)
                         {
                             downloadInfo.Urls.Add(new DownloadUrlInfo()
                             {
                                 FileName = $"{i}.blv",
-                                HttpHeader = playUrl.data.current.HttpHeader,
-                                Url = videoItem.url
+                                HttpHeader = playUrl.CurrentQuality.GetHttpHeader(),
+                                Url = videoItem.Url
                             });
                         }
                     }
-                    if (playUrl.data.current.playUrlInfo.mode == VideoPlayMode.SingleFlv || playUrl.data.current.playUrlInfo.mode == VideoPlayMode.SingleMp4)
+                    if (playUrl.CurrentQuality.PlayUrlType == Modules.Player.Playurl.BiliPlayUrlType.SingleFLV)
                     {
                         downloadInfo.Urls.Add(new DownloadUrlInfo()
                         {
                             FileName = "0.blv",
-                            HttpHeader = playUrl.data.current.HttpHeader,
-                            Url = playUrl.data.current.playUrlInfo.url
+                            HttpHeader = playUrl.CurrentQuality.GetHttpHeader(),
+                            Url = playUrl.CurrentQuality.FlvInfo.First().Url
                         });
 
                     }

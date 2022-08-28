@@ -88,36 +88,6 @@ namespace BiliLite.Api
             return api;
         }
 
-        public ApiModel SeasonPlayUrl23Moe(int animeid, string cid,string epid)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.Get,
-                baseUrl = $"https://moe.nsapps.cn/api/v1/BiliAnimeUrl",
-                parameter = $"animeid={animeid}&cid={cid}&epid={epid}&rnd={Utils.GetTimestampS()}"
-            };
-            return api;
-        }
-        public ApiModel SeasonPlayUrlBiliPlus(string aid, string cid, int qn, int season_type, bool dash)
-        {
-            ApiModel api = new ApiModel()
-            {
-                method = RestSharp.Method.Get,
-                baseUrl = $"https://www.biliplus.com/BPplayurl.php",
-                parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
-            };
-            if (SettingHelper.Account.Logined)
-            {
-                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}&mid={SettingHelper.Account.Profile.mid}";
-            }
-            if (dash)
-            {
-                api.parameter += "&fnver=0&fnval=4048";
-            }
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
-            return api;
-        }
-
         public ApiModel LivePlayUrl(string cid, int qn=0)
         {
             ApiModel api = new ApiModel()

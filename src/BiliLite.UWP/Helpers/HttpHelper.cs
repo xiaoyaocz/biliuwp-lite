@@ -68,7 +68,7 @@ namespace BiliLite.Helpers
                         code = (int)response.StatusCode,
                         status = response.StatusCode == HttpStatusCode.Ok,
                         results = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length),
-                        message = StatusCodeToMessage((int)response.StatusCode)
+                        message = "",
                     };
                     return httpResults;
                 }
@@ -250,7 +250,7 @@ namespace BiliLite.Helpers
                         code = (int)response.StatusCode,
                         status = response.StatusCode == HttpStatusCode.Ok,
                         results = Encoding.UTF8.GetString(byteArray),
-                        message = StatusCodeToMessage((int)response.StatusCode)
+                        message = ""
                     };
                     return httpResults;
                 }
@@ -281,6 +281,8 @@ namespace BiliLite.Helpers
                 case 0:
                 case 200:
                     return "请求成功";
+                case 412:
+                    return "请求太频繁，请稍后再试（412）";
                 case 504:
                     return "请求超时了";
                 case 301:

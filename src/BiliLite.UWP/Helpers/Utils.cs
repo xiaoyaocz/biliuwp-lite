@@ -24,6 +24,7 @@ using Windows.System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
 
 namespace BiliLite.Helpers
 {
@@ -99,7 +100,7 @@ namespace BiliLite.Helpers
             var result = CryptographicBuffer.EncodeToHexString(hashed);
             return result;
         }
-        public static void ShowMessageToast(string message,int seconds = 2)
+        public static void ShowMessageToast(string message, int seconds = 2)
         {
             MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(seconds));
             ms.Show();
@@ -131,7 +132,7 @@ namespace BiliLite.Helpers
             if (obj == null) return "0";
             if (double.TryParse(obj.ToString(), out var number))
             {
-               
+
                 if (number >= 10000)
                 {
                     return ((double)number / 10000).ToString("0.0") + "万";
@@ -154,13 +155,39 @@ namespace BiliLite.Helpers
             {
                 var re = await HttpHelper.GetString($"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}");
                 var obj = JObject.Parse(re);
-               return obj["result"]["season_id"].ToString();
+                return obj["result"]["season_id"].ToString();
             }
             catch (Exception)
             {
                 return "";
             }
         }
+
+        /// <summary>
+        /// 短链接还原
+        /// </summary>
+        /// <returns></returns>
+        public async static Task<string> GetShortLinkLocation(string shortlink)
+        {
+            try
+            {
+                HttpMessageHandler httpMessageHandler = new HttpClientHandler()
+                {
+                    AllowAutoRedirect = false,
+                };
+                using (HttpClient client = new HttpClient(httpMessageHandler))
+                {
+                    var response = await client.GetAsync(shortlink);
+                    return response.Headers.Location.ToString();
+                }
+            }
+            catch (Exception)
+            {
+                return shortlink;
+            }
+
+        }
+
         private static bool dialogShowing = false;
         public async static Task<bool> ShowLoginDialog()
         {
@@ -181,12 +208,12 @@ namespace BiliLite.Helpers
             }
         }
 
-        public async static Task<bool> ShowDialog(string title,string content)
+        public async static Task<bool> ShowDialog(string title, string content)
         {
-            MessageDialog messageDialog = new MessageDialog(content,title);
-            messageDialog.Commands.Add(new UICommand() { Label="确定",Id=true});
+            MessageDialog messageDialog = new MessageDialog(content, title);
+            messageDialog.Commands.Add(new UICommand() { Label = "确定", Id = true });
             messageDialog.Commands.Add(new UICommand() { Label = "取消", Id = false });
-           var result= await messageDialog.ShowAsync();
+            var result = await messageDialog.ShowAsync();
             return (bool)result.Id;
         }
 
@@ -210,8 +237,8 @@ namespace BiliLite.Helpers
             });
         }
         public static string ToSimplifiedChinese(string content)
-        { 
-            content= ChineseConverter.TraditionalToSimplified(content);
+        {
+            content = ChineseConverter.TraditionalToSimplified(content);
             return content;
         }
         public static bool SetClipboard(string content)
@@ -262,20 +289,21 @@ namespace BiliLite.Helpers
             {
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersion>(result.results);
-                var num = $"{ SystemInformation.ApplicationVersion.Major }{ SystemInformation.ApplicationVersion.Minor.ToString("00")}{ SystemInformation.ApplicationVersion.Build.ToString("00")}";
-                var v= int.Parse(num);
-                if (ver.version_num>v)
+                var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
+                var v = int.Parse(num);
+                if (ver.version_num > v)
                 {
                     var dialog = new ContentDialog();
 
                     dialog.Title = $"发现新版本 Ver {ver.version}";
-                    MarkdownTextBlock markdownText = new MarkdownTextBlock() {
-                        Text= ver.version_desc,
+                    MarkdownTextBlock markdownText = new MarkdownTextBlock()
+                    {
+                        Text = ver.version_desc,
                         TextWrapping = Windows.UI.Xaml.TextWrapping.Wrap,
                         IsTextSelectionEnabled = true,
-                        Background=new SolidColorBrush(Colors.Transparent)
+                        Background = new SolidColorBrush(Colors.Transparent)
                     };
-                    markdownText.LinkClicked += new EventHandler<LinkClickedEventArgs>(async (sender, args) => 
+                    markdownText.LinkClicked += new EventHandler<LinkClickedEventArgs>(async (sender, args) =>
                     {
                         await Launcher.LaunchUriAsync(new Uri(args.Link));
                     });
@@ -298,7 +326,7 @@ namespace BiliLite.Helpers
         public static Color ToColor(this string obj)
         {
             obj = obj.Replace("#", "");
-            if (int.TryParse(obj,out var c))
+            if (int.TryParse(obj, out var c))
             {
                 obj = c.ToString("X2");
             }
@@ -337,7 +365,7 @@ namespace BiliLite.Helpers
                 offset += available;
             }
         }
-      
+
         public static T ObjectClone<T>(this T obj)
         {
             var type = typeof(T);
@@ -364,10 +392,10 @@ namespace BiliLite.Helpers
                 }
             }
         }
-       
-        public static string ParseArea(string title,long mid)
+
+        public static string ParseArea(string title, long mid)
         {
-            if(Regex.IsMatch(title, @"僅.*港.*地區"))
+            if (Regex.IsMatch(title, @"僅.*港.*地區"))
             {
                 return "hk";
             }
