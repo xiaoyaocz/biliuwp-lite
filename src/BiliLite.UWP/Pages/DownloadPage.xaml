@@ -179,7 +179,7 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Title}"></TextBlock>
-                                                    <AppBarButton  Click="btnEpisodesOutput_Click" Width="40" Height="40" Grid.Column="1" Icon="Save"></AppBarButton>
+                                                    <AppBarButton ToolTipService.ToolTip="导出视频"  Click="btnEpisodesOutput_Click" Width="40" Height="40" Grid.Column="1" Icon="Save"></AppBarButton>
                                                     <AppBarButton Visibility="Collapsed" Click="btnEpisodesPlay_Click" Width="40" Height="40" Grid.Column="2" Icon="Play"></AppBarButton>
                                                     <AppBarButton ToolTipService.ToolTip="打开目录" Click="btnEpisodesFolder_Click" Width="40" Height="40" Grid.Column="3" >
                                                         <AppBarButton.Icon>

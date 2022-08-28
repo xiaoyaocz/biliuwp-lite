@@ -89,7 +89,7 @@ namespace BiliLite.Pages
                 else if (item.Paths.Count == 1)
                 {
                     info.PlayUrlType = BiliPlayUrlType.SingleFLV;
-                    info.FlvInfo =new List<BiliFlvPlayUrlInfo>() { new BiliFlvPlayUrlInfo() { 
+                    info.FlvInfo = new List<BiliFlvPlayUrlInfo>() { new BiliFlvPlayUrlInfo() {
                         Url=item.Paths[0],
                         Length = 0,
                         Order=0,
@@ -255,6 +255,13 @@ namespace BiliLite.Pages
             if (data.Epsidoes == null || data.Epsidoes.Count == 0)
             {
                 Utils.ShowMessageToast("没有可以导出的视频");
+                return;
+            }
+            if (data.Epsidoes.Count > 1)
+            {
+                Utils.ShowMessageToast("多集视频，请选择指定集数导出");
+                Pane.DataContext = data;
+                splitView.IsPaneOpen = true;
                 return;
             }
             OutputFile(data, data.Epsidoes.First());
