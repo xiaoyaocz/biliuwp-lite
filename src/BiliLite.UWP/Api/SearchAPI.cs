@@ -56,6 +56,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=video&page={pn}&order={order}&keyword={Uri.EscapeDataString(keyword)}&duration={duration}&category_id=&tids_2=&__refresh__=true&tids={region}&highlight=1&single_column=0"
             };
@@ -75,6 +76,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=media_bangumi&page={pn}&order=&keyword={Uri.EscapeDataString(keyword)}&category_id=&__refresh__=true&highlight=1&single_column=0"
             };
@@ -94,6 +96,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=media_ft&page={pn}&order=&keyword={Uri.EscapeDataString(keyword)}&category_id=&__refresh__=true&highlight=1&single_column=0"
             }; 
@@ -113,6 +116,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=bili_user&page={pn}&keyword={Uri.EscapeDataString(keyword)}{order}{type}&__refresh__=true&changing=mid&highlight=1&single_column=0&category_id="
             };
@@ -132,6 +136,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=live&cover_type=user_cover&page={pn}&keyword={Uri.EscapeDataString(keyword)}&__refresh__=true&changing=mid&highlight=1&single_column=0"
             };
@@ -151,6 +156,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=article&page={pn}&order={order}&keyword={Uri.EscapeDataString(keyword)}&category_id={region}&__refresh__=true&highlight=1&single_column=0"
             };
@@ -170,6 +176,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
+                need_cookie = true,
                 baseUrl = $"{baseUrl}/x/web-interface/search/type",
                 parameter = $"context=&search_type=topic&page={pn}&order=&keyword={Uri.EscapeDataString(keyword)}&category_id=&__refresh__=true&highlight=1&single_column=0"
             };

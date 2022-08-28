@@ -102,7 +102,7 @@ namespace BiliLite.Dialogs
             {
                 var access = Regex.Match(args.Uri.AbsoluteUri, "access_key=(.*?)&").Groups[1].Value;
                 var mid = Regex.Match(args.Uri.AbsoluteUri, "mid=(.*?)&").Groups[1].Value;
-                await loginVM.account.SaveLogin(access, "", 0, long.Parse(mid),null);
+                await loginVM.account.SaveLogin(access, "", 0, long.Parse(mid),null,null);
                 this.Hide();
                 return;
             }

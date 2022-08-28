@@ -45,7 +45,7 @@ namespace BiliLite.Helpers
                             client.DefaultRequestHeaders.Add(item.Key, item.Value);
                         }
                     }
-                    if (url.Contains("bilibili.com")||url.Contains("pgc/player/") || url.Contains("x/web-interface"))
+                    if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
                     {
                         client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
                     }
@@ -75,6 +75,43 @@ namespace BiliLite.Helpers
 
 
 
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                return new HttpResults()
+                {
+                    code = ex.HResult,
+                    status = false,
+                    message = "网络请求出现错误(GET)"
+                };
+            }
+        }
+
+        public async static Task<HttpResults> GetWithWebCookie(string url, IDictionary<string, string> headers = null)
+        {
+            try
+            {
+                if (headers == null)
+                {
+                    headers = new Dictionary<string, string>();
+                }
+                HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
+                var cookies = fiter.CookieManager.GetCookies(new Uri("http://bilibili.com"));
+                //没有Cookie
+                if(cookies==null|| cookies.Count == 0)
+                {
+                    //访问一遍bilibili.com
+                    await Get("https://www.bilibili.com");
+                }
+                cookies = fiter.CookieManager.GetCookies(new Uri("http://bilibili.com"));
+                string cookie = "";
+                foreach (var item in cookies)
+                {
+                    cookie += $"{item.Name}={item.Value};";
+                }
+                headers.Add("Cookie", cookie);
+                return await Get(url, headers);
             }
             catch (Exception ex)
             {
@@ -175,7 +212,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<String> GetString(string url, IDictionary<string, string> headers = null, IDictionary<string, string> cookie = null)
         {
-            Debug.WriteLine("GET:"+url);
+            Debug.WriteLine("GET:" + url);
             try
             {
                 using (var client = new HttpClient())
@@ -219,7 +256,7 @@ namespace BiliLite.Helpers
         /// <returns></returns>
         public async static Task<HttpResults> Post(string url, string body, IDictionary<string, string> headers = null, string contentType = "application/x-www-form-urlencoded")
         {
-            Debug.WriteLine("POST:" + url+"\r\nBODY:"+ body);
+            Debug.WriteLine("POST:" + url + "\r\nBODY:" + body);
 
             try
             {
@@ -305,7 +342,7 @@ namespace BiliLite.Helpers
                 case -2147012889:
                     return "请检查的网络连接";
                 default:
-                    return "未知错误,响应代码："+ code;
+                    return "未知错误,响应代码：" + code;
             }
         }
     }

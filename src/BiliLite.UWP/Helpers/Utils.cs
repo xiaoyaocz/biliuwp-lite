@@ -39,6 +39,10 @@ namespace BiliLite.Helpers
         {
             if (api.method == RestSharp.Method.Get)
             {
+                if (api.need_cookie)
+                {
+                    return await HttpHelper.GetWithWebCookie(api.url, api.headers);
+                }
                 return await HttpHelper.Get(api.url, api.headers);
             }
             else

@@ -4,6 +4,7 @@ using BiliLite.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -140,7 +141,7 @@ namespace BiliLite.Modules
                     {
                         if (m.data.status == 0)
                         {
-                            await SaveLogin(m.data.token_info.access_token, m.data.token_info.refresh_token, m.data.token_info.expires_in, m.data.token_info.mid, null);
+                            await SaveLogin(m.data.token_info.access_token, m.data.token_info.refresh_token, m.data.token_info.expires_in, m.data.token_info.mid, m.data.sso,m.data.cookie_info);
                             return new LoginCallbackModel()
                             {
                                 status = LoginStatus.Success,
@@ -211,7 +212,7 @@ namespace BiliLite.Modules
         /// <param name="expires"></param>
         /// <param name="userid"></param>
         /// <returns></returns>
-        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid, List<string> sso)
+        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid, List<string> sso,LoginCookieInfo cookie)
         {
             try
             {
@@ -229,19 +230,37 @@ namespace BiliLite.Modules
                     mid = userid,
                     refresh_token = refresh_token
                 };
+                // 好像没啥用...
                 if (sso == null)
                 {
                     sso = new List<string>() {
                         "https://passport.bilibili.com/api/v2/sso",
                         "https://passport.biligame.com/api/v2/sso",
-                        "https://passport.im9.com/api/v2/sso",
-                        "https://passport.bigfunapp.cn/api/v2/sso"
+                        "https://passport.bigfunapp.cn/api/v2/sso",
                     };
                 }
                 try
                 {
+                    //设置Cookie
+                    if (cookie!=null)
+                    {
+                        HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
+                        foreach (var item in cookie.domains)
+                        {
+                            foreach (var cookieItem in cookie.cookies)
+                            {
+                                filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.name, item,"/")
+                                {
+                                    HttpOnly=cookieItem.http_only==1,
+                                    Secure=cookieItem.secure==1,
+                                    Expires=Utils.TimestampToDatetime(cookieItem.expires),
+                                    Value=cookieItem.value,
+                                });
+                            }
+                        }
+                    }
                     //执行SSO
-                    await accountApi.SSO(access_key).Request();
+                    //await accountApi.SSO(access_key).Request();
                 }
                 catch (Exception ex)
                 {
@@ -396,10 +415,11 @@ namespace BiliLite.Modules
                 var result = await accountApi.QRLoginPoll(auth_code, guid).Request();
                 if (result.status)
                 {
-                    var data = await result.GetData<LoginTokenInfo>();
+                    var data = await result.GetData<LoginDataV3Model>();
                     if (data.success)
                     {
-                        await SaveLogin(data.data.access_token, data.data.refresh_token, data.data.expires_in, data.data.mid, null);
+                        
+                        await SaveLogin(data.data.token_info.access_token, data.data.token_info.refresh_token, data.data.token_info.expires_in, data.data.token_info.mid, data.data.sso,data.data.cookie_info);
                         return new LoginCallbackModel()
                         {
                             status = LoginStatus.Success,
@@ -478,7 +498,7 @@ namespace BiliLite.Modules
                     if (obj["code"].ToInt32() == 0)
                     {
                         var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
-                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid, null);
+                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid, null,null);
                         return true;
                     }
                     else

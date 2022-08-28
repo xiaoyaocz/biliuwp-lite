@@ -115,7 +115,7 @@ namespace BiliLite.Modules.User
             {
                 if (jObject["access_token"] != null)
                 {
-                    var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()), null);
+                    var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()), null,null);
 
                     if (m)
                     {
@@ -542,7 +542,7 @@ namespace BiliLite.Modules.User
             {
                 if (result.status == 0)
                 {
-                    await account.SaveLogin(result.token_info.access_token, result.token_info.refresh_token, result.token_info.expires_in, result.token_info.mid, result.sso);
+                    await account.SaveLogin(result.token_info.access_token, result.token_info.refresh_token, result.token_info.expires_in, result.token_info.mid, result.sso, result.cookie_info);
                     return new LoginCallbackModel()
                     {
                         status = LoginStatus.Success,
@@ -634,7 +634,7 @@ namespace BiliLite.Modules.User
         public List<string> sso { get; set; }
         public string url { get; set; }
         public LoginResultTokenModel token_info { get; set; }
-        public LoginResultCookieModel cookie_info { get; set; }
+        public LoginCookieInfo cookie_info { get; set; }
     }
     public class LoginResultTokenModel
     {
@@ -643,16 +643,5 @@ namespace BiliLite.Modules.User
         public int expires_in { get; set; }
         public string refresh_token { get; set; }
     }
-    public class LoginResultCookieModel
-    {
-        public List<LoginResultCookieItemModel> cookies { get; set; }
-        public List<string> domains { get; set; }
-    }
-    public class LoginResultCookieItemModel
-    {
-        public string name { get; set; }
-        public string value { get; set; }
-        public int http_only { get; set; }
-        public int expires { get; set; }
-    }
+   
 }

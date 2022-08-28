@@ -76,6 +76,10 @@ namespace BiliLite.Modules
 
     public class SearchVM : IModules
     {
+        /// <summary>
+        /// 搜索请求需要cookie
+        /// </summary>
+        public static string cookie = "";
         public SearchVM()
         {
             Area = Areas[0];

@@ -21,6 +21,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.Web.Http.Filters;
 
 namespace BiliLite.Helpers
 {
@@ -66,7 +67,37 @@ namespace BiliLite.Helpers
             SettingHelper.SetValue<DateTime>(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
             SettingHelper.SetValue<string>(SettingHelper.Account.REFRESH_KEY, null);
             SettingHelper.SetValue<MyProfileModel>(SettingHelper.Account.USER_PROFILE, null);
+            ClaerCookie();
             LogoutedEvent?.Invoke(null, null);
+        }
+
+        private static void ClaerCookie()
+        {
+            try
+            {
+                var domains = new string[] {
+                    "http://bilibili.com",
+                    "http://biligame.com",
+                    "http://bigfun.cn",
+                    "http://bigfunapp.cn",
+                    "http://dreamcast.hk"
+                };
+                //删除Cookie
+                HttpBaseProtocolFilter httpBaseProtocolFilter = new HttpBaseProtocolFilter();
+                foreach (var domain in domains)
+                {
+                    var cookies = httpBaseProtocolFilter.CookieManager.GetCookies(new Uri(domain));
+                    foreach (var item in cookies)
+                    {
+                        httpBaseProtocolFilter.CookieManager.DeleteCookie(item);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("清除用户Cookie", LogType.ERROR, ex);
+            }
         }
 
         /// <summary>

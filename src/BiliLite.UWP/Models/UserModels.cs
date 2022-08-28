@@ -50,6 +50,7 @@ namespace BiliLite.Models
     {
         public int status { get; set; }
         public LoginTokenInfo token_info { get; set; }
+        public LoginCookieInfo cookie_info { get; set; }
         public string url { get; set; }
         public List<string> sso { get; set; }
     }
@@ -67,7 +68,19 @@ namespace BiliLite.Models
 
         public DateTime expires_datetime { get; set; }
     }
-    
+    public class LoginCookieInfo
+    {
+        public List<LoginCookieInfoItem> cookies { get; set; }
+        public List<string> domains { get; set; }
+    }
+    public class LoginCookieInfoItem
+    {
+        public string name { get; set; }
+        public string value { get; set; }
+        public int http_only { get; set; }
+        public int expires { get; set; }
+        public int secure { get; set; }
+    }
     public class LoginCallbackModel
     {
         public LoginStatus status { get; set; }

@@ -123,9 +123,10 @@ namespace BiliLite.Api
         /// </summary>
         public IDictionary<string, string> headers { get; set; }
         /// <summary>
-        /// 请求cookie
+        /// 需要Cookie
         /// </summary>
-        public IDictionary<string, string> cookies { get; set; }
+        public bool need_cookie { get; set; } = false;
+
         /// <summary>
         /// 请求地址
         /// </summary>
