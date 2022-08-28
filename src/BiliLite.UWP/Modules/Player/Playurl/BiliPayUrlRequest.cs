@@ -183,8 +183,7 @@ namespace BiliLite.Modules.Player.Playurl
                         //没有视频，跳过此清晰度
                         if (video == null)
                         {
-
-                            info.Qualites.Remove(item);
+                            //info.Qualites.Remove(item);
                             continue;
                         }
                         DashItemModel audio = null;
@@ -216,12 +215,14 @@ namespace BiliLite.Modules.Player.Playurl
                             Video = video.ToBiliDashItem(),
                         };
                     }
-
+                    //移除没有链接的视频
+                    info.Qualites = info.Qualites.Where(x => x.HasPlayUrl).ToList();
                     if (!IsVIP)
                     {
                         //非大会员，去除大会员专享清晰度
                         info.Qualites = info.Qualites.Where(x => x.QualityID != 74 && x.QualityID <= 80).ToList();
                     }
+
                     var current = info.Qualites.FirstOrDefault(x => x.QualityID == qn);
                     if (current == null)
                     {
@@ -399,7 +400,7 @@ namespace BiliLite.Modules.Player.Playurl
                         if (video == null)
                         {
 
-                            info.Qualites.Remove(item);
+                            //info.Qualites.Remove(item);
                             continue;
                         }
                         DashItemModel audio = null;
@@ -430,7 +431,8 @@ namespace BiliLite.Modules.Player.Playurl
                             Video = video.ToBiliDashItem(),
                         };
                     }
-
+                    //移除没有链接的视频
+                    info.Qualites = info.Qualites.Where(x => x.HasPlayUrl).ToList();
                     if (!IsVIP)
                     {
                         //非大会员，去除大会员专享清晰度
