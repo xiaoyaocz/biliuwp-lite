@@ -179,6 +179,22 @@ namespace BiliLite.Api
             };
             return api;
         }
+        /// <summary>
+        /// 读取视频在线人数
+        /// </summary>
+        /// <param name="aid">AV</param>
+        /// <param name="cid">CID</param>
+        /// <returns></returns>
+        public ApiModel GetPlayerOnline(string aid, string cid, string bvid)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/online/total",
+                parameter = $"cid={cid}&aid={aid}&bvid={bvid}",
+            };
+            return api;
+        }
 
         /// <summary>
         /// 弹幕关键词

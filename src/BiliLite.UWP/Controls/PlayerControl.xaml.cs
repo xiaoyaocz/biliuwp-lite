@@ -1387,6 +1387,7 @@ namespace BiliLite.Controls
 
         private async Task GetPlayerInfo()
         {
+            TopOnline.Text = "";
             var autoAISubtitle = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_OPEN_AI_SUBTITLE, false);
             if (CurrentPlayItem.play_mode == VideoPlayType.Download)
             {
@@ -1483,6 +1484,9 @@ namespace BiliLite.Controls
                     TopTitle.Text = interactionVideoVM.Select.title;
                 }
             }
+
+            TopOnline.Text = await playerHelper.GetOnline(CurrentPlayItem.avid, CurrentPlayItem.cid);
+
         }
 
         BiliPlayUrlInfo current_quality_info = null;

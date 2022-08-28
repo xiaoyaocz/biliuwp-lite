@@ -656,7 +656,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis">第一集</TextBlock>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
-
+                                <TextBlock x:Name="TopOnline" Foreground="White" FontSize="16" VerticalAlignment="Center" Margin="12 0"></TextBlock>
                                 <Button x:Name="TopBtnSettingDanmaku" Click="TopBtnSettingDanmaku_Click" Background="Transparent" Padding="0" Width="48" Height="48">
                                     <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_setting.png" ></Image>
 

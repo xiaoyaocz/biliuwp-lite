@@ -89,11 +89,11 @@
                                     </Border>
                                     <StackPanel Grid.Column="1" Margin="4 0 0 0" >
                                         <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
-                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=stat.view,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 8 0 0">观看:<Run Text="{x:Bind Path=stat.view,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
 
                                         <TextBlock Margin="0 2 0 0" Foreground="Gray" VerticalAlignment="Center" >UP:<Run Text="{x:Bind Path=owner.name}"/></TextBlock>
 
-                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">综合评分 <Run Text="{x:Bind Path=score}"/></TextBlock>
+                                       
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

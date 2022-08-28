@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Services.Maps;
 using Windows.Storage;
 
 namespace BiliLite.Modules
@@ -218,7 +219,28 @@ namespace BiliLite.Modules
 
         }
 
+        public async Task<string> GetOnline(string aid, string cid)
+        {
 
+            try
+            {
+                var api = PlayerAPI.GetPlayerOnline(aid: aid, cid: cid, "");
+                var result = await api.Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<PlayerOnlineInfo>();
+                    if (data.code == 0)
+                    {
+                        return $"{data.data.total}人正在看";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                HandelError<object>(ex);
+            }
+            return "";
+        }
     }
 
    
@@ -232,6 +254,11 @@ namespace BiliLite.Modules
         /// 互动视频信息
         /// </summary>
         public InteractionModel interaction { get; set; }
+    }
+    public class PlayerOnlineInfo
+    {
+        public string total { get; set; }
+        public string count { get; set; }
     }
     public class InteractionHistoryNodeModel
     {
