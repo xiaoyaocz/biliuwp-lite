@@ -139,7 +139,7 @@ namespace BiliLite.Controls
             }
             if (loadCommentInfo.IsDialog)
             {
-                btn_Refresh.Margin= new Thickness(0,0,40,0);
+                btn_Refresh.Margin = new Thickness(0, 0, 40, 0);
             }
             else
             {
@@ -652,7 +652,7 @@ namespace BiliLite.Controls
         public int CommentMode { get; set; }
         public commentSort CommentSort { get; set; }
         public string Oid { get; set; }
-        public bool IsDialog { get; set; }=false;
+        public bool IsDialog { get; set; } = false;
     }
 
     public class dataCommentModel
@@ -818,6 +818,7 @@ namespace BiliLite.Controls
         public CommentMemberModel member { get; set; }
         public CommentContentModel content { get; set; }
         public CommentUPActionModel up_action { get; set; }
+        public CommentReplyControlModel reply_control { get; set; }
 
         private ObservableCollection<CommentModel> _replies = new ObservableCollection<CommentModel>();
         public ObservableCollection<CommentModel> replies
@@ -874,7 +875,7 @@ namespace BiliLite.Controls
             set { _showLoading = value; thisPropertyChanged("showLoading"); }
         }
 
-        
+
         public Visibility showDelete
         {
             get
@@ -931,16 +932,20 @@ namespace BiliLite.Controls
 
         private async void ButtonClick(object paramenter)
         {
-            
+
             await MessageCenter.HandelUrl(paramenter.ToString());
             return;
-           
+
 
         }
 
 
     }
-
+    public class CommentReplyControlModel
+    {
+        public string time_desc { get; set; }
+        public string location { get; set; }
+    }
     public class CommentContentModel
     {
 
@@ -966,7 +971,7 @@ namespace BiliLite.Controls
             }
         }
         public string device { get; set; }
-        public RichTextBlock text 
+        public RichTextBlock text
         {
             get
             {
@@ -977,7 +982,7 @@ namespace BiliLite.Controls
                 //tx.Blocks.Add(paragraph);
                 //return tx;
 
-                return  ControlHelper.StringToRichText(message, emote);
+                return ControlHelper.StringToRichText(message, emote);
             }
 
         }
@@ -1018,7 +1023,7 @@ namespace BiliLite.Controls
         {
             get
             {
-                return user_sailing != null&& user_sailing.cardbg!=null&& user_sailing.cardbg.fan!=null;
+                return user_sailing != null && user_sailing.cardbg != null && user_sailing.cardbg.fan != null;
             }
         }
 
@@ -1131,7 +1136,7 @@ namespace BiliLite.Controls
     }
     public class CommentMemberUserSailingModel
     {
-        public CommentMemberUserSailingPendantModel pendant{ get; set; }
+        public CommentMemberUserSailingPendantModel pendant { get; set; }
         public CommentMemberUserSailingCardbgModel cardbg { get; set; }
     }
     public class CommentMemberUserSailingPendantModel
@@ -1146,7 +1151,7 @@ namespace BiliLite.Controls
         public string name { get; set; }
         public string image { get; set; }
         public string jump_url { get; set; }
-        public bool show { get { return fan != null && fan.num_desc != null && fan.num_desc!=""; } }
+        public bool show { get { return fan != null && fan.num_desc != null && fan.num_desc != ""; } }
         public CommentMemberUserSailingCardbgFanModel fan { get; set; }
     }
     public class CommentMemberUserSailingCardbgFanModel

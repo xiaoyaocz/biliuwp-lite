@@ -171,7 +171,12 @@
                     <AppBarButton Visibility="Collapsed" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More"  Width="48" ></AppBarButton>
                 </StackPanel>
 
-                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}"><!--#<Run Text="{Binding Path=floor}"></Run>--> <Run Text="{x:Bind Path=time}"></Run> <Run Text="{x:Bind Path=content.plat_str}"></Run></TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}">
+                    <!--#<Run Text="{Binding Path=floor}"></Run>-->
+                    <Run Text="{x:Bind Path=time}"></Run> 
+                    <Run Text="{x:Bind Path=content.plat_str}"></Run>
+                    <Run Text="{x:Bind Path=reply_control.location}"></Run>
+                </TextBlock>
 
                 <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=content.text}">
 
@@ -239,21 +244,25 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
+                                    
                                     <HyperlinkButton Foreground="{Binding Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="btn_User_Click">
                                         <StackPanel Orientation="Horizontal"  >
                                             <TextBlock  Text="{Binding Path=member.uname}"  VerticalAlignment="Center"></TextBlock>
                                             <Image Height="12" Margin="8 0" Source="{Binding Path=member.LV}"></Image>
                                         </StackPanel>
                                     </HyperlinkButton>
-
+                                    <TextBlock FontSize="12"  IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center"  ToolTipService.ToolTip="{Binding Path=ctime,Converter={StaticResource datetime}}">
+                                                <Run Text="{Binding Path=time}"></Run>
+                                                <Run Text="{Binding Path=reply_control.location}"></Run>
+                                    </TextBlock>
                                     <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
-                                    <ContentControl Content="{Binding Path=content.text}">
+                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=content.text}">
 
                                     </ContentControl>
 
                                     <Grid>
                                         <StackPanel Margin="0 4" Orientation="Horizontal">
-                                            <TextBlock FontSize="14" Margin="0 0 8 0" IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center" Text="{Binding Path=time}" ToolTipService.ToolTip="{Binding Path=ctime,Converter={StaticResource datetime}}">></TextBlock>
+                                           
                                             <HyperlinkButton  Click="btn_Like_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
                                                 <StackPanel Orientation="Horizontal">
                                                     <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
