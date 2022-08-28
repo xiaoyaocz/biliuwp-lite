@@ -571,28 +571,43 @@ namespace BiliLite.Modules.Player.Playurl
 
         private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID)
         {
-            var webApiResult = await (playerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qualityID, dash: CodecMode != PlayUrlCodecMode.FLV, false, playInfo.area)).Request();
-            if (!webApiResult.status)
+            try
             {
-                return BiliPlayUrlQualitesInfo.Failure(webApiResult.message);
+                var webApiResult = await (playerAPI.VideoPlayUrl(aid: playInfo.avid, cid: playInfo.cid, qn: qualityID, dash: CodecMode != PlayUrlCodecMode.FLV, false, playInfo.area)).Request();
+                if (!webApiResult.status)
+                {
+                    return BiliPlayUrlQualitesInfo.Failure(webApiResult.message);
+                }
+                var data = await webApiResult.GetData<JObject>();
+                if (data.code != 0)
+                {
+                    return BiliPlayUrlQualitesInfo.Failure(data.message);
+                }
+                var jsonResult = await ParseJson(qualityID, data.data, WebUserAgent, WebReferer, false);
+                return jsonResult;
             }
-            var data = await webApiResult.GetData<JObject>();
-            if (data.code != 0)
+            catch (Exception ex)
             {
-                return BiliPlayUrlQualitesInfo.Failure(data.message);
+                return BiliPlayUrlQualitesInfo.Failure(ex.ToString());
             }
-            var jsonResult = await ParseJson(qualityID, data.data, WebUserAgent, WebReferer, false);
-            return jsonResult;
+
         }
         private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseGrpc(PlayInfo playInfo, int qualityID)
         {
+            try
+            {
+                Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
 
-            Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
+                var playViewReply = await playUrlApi.VideoPlayView(Convert.ToInt64(playInfo.avid), Convert.ToInt64(playInfo.cid), qualityID, 16, codec, SettingHelper.Account.AccessKey);
 
-            var playViewReply = await playUrlApi.VideoPlayView(Convert.ToInt64(playInfo.avid), Convert.ToInt64(playInfo.cid), qualityID, 16, codec, SettingHelper.Account.AccessKey);
+                var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
+                return grpcResult;
+            }
+            catch (Exception ex)
+            {
+                return BiliPlayUrlQualitesInfo.Failure(ex.ToString());
+            }
 
-            var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
-            return grpcResult;
         }
     }
     class BiliSeasonPlayUrlRequest : BiliPlayUrlRequest
@@ -653,28 +668,45 @@ namespace BiliLite.Modules.Player.Playurl
 
         private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID, string area = "")
         {
-            var webApiResult = await (playerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, ep_id: playInfo.ep_id, qn: qualityID, season_type: playInfo.season_type, dash: CodecMode != PlayUrlCodecMode.FLV, area != "", area)).Request();
-            if (!webApiResult.status)
+            try
             {
-                return BiliPlayUrlQualitesInfo.Failure(webApiResult.message);
+                var webApiResult = await (playerAPI.SeasonPlayUrl(aid: playInfo.avid, cid: playInfo.cid, ep_id: playInfo.ep_id, qn: qualityID, season_type: playInfo.season_type, dash: CodecMode != PlayUrlCodecMode.FLV, area != "", area)).Request();
+                if (!webApiResult.status)
+                {
+                    return BiliPlayUrlQualitesInfo.Failure(webApiResult.message);
+                }
+                var data = await webApiResult.GetResult<JObject>();
+                if (data.code != 0)
+                {
+                    return BiliPlayUrlQualitesInfo.Failure(data.message);
+                }
+                var jsonResult = await ParseJson(qualityID, data.result, WebUserAgent, WebReferer, area != "");
+                return jsonResult;
             }
-            var data = await webApiResult.GetResult<JObject>();
-            if (data.code != 0)
+            catch (Exception ex)
             {
-                return BiliPlayUrlQualitesInfo.Failure(data.message);
+
+                return BiliPlayUrlQualitesInfo.Failure(ex.Message);
             }
-            var jsonResult = await ParseJson(qualityID, data.result, WebUserAgent, WebReferer, area != "");
-            return jsonResult;
+
         }
         private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseGrpc(PlayInfo playInfo, int qualityID)
         {
+            try
+            {
 
-            Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
+                Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
 
-            var playViewReply = await playUrlApi.BangumiPlayView(Convert.ToInt64(playInfo.ep_id), Convert.ToInt64(playInfo.cid), qualityID, 0, codec, SettingHelper.Account.AccessKey);
+                var playViewReply = await playUrlApi.BangumiPlayView(Convert.ToInt64(playInfo.ep_id), Convert.ToInt64(playInfo.cid), qualityID, 0, codec, SettingHelper.Account.AccessKey);
 
-            var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
-            return grpcResult;
+                var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
+                return grpcResult;
+            }
+            catch (Exception ex)
+            {
+
+                return BiliPlayUrlQualitesInfo.Failure(ex.Message);
+            }
         }
     }
 
