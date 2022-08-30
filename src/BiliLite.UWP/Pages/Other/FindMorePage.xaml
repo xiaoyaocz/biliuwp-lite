@@ -1,0 +1,52 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Other.FindMorePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Other"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:modules="using:BiliLite.Modules.Other"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <toolkit:AdaptiveGridView OneRowModeEnabled="False"
+                                  ItemClick="AdaptiveGridView_ItemClick"
+                                  StretchContentForSingleRow="False"
+                                  x:Name="list"
+                                  DesiredWidth="600" 
+                                  Padding="8"
+                                  ItemsSource="{x:Bind Path=findMoreVM.Items,Mode=OneWay}"
+                                  SelectionMode="None" 
+                                  IsItemClickEnabled="True">
+           
+            <toolkit:AdaptiveGridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="8 4"></Setter>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </toolkit:AdaptiveGridView.ItemContainerStyle>
+            <toolkit:AdaptiveGridView.ItemTemplate>
+                <DataTemplate x:DataType="modules:FindMoreEntranceModel">
+                    <Border Background="WhiteSmoke" CornerRadius="8">
+                        <Grid Margin="8" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{x:Bind Path=pic}" Width="80" Height="80" ></Image>
+                            <StackPanel Grid.Column="1" Margin="12 0" Orientation="Vertical">
+                                <TextBlock  Text="{x:Bind name}" FontSize="15" MaxLines="1" TextTrimming="CharacterEllipsis"></TextBlock>
+                                <TextBlock Text="{x:Bind desc}" FontSize="12" Margin="0 4 0 0" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Foreground="Gray">《SPY×FAMILY 間諜家家酒》、《輝夜姬想讓人告白》、《派對咖孔明》、《街角的魔族女孩》</TextBlock>
+                            </StackPanel>
+                        </Grid>
+                       
+                    </Border>
+                </DataTemplate>
+            </toolkit:AdaptiveGridView.ItemTemplate>
+            
+        </toolkit:AdaptiveGridView>
+        <ProgressRing VerticalAlignment="Center" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=findMoreVM.Loading,Mode=OneWay}"></ProgressRing>
+    </Grid>
+</pages:BasePage>

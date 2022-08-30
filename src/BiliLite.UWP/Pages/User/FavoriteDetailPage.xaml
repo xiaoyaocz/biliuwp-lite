@@ -1,0 +1,116 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.User.FavoriteDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.User"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:BiliLite.Controls"
+    mc:Ignorable="d"
+    xmlns:fa="using:FontAwesome5"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:convert="using:BiliLite.Converters"
+    xmlns:model="using:BiliLite.Modules"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <Style x:Key="ItemStyle" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="8"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+        </Style>
+        <DataTemplate x:Key="VideoDataTemplate" x:DataType="model:FavoriteInfoVideoItemModel">
+            <Grid Background="#00FFFFFF">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="AddToWatchLater" Click="AddToWatchLater_Click" Icon="Add" Text="添加到稍后再看"/>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!--<Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem  Text="取消收藏"></MenuFlyoutItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>-->
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                    <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" >UP:<Run Text="{x:Bind Path=upper.name}"/></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray">播放:<Run Text="{x:Bind Path=cnt_info.play,Converter={StaticResource numberToStringConvert}}"></Run> 弹幕:<Run Text="{x:Bind Path=cnt_info.danmaku,Converter={StaticResource numberToStringConvert}}"></Run></TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource NavigationViewTopPaneBackground}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="12 4" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.title,Mode=OneWay}"></TextBlock>
+                <TextBlock Margin="0 4" Foreground="Gray" >创建者:<Run Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.upper.name,Mode=OneWay}"/>,共<Run Text="{x:Bind Path=favoriteDetailVM.FavoriteInfo.media_count,Mode=OneWay}"/>个视频</TextBlock>
+            </StackPanel>
+            <StackPanel  Visibility="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Mode=OneWay}" Grid.Column="1" Margin="12 0" VerticalAlignment="Center" Orientation="Horizontal">
+                <AutoSuggestBox x:Name="searchBox" Width="160" QueryIcon="Find" Margin="12 0" PlaceholderText="输入关键字" VerticalAlignment="Center" QuerySubmitted="AutoSuggestBox_QuerySubmitted"></AutoSuggestBox>
+                <AppBarButton x:Name="PlayAll" Click="PlayAll_Click" ToolTipService.ToolTip="播放全部" Icon="Play" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="收藏" 
+                              Visibility="{x:Bind Path=favoriteDetailVM.ShowCollect,Mode=OneWay}" 
+                              Command="{x:Bind Path=favoriteDetailVM.CollectCommand}"
+                              Icon="OutlineStar" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="取消收藏" 
+                              Visibility="{x:Bind Path=favoriteDetailVM.ShowCancelCollect,Mode=OneWay}" 
+                              Command="{x:Bind Path=favoriteDetailVM.CancelCollectCommand}"
+                              Icon="SolidStar" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="清除失效" Click="btnClean_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Icon="Delete" Width="40" Height="40"></AppBarButton>
+                <AppBarButton ToolTipService.ToolTip="批量操作" Command="{x:Bind Path=favoriteDetailVM.SelectCommand}" CommandParameter="1" Icon="List" Width="40" Height="40"></AppBarButton>
+            </StackPanel>
+            <StackPanel  Visibility="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Converter={StaticResource display},Mode=OneWay}" Grid.Column="1" Margin="12 0" VerticalAlignment="Center" Orientation="Horizontal">
+                <CheckBox Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked">全选/反选</CheckBox>
+                <Button x:Name="btnDelete" Click="btnDelete_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Margin="0 0 4 0">删除选中</Button>
+                <Button x:Name="btnMove" Click="btnMove_Click" Visibility="{x:Bind Path=favoriteDetailVM.IsSelf,Mode=OneWay}" Margin="4 0">移动到...</Button>
+                <Button x:Name="btnCopy" Click="btnCopy_Click"  Margin="4 0">复制到...</Button>
+                <AppBarButton ToolTipService.ToolTip="退出批量操作" Command="{x:Bind Path=favoriteDetailVM.SelectCommand}" Icon="Cancel" Width="40" Height="40"></AppBarButton>
+            </StackPanel>
+            
+        </Grid>
+        
+        <Grid Grid.Row="1">
+
+            <toolkit:AdaptiveGridView SelectionMode="{x:Bind Path=favoriteDetailVM.SelectionMode,Mode=OneWay}" 
+                                          IsItemClickEnabled="{x:Bind Path=favoriteDetailVM.IsItemClickEnabled,Mode=OneWay}"
+                                          DesiredWidth="600"
+                                          x:Name="listView"
+                                          ItemClick="Video_ItemClick"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource ItemStyle}"
+                                          ItemTemplate="{StaticResource VideoDataTemplate}"
+                                          ItemsSource="{x:Bind Path=favoriteDetailVM.Videos,Mode=OneWay}"
+                                          ItemHeight="80" Grid.ColumnSpan="2">
+
+                <toolkit:AdaptiveGridView.Footer>
+                    <StackPanel>
+                        <HyperlinkButton Command="{x:Bind Path=favoriteDetailVM.LoadMoreCommand}" Visibility="{x:Bind Path=favoriteDetailVM.ShowLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                            <TextBlock>加载更多</TextBlock>
+                        </HyperlinkButton>
+                        <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=favoriteDetailVM.Loading,Mode=OneWay}"></ProgressRing>
+                    </StackPanel>
+                </toolkit:AdaptiveGridView.Footer>
+            </toolkit:AdaptiveGridView>
+            <TextBlock Visibility="{x:Bind Path=favoriteDetailVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Gray" Margin="444,0,0,0">这里还什么都没有呢~</TextBlock>
+            
+        </Grid>
+        <controls:RoundButton Grid.RowSpan="2" Command="{x:Bind Path=favoriteDetailVM.RefreshCommand}" Visibility="{x:Bind Path=favoriteDetailVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+            <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+        </controls:RoundButton>
+    </Grid>
+</pages:BasePage>

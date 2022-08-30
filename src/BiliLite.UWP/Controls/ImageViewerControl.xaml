@@ -1,0 +1,77 @@
+﻿<UserControl
+    x:Class="BiliLite.Controls.ImageViewerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <Grid>
+     
+        <Grid>
+            <ScrollViewer  x:Name="scrollViewer" Tapped="Grid_Tapped" ZoomMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <Image x:Name="image" Stretch="None" ></Image>
+            </ScrollViewer>
+            <StackPanel  Orientation="Horizontal" Margin="12" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <Border CornerRadius="8"  Background="#7F000000" >
+                    <StackPanel Orientation="Horizontal">
+                        <AppBarButton x:Name="btnSave" Click="btnSave_Click" ToolTipService.ToolTip="保存" Width="40" Height="40" Icon="Save" Foreground="White"></AppBarButton>
+                        <AppBarButton x:Name="btnCopy" Click="btnCopy_Click" ToolTipService.ToolTip="复制" Width="40" Height="40" Icon="Copy" Foreground="White"></AppBarButton>
+                    </StackPanel>
+                </Border>
+                <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
+                    <StackPanel Orientation="Horizontal">
+                        <AppBarButton ToolTipService.ToolTip="原始大小" x:Name="btnOrigin"  Click="btnOrigin_Click"  Width="40" Height="40" Icon="Pictures" Foreground="White"></AppBarButton>
+                        <AppBarButton ToolTipService.ToolTip="放大" x:Name="btnZoomIn" Click="btnZoomIn_Click" Width="40" Height="40" Icon="ZoomIn" Foreground="White">
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator  Modifiers="None"  Key="Up" />
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
+                        <TextBlock VerticalAlignment="Center" FontSize="16" Margin="8 0" Foreground="White" Text="{Binding ElementName=scrollViewer,Path=ZoomFactor,Mode=OneWay,Converter={StaticResource numberToStringConvert},ConverterParameter='p00'}"></TextBlock>
+                        <AppBarButton ToolTipService.ToolTip="缩小" x:Name="btnZoomOut" Click="btnZoomOut_Click" Width="40" Height="40" Icon="ZoomOut" Foreground="White">
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator  Modifiers="None"  Key="Down" />
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
+
+                    </StackPanel>
+                </Border>
+                <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
+                    <StackPanel Orientation="Horizontal">
+
+
+
+                        <AppBarButton ToolTipService.ToolTip="上一张" x:Name="btnPrevious" Click="btnPrevious_Click" Width="40" Height="40"  Icon="Previous" Foreground="White">
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator  Modifiers="None"  Key="Left" />
+                                <KeyboardAccelerator  Modifiers="None"  Key="PageUp" />
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
+                        <TextBlock x:Name="txtIndex" VerticalAlignment="Center" Margin="8 0" FontSize="16" Foreground="White">1 / 1</TextBlock>
+                        <AppBarButton ToolTipService.ToolTip="下一张" x:Name="btnNext" Click="btnNext_Click" Width="40" Height="40"  Icon="Next" Foreground="White">
+                            <AppBarButton.KeyboardAccelerators>
+                                <KeyboardAccelerator  Modifiers="None"  Key="Right" />
+                                <KeyboardAccelerator  Modifiers="None"  Key="PageDown" />
+                            </AppBarButton.KeyboardAccelerators>
+                        </AppBarButton>
+                    </StackPanel>
+                </Border>
+                <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
+                    <StackPanel Orientation="Horizontal">
+                        <AppBarButton x:Name="btnHelp" Click="btnHelp_Click" ToolTipService.ToolTip="帮助" Width="40" Height="40" Icon="Help" Foreground="White"></AppBarButton>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+        </Grid>
+        <StackPanel x:Name="loadFaild" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock >图片加载失败</TextBlock>
+            <Button x:Name="btnRefresh" Click="btnRefresh_Click" Margin="8" HorizontalAlignment="Center">刷新</Button>
+        </StackPanel>
+        <ProgressRing x:Name="loading" Visibility="Collapsed" IsActive="True"></ProgressRing>
+
+    </Grid>
+</UserControl>

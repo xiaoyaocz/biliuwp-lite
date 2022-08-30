@@ -1,0 +1,34 @@
+﻿<Page
+    x:Class="BiliLite.Pages.Home.RegionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Home"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:BiliLite.Modules.Home"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <GridView ItemClick="GridView_ItemClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{x:Bind Path=channelVM.Regions,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem">
+                        <Setter Property="Width" Value="100"></Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="model:RegionItem">
+                        <StackPanel>
+                            <Image Width="48" Margin="0 8" Height="48" Source="{x:Bind Path=logo}"></Image>
+                            <TextBlock Margin="0 0 0 8" TextAlignment="Center" Text="{x:Bind name}"></TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+
+            </GridView>
+        </ScrollViewer>
+       
+        <ProgressRing IsActive="True" Width="56" Height="56" HorizontalAlignment="Center" Visibility="{x:Bind Path=channelVM.Loading,Mode=OneWay}"></ProgressRing>
+    </Grid>
+</Page>

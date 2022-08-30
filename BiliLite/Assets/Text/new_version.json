@@ -1,7 +1,7 @@
 {
-  "version": "4.3.7",
-  "version_num": 40307,
-  "version_desc": "更新内容:\r\n\r\n* 新增直播默认画质调节\r\n\r\n* 更新登录API，新增短信登录\r\n\r\n* 新增倍速、静音快捷键\r\n\r\n* 评论支持显示用户装扮\r\n\r\n* 动态评论展示方式修改(右侧->中间)\r\n\r\n* 修复直播音量调节问题\r\n\r\n* 修复我的收藏加载失败问题\r\n\r\n* 修复其他问题",
-  "url": "https://www.showdoc.com.cn/biliuwpv4",
-  "download_url": "https://xiaoyaocz.lanzouv.com/b00veeuqb"
+  "version": "4.4.0",
+  "version_num": 40400,
+  "version_desc": "更新内容:\r\n\r\n* 支持导出下载的视频为MP4文件\r\n\r\n* 支持按地区设置代理\r\n\r\n* 支持按地区搜索\r\n\r\n* 修复一些问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
+  "url": "https://b.nsapps.cn",
+  "download_url": "https://b.nsapps.cn"
 }

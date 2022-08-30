@@ -1,0 +1,54 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Live.LiveAreaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Live"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:modules="using:BiliLite.Modules.Live"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+        <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
+    </Page.Resources>
+    <Grid>
+        
+    
+    <Pivot ItemsSource="{x:Bind Path=liveAreaVM.Items,Mode=OneWay}" >
+        <Pivot.HeaderTemplate>
+            <DataTemplate x:DataType="modules:LiveAreaModel">
+                <TextBlock FontSize="15" Text="{x:Bind Path=name}"></TextBlock>
+            </DataTemplate>
+        </Pivot.HeaderTemplate>
+        <Pivot.ItemContainerStyle>
+            <Style TargetType="PivotItem">
+                <Setter Property="Margin" Value="0 8"></Setter>
+            </Style>
+        </Pivot.ItemContainerStyle>
+        <Pivot.ItemTemplate>
+            <DataTemplate x:DataType="modules:LiveAreaModel">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <GridView ItemClick="GridView_ItemClick" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{x:Bind Path=list,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Width" Value="100"></Setter>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:LiveAreaItemModel">
+                            <StackPanel>
+                                <Image Width="48" Margin="0 8" Height="48" Source="{x:Bind Path=pic}"></Image>
+                                <TextBlock Margin="0 0 0 8" TextAlignment="Center" Text="{x:Bind name}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+
+                </GridView>
+                    </ScrollViewer>
+                </DataTemplate>
+        </Pivot.ItemTemplate>
+    </Pivot>
+        <ProgressRing IsActive="True" Width="56" Height="56" HorizontalAlignment="Center" Visibility="{x:Bind Path=liveAreaVM.Loading,Mode=OneWay}"></ProgressRing>
+    </Grid>
+</pages:BasePage>

@@ -1,0 +1,20 @@
+﻿<MPD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="urn:mpeg:dash:schema:mpd:2011" 
+xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd" 
+type="static" 
+mediaPresentationDuration="PT00H00M51S" 
+timeShiftBufferDepth="PT1S" minimumUpdatePeriod="PT1H" maxSegmentDuration="PT3S" minBufferTime="PT1S" 
+profiles="urn:mpeg:dash:profile:isoff-live:2011,urn:com:dashif:dash264">
+  <Period id="1" start="PT0S">
+    <AdaptationSet group="1" mimeType="audio/mp4" segmentAlignment="true">
+      <Representation id="30232" bandwidth="133049" codecs="mp4a.40.2" >
+        <SegmentTemplate duration="52" media="https://xy110x85x56x56xy.mcdn.bilivideo.cn:4483/upgcxcode/47/61/768796147/768796147_nb3-1-30232.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTF8diT3xLB9LEodPn1K1NiEndwD8gxbRczM=&amp;uipk=5&amp;nbs=1&amp;deadline=1657711515&amp;gen=playurlv2&amp;os=mcdn&amp;oi=992567114&amp;trid=000081c568845d6841bd9afad697fe51f4c9u&amp;mid=0&amp;platform=pc&amp;upsig=3bb6e7debb591dd65040d814427b4966&amp;uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&amp;mcdnid=11000044&amp;bvc=vod&amp;nettype=0&amp;orderid=0,3&amp;agrr=1&amp;bw=16953&amp;logo=A0000400" startNumber="1"/>
+      </Representation>
+    </AdaptationSet>
+    <AdaptationSet group="2" mimeType="video/mp4"  segmentAlignment="true" startWithSAP="1">
+      <Representation id="80" frameRate="30.019" bandwidth="1318014" codecs="av01.0.08M.08.0.110.01.01.01.0" width="1920" height="1080">
+        <SegmentTemplate timescale="1000" duration="52" media="https://xy183x56x120x181xy.mcdn.bilivideo.cn:4483/upgcxcode/47/61/768796147/768796147-1-100026.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTF8diT3xLB9LEodPn1K1NiEndwD8gxbRczM=&amp;uipk=5&amp;nbs=1&amp;deadline=1657711515&amp;gen=playurlv2&amp;os=mcdn&amp;oi=992567114&amp;trid=000181c568845d6841bd9afad697fe51f4c9u&amp;mid=0&amp;platform=pc&amp;upsig=571c49cda82acc1553c63a47913e295a&amp;uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&amp;mcdnid=17000044&amp;bvc=vod&amp;nettype=0&amp;orderid=0,3&amp;agrr=1&amp;bw=167946&amp;logo=A0010000"  startNumber="1"/>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>

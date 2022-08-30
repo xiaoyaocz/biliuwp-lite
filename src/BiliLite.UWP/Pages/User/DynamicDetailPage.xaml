@@ -1,0 +1,103 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.User.DynamicDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.User"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+     xmlns:controls="using:BiliLite.Controls"
+     xmlns:dynamic="using:BiliLite.Controls.Dynamic"
+     xmlns:fa="using:FontAwesome5" xmlns:converters="using:BiliLite.Converters" 
+    xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    Background="{ThemeResource TopPaneBackground}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Controls/Dynamic/DynamicTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="HyperlinkButton">
+                <Setter Property="Foreground" Value="#178bcf" />
+            </Style>
+            <AcrylicBrush x:Key="SystemControlBaseHighAcrylicElementBrush" BackgroundSource="Backdrop" TintColor="{StaticResource SystemChromeAltHighColor}" TintOpacity="0.8" FallbackColor="{StaticResource SystemChromeAltHighColor}" />
+        </ResourceDictionary>
+
+
+    </Page.Resources>
+    <Grid>
+
+
+        <SplitView x:Name="splitView" OpenPaneLength="360" PaneBackground="Transparent" PanePlacement="Right" IsPaneOpen="False" DisplayMode="Overlay">
+            <SplitView.Pane>
+                <Border x:Name="RootBorder" Padding="12,0,0,0" >
+                    <Grid>
+                        <controls1:DropShadowPanel BlurRadius="12"
+                                          Color="Black"
+                                          Opacity="0.3"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch">
+                            <Rectangle Fill="White" />
+                        </controls1:DropShadowPanel>
+                        <Grid Background="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}">
+                            <Pivot x:Name="pivotRight" SelectionChanged="pivotRight_SelectionChanged">
+                                <PivotItem Margin="0">
+                                    <PivotItem.Header>
+                                        <TextBlock FontSize="15">转发(<Run x:Name="repostCount"/>)</TextBlock>
+                                    </PivotItem.Header>
+                                    <controls:DynamicRepostControl x:Name="repost"></controls:DynamicRepostControl>
+                                </PivotItem>
+                                <PivotItem Margin="0">
+                                    <PivotItem.Header>
+                                        <TextBlock FontSize="15">评论(<Run x:Name="commentCount"/>)</TextBlock>
+                                    </PivotItem.Header>
+                                    <controls:CommentControl x:Name="comment"></controls:CommentControl>
+                                </PivotItem>
+                            </Pivot>
+                        </Grid>
+                    </Grid>
+
+                </Border>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid  >
+
+                    <controls:MyListView SelectionMode="None" 
+                  IsItemClickEnabled="false" 
+                          x:Name="list"
+                  ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}" 
+                                         CanLoadMore="{x:Bind Path=dynamicVM.CanLoadMore,Mode=OneWay}"
+                                         LoadMoreBottomOffset="0"
+                                         LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand}"
+                  Padding="4" 
+                  Grid.Row="1"
+                 ItemTemplateSelector="{StaticResource select}"
+                  HorizontalContentAlignment="Center">
+                        <controls:MyListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                <Setter Property="MaxWidth" Value="800"></Setter>
+                                <Setter Property="Margin" Value="4"></Setter>
+
+                            </Style>
+                        </controls:MyListView.ItemContainerStyle>
+                        <!--<ListView.ItemsPanel>-->
+                        <!--<ItemsPanelTemplate>
+                     
+                            <controls1:StaggeredPanel DesiredColumnWidth="500"
+                                             HorizontalAlignment="Stretch"
+                                             ColumnSpacing="-12"
+                                             RowSpacing="8" />
+                        </ItemsPanelTemplate>-->
+
+                        <!--</ListView.ItemsPanel>-->
+
+                    </controls:MyListView>
+                    <ProgressRing Grid.Row="1" VerticalAlignment="Center" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+    </Grid>
+</pages:BasePage>

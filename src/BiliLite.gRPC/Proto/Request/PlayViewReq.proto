@@ -1,0 +1,25 @@
+﻿syntax = "proto3";
+package proto.request;
+
+enum CodeType {
+    NOCODE = 0;
+    CODE264 = 1;
+    CODE265 = 2;
+}
+
+message PlayViewReq {
+    int64 ep_id = 0x1;
+    int64 cid = 0x2;
+    int64 qn = 0x3;
+    int32 fnver = 0x4;
+    int32 fnval = 0x5;
+    int32 download = 0x6;
+    int32 force_host = 0x7;
+    int32 fourk = 0x8;
+    string spmid = 0x9;
+    string from_spmid = 0xa;
+    int32 teenagers_mode = 0xb;
+    CodeType prefer_codec_type = 0xc;
+    bool is_preview = 0xd;
+}
+

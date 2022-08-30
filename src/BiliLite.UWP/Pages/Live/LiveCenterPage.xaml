@@ -1,0 +1,232 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Live.LiveCenterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Live"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+     xmlns:control="using:BiliLite.Controls" 
+    xmlns:modules="using:BiliLite.Modules.Live.LiveCenter"
+     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+      xmlns:convert="using:BiliLite.Converters"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+        <convert:DatetimeConvert x:Key="time"/>
+    </Page.Resources>
+    <Grid>
+        <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
+            <Pivot.RightHeader>
+                <Grid Background="{ThemeResource TopPaneBackground}">
+                    <StackPanel Orientation="Horizontal" Margin="8 0">
+                       
+                        <!--<StackPanel Margin="0 0 12 0" VerticalAlignment="Center">
+                            <TextBlock Foreground="#61c05a">UL 11</TextBlock>
+                            <ProgressBar Foreground="#61c05a" Margin="0 4 0 0" Width="120" Value="60" Height="8"></ProgressBar>
+                        </StackPanel>-->
+                        <Button Width="80" 
+                                Margin="0 0 8 0"
+                              
+                                Command="{x:Bind Path=liveCenterVM.TitleCommand,Mode=OneWay}" >佩戴中心</Button>
+                        <Button Width="80" 
+                                Visibility="{x:Bind Path=liveCenterVM.SignInfo.is_signed,Mode=OneWay,Converter={StaticResource display}}"
+                                Command="{x:Bind Path=liveCenterVM.SignCommand,Mode=OneWay}" >签到</Button>
+                        <Button Width="80"
+                                Visibility="{x:Bind Path=liveCenterVM.SignInfo.is_signed,Mode=OneWay}">已签到</Button>
+                    </StackPanel>
+                  
+                </Grid>
+            </Pivot.RightHeader>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">关注直播中</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <control:MyAdaptiveGridView
+                                    Padding="12 8" 
+                                    ItemHeight="100" 
+                                    DesiredWidth="600" 
+                                    StretchContentForSingleRow="False" 
+                                    SelectionMode="None" 
+                                    IsItemClickEnabled="True" 
+                                    CanLoadMore="False"
+                                    ItemsSource="{x:Bind Path=liveAttentionVM.Follow,Mode=OneWay}"
+                                    ItemClick="AttentionlList_ItemClick"
+                                    OneRowModeEnabled="False">
+
+                        <control:MyAdaptiveGridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"></Setter>
+                            </Style>
+                        </control:MyAdaptiveGridView.ItemContainerStyle>
+                        <control:MyAdaptiveGridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:LiveFollowAnchorModel">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Margin="4" CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                       
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" Margin="4 0 0 0" >
+                                        <TextBlock MaxLines="1" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0"><Run Text="{x:Bind Path=uname}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0">人气:<Run Text="{x:Bind Path=online,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0">分区:<Run Text="{x:Bind Path=area_v2_name}"/></TextBlock>
+                                    </StackPanel>
+                                    <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
+                                </Grid>
+                            </DataTemplate>
+                        </control:MyAdaptiveGridView.ItemTemplate>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=liveAttentionVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </control:MyAdaptiveGridView>
+                
+                    <control:RoundButton x:Name="btnRefresh" Command="{x:Bind Path=liveAttentionVM.RefreshCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </control:RoundButton>
+                </Grid>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">关注未直播</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <control:MyAdaptiveGridView
+                                    Padding="12 8" 
+                                    DesiredWidth="600" 
+                                    StretchContentForSingleRow="False" 
+                                    SelectionMode="None" 
+                                    IsItemClickEnabled="True" 
+                                    CanLoadMore="{x:Bind Path=liveAttentionUnLiveVM.CanLoadMore,Mode=OneWay}"
+                                    LoadMoreBottomOffset="0"
+                                    LoadMoreCommand="{x:Bind Path=liveAttentionUnLiveVM.LoadMoreCommand}"
+                                    ItemsSource="{x:Bind Path=liveAttentionUnLiveVM.Items,Mode=OneWay}"
+                                    ItemClick="UnLiveList_ItemClick"
+                                    OneRowModeEnabled="False">
+                       
+                        <toolkit:AdaptiveGridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"></Setter>
+                            </Style>
+                        </toolkit:AdaptiveGridView.ItemContainerStyle>
+                        <toolkit:AdaptiveGridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:LiveFollowUnliveAnchorModel">
+                                <Grid Padding="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                   
+                                    <Ellipse Width="64" Height="64">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{x:Bind Path=face,Converter={StaticResource imageConvert2},ConverterParameter='100h'}"></ImageBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <StackPanel Grid.Column="1" Margin="8 0 0 0" VerticalAlignment="Center">
+                                        <TextBlock MaxLines="1" TextTrimming="CharacterEllipsis" Text="{x:Bind uname}"></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0">公告:<Run Text="{x:Bind Path=announcement_content}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0"><Run Text="{x:Bind Path=live_desc}"/>直播了<Run Text="{x:Bind Path=area_v2_name}"/></TextBlock>
+                                    </StackPanel>
+                                    <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
+                                </Grid>
+                            </DataTemplate>
+                        </toolkit:AdaptiveGridView.ItemTemplate>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+                                <HyperlinkButton  Command="{x:Bind Path=liveAttentionUnLiveVM.LoadMoreCommand}" Visibility="{x:Bind Path=liveAttentionUnLiveVM.CanLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" >
+                                    <TextBlock>加载更多</TextBlock>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=liveAttentionUnLiveVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </control:MyAdaptiveGridView>
+                    <TextBlock Visibility="{x:Bind Path=liveAttentionUnLiveVM.Nothing,Mode=OneWay}" Text="这里什么都没有呢..." Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    <control:RoundButton Command="{x:Bind Path=liveAttentionUnLiveVM.RefreshCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </control:RoundButton>
+                </Grid>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">观看历史</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <control:MyAdaptiveGridView
+                                    Padding="12 8" 
+                                    ItemHeight="100" 
+                                    DesiredWidth="600" 
+                                    StretchContentForSingleRow="False" 
+                                    SelectionMode="None" 
+                                    IsItemClickEnabled="True" 
+                                    CanLoadMore="{x:Bind Path=liveCenterHistoryVM.CanLoadMore,Mode=OneWay}"
+                                    LoadMoreBottomOffset="0"
+                                    LoadMoreCommand="{x:Bind Path=liveCenterHistoryVM.LoadMoreCommand}"
+                                    ItemsSource="{x:Bind Path=liveCenterHistoryVM.Items,Mode=OneWay}"
+                                    ItemClick="HistoryList_ItemClick"
+                                    OneRowModeEnabled="False">
+
+                        <toolkit:AdaptiveGridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"></Setter>
+                            </Style>
+                        </toolkit:AdaptiveGridView.ItemContainerStyle>
+                        <toolkit:AdaptiveGridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:LiveHistoryItemModel">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Border CornerRadius="{StaticResource ImageCornerRadius}" Margin="4">
+                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" Margin="4 0 0 0" >
+                                        <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0"><Run Text="{x:Bind Path=name}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 4 0 0"><Run Text="{x:Bind Path=view_at,Converter={StaticResource time},ConverterParameter='ts'}"/>观看</TextBlock>
+
+                                    </StackPanel>
+                                    <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
+                                </Grid>
+                            </DataTemplate>
+                        </toolkit:AdaptiveGridView.ItemTemplate>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+                                <HyperlinkButton  Command="{x:Bind Path=liveCenterHistoryVM.LoadMoreCommand}" Visibility="{x:Bind Path=liveCenterHistoryVM.CanLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" >
+                                    <TextBlock>加载更多</TextBlock>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=liveCenterHistoryVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </control:MyAdaptiveGridView>
+                    <TextBlock Visibility="{x:Bind Path=liveCenterHistoryVM.Nothing,Mode=OneWay}" Text="这里什么都没有呢..." Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    <control:RoundButton Command="{x:Bind Path=liveCenterHistoryVM.RefreshCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </control:RoundButton>
+                </Grid>
+            </PivotItem>
+            <!--<PivotItem>
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">头衔</TextBlock>
+                </PivotItem.Header>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">勋章</TextBlock>
+                </PivotItem.Header>
+            </PivotItem>-->
+        </Pivot>
+    </Grid>
+</pages:BasePage>

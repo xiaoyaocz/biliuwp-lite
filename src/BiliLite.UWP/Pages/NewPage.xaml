@@ -1,0 +1,110 @@
+﻿<Page
+    x:Class="BiliLite.Pages.NewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:BiliLite.Controls"
+    mc:Ignorable="d"
+    xmlns:model="using:BiliLite.Modules" 
+      xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
+      xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
+      xmlns:fa="using:FontAwesome5" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Image x:Name="backgroundImage" Stretch="UniformToFill" ></Image>
+        <StackPanel VerticalAlignment="Center" >
+            <Grid Margin="24"  MaxWidth="540">
+                <AutoSuggestBox QueryIcon="Find" x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" PlaceholderText="输入关键词搜索或哔哩哔哩链接跳转" Background="{ThemeResource CardColor}"></AutoSuggestBox>
+               
+            </Grid>
+            
+            <ItemsControl HorizontalAlignment="Center" MaxWidth="600">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <HyperlinkButton x:Name="BtnOpenRank" Click="BtnOpenRank_Click" Foreground="{ThemeResource TextColor}" Margin="8" >
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_Trophy"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">排行榜</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenLive" Click="BtnOpenLive_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_Fire"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">热门直播</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenBangumiIndex" Click="BtnOpenBangumiIndex_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_Filter"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">番剧索引</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenBangumiTimeline" Click="BtnOpenBangumiTimeline_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_CalendarAlt"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">番剧时间表</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenMyFollow" Click="BtnOpenMyFollow_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_Star"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">我的收藏</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenDownload" Click="BtnOpenDownload_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_CloudDownloadAlt"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">离线缓存</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenHistory" Click="BtnOpenHistory_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_History"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">历史记录</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+                <HyperlinkButton x:Name="BtnOpenSetting" Click="BtnOpenSetting_Click" Foreground="{ThemeResource TextColor}" Margin="8">
+                    <Border Background="{ThemeResource CardColor}" CornerRadius="4" Width="120" Height="80">
+                        <StackPanel VerticalAlignment="Center">
+                            <fa:FontAwesome Icon="Solid_Cog"></fa:FontAwesome>
+                            <TextBlock TextAlignment="Center" Margin="0 8 0 0">设置</TextBlock>
+                        </StackPanel>
+                    </Border>
+                </HyperlinkButton>
+            </ItemsControl>
+            
+            </StackPanel>
+        <Button Background="Transparent" Visibility="Visible" HorizontalAlignment="Right" Height="48" Width="48" VerticalAlignment="Top" >
+            <FontIcon FontFamily="Segoe MDL2 Assets" Foreground="Gray" Glyph="&#xE700;" />
+            <Button.Flyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="自定义背景" x:Name="btnSetBackground" Click="btnSetBackground_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="默认背景" x:Name="btnSetDefaultBackground" Click="btnSetDefaultBackground_Click"></MenuFlyoutItem>
+                    <!--TODO 自定义快捷入口-->
+                    <MenuFlyoutItem Text="自定义快捷入口" Visibility="Collapsed"></MenuFlyoutItem>
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+        <Image Width="48" Height="48" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12" Source="https://i0.hdslb.com/bfs/live/e9a7971219a6f6d9ad641dad5019a7ddcef40d47.gif"></Image>
+    </Grid>
+</Page>

@@ -1,7 +1,0 @@
-syntax = "proto2";
-package proto.header;
-
-message FawkesReq {
-    optional string appkey = 1;
-    optional string env = 2;
-}

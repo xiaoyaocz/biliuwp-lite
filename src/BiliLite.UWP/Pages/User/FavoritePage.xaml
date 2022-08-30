@@ -1,0 +1,300 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.User.FavoritePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.User"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:fa="using:FontAwesome5"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:convert="using:BiliLite.Converters"
+    xmlns:model="using:BiliLite.Modules"
+    xmlns:controls="using:BiliLite.Controls" 
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+        <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
+        <convert:BooleanConvert x:Name="boolConvert" />
+        <Style x:Key="SeasonItemStyle" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="8"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+        </Style>
+        <DataTemplate x:Key="SeasonDataTemplate" x:DataType="model:FollowSeasonModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Command="{x:Bind SetWatchedCommand}" CommandParameter="{x:Bind}"
+                            Visibility="{x:Bind show_watched}">标为看过</MenuFlyoutItem>
+                        <MenuFlyoutItem
+                            Command="{x:Bind SetWatchingCommand}" CommandParameter="{x:Bind}"
+                            Visibility="{x:Bind show_watching}">标为在看</MenuFlyoutItem>
+                        <MenuFlyoutItem
+                            Command="{x:Bind SetWantWatchCommand}" CommandParameter="{x:Bind}"
+                            Visibility="{x:Bind show_want_watch}">标为想看</MenuFlyoutItem>
+                        <MenuFlyoutItem Command="{x:Bind CancelFollowCommand}" CommandParameter="{x:Bind}">取消收藏</MenuFlyoutItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <Grid>
+                        <toolkit:ImageEx IsCacheEnabled="True" Height="140" Width="105" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
+                        <Border Visibility="{x:Bind show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="会员专享"></TextBlock>
+                        </Border>
+                    </Grid>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                    <TextBlock MaxLines="2" Margin="0 4" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Text="{x:Bind Path=new_ep.index_show}"></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Text="{x:Bind Path=progress_text}"></TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Name="VideoDataTemplate" x:DataType="model:FavoriteItemModel">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Name="btnFavBoxEdit" Click="btnFavBoxEdit_Click">编辑</MenuFlyoutItem>
+                        <MenuFlyoutItem x:Name="btnFavBoxDel" Click="btnFavBoxDel_Click">删除</MenuFlyoutItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde1x1.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
+
+                </Border>
+                <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                    <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray">共<Run Text="{x:Bind Path=media_count}"/>个视频</TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Visibility="{x:Bind Path=privacy,Converter={StaticResource display}}">公开</TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Visibility="{x:Bind Path=privacy}">私密</TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
+            <Pivot.ItemContainerStyle>
+                <Style TargetType="PivotItem">
+                    <Setter Property="Margin" Value="0"></Setter>
+                </Style>
+            </Pivot.ItemContainerStyle>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">视频</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <toolkit:AdaptiveGridView SelectionMode="None" 
+                                          IsItemClickEnabled="True"
+                                          DesiredWidth="500"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource SeasonItemStyle}"
+                                          ItemsSource="{x:Bind Path=videoVM.MyFavorite,Mode=OneWay}"
+                                          ItemTemplate="{StaticResource VideoDataTemplate}"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          ItemClick="VideoFavorite_ItemClick"
+                                          ScrollViewer.VerticalScrollMode="Disabled"
+                                          ItemHeight="80">
+                                <toolkit:AdaptiveGridView.Header>
+                                    <Grid Margin="12 8 0 0">
+                                        <TextBlock FontSize="18" FontWeight="Bold">我的创建</TextBlock>
+                                        <HyperlinkButton x:Name="btnCreateFavBox" Click="btnCreateFavBox_Click" Margin="12 0" HorizontalAlignment="Right">
+                                            <TextBlock>创建收藏夹</TextBlock>
+                                        </HyperlinkButton>
+                                    </Grid>
+                                </toolkit:AdaptiveGridView.Header>
+                                <toolkit:AdaptiveGridView.Footer>
+                                    <Grid>
+                                        <HyperlinkButton Command="{x:Bind Path=videoVM.LoadMoreCommand}" Visibility="{x:Bind Path=videoVM.HasMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" >
+                                            <TextBlock>加载更多</TextBlock>
+                                        </HyperlinkButton>
+                                    </Grid>
+                                </toolkit:AdaptiveGridView.Footer>
+                            </toolkit:AdaptiveGridView>
+                            <toolkit:AdaptiveGridView SelectionMode="None" 
+                                          IsItemClickEnabled="True"
+                                          DesiredWidth="500"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource SeasonItemStyle}"
+                                          ItemsSource="{x:Bind Path=videoVM.CollectFavorite,Mode=OneWay}"
+                                          ItemTemplate="{StaticResource VideoDataTemplate}"
+                                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                          ScrollViewer.VerticalScrollMode="Disabled"
+                                           ItemClick="VideoFavorite_ItemClick"
+                                          ItemHeight="80">
+                                <toolkit:AdaptiveGridView.Header>
+                                    <Grid Margin="12 8 0 0">
+                                        <TextBlock FontSize="18" FontWeight="Bold">我的收藏与订阅</TextBlock>
+                                    </Grid>
+                                </toolkit:AdaptiveGridView.Header>
+
+                            </toolkit:AdaptiveGridView>
+                        </StackPanel>
+                    </ScrollViewer>
+                   
+                    <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=videoVM.Loading,Mode=OneWay}"></ProgressRing>
+                    <controls:RoundButton  Command="{x:Bind Path=videoVM.RefreshCommand}" Visibility="{x:Bind Path=videoVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </controls:RoundButton>
+                </Grid>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">追番</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <controls:MyAdaptiveGridView SelectionMode="None" 
+                                          IsItemClickEnabled="True"
+                                          DesiredWidth="500"
+                                          x:Name="BangumiSeason"
+                                          LoadMoreCommand="{x:Bind Path=animeVM.LoadMoreCommand,Mode=OneWay}"
+                                          CanLoadMore="{x:Bind Path=animeVM.ShowLoadMore,Mode=OneWay}"
+                                          ItemClick="BangumiSeason_ItemClick"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource SeasonItemStyle}"
+                                          ItemTemplate="{StaticResource SeasonDataTemplate}"
+                                          ItemsSource="{x:Bind Path=animeVM.Follows,Mode=OneWay}"
+                                          ItemHeight="140">
+                        <GridView.Header>
+                            <Grid Padding="12 4" Background="{ThemeResource TopPaneBackground}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ToggleButton FontSize="12" 
+                                              Command="{x:Bind Path=animeVM.StatusCommand}" 
+                                              CommandParameter="2"
+                                              IsChecked="{x:Bind Path=animeVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=2}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">在看</ToggleButton>
+                                    <ToggleButton FontSize="12"
+                                              Command="{x:Bind Path=animeVM.StatusCommand}" 
+                                              CommandParameter="1"
+                                              IsChecked="{x:Bind Path=animeVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=1}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">想看</ToggleButton>
+                                    <ToggleButton FontSize="12"
+                                              Command="{x:Bind Path=animeVM.StatusCommand}" 
+                                              CommandParameter="3"
+                                              IsChecked="{x:Bind Path=animeVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=3}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">看过</ToggleButton>
+                                </StackPanel>
+                                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                    <HyperlinkButton Margin="8 0 0 0" >
+                                        <TextBlock>管理</TextBlock>
+                                    </HyperlinkButton>
+                                </StackPanel>-->
+                                <StackPanel Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                    <CheckBox MinWidth="64">全选</CheckBox>
+                                    <HyperlinkButton Margin="8 0 0 0">
+                                        <TextBlock>移至想看</TextBlock>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton  Margin="8 0 0 0">
+                                        <TextBlock>移至看过</TextBlock>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton  Margin="8 0 0 0">
+                                        <TextBlock>取消管理</TextBlock>
+                                    </HyperlinkButton>
+                                </StackPanel>
+                            </Grid>
+                        </GridView.Header>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+                                <HyperlinkButton Command="{x:Bind Path=animeVM.LoadMoreCommand}" Visibility="{x:Bind Path=animeVM.ShowLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                                    <TextBlock>加载更多</TextBlock>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=animeVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </controls:MyAdaptiveGridView>
+                    <TextBlock Visibility="{x:Bind Path=animeVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray">这里还什么都没有呢~</TextBlock>
+                    <controls:RoundButton  Command="{x:Bind Path=animeVM.RefreshCommand}" Visibility="{x:Bind Path=animeVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </controls:RoundButton>
+                </Grid>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">追剧</TextBlock>
+                </PivotItem.Header>
+                <Grid>
+                    <controls:MyAdaptiveGridView SelectionMode="None" 
+                                          IsItemClickEnabled="True"
+                                          DesiredWidth="500"
+                                          ItemClick="BangumiSeason_ItemClick"
+                                          LoadMoreCommand="{x:Bind Path=cinemaVM.LoadMoreCommand,Mode=OneWay}"
+                                          CanLoadMore="{x:Bind Path=cinemaVM.ShowLoadMore,Mode=OneWay}"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource SeasonItemStyle}"
+                                          ItemTemplate="{StaticResource SeasonDataTemplate}"
+                                          ItemsSource="{x:Bind Path=cinemaVM.Follows,Mode=OneWay}"
+                                          ItemHeight="140">
+                        <GridView.Header>
+                            <Grid Padding="12 4" Background="{ThemeResource TopPaneBackground}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ToggleButton FontSize="12" 
+                                              Command="{x:Bind Path=cinemaVM.StatusCommand}" 
+                                              CommandParameter="2"
+                                              IsChecked="{x:Bind Path=cinemaVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=2}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">在看</ToggleButton>
+                                    <ToggleButton FontSize="12"
+                                              Command="{x:Bind Path=cinemaVM.StatusCommand}" 
+                                              CommandParameter="1"
+                                              IsChecked="{x:Bind Path=cinemaVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=1}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">想看</ToggleButton>
+                                    <ToggleButton FontSize="12"
+                                              Command="{x:Bind Path=cinemaVM.StatusCommand}" 
+                                              CommandParameter="3"
+                                              IsChecked="{x:Bind Path=cinemaVM.Status,Mode=OneWay,Converter={StaticResource boolConvert},ConverterParameter=3}" 
+                                              Background="Transparent" 
+                                              Margin="0 0 8 0">看过</ToggleButton>
+                                </StackPanel>
+                                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                    <HyperlinkButton Margin="8 0 0 0" >
+                                        <TextBlock>管理</TextBlock>
+                                    </HyperlinkButton>
+                                </StackPanel>-->
+                                <StackPanel Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 0">
+                                    <CheckBox MinWidth="64">全选</CheckBox>
+                                    <HyperlinkButton Margin="8 0 0 0">
+                                        <TextBlock>移至想看</TextBlock>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton  Margin="8 0 0 0">
+                                        <TextBlock>移至看过</TextBlock>
+                                    </HyperlinkButton>
+                                    <HyperlinkButton  Margin="8 0 0 0">
+                                        <TextBlock>取消管理</TextBlock>
+                                    </HyperlinkButton>
+                                </StackPanel>
+                            </Grid>
+                        </GridView.Header>
+                        <toolkit:AdaptiveGridView.Footer>
+                            <StackPanel>
+                                <HyperlinkButton  Command="{x:Bind Path=cinemaVM.LoadMoreCommand}" Visibility="{x:Bind Path=cinemaVM.ShowLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center">
+                                    <TextBlock>加载更多</TextBlock>
+                                </HyperlinkButton>
+                                <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=cinemaVM.Loading,Mode=OneWay}"></ProgressRing>
+                            </StackPanel>
+                        </toolkit:AdaptiveGridView.Footer>
+                    </controls:MyAdaptiveGridView>
+                    <TextBlock Visibility="{x:Bind Path=cinemaVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray">这里还什么都没有呢~</TextBlock>
+                    <controls:RoundButton  Command="{x:Bind Path=cinemaVM.RefreshCommand}" Visibility="{x:Bind Path=cinemaVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                        <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+                    </controls:RoundButton>
+                </Grid>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</pages:BasePage>

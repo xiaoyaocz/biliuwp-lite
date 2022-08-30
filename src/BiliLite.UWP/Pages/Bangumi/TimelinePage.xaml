@@ -1,0 +1,103 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Bangumi.TimelinePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Bangumi"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:BiliLite.Controls"
+    xmlns:modules="using:BiliLite.Modules"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:fa="using:FontAwesome5"
+    
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+        <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
+    </Page.Resources>
+    <Grid>
+        <Pivot x:Name="timeLine" ItemsSource="{x:Bind Path=timelineVM.Timelines,Mode=OneWay}" SelectedItem="{x:Bind Path=timelineVM.Today,Mode=OneWay}">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock FontSize="12" TextAlignment="Center" Text="{Binding date}"></TextBlock>
+                        <TextBlock FontSize="16"  Text="{Binding week}"></TextBlock>
+                    </StackPanel>
+                   
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <Pivot.RightHeader>
+                <Grid Background="{ThemeResource PivotHeaderBackground}" >
+                    <ComboBox x:Name="cbType" Margin="8" ItemsSource="{x:Bind Path=timelineVM.AnimeTypeItems}" SelectedItem="{x:Bind Path=timelineVM.SelectAnimeType}" SelectionChanged="cbType_SelectionChanged" DisplayMemberPath="Name"></ComboBox>
+                </Grid>
+               
+            </Pivot.RightHeader>
+            <Pivot.ItemContainerStyle>
+                <Style TargetType="PivotItem">
+                    <Setter Property="Margin" Value="0"></Setter>
+                    <Setter Property="Padding" Value="8"></Setter>
+                    <!--<Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"></Setter>-->
+                    <!--<Setter Property="Padding" Value="12"></Setter>-->
+                </Style>
+            </Pivot.ItemContainerStyle>
+            <Pivot.ItemTemplate>
+                <DataTemplate x:DataType="modules:AnimeTimelineModel">
+                    <toolkit:AdaptiveGridView
+                         OneRowModeEnabled="False"
+                         StretchContentForSingleRow="False"
+                         ItemHeight="288"
+                          DesiredWidth="180"
+                          ItemClick="AdaptiveGridView_ItemClick"
+                          ItemsSource="{x:Bind Path=seasons}"
+                                          SelectionMode="None"
+                                          IsItemClickEnabled="True">
+
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"></Setter>
+                                <Setter Property="Height" Value="288"></Setter>
+                                <Setter Property="Width" Value="180"></Setter>
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                      
+                        <GridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:AnimeTimelineItemModel">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                    </Grid.RowDefinitions>
+                                    <Border  CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <Grid>
+                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='300w'}"></toolkit:ImageEx>
+                                            <Grid VerticalAlignment="Bottom" Padding="8">
+                                                <Grid.Background>
+                                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                        <GradientStop Color="#CC000005" Offset="0.993"/>
+                                                        <GradientStop Color="#00000000" Offset="0"/>
+                                                    </LinearGradientBrush>
+                                                </Grid.Background>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE121;" FontSize="12" Foreground="White"/>
+                                                    <TextBlock  FontSize="12" Foreground="White" Margin="8 0 0 0" Text="{x:Bind pub_time}"></TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                    <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind pub_index}"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+
+                    </toolkit:AdaptiveGridView>
+
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
+        <ProgressRing IsActive="True"  VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{x:Bind Path=timelineVM.Loading,Mode=OneWay}"></ProgressRing>
+    </Grid>
+</pages:BasePage>

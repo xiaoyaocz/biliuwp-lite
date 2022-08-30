@@ -1,0 +1,54 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Other.TopicPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Other"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+      xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:convert="using:BiliLite.Converters"
+    xmlns:modules="using:BiliLite.Modules.User"
+    xmlns:control="using:BiliLite.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Controls/Dynamic/DynamicTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="HyperlinkButton">
+                <Setter Property="Foreground" Value="#178bcf" />
+            </Style>
+            <convert:DatetimeConvert x:Key="time"/>
+            <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+            <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
+        </ResourceDictionary>
+
+    </Page.Resources>
+    <Grid>
+        <Pivot>
+            <Pivot.RightHeader>
+                <Grid VerticalAlignment="Stretch" Background="{ThemeResource TopPaneBackground}">
+                    <Button Margin="12 0">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon FontSize="12" Margin="0 0 8 0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE109;" />
+                            <TextBlock>订阅</TextBlock>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Pivot.RightHeader>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">视频</TextBlock>
+                </PivotItem.Header>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
+                    <TextBlock FontSize="15">动态</TextBlock>
+                </PivotItem.Header>
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</pages:BasePage>

@@ -1,0 +1,29 @@
+﻿<Window x:Class="BiliLite.Win32Tools.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BiliLite.Win32Tools"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Background="WhiteSmoke"
+        FontSize="16"
+        Loaded="Window_Loaded"
+        Title="视频导出工具 - BiliLite" Height="400" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="White">
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="20" Margin="12" Foreground="#F2000000" TextWrapping="Wrap">正在导出：<Run x:Name="txtName"></Run></TextBlock>
+        </Grid>
+        <Grid x:Name="gridFFmpeg" Margin="8" Grid.Row="1">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressBar x:Name="progressBar" Height="24" Width="240" IsIndeterminate="True"></ProgressBar>
+                <TextBlock TextAlignment="Center" Margin="0 12" x:Name="txtStatus"></TextBlock>
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</Window>

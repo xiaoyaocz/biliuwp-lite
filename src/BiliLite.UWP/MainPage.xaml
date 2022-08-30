@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="BiliLite.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:fa="using:FontAwesome5"
+   xmlns:pages="using:BiliLite.Pages"
+    xmlns:muxm="using:Microsoft.UI.Xaml.Media" xmlns:controls="using:BiliLite.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <winui:TabView x:Name="tabView" TabItemsChanged="tabView_TabItemsChanged" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Loaded="tabView_Loaded" IsAddTabButtonVisible="True" TabCloseRequested="TabView_TabCloseRequested" AddTabButtonClick="TabView_AddTabButtonClick">
+            <!--<winui:TabView.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Light">
+                            <SolidColorBrush x:Key="TabViewBackground" Color="{ThemeResource SystemAccentColorLight1}"/>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Dark">
+                            <SolidColorBrush x:Key="TabViewBackground" Color="{ThemeResource SystemAccentColorDark2}"/>
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
+                </ResourceDictionary>
+
+            </winui:TabView.Resources>-->
+            <winui:TabView.KeyboardAccelerators>
+                <KeyboardAccelerator Key="T" Modifiers="Control" Invoked="NewTabKeyboardAccelerator_Invoked" />
+                <KeyboardAccelerator Key="W" Modifiers="Control" Invoked="CloseSelectedTabKeyboardAccelerator_Invoked" />
+            </winui:TabView.KeyboardAccelerators>
+            <winui:TabView.TabItems>
+                <winui:TabViewItem IsClosable="False" Header="首页">
+                    <winui:TabViewItem.IconSource>
+                        <winui:SymbolIconSource Symbol="Home" />
+                    </winui:TabViewItem.IconSource>
+                   
+                </winui:TabViewItem>
+            </winui:TabView.TabItems>
+          
+            <winui:TabView.TabStripHeader>
+                <Grid x:Name="ShellTitlebarInset" Background="Transparent" />
+            </winui:TabView.TabStripHeader>
+            <winui:TabView.TabStripFooter>
+                <Grid x:Name="CustomDragRegion" Background="Transparent" ></Grid>
+            </winui:TabView.TabStripFooter>
+        </winui:TabView>
+        <Border x:Name="MiniWindowsTitleBar"  Visibility="Collapsed" Background="#00FFFFFF" Height="36" VerticalAlignment="Top"></Border>
+        <Grid x:Name="gridViewer" Opacity="0" Visibility="Collapsed" Background="{ThemeResource SystemControlChromeHighAcrylicElementMediumBrush}" >
+            <controls:ImageViewerControl x:Name="imgViewer" CloseEvent="imgViewer_CloseEvent"></controls:ImageViewerControl>
+        </Grid>
+    </Grid>
+</Page>

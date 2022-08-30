@@ -1,0 +1,391 @@
+﻿<Page
+    x:Class="BiliLite.Pages.Home.MoviePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Home"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+     xmlns:model="using:BiliLite.Modules" 
+      xmlns:controls="using:BiliLite.Controls" 
+      xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
+      xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
+      xmlns:fa="using:FontAwesome5"
+    xmlns:models="using:BiliLite.Models"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="HotAnimeItem" x:DataType="model:CinemaHomeHotItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="24" />
+                    <RowDefinition Height="24" />
+                </Grid.RowDefinitions>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <Grid>
+                        <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                        <Grid VerticalAlignment="Bottom" Padding="8">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#CC000005" Offset="0.993" />
+                                    <GradientStop Color="#00000000" Offset="0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=stat.follow_view}"></TextBlock>
+                            </StackPanel>
+                        </Grid>
+                        <Border Visibility="{Binding Path=show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                        </Border>
+                    </Grid>
+                </Border>
+                <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
+                <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=desc}"></TextBlock>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="HotAnimeItemWide" x:DataType="model:CinemaHomeHotItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="24" />
+                    <RowDefinition Height="24" />
+                </Grid.RowDefinitions>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <Grid>
+                        <toolkit:ImageEx IsCacheEnabled="True" MinHeight="132" Width="200"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                        <Grid VerticalAlignment="Bottom" Padding="8">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#CC000005" Offset="0.993" />
+                                    <GradientStop Color="#00000000" Offset="0" />
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=stat.follow_view}"></TextBlock>
+                            </StackPanel>
+                        </Grid>
+                        <Border Visibility="{Binding Path=show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                        </Border>
+                    </Grid>
+                </Border>
+                <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
+                <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=desc}"></TextBlock>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="HotWideStyle" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="4"></Setter>
+            <Setter Property="Height" Value="180"></Setter>
+            <Setter Property="Width" Value="200"></Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <winui:RefreshContainer RefreshRequested="RefreshContainer_RefreshRequested">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Padding="16 8">
+                    <controls:Carousel x:Name="control" ItemsSource="{x:Bind Path=cinemaVM.HomeData.banners,Mode=OneWay}" MaxItems="1" SlideInterval="5000" AspectRatio="3.49" MaxHeight="240">
+                        <controls:Carousel.ContentTemplate>
+                            <DataTemplate>
+                                <HyperlinkButton Margin="4 0" Padding="0" Click="BannerItem_Click">
+                                    <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Source="{Binding Path=img,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                    </Border>
+                                </HyperlinkButton>
+                            </DataTemplate>
+                        </controls:Carousel.ContentTemplate>
+                    </controls:Carousel>
+                    <StackPanel  Margin="0 8 0 0">
+                        <GridView ItemClick="GridView_ItemClick" ItemsSource="{x:Bind Path=cinemaVM.Entrances,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="models:PageEntranceModel">
+                                    <StackPanel>
+                                        <Image Width="48" Margin="0 8" Height="48" Source="{x:Bind Path=Logo}"></Image>
+                                        <TextBlock Margin="0 0 0 8" TextAlignment="Center" Text="{x:Bind Path=Name}"></TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Width" Value="100"></Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                        </GridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0" Visibility="{x:Bind Path=cinemaVM.ShowFollows,Mode=OneWay}">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">我的追剧</TextBlock>
+                            <HyperlinkButton x:Name="btnOpenMyFollow" Click="btnOpenMyFollow_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
+                                <TextBlock>查看全部</TextBlock>
+                            </HyperlinkButton>
+                        </Grid>
+                        <controls:ScrollGridView 
+                            MoveOffset="600" 
+                            AlwayShowButton="False" 
+                            ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" 
+                            ItemsSource="{x:Bind Path=cinemaVM.Follows,Mode=OneWay}" 
+                            SelectionMode="None" 
+                            Margin="-4 0 0 0"
+                            ScrollViewer.HorizontalScrollMode="Enabled"
+                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                            ScrollViewer.VerticalScrollMode="Disabled" 
+                            ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                            IsItemClickEnabled="True">
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Margin" Value="4"></Setter>
+                                    <Setter Property="Height" Value="180"></Setter>
+                                    <Setter Property="Width" Value="200"></Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="model:FollowSeasonModel">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition Height="24" />
+                                            <RowDefinition Height="24" />
+                                        </Grid.RowDefinitions>
+                                        <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                            <Grid>
+                                                <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" MinHeight="132" Width="200" Stretch="UniformToFill" Source="{x:Bind Path=new_ep.cover,Converter={StaticResource imageConvert},ConverterParameter='320w_200h_1c'}"></toolkit:ImageEx>
+                                                <Grid VerticalAlignment="Bottom" Padding="8">
+                                                    <Grid.Background>
+                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                            <GradientStop Color="#CC000005" Offset="0.993" />
+                                                            <GradientStop Color="#00000000" Offset="0" />
+                                                        </LinearGradientBrush>
+                                                    </Grid.Background>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=new_ep.index_show}"></TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Border VerticalAlignment="Top" Visibility="{x:Bind show_badge}" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                                                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind badge}"></TextBlock>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
+                                        <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=progress_text}"></TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">即将开播</TextBlock>
+                        </Grid>
+                        <controls:ScrollGridView 
+                                                 Margin="-4 0 0 0"
+                                                 MoveOffset="600" 
+                            AlwayShowButton="False" SelectionMode="None" 
+                            ItemsSource="{x:Bind Path=cinemaVM.HomeData.update,Mode=OneWay}"
+                            ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" 
+                            ScrollViewer.VerticalScrollMode="Disabled" 
+                            ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                            ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                            ScrollViewer.HorizontalScrollMode="Disabled" 
+                            IsItemClickEnabled="True">
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Margin" Value="4"></Setter>
+                                    <Setter Property="Height" Value="288"></Setter>
+                                    <Setter Property="Width" Value="180"></Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="model:CinemaHomeHotItem">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition Height="24" />
+                                            <RowDefinition Height="24" />
+                                        </Grid.RowDefinitions>
+                                        <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                            <Grid>
+                                                <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200w'}"></toolkit:ImageEx>
+                                                <Grid VerticalAlignment="Bottom" Padding="8">
+                                                    <Grid.Background>
+                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                            <GradientStop Color="#CC000005" Offset="0.993" />
+                                                            <GradientStop Color="#00000000" Offset="0" />
+                                                        </LinearGradientBrush>
+                                                    </Grid.Background>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=stat.follow_view}"></TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
+                                                <Border Visibility="{Binding Path=show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                                                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
+                                        <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=hat}"></TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">纪录片推荐</TextBlock>
+                            <HyperlinkButton x:Name="OpenDocumentaryIndex" Click="OpenDocumentaryIndex_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
+                                <TextBlock>纪录片索引</TextBlock>
+                            </HyperlinkButton>
+                        </Grid>
+                        <controls:ScrollGridView 
+                                                 Margin="-4 0 0 0"
+                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" ItemsSource="{x:Bind Path=cinemaVM.HomeData.documentary,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItem}" IsItemClickEnabled="True">
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Margin" Value="4"></Setter>
+                                    <Setter Property="Height" Value="288"></Setter>
+                                    <Setter Property="Width" Value="180"></Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">电影推荐</TextBlock>
+                            <HyperlinkButton x:Name="OpenMovieIndex" Click="OpenMovieIndex_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
+                                <TextBlock>电影索引</TextBlock>
+                            </HyperlinkButton>
+                        </Grid>
+                        <controls:ScrollGridView 
+                                                 Margin="-4 0 0 0"
+                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" ItemsSource="{x:Bind Path=cinemaVM.HomeData.movie,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItem}" IsItemClickEnabled="True">
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Margin" Value="4"></Setter>
+                                    <Setter Property="Height" Value="288"></Setter>
+                                    <Setter Property="Width" Value="180"></Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">电视剧推荐</TextBlock>
+                            <HyperlinkButton x:Name="OpenTVIndex" Click="OpenTVIndex_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
+                                <TextBlock>电视剧索引</TextBlock>
+                            </HyperlinkButton>
+                        </Grid>
+                        <controls:ScrollGridView
+                            ItemContainerStyle="{StaticResource HotWideStyle}"
+                                                 Margin="-4 0 0 0"
+                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" ItemsSource="{x:Bind Path=cinemaVM.HomeData.tv,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItemWide}" IsItemClickEnabled="True">
+                         
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <StackPanel Margin="0 8 0 0">
+                        <Grid>
+                            <TextBlock FontSize="18" FontWeight="Bold">综艺推荐</TextBlock>
+                            <HyperlinkButton x:Name="OpenVarietyIndex" Click="OpenVarietyIndex_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
+                                <TextBlock>综艺索引</TextBlock>
+                            </HyperlinkButton>
+                        </Grid>
+                        <controls:ScrollGridView
+                                                 Margin="-4 0 0 0"
+                            ItemContainerStyle="{StaticResource HotWideStyle}"
+                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=cinemaVM.SeasonItemClick}" ItemsSource="{x:Bind Path=cinemaVM.HomeData.variety,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItemWide}" IsItemClickEnabled="True">
+                           
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                        </controls:ScrollGridView>
+                    </StackPanel>
+                    <ItemsControl Margin="0 8 0 0" ItemsSource="{x:Bind Path=cinemaVM.HomeData.falls,Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Vertical"></ItemsStackPanel>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="model:CinemaHomeFallModel">
+                                <StackPanel>
+                                    <toolkit:AdaptiveGridView ItemClick="gvFall_ItemClick" 
+                                                              Margin="-4 0 0 0" 
+                                                              OneRowModeEnabled="False" 
+                                                              ScrollViewer.VerticalScrollMode="Disabled" 
+                                                              ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                                              StretchContentForSingleRow="False"
+                                                              ItemsSource="{x:Bind Path=items,Mode=OneWay}" 
+                                                              ItemHeight="168" DesiredWidth="540" 
+                                                              SelectionMode="None" IsItemClickEnabled="True">
+                                        <toolkit:AdaptiveGridView.ItemContainerStyle>
+                                            <Style TargetType="GridViewItem">
+                                                <Setter Property="Margin" Value="4"></Setter>
+                                                <Setter Property="BorderThickness" Value="0"></Setter>
+                                            </Style>
+                                        </toolkit:AdaptiveGridView.ItemContainerStyle>
+                                        <toolkit:AdaptiveGridView.Header>
+                                            <Grid>
+                                                <TextBlock FontSize="18" Margin="4 0 0 0" FontWeight="Bold" Text="{Binding title}"></TextBlock>
+                                            </Grid>
+                                        </toolkit:AdaptiveGridView.Header>
+                                        <toolkit:AdaptiveGridView.ItemTemplate>
+                                            <DataTemplate x:DataType="model:CinemaHomeFallItemModel">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition />
+                                                        <RowDefinition Height="28" />
+                                                        <!--<RowDefinition Height="48"/>-->
+                                                    </Grid.RowDefinitions>
+                                                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='180h'}"></toolkit:ImageEx>
+                                                    <TextBlock Grid.Row="1" Margin="4" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                                    <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
+                                                </Grid>
+                                            </DataTemplate>
+                                        </toolkit:AdaptiveGridView.ItemTemplate>
+                                    </toolkit:AdaptiveGridView>
+                                    <Grid>
+                                        <HyperlinkButton x:Name="btnLoadMoreFall" Visibility="{x:Bind Path=ShowMore,Mode=OneWay}" Click="btnLoadMoreFall_Click" HorizontalAlignment="Center" Padding="4" Foreground="Gray">
+                                            <TextBlock>加载更多</TextBlock>
+                                        </HyperlinkButton>
+                                        <ProgressRing IsActive="True" Visibility="{x:Bind Path=ShowMore,Converter={StaticResource display},Mode=OneWay}" HorizontalAlignment="Center"></ProgressRing>
+                                    </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </winui:RefreshContainer>
+        <controls:RoundButton x:Name="btnRefresh" Click="btnRefresh_Click" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+            <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+        </controls:RoundButton>
+        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=cinemaVM.Loading,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <ProgressRing IsActive="True" VerticalAlignment="Center" HorizontalAlignment="Center"></ProgressRing>
+        </Grid>
+    </Grid>
+</Page>

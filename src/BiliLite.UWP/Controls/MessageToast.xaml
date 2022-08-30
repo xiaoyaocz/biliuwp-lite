@@ -1,0 +1,33 @@
+﻿<UserControl
+    x:Class="BiliLite.Controls.MessageToast"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    RequestedTheme="Light"
+    d:DesignWidth="400">
+
+
+    <Grid x:Name="mainGrid" >
+
+
+        <Border x:Name="border" Grid.Row="1" BorderThickness="2" BorderBrush="#b1b1b1" Background="#e7e7e7"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="36,0,36,0" Padding="16,8" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="tbNotify" VerticalAlignment="Center" TextWrapping="Wrap"  Text=""/>
+                <StackPanel Grid.Column="1" x:Name="btns" Orientation="Horizontal">
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+    </Grid>
+</UserControl>

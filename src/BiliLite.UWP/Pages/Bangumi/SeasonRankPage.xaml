@@ -1,0 +1,80 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.Bangumi.SeasonRankPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.Bangumi"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:convert="using:BiliLite.Converters" 
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:modules="using:BiliLite.Modules.Season"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
+        <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
+        <convert:RankColorConvert x:Key="RankConvert"/>
+    </Page.Resources>
+    <Grid>
+        <Pivot ItemsSource="{x:Bind Path=seasonRankVM.RegionItems,Mode=OneWay}" SelectedItem="{x:Bind Path=seasonRankVM.Current,Mode=TwoWay}" x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
+          
+            <Pivot.HeaderTemplate>
+                <DataTemplate x:DataType="modules:SeasonRankModel">
+                    <TextBlock FontSize="15" Text="{x:Bind Path=name}"></TextBlock>
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
+            <Pivot.ItemContainerStyle>
+                <Style TargetType="PivotItem">
+                    <Setter Property="Margin" Value="0"></Setter>
+                </Style>
+            </Pivot.ItemContainerStyle>
+            <Pivot.ItemTemplate>
+                <DataTemplate x:DataType="modules:SeasonRankModel">
+                    <toolkit:AdaptiveGridView 
+                    OneRowModeEnabled="False"
+                        ItemClick="AdaptiveGridView_ItemClick"
+                    StretchContentForSingleRow="False"
+                    ItemsSource="{x:Bind Path=Items,Mode=OneWay}"
+                    ItemHeight="100" DesiredWidth="600" 
+                    Padding="8"
+                    SelectionMode="None" IsItemClickEnabled="True">
+                        <toolkit:AdaptiveGridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem">
+                                <Setter Property="Margin" Value="4"></Setter>
+                            </Style>
+                        </toolkit:AdaptiveGridView.ItemContainerStyle>
+                        <toolkit:AdaptiveGridView.ItemTemplate>
+                            <DataTemplate x:DataType="modules:SeasonRankItemModel">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Margin="4" CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <Grid >
+                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=new_ep.cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                            <Border Visibility="{Binding show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                                            </Border>
+                                            <Border Padding="12 2" Background="{x:Bind Path=rank,Converter={StaticResource RankConvert}}" Opacity="0.8" CornerRadius="0 0 4 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                                <TextBlock Foreground="White" Text="{x:Bind Path=rank}" FontWeight="Bold" ></TextBlock>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="4 0 0 0" >
+                                        <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 2 0 0"><Run Text="{x:Bind Path=new_ep.index_show}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 2 0 0" Visibility="{x:Bind Path=show_danmaku}">弹幕:<Run Text="{x:Bind Path=stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                        <TextBlock Foreground="Gray" Margin="0 2 0 0">综合评分 <Run Text="{x:Bind Path=pts}"/></TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </toolkit:AdaptiveGridView.ItemTemplate>
+                    </toolkit:AdaptiveGridView>
+                </DataTemplate>
+            </Pivot.ItemTemplate>
+        </Pivot>
+        <ProgressRing IsActive="True" Visibility="{x:Bind Path=seasonRankVM.Loading,Mode=OneWay}"  VerticalAlignment="Center" HorizontalAlignment="Center"></ProgressRing>
+    </Grid>
+</pages:BasePage>

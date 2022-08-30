@@ -1,0 +1,73 @@
+﻿<pages:BasePage
+     xmlns:pages="using:BiliLite.Pages"
+    x:Class="BiliLite.Pages.User.WatchlaterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Pages.User"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:BiliLite.Controls" xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:user="using:BiliLite.Modules.User"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+       
+        <Style x:Key="ItemStyle" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="8"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+        </Style>
+        <DataTemplate x:Key="VideoDataTemplate" x:DataType="user:WatchlaterItemModel">
+            <Grid  Background="#00FFFFFF">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="移除" Command="{x:Bind Path=DeleteCommand}" CommandParameter="{x:Bind}"></MenuFlyoutItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                    <toolkit:ImageEx IsCacheEnabled="True" Height="80" Width="120" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=pic,Converter={StaticResource imageConvert},ConverterParameter='160w'}"></toolkit:ImageEx>
+                </Border>
+                <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                    <TextBlock MaxLines="2" Margin="0 0 0 4" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" >UP:<Run Text="{x:Bind Path=owner.name}"/></TextBlock>
+                    <TextBlock Margin="0 4" FontSize="14" Foreground="Gray" Text="{x:Bind Path=state}"></TextBlock>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource TopPaneBackground}">
+            <TextBlock Margin="12 0" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Left">稍后再看(<Run Text="{x:Bind Path=watchLaterVM.Videos.Count,Mode=OneWay}"/>个视频)</TextBlock>
+            <StackPanel Margin="12 0" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Command="{x:Bind Path=watchLaterVM.CleanCommand}" Margin="8 0">一键清空</Button>
+                <Button Command="{x:Bind Path=watchLaterVM.CleanViewedCommand}">移除已观看</Button>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1">
+            <toolkit:AdaptiveGridView SelectionMode="None" 
+                                      Padding="8"
+                                          IsItemClickEnabled="True"
+                                          DesiredWidth="600"
+                                          ItemClick="Video_ItemClick"
+                                          StretchContentForSingleRow="False"
+                                          ItemContainerStyle="{StaticResource ItemStyle}"
+                                          ItemTemplate="{StaticResource VideoDataTemplate}"
+                                          ItemsSource="{x:Bind Path=watchLaterVM.Videos,Mode=OneWay}"
+                                          ItemHeight="80" Grid.ColumnSpan="2">
+
+              
+            </toolkit:AdaptiveGridView>
+            <ProgressRing IsActive="True" HorizontalAlignment="Center"  Visibility="{x:Bind Path=watchLaterVM.Loading,Mode=OneWay}"></ProgressRing>
+            <TextBlock Visibility="{x:Bind Path=watchLaterVM.Nothing,Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" >这里还什么都没有呢~</TextBlock>
+        </Grid>
+        <controls:RoundButton Grid.Row="1" Command="{x:Bind Path=watchLaterVM.RefreshCommand}" Visibility="{x:Bind Path=watchLaterVM.Loading,Mode=OneWay,Converter={StaticResource display}}" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+            <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
+        </controls:RoundButton>
+    </Grid>
+</pages:BasePage>

@@ -1,0 +1,99 @@
+﻿<ContentDialog
+    x:Class="BiliLite.Dialogs.DownloadDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BiliLite.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="下载视频"
+    PrimaryButtonText="开始"
+    SecondaryButtonText="取消"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid Width="360">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+          
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock>优先下载格式</TextBlock>
+            <ComboBox x:Name="cbVideoType"  Margin="0 4 0 0" HorizontalAlignment="Stretch">
+                <ComboBox.Items>
+                    <ComboBoxItem>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock >FLV/H264</TextBlock>
+                            <TextBlock VerticalAlignment="Center"  FontSize="12" Foreground="Gray" Margin="8 0">限速、不支持4K</TextBlock>
+                        </StackPanel>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/H264</TextBlock>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/H265</TextBlock>
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/AV1</TextBlock>
+                    </ComboBoxItem>
+                </ComboBox.Items>
+                
+            </ComboBox>
+         
+        </StackPanel>
+        <StackPanel  Grid.Row="1" Margin="0 8 0 0">
+            <TextBlock>优先清晰度</TextBlock>
+            <ComboBox x:Name="cbQuality" Margin="0 4 0 0" DisplayMemberPath="QualityName" HorizontalAlignment="Stretch" >
+              
+            </ComboBox>
+
+        </StackPanel>
+       
+        <StackPanel Grid.Row="2" Margin="0 8 0 0">
+            <TextBlock>选集</TextBlock>
+            <Border BorderBrush="{ThemeResource ComboBoxBorderBrush}" 
+                    CornerRadius="2"
+                    Margin="0 4"
+                    BorderThickness="{ThemeResource ComboBoxBorderThemeThickness}">
+                <ListView x:Name="listView" ItemsSource="{x:Bind Path=downloadItem.Episodes,Mode=OneWay}"  SelectionMode="Multiple" Height="200">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:DownloadEpisodeItem">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{x:Bind Path=Title}" ToolTipService.ToolTip="{x:Bind Path=Title}"></TextBlock>
+                                <Border Grid.Column="1" Visibility="{x:Bind Path=ShowBadge,Mode=OneWay}" HorizontalAlignment="Right" Background="HotPink" CornerRadius="4">
+                                    <TextBlock FontSize="12" Foreground="White" Margin="4" Text="{x:Bind Path=Badge,Mode=OneWay}"></TextBlock>
+                                </Border>
+                                <TextBlock  Grid.Column="2" FontSize="12" VerticalAlignment="Center" Foreground="Red"  Visibility="{x:Bind Path=State,Mode=OneWay,Converter={StaticResource display},ConverterParameter=99}" Text="{x:Bind Path=ErrorMessage,Mode=OneWay}"></TextBlock>
+                                <ProgressRing Grid.Column="2" Visibility="{x:Bind Path=State,Mode=OneWay,Converter={StaticResource display},ConverterParameter=1}" HorizontalAlignment="Right" IsActive="True"></ProgressRing>
+
+                                <TextBlock Grid.Column="2"  Visibility="{x:Bind Path=State,Mode=OneWay,Converter={StaticResource display},ConverterParameter=2}" FontSize="12" Foreground="Gray" Margin="4">下载中</TextBlock>
+                            
+                                <Border Grid.Column="2"  Visibility="{x:Bind Path=State,Mode=OneWay,Converter={StaticResource display},ConverterParameter=3}" HorizontalAlignment="Right" Background="Gray" CornerRadius="4">
+                                    <TextBlock FontSize="12" Foreground="White" Margin="4">已下载</TextBlock>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                   
+                </ListView>
+            </Border>
+            <StackPanel Orientation="Horizontal">
+                <CheckBox x:Name="checkAll" Checked="checkAll_Checked" Unchecked="checkAll_Unchecked">全选/取消全选</CheckBox>
+                <CheckBox x:Name="checkHidePreview" Visibility="Collapsed" Margin="8 0" Checked="checkHidePreview_Checked" Unchecked="checkHidePreview_Unchecked">隐藏预告/PV/花絮</CheckBox>
+            </StackPanel>
+          
+        </StackPanel>
+    </Grid>
+</ContentDialog>
