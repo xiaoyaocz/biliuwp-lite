@@ -2051,7 +2051,6 @@ namespace BiliLite.Controls
             }
             catch (Exception ex)
             {
-                throw;
                 //Debug.WriteLine(ex.Message);
                 //throws an error but it works;
                 //A method was called at an unexpected time

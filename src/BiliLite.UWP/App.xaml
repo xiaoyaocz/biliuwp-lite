@@ -16,14 +16,8 @@
                 <ResourceDictionary Source="ms-appx:///Controls/Carousel/Carousel.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Controls/RoundButton/RoundButton.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Controls/ScrollGridView/ScrollGridView.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Controls/TabViewStyle.xaml"/>
                 <ResourceDictionary>
-                    <StaticResource x:Key="NavigationViewContentBackground" ResourceKey="LayerFillColorDefaultBrush" />
-                    <StaticResource x:Key="NavigationViewContentGridBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
-
-                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent" />
-                    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="Transparent" />
-                    <SolidColorBrush x:Key="TabViewBorderBrush" Color="Transparent"/>
-
                     <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource TopPaneBackground}" />
                     <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource TopPaneBackground}"/>
                 </ResourceDictionary>
