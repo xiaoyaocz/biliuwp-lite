@@ -12,7 +12,7 @@
     xmlns:convert="using:BiliLite.Converters"
     xmlns:model="using:BiliLite.Modules"
     xmlns:controls="using:BiliLite.Controls" 
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>

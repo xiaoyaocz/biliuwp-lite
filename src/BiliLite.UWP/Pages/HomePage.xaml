@@ -11,7 +11,7 @@
     xmlns:ip="using:MahApps.Metro.IconPacks"
     xmlns:modules="using:BiliLite.Modules" xmlns:converters="using:BiliLite.Converters"
     NavigationCacheMode="Required"
-   >
+    Background="Transparent">
     <Page.Resources>
         <converters:CountDisplayConvert x:Name="countDisplayConvert"></converters:CountDisplayConvert>
     </Page.Resources>

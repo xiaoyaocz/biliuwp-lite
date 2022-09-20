@@ -9,7 +9,7 @@
       xmlns:convert="using:BiliLite.Converters" 
     xmlns:controls="using:BiliLite.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:modules="using:BiliLite.Modules"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>

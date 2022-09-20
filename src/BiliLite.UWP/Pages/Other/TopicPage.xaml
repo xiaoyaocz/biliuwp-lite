@@ -11,7 +11,7 @@
     xmlns:convert="using:BiliLite.Converters"
     xmlns:modules="using:BiliLite.Modules.User"
     xmlns:control="using:BiliLite.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

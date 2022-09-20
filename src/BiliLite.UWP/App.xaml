@@ -17,20 +17,27 @@
                 <ResourceDictionary Source="ms-appx:///Controls/RoundButton/RoundButton.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Controls/ScrollGridView/ScrollGridView.xaml"/>
                 <ResourceDictionary>
+                    <StaticResource x:Key="NavigationViewContentBackground" ResourceKey="LayerFillColorDefaultBrush" />
+                    <StaticResource x:Key="NavigationViewContentGridBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="TabViewBorderBrush" Color="Transparent"/>
+
                     <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource TopPaneBackground}" />
                     <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource TopPaneBackground}"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <Color x:Key="TopPaneBackground">#FFF9F9F9</Color>
+                    <Color x:Key="TopPaneBackground">#00000000</Color>
                     <Color x:Key="HighLightColor">#ec407a</Color>
                     <Color x:Key="TextColor">#CC000000</Color>
                     <Color x:Key="SystemColorHighlightColor">#ec407a</Color>
                     <Color x:Key="CardColor">#C8FFFFFF</Color>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <Color x:Key="TopPaneBackground">#FF282828</Color>
+                    <Color x:Key="TopPaneBackground">#00000000</Color>
                     <Color x:Key="HighLightColor">#ec407a</Color>
                     <Color x:Key="TextColor">#CCFFFFFF</Color>
                     <Color x:Key="SystemColorHighlightColor">#ec407a</Color>

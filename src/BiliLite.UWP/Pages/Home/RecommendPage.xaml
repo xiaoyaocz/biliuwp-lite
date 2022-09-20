@@ -12,8 +12,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:fa="using:FontAwesome5"
-    
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Page.Resources>
         <covert:ColorConvert x:Key="colorConvert"></covert:ColorConvert>
@@ -212,14 +211,14 @@
             </Grid>
         </winui:RefreshContainer>
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="20 12" HorizontalAlignment="Right">
+            <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
+            </controls:RoundButton>
             <controls:RoundButton x:Name="btnGrid"  Visibility="Collapsed" ToolTipService.ToolTip="切换为网格显示" Click="btnGrid_Click" Margin="0 0 0 8"  Padding="12">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80A;"  Foreground="White"/>
             </controls:RoundButton>
             <controls:RoundButton x:Name="btnList"  ToolTipService.ToolTip="切换为列表显示" Click="btnList_Click" Margin="0 0 0 8"  Padding="12">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE292;" Foreground="White"/>
-            </controls:RoundButton>
-            <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
-                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
             </controls:RoundButton>
             <controls:RoundButton Padding="12" Command="{x:Bind Path=recommendVM.RefreshCommand}" >
                 <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>

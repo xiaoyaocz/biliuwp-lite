@@ -11,7 +11,7 @@
     xmlns:modules="using:BiliLite.Modules.Live.LiveCenter"
      xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:convert="using:BiliLite.Converters"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <convert:DatetimeConvert x:Key="time"/>
