@@ -39,6 +39,7 @@ using Windows.UI;
 using Windows.Storage.Streams;
 using Windows.UI.Text;
 using BiliLite.Modules.Player.Playurl;
+using System.Diagnostics;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -184,7 +185,7 @@ namespace BiliLite.Controls
         IDictionary<int, List<NSDanmaku.Model.DanmakuModel>> danmakuPool = new Dictionary<int, List<NSDanmaku.Model.DanmakuModel>>();
         List<int> danmakuLoadedSegment;
         SettingVM settingVM;
-        DisplayRequest dispRequest;
+        DisplayRequest displayRequest;
         SystemMediaTransportControls _systemMediaTransportControls;
         DispatcherTimer timer_focus;
         public Player PlayerInstance { get { return Player; } }
@@ -198,7 +199,7 @@ namespace BiliLite.Controls
         public PlayerControl()
         {
             this.InitializeComponent();
-            dispRequest = new DisplayRequest();
+            displayRequest = new DisplayRequest();
             playerHelper = new PlayerVM();
             settingVM = new SettingVM();
 
@@ -786,7 +787,7 @@ namespace BiliLite.Controls
         public void InitializePlayInfo(List<PlayInfo> playInfos, int index)
         {
             //保持屏幕常亮
-            dispRequest.RequestActive();
+            //displayRequest.RequestActive();
 
             PlayInfos = playInfos;
             EpisodeList.ItemsSource = PlayInfos;
@@ -2032,13 +2033,37 @@ namespace BiliLite.Controls
         {
             EpisodeList.SelectedIndex = EpisodeList.SelectedIndex + 1;
         }
-
+        private void KeepScreenOn(bool value = true)
+        {
+            try
+            {
+                if (displayRequest != null)
+                {
+                    if (value)
+                    {
+                        displayRequest.RequestActive();
+                    }
+                    else
+                    {
+                        displayRequest.RequestRelease();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+                //Debug.WriteLine(ex.Message);
+                //throws an error but it works;
+                //A method was called at an unexpected time
+            }
+        }
         private void Player_PlayStateChanged(object sender, PlayState e)
         {
             BottomImageBtnPlay.Visibility = Visibility.Collapsed;
             switch (e)
             {
                 case PlayState.Loading:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
@@ -2048,6 +2073,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Playing:
+                    KeepScreenOn();
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -2058,6 +2084,7 @@ namespace BiliLite.Controls
                     DanmuControl.ResumeDanmaku();
                     break;
                 case PlayState.Pause:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
@@ -2069,6 +2096,7 @@ namespace BiliLite.Controls
                     DanmuControl.PauseDanmaku();
                     break;
                 case PlayState.End:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
@@ -2078,6 +2106,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Error:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
@@ -2351,9 +2380,9 @@ namespace BiliLite.Controls
                 danmuTimer = null;
             }
             danmakuPool = null;
-            if (dispRequest != null)
+            if (displayRequest != null)
             {
-                dispRequest = null;
+                displayRequest = null;
             }
         }
 
@@ -2398,7 +2427,7 @@ namespace BiliLite.Controls
             var result = await playerHelper.SendDanmaku(CurrentPlayItem.avid, CurrentPlayItem.cid, SendDanmakuTextBox.Text, Convert.ToInt32(Player.Position), modeInt, color);
             if (result)
             {
-                DanmuControl.AddDanmu(new DanmakuModel()
+                await DanmuControl.AddDanmu(new DanmakuModel()
                 {
                     color = NSDanmaku.Utils.ToColor(color),
                     text = SendDanmakuTextBox.Text,
