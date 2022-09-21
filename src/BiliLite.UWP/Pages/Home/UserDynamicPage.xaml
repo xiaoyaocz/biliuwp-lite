@@ -77,7 +77,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid x:Name="gridTopBar" MaxWidth="800" Margin="8 0">
-                        <Border x:Name="borderTopBar" Margin="12 4"  CornerRadius="4"  Background="{ThemeResource CardColor}">
+                        <Border x:Name="borderTopBar" Margin="12 4"  CornerRadius="4"  Background="Transparent">
                             <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
                                 <Pivot.RightHeader>
                                     <StackPanel Orientation="Horizontal">
@@ -147,6 +147,9 @@
                     </controls:MyListView>
                     <ProgressRing Grid.Row="1" VerticalAlignment="Bottom" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
                     <StackPanel Orientation="Vertical"  Grid.Row="1" VerticalAlignment="Bottom" Margin="20 12" HorizontalAlignment="Right">
+                        <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
+                        </controls:RoundButton>
                         <controls:RoundButton x:Name="btnGrid"  ToolTipService.ToolTip="切换为瀑布流" Click="btnGrid_Click" Margin="0 0 0 8"  Padding="12">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80A;"  Foreground="White"/>
                         </controls:RoundButton>

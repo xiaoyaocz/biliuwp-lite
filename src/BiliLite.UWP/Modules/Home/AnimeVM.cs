@@ -189,7 +189,12 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiResultModel<JObject>>();
                     if (data.success)
                     {
-                        Follows = await data.result["follow_list"].ToString().DeserializeJson<ObservableCollection<FollowSeasonModel>>();
+                        JToken token = data.result["total"];
+                        int value = token.ToObject<int>();
+                        if (value != 0)
+                        {
+                            Follows = await data.result["follow_list"].ToString().DeserializeJson<ObservableCollection<FollowSeasonModel>>();
+                        }
                     }
                     else
                     {
