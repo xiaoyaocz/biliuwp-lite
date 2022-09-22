@@ -156,9 +156,6 @@
                         <controls:RoundButton x:Name="btnList"  Visibility="Collapsed" ToolTipService.ToolTip="切换为列表" Click="btnList_Click" Margin="0 0 0 8"  Padding="12">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE292;" Foreground="White"/>
                         </controls:RoundButton>
-                        <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
-                        </controls:RoundButton>
                         <controls:RoundButton x:Name="btnRefresh"  Command="{x:Bind Path=dynamicVM.RefreshCommand}"   Padding="12">
                             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
                         </controls:RoundButton>
