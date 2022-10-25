@@ -1,5 +1,12 @@
 [
   {
+    "name": "2022年10月港澳台片单",
+    "desc": "《电锯人》、《死神 千年血戰篇》、《路人超能100 S3》、《咒術迴戰 0》",
+    "type": 0,
+    "link": "https://www.bilibili.com/bangumi/list/sl62024",
+    "pic": "http://i0.hdslb.com/bfs/bangumi/image/8cae4ea0ea97c612c9ab229fdb751b364a99e3cb.png@200w.jpg"
+  },
+  {
     "name": "2022年7月港澳台片单",
     "desc": "《OVERLORD 第四季》、《歡迎來到實力至上主義的教室S2》、《出租女友S2》、《繼母的拖油瓶是我的前女友》",
     "type": 0,
@@ -33,12 +40,5 @@
     "type": 0,
     "link": "https://www.bilibili.com/bangumi/list/sl55865",
     "pic": "http://i0.hdslb.com/bfs/bangumi/image/45bb6906f945b15d31e4f650f850b95d0c08462a.png@200w.jpg"
-  },
-  {
-    "name": "橙猫服饰",
-    "desc": "👉橙子服装店开业啦！纯棉T恤，超级特惠！单价￥29.8，两件仅需￥54.8！",
-    "type": 0,
-    "link": "https://nsapps.cn/index.php/ad.html",
-    "pic": "https://vip2.loli.io/2022/06/04/gVtCNnK2aGJwTqQ.png"
   }
 ]

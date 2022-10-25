@@ -48,7 +48,7 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/reply",
                 parameter = $"&oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
