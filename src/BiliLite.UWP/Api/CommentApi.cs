@@ -37,8 +37,8 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}"
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
+                parameter = $"&oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -48,8 +48,8 @@ namespace BiliLite.Api
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/reply",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
+                parameter = $"&oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
