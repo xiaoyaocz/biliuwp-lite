@@ -1,7 +1,7 @@
 {
-  "version": "4.4.7",
-  "version_num": 40407,
-  "version_desc": "更新内容:\r\n\r\n* 优化视频播放链接读取\r\n\r\n* 增加替换视频CDN链接选项\r\n\r\n* 增加评论显示IP属地\r\n\r\n* 增加播放器显示在线人数\r\n\r\n* 修复动态加载问题\r\n\r\n* 修复搜索问题\r\n\r\n* 修复搜索结果重复加载的问题\r\n\r\n* 修复WebView未同步登录问题\r\n\r\n* 修复个人中心关注状态失效问题\r\n\r\n* 修复4.4.6无法播放1080P问题\r\n\r\n* 修复其他一些BUG\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
+  "version": "4.4.8",
+  "version_num": 40408,
+  "version_desc": "更新内容:\r\n\r\n* 临时修复评论加载问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
   "url": "https://b.nsapps.cn",
   "download_url": "https://b.nsapps.cn"
 }
