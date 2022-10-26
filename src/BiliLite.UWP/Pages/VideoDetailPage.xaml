@@ -69,7 +69,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto" x:Name="BottomInfo"/>
                 </Grid.RowDefinitions>
-                <Grid Background="Black">
+                <Grid Background="Transparent">
                     <control:PlayerControl x:Name="player" AllMediaEndEvent="player_AllMediaEndEvent" FullScreenEvent="PlayerControl_FullScreenEvent" FullWindowEvent="PlayerControl_FullWindowEvent" ChangeEpisodeEvent="PlayerControl_ChangeEpisodeEvent"/>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -246,9 +246,8 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-            <Grid Grid.Column="1" Background="Transparent">
+            <Grid Background="Transparent" Grid.Column="1" >
                 <Pivot x:Name="pivot" >
-
                     <PivotItem Margin="0">
                         <PivotItem.Header>
                             <TextBlock Text="详情" FontSize="18"></TextBlock>
