@@ -1,7 +1,0 @@
-{
-  "version": "4.4.0",
-  "version_num": 40400,
-  "version_desc": "更新内容:\r\n\r\n* 支持导出下载的视频为MP4文件\r\n\r\n* 支持按地区设置代理\r\n\r\n* 支持按地区搜索\r\n\r\n* 修复一些问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
-  "url": "https://b.nsapps.cn",
-  "download_url": "https://b.nsapps.cn"
-}
