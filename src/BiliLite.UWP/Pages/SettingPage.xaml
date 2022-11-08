@@ -9,7 +9,7 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:font="using:FontAwesome5"
     xmlns:covert="using:BiliLite.Converters" xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
@@ -510,7 +510,7 @@
                     <TextBlock FontSize="15">帮助</TextBlock>
                 </PivotItem.Header>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <controls1:MarkdownTextBlock x:Name="txtHelp" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="16" LinkClicked="txtHelp_LinkClicked" IsTextSelectionEnabled="True" ></controls1:MarkdownTextBlock>
+                    <controls1:MarkdownTextBlock x:Name="txtHelp" Background="Transparent" Padding="16" LinkClicked="txtHelp_LinkClicked" IsTextSelectionEnabled="True" ></controls1:MarkdownTextBlock>
                 </ScrollViewer>
             </PivotItem>
             <PivotItem Margin="0">

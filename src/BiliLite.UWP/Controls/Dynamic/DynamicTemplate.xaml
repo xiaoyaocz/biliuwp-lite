@@ -20,15 +20,13 @@
     <DataTemplate x:Key="OneRow" >
         <local:DynamicItemControl Model="{Binding}">
             <local:DynamicItemControl.CardContent>
-
-                <Border BorderThickness="1" HorizontalAlignment="Stretch"  BorderBrush="#C8E5E9EF" CornerRadius="4">
-                    <HyperlinkButton Padding="0" Margin="0" Command="{Binding Path=LaunchUrlCommand}" CommandParameter="{Binding Path=OneRowInfo.Url}">
-                        <HyperlinkButton.ContextFlyout>
+                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0" Background="Transparent"  Command="{Binding Path=LaunchUrlCommand}" CommandParameter="{Binding Path=OneRowInfo.Url}">
+                        <Button.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Visibility="{Binding Path=ShowWatchLater}" Icon="Add" Text="添加到稍后再看" Command="{Binding Path=WatchLaterCommand}" CommandParameter="{Binding Path=OneRowInfo.ID}"></MenuFlyoutItem>
                             </MenuFlyout>
-                        </HyperlinkButton.ContextFlyout>
-                        <Grid >
+                        </Button.ContextFlyout>
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
@@ -51,11 +49,7 @@
                                 <TextBlock Margin="0 8 0 0" Text="{Binding Path=OneRowInfo.Subtitle}" FontSize="14" Foreground="Gray"></TextBlock>
                             </StackPanel>
                         </Grid>
-                    </HyperlinkButton>
-                </Border>
-
-
-
+                    </Button>
             </local:DynamicItemControl.CardContent>
         </local:DynamicItemControl>
     </DataTemplate>

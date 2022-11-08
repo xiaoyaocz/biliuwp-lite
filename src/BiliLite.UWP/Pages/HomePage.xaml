@@ -11,9 +11,13 @@
     xmlns:pages="using:BiliLite.Pages.Home"
     xmlns:modules="using:BiliLite.Modules" xmlns:converters="using:BiliLite.Converters"
     NavigationCacheMode="Required"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <converters:CountDisplayConvert x:Name="countDisplayConvert"></converters:CountDisplayConvert>
+        <StaticResource x:Key="NavigationViewContentBackground" ResourceKey="LayerFillColorDefaultBrush" />
+        <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent" />
+        <StaticResource x:Key="NavigationViewContentGridBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+        <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="Transparent" />
     </Page.Resources>
 
     <Grid >
@@ -28,7 +32,7 @@
                 <AutoSuggestBox x:Name="SearchBox" QuerySubmitted="SearchBox_QuerySubmitted" MinWidth="140" PlaceholderText="你想找什么呢?" QueryIcon="Find"></AutoSuggestBox>
             </winui:NavigationView.AutoSuggestBox>
             <winui:NavigationView.PaneFooter>
-                <StackPanel Margin="-8 0 0 0" Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <Button x:Name="btnUser" Visibility="{x:Bind Path=homeVM.IsLogin,Mode=OneWay}" BorderThickness="0"  Width="48" Height="40" Background="Transparent">
                         <Ellipse Width="24" Height="24" >
                             <Ellipse.Fill>
@@ -38,6 +42,11 @@
                         <Button.Flyout>
                             <Flyout x:Name="UserFlyout">
                                 <StackPanel Width="240">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="Button">
+                                            <Setter Target="BorderThickness" Value="0"/>
+                                        </Style>
+                                    </StackPanel.Resources>
                                     <Grid>
                                         <Ellipse Width="48" Height="48">
                                             <Ellipse.Fill>

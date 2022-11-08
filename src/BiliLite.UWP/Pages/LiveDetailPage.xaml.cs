@@ -40,7 +40,7 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class LiveDetailPage : BasePage
     {
-        DisplayRequest dispRequest;
+        DisplayRequest displayRequest;
         readonly MediaSourceConfig _config;
         FFmpegInteropX.FFmpegMediaSource interopMSS;
         LiveRoomVM liveRoomVM;
@@ -53,7 +53,7 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             Title = "直播间";
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
-            dispRequest = new DisplayRequest();
+            displayRequest = new DisplayRequest();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             _config = new MediaSourceConfig();
@@ -154,6 +154,10 @@ namespace BiliLite.Pages
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
+                if (displayRequest != null)
+                {
+                    displayRequest.RequestRelease();
+                }
                 liveRoomVM.Liveing = false;
                 url = "";
                 player.SetMediaPlayer(null);
@@ -190,6 +194,10 @@ namespace BiliLite.Pages
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
              {
+                 if (displayRequest != null)
+                 {
+                     displayRequest.RequestRelease();
+                 }
                  LogHelper.Log("直播加载失败", LogType.ERROR, new Exception(args.ErrorMessage));
                  await new MessageDialog($"啊，直播加载失败了\r\n错误信息:{args.ErrorMessage}\r\n请尝试在直播设置中打开/关闭硬解试试", "播放失败").ShowAsync();
              });
@@ -201,7 +209,10 @@ namespace BiliLite.Pages
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 //保持屏幕常亮
-                dispRequest.RequestActive();
+                if (displayRequest != null)
+                {
+                    displayRequest.RequestActive();
+                }
                 PlayerLoading.Visibility = Visibility.Collapsed;
                 SetMediaInfo();
             });
@@ -406,9 +417,9 @@ namespace BiliLite.Pages
             }
             liveRoomVM?.Dispose();
             //取消屏幕常亮
-            if (dispRequest != null)
+            if (displayRequest != null)
             {
-                dispRequest = null;
+                displayRequest = null;
             }
             liveRoomVM = null;
             SetFullScreen(false);

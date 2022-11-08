@@ -384,7 +384,7 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }

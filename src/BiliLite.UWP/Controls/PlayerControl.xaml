@@ -284,10 +284,8 @@
         <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="Transparent"></SolidColorBrush>
         <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
     </UserControl.Resources>
-    <Grid Background="Black">
-
-
-        <SplitView x:Name="SplitView"  PanePlacement="Right" PaneBackground="#C8000000">
+    <Grid Background="Transparent">
+        <SplitView x:Name="SplitView" SizeChanged="Player_SizeChanged" PanePlacement="Right" PaneBackground="#C8000000">
             <SplitView.Pane>
                 <Grid x:Name="Setting">
                     <Pivot x:Name="SettingPivot" RequestedTheme="Dark">
@@ -378,7 +376,7 @@
                                     <Slider  x:Name="DanmuTopMargin" Value="0" Minimum="0" Maximum="200" StepFrequency="4"></Slider>
                                     <TextBlock Margin="0 4 0 0">弹幕每秒数量(0为不限制) <Run Text="{x:Bind Path=DanmuSettingMaxNum.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
                                     <Slider  x:Name="DanmuSettingMaxNum" Value="0" Minimum="0" Maximum="50" StepFrequency="1"></Slider>
-                                    
+
                                     <Grid Margin="0 4 0 0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -411,7 +409,7 @@
                                                 <TextBlock  Foreground="White" >合并重复弹幕</TextBlock>
                                             </ToggleSwitch.Header>
                                         </ToggleSwitch>
-                                        
+
                                     </Grid>
                                     <TextBlock Margin="0 8">屏蔽等级(0为不屏蔽) <Run Text="{x:Bind Path=DanmuSettingShieldLevel.Value,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>级</TextBlock>
                                     <Slider x:Name="DanmuSettingShieldLevel"  Minimum="0" Maximum="10" StepFrequency="1"></Slider>
@@ -502,6 +500,7 @@
                                         <Button x:Name="PlayerSettingABPlaySetPointA" Click="PlayerSettingABPlaySetPointA_Click" Grid.Column="1" Foreground="White" Margin="0 0 8 0" Visibility="Collapsed">设置A点</Button>
                                         <Button x:Name="PlayerSettingABPlaySetPointB" Click="PlayerSettingABPlaySetPointB_Click" Grid.Column="1" Foreground="White" Visibility="Collapsed">设置B点</Button>
                                     </StackPanel>
+                                    <TextBlock TextWrapping="Wrap" x:Name="txtInfo" />
                                 </StackPanel>
                             </ScrollViewer>
                         </PivotItem>
@@ -559,28 +558,20 @@
                 </Grid>
             </SplitView.Pane>
             <Grid  PointerMoved="Grid_PointerMoved"   
-                   DoubleTapped="Grid_DoubleTapped" 
                    PointerEntered="Grid_PointerEntered" 
                    PointerExited="Grid_PointerExited"
-                   
-                   ManipulationMode="TranslateX,TranslateRailsX,TranslateY,TranslateRailsY"
-                   ManipulationCompleted="Grid_ManipulationCompleted"
-                   ManipulationDelta="Grid_ManipulationDelta"
-                   ManipulationStarted="Grid_ManipulationStarted">
-                <Grid.ContextFlyout>
-                    <Flyout>
-                        <TextBlock TextWrapping="Wrap" x:Name="txtInfo" ></TextBlock>
-                    </Flyout>
-                </Grid.ContextFlyout>
+                   PointerPressed="Grid_PointerPressed"
+                   PointerReleased="Grid_PointerReleased"
+                   DoubleTapped="Grid_DoubleTapped">
                 <!--播放器-->
-                <local:Player x:Name="Player"  PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
-               
+                <local:Player x:Name="Player" PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
+
                 <!--字幕-->
                 <Border x:Name="BorderSubtitle" Visibility="Collapsed" Opacity="{Binding ElementName=SubtitleSettingOpacity,Path=Value,Mode=OneWay}" Padding="8 4" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 0 0 24">
-                   
+
                 </Border>
                 <!--弹幕-->
-                <Grid >
+                <Grid>
                     <danmaku:Danmaku x:Name="DanmuControl"/>
                 </Grid>
                 <!--亮度-->
@@ -633,7 +624,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
+
                 <Grid x:Name="control" >
                     <Grid x:Name="StandardControl">
                         <Grid.RowDefinitions>
@@ -715,7 +706,7 @@
                                     <Button x:Name="TopBtnOpenDanmaku" Click="TopBtnOpenDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay,Converter={StaticResource display}}" Background="Transparent" Padding="0" Width="48" Height="48">
                                         <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_open.png" ></Image>
                                     </Button>
-                                   
+
                                     <Button x:Name="TopBtnCloseDanmaku" Click="TopBtnCloseDanmaku_Click" Visibility="{x:Bind Path=DanmuControl.Visibility,Mode=OneWay}" Background="Transparent" Padding="0" Width="48" Height="48">
                                         <Image Width="28" Height="28" Source="/Assets/Icon/icon_danmaku_close.png" ></Image>
                                     </Button>
@@ -824,7 +815,7 @@
                                 </StackPanel>
                             </Grid>
                         </Grid>
-                       
+
                     </Grid>
                     <Grid x:Name="MiniControl" Visibility="Collapsed" VerticalAlignment="Bottom">
                         <Grid.Background>
@@ -852,7 +843,7 @@
                         </StackPanel>
                         <ProgressBar VerticalAlignment="Bottom" Foreground="White" Value="{Binding ElementName=BottomProgress,Path=Value,Mode=OneWay}" Maximum="{Binding ElementName=BottomProgress,Path=Maximum,Mode=OneWay}"></ProgressBar>
                     </Grid>
-                   
+
                 </Grid>
                 <HyperlinkButton x:Name="BottomImageBtnPlay" Visibility="Collapsed"  Margin="24 100" Width="80" Height="80" Click="BottomBtnPlay_Click" VerticalAlignment="Bottom" HorizontalAlignment="Right" >
                     <Image Source="ms-appx:///Assets/Icon/ic_play.png"></Image>
@@ -861,6 +852,4 @@
             </Grid>
         </SplitView>
     </Grid>
-
-
 </UserControl>
