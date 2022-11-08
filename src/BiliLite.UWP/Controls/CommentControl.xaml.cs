@@ -127,7 +127,7 @@ namespace BiliLite.Controls
         public async void LoadComment(LoadCommentInfo loadCommentInfo)
         {
 
-            if (loadCommentInfo.CommentSort == commentSort.Hot)
+            if (loadCommentInfo.CommentSort == CommentSort.Hot)
             {
                 hot.Visibility = Visibility.Visible;
                 _new.Visibility = Visibility.Collapsed;
@@ -420,13 +420,13 @@ namespace BiliLite.Controls
 
         private void btn_HotSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.CommentSort = commentSort.Hot;
+            _loadCommentInfo.CommentSort = CommentSort.Hot;
             LoadComment(_loadCommentInfo);
         }
 
         private void btn_NewSort_Click(object sender, RoutedEventArgs e)
         {
-            _loadCommentInfo.CommentSort = commentSort.New;
+            _loadCommentInfo.CommentSort = CommentSort.New;
             LoadComment(_loadCommentInfo);
         }
 
@@ -650,7 +650,7 @@ namespace BiliLite.Controls
     public class LoadCommentInfo
     {
         public int CommentMode { get; set; }
-        public commentSort CommentSort { get; set; }
+        public CommentSort CommentSort { get; set; }
         public string Oid { get; set; }
         public bool IsDialog { get; set; } = false;
     }

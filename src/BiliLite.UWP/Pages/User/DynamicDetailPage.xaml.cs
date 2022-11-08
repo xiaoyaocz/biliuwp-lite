@@ -79,7 +79,7 @@ namespace BiliLite.Pages.User
                     id = e.DynamicID;
                     break;
             }
-            Utils.ShowComment(id, (int)commentType, Api.CommentApi.commentSort.Hot);
+            Utils.ShowComment(id, (int)commentType, Api.CommentApi.CommentSort.Hot);
             //comment.LoadComment(new Controls.LoadCommentInfo()
             //{
             //    CommentMode = (int)commentType,

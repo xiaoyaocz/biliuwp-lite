@@ -98,7 +98,7 @@ namespace BiliLite.Pages.Home
             //    commentSort = Api.CommentApi.commentSort.Hot,
             //    oid = id
             //});
-            Utils.ShowComment(id, (int)commentType, Api.CommentApi.commentSort.Hot);
+            Utils.ShowComment(id, (int)commentType, Api.CommentApi.CommentSort.Hot);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)

@@ -188,7 +188,7 @@ namespace BiliLite.Pages
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.commentSort.Hot,
+                CommentSort = Api.CommentApi.CommentSort.Hot,
                 Oid = playInfos[index].avid
             });
         }
@@ -219,7 +219,7 @@ namespace BiliLite.Pages
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.commentSort.Hot,
+                CommentSort = Api.CommentApi.CommentSort.Hot,
                 Oid = playInfos[index].avid
             });
         }
@@ -316,7 +316,7 @@ namespace BiliLite.Pages
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.commentSort.Hot,
+                CommentSort = Api.CommentApi.CommentSort.Hot,
                 Oid = aid
             });
             changedFlag = false;
@@ -339,7 +339,7 @@ namespace BiliLite.Pages
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.commentSort.Hot,
+                CommentSort = Api.CommentApi.CommentSort.Hot,
                 Oid = seasonDetailVM.Episodes[listEpisode.SelectedIndex].aid
             });
             CreateQR();
@@ -361,7 +361,7 @@ namespace BiliLite.Pages
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.commentSort.Hot,
+                CommentSort = Api.CommentApi.CommentSort.Hot,
                 Oid = seasonDetailVM.Episodes[listPreview.SelectedIndex].aid
             });
             CreateQR();

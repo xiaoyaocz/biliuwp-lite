@@ -18,10 +18,10 @@ namespace BiliLite.Api
             SongMenu=19,
             Song=14
         }
-        public enum commentSort
+        public enum CommentSort
         {
             New = 0,
-            Hot=2,
+            Hot =1,        
         }
         /// <summary>
         /// 读取评论
@@ -32,15 +32,15 @@ namespace BiliLite.Api
         /// <param name="type">类型，1=视频，17=动态，11=图片，5=小视频，19=歌单，14=歌曲</param>
         /// <param name="ps">每页数量</param>
         /// <returns></returns>
-        public ApiModel Comment(string oid, commentSort sort,int pn, int type, int ps = 30)
+        public ApiModel Comment(string oid, CommentSort sort,int pn, int type, int ps = 30)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
-                parameter = $"&oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}"
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply",
+                parameter =  $"oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}"
             };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
         public ApiModel Reply(string oid,string root, int pn, int type, int ps = 30)
@@ -49,9 +49,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/reply",
-                parameter = $"&oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
+                parameter =  $"oid={oid}&plat=2&pn={pn}&ps={ps}&root={root}&type={type}"
             };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -61,9 +61,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/action",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&rpid={root}&action={action}&type={type}"
+                body =  $"&oid={oid}&rpid={root}&action={action}&type={type}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+            //api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -73,9 +73,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/add",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&root={root}&parent={parent}&type={type}&message={message}"
+                body =  $"&oid={oid}&root={root}&parent={parent}&type={type}&message={message}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+           // api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
         public ApiModel DeleteComment(string oid, string rpid, int type)
@@ -84,9 +84,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/del",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&rpid={rpid}&type={type}"
+                body =  $"&oid={oid}&rpid={rpid}&type={type}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+           // api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
         public ApiModel AddComment(string oid, CommentType type,string message)
@@ -95,9 +95,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/add",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&oid={oid}&type={(int)type}&message={Uri.EscapeDataString(message)}"
+                body = $"&oid={oid}&type={(int)type}&message={Uri.EscapeDataString(message)}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+            //api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
     }

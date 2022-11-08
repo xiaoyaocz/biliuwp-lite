@@ -215,7 +215,7 @@ namespace BiliLite.Pages
                 comment.LoadComment(new LoadCommentInfo()
                 {
                     CommentMode = (int)Api.CommentApi.CommentType.Video,
-                    CommentSort = Api.CommentApi.commentSort.Hot,
+                    CommentSort = Api.CommentApi.CommentSort.Hot,
                     Oid = videoDetailVM.VideoInfo.aid
                 });
             }

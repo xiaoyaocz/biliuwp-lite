@@ -114,7 +114,7 @@ namespace BiliLite.Helpers
             MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(seconds), commands);
             ms.Show();
         }
-        public static void ShowComment(string oid, int commentMode, Api.CommentApi.commentSort commentSort)
+        public static void ShowComment(string oid, int commentMode, Api.CommentApi.CommentSort commentSort)
         {
             CommentDialog ms = new CommentDialog();
             ms.Show(oid, commentMode, commentSort);

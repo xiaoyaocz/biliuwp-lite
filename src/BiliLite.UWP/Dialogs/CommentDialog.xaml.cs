@@ -36,7 +36,7 @@ namespace BiliLite.Dialogs
         {
             Window.Current.SizeChanged -= Current_SizeChanged;
         }
-        public void Show(string oid,int commentMode, Api.CommentApi.commentSort commentSort)
+        public void Show(string oid,int commentMode, Api.CommentApi.CommentSort commentSort)
         {
             this.popup.IsOpen = true;
             comment.LoadComment(new Controls.LoadCommentInfo()
