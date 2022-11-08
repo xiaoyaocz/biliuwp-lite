@@ -1,27 +1,13 @@
-# 哔哩哔哩 UWP 
+# BiliLite
 
-第三方哔哩哔哩UWP客户端
+由于个人时间不足，该项目停止维护，有兴趣的可以自行Fork维护。
 
-下载及常见问题见：[https://b.nsapps.cn](https://b.nsapps.cn)
+感谢大家6年多以来的支持。
 
-## 截图
+其他客户端推荐：
 
-![QQ截图20200730165337.png](https://vip1.loli.net/2020/08/02/rGLMwtVSYmaKgxi.png)
+@Richasy开发的UWP，很好看也很好用
+https://github.com/Richasy/Bili.Uwp
 
-## 参考及引用
-
-[SYEngine@ShanYe](https://github.com/ShanYe/SYEngine)
-
-[FFmpegInteropX@ffmpeginteropx](https://github.com/ffmpeginteropx/FFmpegInteropX)
-
-[bilibili-API-collect@SocialSisterYi](https://github.com/SocialSisterYi/bilibili-API-collect)
-
-[bilibili-grpc-api@SeeFlowerX](https://github.com/SeeFlowerX/bilibili-grpc-api)
-
-[FontAwesome5@MartinTopfstedt](https://github.com/MartinTopfstedt/FontAwesome5)
-
-[waslibs@wasteam](https://github.com/wasteam/waslibs)
-
-[bilibili-helper@ipcjs](https://github.com/ipcjs/bilibili-helper)
-
-[BiliRoaming@yujincheng08](https://github.com/yujincheng08/BiliRoaming)
+哔哩哔哩官方客户端，体验也很好
+https://app.bilibili.com/
