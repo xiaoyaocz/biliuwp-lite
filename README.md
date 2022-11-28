@@ -1,4 +1,4 @@
-# BiliLite
+<!-- # BiliLite
 
 由于个人原因，该项目停止维护，有兴趣的可以自行Fork维护。
 
@@ -12,4 +12,10 @@ https://github.com/Richasy/Bili.Uwp
 
 https://app.bilibili.com/
 
-感谢大家6年多以来的支持。
+感谢大家6年多以来的支持。 -->
+
+# BiliLite
+
+从逍遥橙子大佬那fork出来，大佬不维护了，群也解散了，要维护只能自己搞了
+
+https://github.com/xiaoyaocz/biliuwp-lite
