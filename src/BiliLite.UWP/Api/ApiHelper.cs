@@ -89,10 +89,11 @@ namespace BiliLite.Api
             return headers;
         }
 
-        public static IDictionary<string,string> GetAuroraZoneHeaders()
+        public static IDictionary<string,string> GetAuroraHeaders()
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
             headers.Add("x-bili-aurora-zone", "sh001");
+            headers.Add("x-bili-aurora-eid", "UlMFQVcABlAH");
             return headers;
         }
 

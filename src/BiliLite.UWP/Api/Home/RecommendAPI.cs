@@ -15,7 +15,7 @@ namespace BiliLite.Api.Home
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://app.bilibili.com/x/v2/feed/index",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&flush=0&idx={idx}&login_event=2&network=wifi&open_event=&pull={(idx == "0").ToString().ToLower()}&qn=32&style=2",
-                headers = ApiHelper.GetAuroraZoneHeaders()
+                headers = ApiHelper.GetAuroraHeaders()
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

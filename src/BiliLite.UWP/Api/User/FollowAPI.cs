@@ -23,7 +23,7 @@ namespace BiliLite.Api.User
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/app/follow/v2/bangumi",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&pn={page}&ps={pagesize}&status={status}",
-                headers = ApiHelper.GetAuroraZoneHeaders()
+                headers = ApiHelper.GetAuroraHeaders()
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
