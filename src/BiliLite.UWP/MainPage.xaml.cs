@@ -78,7 +78,7 @@ namespace BiliLite
                 }
             }
 //#if !DEBUG
-            await Utils.CheckVersion();
+            // await Utils.CheckVersion();
 //#endif
         }
         private void MessageCenter_ChangeTitleEvent(object sender, string e)
