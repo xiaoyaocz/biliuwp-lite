@@ -120,11 +120,18 @@ namespace BiliLite.Helpers
             catch (Exception ex)
             {
                 LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                var flurlEx = ex as FlurlHttpException;
+                var message = "其他错误";
+                if (flurlEx != null)
+                {
+                    var exMessage = await flurlEx.Call?.Response?.GetStringAsync();
+                    if (exMessage != null) message = exMessage;
+                }
                 return new HttpResults()
                 {
                     code = ex.HResult,
                     status = false,
-                    message = "网络请求出现错误(GET)"
+                    message = $"网络请求出现错误(GET) : {message}"
                 };
             }
         }
