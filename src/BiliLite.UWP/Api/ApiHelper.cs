@@ -89,6 +89,13 @@ namespace BiliLite.Api
             return headers;
         }
 
+        public static IDictionary<string,string> GetAuroraZoneHeaders()
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("x-bili-aurora-zone", "sh001");
+            return headers;
+        }
+
     }
     public class ApiKeyInfo
     {

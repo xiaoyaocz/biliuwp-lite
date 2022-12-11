@@ -13,6 +13,7 @@ using Windows.Web.Http.Filters;
 using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
+using Flurl.Http;
 
 namespace BiliLite.Helpers
 {
@@ -47,7 +48,7 @@ namespace BiliLite.Helpers
                     }
                     if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
                     {
-                        client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36");
+                        client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
                     }
                     var response = await client.GetAsync(new Uri(url));
                     if (!response.IsSuccessStatusCode)
@@ -75,6 +76,46 @@ namespace BiliLite.Helpers
 
 
 
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                return new HttpResults()
+                {
+                    code = ex.HResult,
+                    status = false,
+                    message = "网络请求出现错误(GET)"
+                };
+            }
+        }
+
+        public static async Task<HttpResults> GetAsync(string url, IDictionary<string, string> headers = null)
+        {
+            try
+            {
+                Debug.WriteLine("GET:" + url);
+                var flurlResponse = await url.WithHeaders(headers).GetAsync();
+
+                var response = flurlResponse.ResponseMessage;
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new HttpResults()
+                    {
+                        code = (int)response.StatusCode,
+                        status = false,
+                        message = StatusCodeToMessage((int)response.StatusCode)
+                    };
+                }
+                var results = await flurlResponse.GetStringAsync();
+                //response.EnsureSuccessStatusCode();
+                HttpResults httpResults = new HttpResults()
+                {
+                    code = (int)response.StatusCode,
+                    status = response.StatusCode == System.Net.HttpStatusCode.OK,
+                    results = results,
+                    message = "",
+                };
+                return httpResults;
             }
             catch (Exception ex)
             {

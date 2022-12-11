@@ -43,7 +43,7 @@ namespace BiliLite.Helpers
                 {
                     return await HttpHelper.GetWithWebCookie(api.url, api.headers);
                 }
-                return await HttpHelper.Get(api.url, api.headers);
+                return await HttpHelper.GetAsync(api.url, api.headers);
             }
             else
             {
