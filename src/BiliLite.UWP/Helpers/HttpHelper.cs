@@ -14,6 +14,7 @@ using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
 using Flurl.Http;
+using Windows.Media.Protection.PlayReady;
 
 namespace BiliLite.Helpers
 {
@@ -94,7 +95,12 @@ namespace BiliLite.Helpers
             try
             {
                 Debug.WriteLine("GET:" + url);
-                var flurlResponse = await url.WithHeaders(headers).GetAsync();
+                var flurlRequest = url.WithHeaders(headers);
+                if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
+                {
+                    flurlRequest.WithHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
+                }
+                var flurlResponse = await flurlRequest.GetAsync();
 
                 var response = flurlResponse.ResponseMessage;
                 if (!response.IsSuccessStatusCode)
