@@ -317,6 +317,23 @@ namespace BiliLite.Pages
             });
         }
 
+        private async void btnReplaceToken_Click(object sender, RoutedEventArgs e)
+        {
+            var replaceTokenDialog = new ContentDialog();
+            replaceTokenDialog.XamlRoot = this.XamlRoot;
+            replaceTokenDialog.Title = "更换令牌";
+            replaceTokenDialog.PrimaryButtonText = "保存";
+            replaceTokenDialog.CloseButtonText = "取消";
+            replaceTokenDialog.DefaultButton = ContentDialogButton.Primary;
+            var tokenBox= new TextBox();
+            replaceTokenDialog.Content = tokenBox;
+            replaceTokenDialog.PrimaryButtonClick += (s, args) =>
+            {
+                var token=tokenBox.Text;
+                account.UpdateToken(token);
+            };
+            var result = await replaceTokenDialog.ShowAsync();
+        }
     }
 
 

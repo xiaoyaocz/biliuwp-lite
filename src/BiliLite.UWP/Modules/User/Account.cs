@@ -519,6 +519,11 @@ namespace BiliLite.Modules
                 //return false;
             }
         }
+
+        public void UpdateToken(string accessKey)
+        {
+            SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY, accessKey);
+        }
     }
 
     public class HomeUserCardModel

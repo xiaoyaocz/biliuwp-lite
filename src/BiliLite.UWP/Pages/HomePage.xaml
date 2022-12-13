@@ -124,6 +124,12 @@
                                         </StackPanel>
                                     </Button>
                                     <Border Height="1" Margin="0 4" Background="#19808080"></Border>
+                                    <Button x:Name="btnReplaceToken" Click="btnReplaceToken_Click"  Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                        <StackPanel Orientation="Horizontal">
+                                            <fa:FontAwesome Icon="Solid_TicketAlt" Width="24" FontSize="16"></fa:FontAwesome>
+                                            <TextBlock Margin="12 0">更换令牌</TextBlock>
+                                        </StackPanel>
+                                    </Button>
                                     <Button x:Name="btnLogout" Click="btnLogout_Click"  Padding="12 8" Foreground="{ThemeResource TextColor}" Background="Transparent" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal">
                                             <fa:FontAwesome Icon="Solid_SignOutAlt" Width="24" FontSize="16"></fa:FontAwesome>
