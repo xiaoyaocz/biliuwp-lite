@@ -270,10 +270,14 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\ApiModel.cs" />
+    <Compile Include="Models\Common\Constants.cs" />
     <Compile Include="Models\Dynamic\DynamicModel.cs" />
     <Compile Include="Models\Dynamic\DynamicUserProfileModel.cs" />
+    <Compile Include="Models\Common\Enumerates.cs" />
     <Compile Include="Models\GenerateMPDModel.cs" />
+    <Compile Include="Models\Common\HttpCookieItem.cs" />
     <Compile Include="Models\PageEntranceModel.cs" />
+    <Compile Include="Models\Responses\LoginAppThirdResponse.cs" />
     <Compile Include="Models\ReturnModel.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Modules\Detail\FavoriteDetailVM.cs" />

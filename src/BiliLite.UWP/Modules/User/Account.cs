@@ -4,15 +4,17 @@ using BiliLite.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using Windows.Web.Http.Filters;
+using BiliLite.Models.Common;
+using BiliLite.Models.Responses;
 
 namespace BiliLite.Modules
 {
@@ -280,6 +282,24 @@ namespace BiliLite.Modules
             }
         }
 
+        public void SaveCookie(List<HttpCookieItem> cookies)
+        {
+            if (cookies != null)
+            {
+                var filter = new HttpBaseProtocolFilter();
+                foreach (var cookieItem in cookies)
+                {
+                    filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.Name, cookieItem.Domain, "/")
+                    {
+                        HttpOnly = cookieItem.HttpOnly,
+                        Secure = cookieItem.Secure,
+                        Expires = cookieItem.Expires,
+                        Value = cookieItem.Value,
+                    });
+                }
+            }
+        }
+
         public async Task<MyProfileModel> GetProfile()
         {
             try
@@ -360,11 +380,121 @@ namespace BiliLite.Modules
         /// 获取二维码登录信息
         /// </summary>
         /// <returns></returns>
-        public async Task<ReturnModel<QRAuthInfo>> GetQRAuthInfo()
+        public async Task<ReturnModel<QRAuthInfoWeb>> GetQRAuthInfo()
         {
             try
             {
-                var result = await accountApi.QRLoginAuthCode(guid).Request();
+                var result = await accountApi.QRLoginAuthCode().Request();
+                var data = await result.GetData<QRAuthInfoWeb>();
+                return new ReturnModel<QRAuthInfoWeb>()
+                {
+                    success = true,
+                    data = data.data
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ReturnModel<QRAuthInfoWeb>()
+                {
+                    success = false,
+                    message = ex.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// 轮询二维码扫描信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task<LoginCallbackModel> PollQRAuthInfo(string auth_code)
+        {
+            try
+            {
+                var result = await accountApi.QRLoginPoll(auth_code).Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<LoginDataWebModel>();
+                    if (data.data.code == LoginQRStatusCode.Success)
+                    {
+                        SaveCookie(result.cookies);
+                        var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
+                        var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
+                        // var expires = result.cookies[0].Expires;
+                        var userId = result.cookies.FirstOrDefault(x=>x.Name== "DedeUserID").Value;
+                        await SaveLogin(accessKey, data.data.refresh_token, 3600*240, long.Parse(userId), null, null);
+                        return new LoginCallbackModel()
+                        {
+                            status = LoginStatus.Success,
+                            message = "登录成功"
+                        };
+                    }
+                    return new LoginCallbackModel()
+                    {
+                        status = LoginStatus.Fail,
+                        message = data.message
+                    };
+                }
+                return new LoginCallbackModel()
+                {
+                    status = LoginStatus.Fail,
+                    message = result.message
+                };
+            }
+            catch (Exception ex)
+            {
+                return new LoginCallbackModel()
+                {
+                    status = LoginStatus.Fail,
+                    message = ex.Message
+                };
+            }
+        }
+
+        public async Task<string> GetCookieToAccessKeyConfirmUrl()
+        {
+            try
+            {
+                var result = await accountApi.GetCookieToAccessKey().Request();
+                if (result.status)
+                {
+                    var data = await result.GetData<LoginAppThirdResponse>();
+                    return data.data.confirm_uri;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return null;
+        }
+
+        public async Task<string> GetAccessKey(string url)
+        {
+            try
+            {
+                var result = await accountApi.GetCookieToAccessKey(url).Request();
+                if (!result.status) return null;
+                var uri = new Uri(result.results);
+                var queries = HttpUtility.ParseQueryString(uri.Query);
+                var accessKey = queries.Get("access_key");
+                return accessKey;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 获取二维码登录信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ReturnModel<QRAuthInfo>> GetQRAuthInfoTV()
+        {
+            try
+            {
+                var result = await accountApi.QRLoginAuthCodeTV(guid).Request();
                 if (result.status)
                 {
                     var data = await result.GetData<QRAuthInfo>();
@@ -408,11 +538,11 @@ namespace BiliLite.Modules
         /// 轮询二维码扫描信息
         /// </summary>
         /// <returns></returns>
-        public async Task<LoginCallbackModel> PollQRAuthInfo(string auth_code)
+        public async Task<LoginCallbackModel> PollQRAuthInfoTV(string auth_code)
         {
             try
             {
-                var result = await accountApi.QRLoginPoll(auth_code, guid).Request();
+                var result = await accountApi.QRLoginPollTV(auth_code, guid).Request();
                 if (result.status)
                 {
                     var data = await result.GetData<LoginDataV3Model>();
@@ -519,11 +649,6 @@ namespace BiliLite.Modules
                 //return false;
             }
         }
-
-        public void UpdateToken(string accessKey)
-        {
-            SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY, accessKey);
-        }
     }
 
     public class HomeUserCardModel
@@ -565,4 +690,9 @@ namespace BiliLite.Modules
         public string auth_code { get; set; }
     }
 
+    public class QRAuthInfoWeb
+    {
+        public string url { get; set; }
+        public string qrcode_key { get; set; }
+    }
 }

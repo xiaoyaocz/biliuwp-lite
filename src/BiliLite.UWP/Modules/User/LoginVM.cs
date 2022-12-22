@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules.User
 {
@@ -465,7 +466,7 @@ namespace BiliLite.Modules.User
         }
 
 
-        QRAuthInfo qrAuthInfo;
+        QRAuthInfoWeb qrAuthInfo;
         private async void GetQRAuthInfo()
         {
             try
@@ -525,7 +526,7 @@ namespace BiliLite.Modules.User
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                var result = await account.PollQRAuthInfo(qrAuthInfo.auth_code);
+                var result = await account.PollQRAuthInfo(qrAuthInfo.qrcode_key);
                   if (result.status == LoginStatus.Success)
                   {
                       qrTimer.Stop();

@@ -1,18 +1,14 @@
 ﻿using BiliLite.Api;
 using BiliLite.Controls;
 using Microsoft.Toolkit.Uwp.Helpers;
-using Microsoft.Toolkit.Uwp.UI.Animations;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI;
@@ -35,10 +31,14 @@ namespace BiliLite.Helpers
         /// </summary>
         /// <param name="api"></param>
         /// <returns></returns>
-        public async static Task<HttpResults> Request(this ApiModel api)
+        public static async Task<HttpResults> Request(this ApiModel api)
         {
             if (api.method == RestSharp.Method.Get)
             {
+                if (api.need_redirect)
+                {
+                    return await HttpHelper.GetRedirectWithWebCookie(api.url, api.headers);
+                }
                 if (api.need_cookie)
                 {
                     return await HttpHelper.GetWithWebCookie(api.url, api.headers);
@@ -153,7 +153,7 @@ namespace BiliLite.Helpers
         /// 根据Epid取番剧ID
         /// </summary>
         /// <returns></returns>
-        public async static Task<string> BangumiEpidToSid(string epid)
+        public static async Task<string> BangumiEpidToSid(string epid)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace BiliLite.Helpers
         /// 短链接还原
         /// </summary>
         /// <returns></returns>
-        public async static Task<string> GetShortLinkLocation(string shortlink)
+        public static async Task<string> GetShortLinkLocation(string shortlink)
         {
             try
             {
@@ -193,7 +193,7 @@ namespace BiliLite.Helpers
         }
 
         private static bool dialogShowing = false;
-        public async static Task<bool> ShowLoginDialog()
+        public static async Task<bool> ShowLoginDialog()
         {
             if (!dialogShowing)
             {
@@ -212,7 +212,7 @@ namespace BiliLite.Helpers
             }
         }
 
-        public async static Task<bool> ShowDialog(string title, string content)
+        public static async Task<bool> ShowDialog(string title, string content)
         {
             MessageDialog messageDialog = new MessageDialog(content, title);
             messageDialog.Commands.Add(new UICommand() { Label = "确定", Id = true });
@@ -287,7 +287,7 @@ namespace BiliLite.Helpers
             }
         }
 
-        public async static Task CheckVersion()
+        public static async Task CheckVersion()
         {
             try
             {

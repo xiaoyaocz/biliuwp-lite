@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using RestSharp;
 using System.IO;
 using Windows.Web.Http;
 using Windows.Storage.Streams;
@@ -13,8 +12,8 @@ using Windows.Web.Http.Filters;
 using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
+using BiliLite.Models.Common;
 using Flurl.Http;
-using Windows.Media.Protection.PlayReady;
 
 namespace BiliLite.Helpers
 {
@@ -90,7 +89,7 @@ namespace BiliLite.Helpers
             }
         }
 
-        public static async Task<HttpResults> GetAsync(string url, IDictionary<string, string> headers = null)
+        public static async Task<HttpResults> GetRedirectAsync(string url, IDictionary<string, string> headers = null)
         {
             try
             {
@@ -103,21 +102,12 @@ namespace BiliLite.Helpers
                 var flurlResponse = await flurlRequest.GetAsync();
 
                 var response = flurlResponse.ResponseMessage;
-                if (!response.IsSuccessStatusCode)
-                {
-                    return new HttpResults()
-                    {
-                        code = (int)response.StatusCode,
-                        status = false,
-                        message = StatusCodeToMessage((int)response.StatusCode)
-                    };
-                }
-                var results = await flurlResponse.GetStringAsync();
-                //response.EnsureSuccessStatusCode();
+
+                var success = flurlResponse.Headers.TryGetFirst("location", out var results);
                 HttpResults httpResults = new HttpResults()
                 {
                     code = (int)response.StatusCode,
-                    status = response.StatusCode == System.Net.HttpStatusCode.OK,
+                    status = success,
                     results = results,
                     message = "",
                 };
@@ -142,7 +132,82 @@ namespace BiliLite.Helpers
             }
         }
 
-        public async static Task<HttpResults> GetWithWebCookie(string url, IDictionary<string, string> headers = null)
+        public static async Task<HttpResults> GetAsync(string url, IDictionary<string, string> headers = null,
+            IDictionary<string, string> cookies = null)
+        {
+            try
+            {
+                Debug.WriteLine("GET:" + url);
+                var flurlRequest = url.WithHeaders(headers);
+                if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
+                {
+                    flurlRequest.WithHeader("user-agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
+                }
+
+                if (cookies != null)
+                {
+                    flurlRequest = flurlRequest.WithCookies(cookies);
+                }
+
+                var flurlResponse = await flurlRequest.GetAsync();
+
+                var response = flurlResponse.ResponseMessage;
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new HttpResults()
+                    {
+                        code = (int) response.StatusCode,
+                        status = false,
+                        message = StatusCodeToMessage((int) response.StatusCode)
+                    };
+                }
+
+                var responseCookies = flurlResponse.Cookies.Select(x =>
+                {
+                    return new HttpCookieItem()
+                    {
+                        Name = x.Name,
+                        Domain = x.Domain,
+                        Expires = x.Expires,
+                        HttpOnly = x.HttpOnly,
+                        Value = x.Value,
+                        Secure = x.Secure,
+                    };
+                }).ToList();
+                var results = await flurlResponse.GetStringAsync();
+                //response.EnsureSuccessStatusCode();
+                HttpResults httpResults = new HttpResults()
+                {
+                    code = (int) response.StatusCode,
+                    status = response.StatusCode == System.Net.HttpStatusCode.OK,
+                    results = results,
+                    message = "",
+                    cookies = responseCookies,
+                };
+                return httpResults;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                var flurlEx = ex as FlurlHttpException;
+                var message = "其他错误";
+                if (flurlEx != null)
+                {
+                    var exMessage = await flurlEx.Call?.Response?.GetStringAsync();
+                    if (exMessage != null) message = exMessage;
+                }
+
+                return new HttpResults()
+                {
+                    code = ex.HResult,
+                    status = false,
+                    message = $"网络请求出现错误(GET) : {message}"
+                };
+            }
+        }
+
+        public static async Task<HttpResults> GetRedirectWithWebCookie(string url, IDictionary<string, string> headers = null)
         {
             try
             {
@@ -151,21 +216,53 @@ namespace BiliLite.Helpers
                     headers = new Dictionary<string, string>();
                 }
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-                var cookies = fiter.CookieManager.GetCookies(new Uri("http://bilibili.com"));
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 //没有Cookie
-                if(cookies==null|| cookies.Count == 0)
+                if (cookies == null || cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
                     await Get("https://www.bilibili.com");
                 }
-                cookies = fiter.CookieManager.GetCookies(new Uri("http://bilibili.com"));
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 string cookie = "";
                 foreach (var item in cookies)
                 {
                     cookie += $"{item.Name}={item.Value};";
                 }
                 headers.Add("Cookie", cookie);
-                return await Get(url, headers);
+                return await GetRedirectAsync(url, headers);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                return new HttpResults()
+                {
+                    code = ex.HResult,
+                    status = false,
+                    message = "网络请求出现错误(GET)"
+                };
+            }
+        }
+
+        public static async Task<HttpResults> GetWithWebCookie(string url, IDictionary<string, string> headers = null)
+        {
+            try
+            {
+                if (headers == null)
+                {
+                    headers = new Dictionary<string, string>();
+                }
+                HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                //没有Cookie
+                if(cookies==null|| cookies.Count == 0)
+                {
+                    //访问一遍bilibili.com
+                    await Get("https://www.bilibili.com");
+                }
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
+                return await GetAsync(url, headers, cookiesCollection);
             }
             catch (Exception ex)
             {
@@ -408,6 +505,7 @@ namespace BiliLite.Helpers
         public string message { get; set; }
         public string results { get; set; }
         public bool status { get; set; }
+        public List<HttpCookieItem> cookies { get; set; }
         public async Task<T> GetJson<T>()
         {
             return await Task.Run<T>(() =>

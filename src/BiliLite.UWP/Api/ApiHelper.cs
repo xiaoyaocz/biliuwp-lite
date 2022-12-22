@@ -1,9 +1,7 @@
 ﻿using BiliLite.Helpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api
 {
@@ -134,6 +132,10 @@ namespace BiliLite.Api
         /// 需要Cookie
         /// </summary>
         public bool need_cookie { get; set; } = false;
+        /// <summary>
+        /// 需要重定向
+        /// </summary>
+        public bool need_redirect { get; set; } = false;
 
         /// <summary>
         /// 请求地址

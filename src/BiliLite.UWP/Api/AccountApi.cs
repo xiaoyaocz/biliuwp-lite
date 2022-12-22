@@ -1,9 +1,5 @@
 ﻿using BiliLite.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api
 {
@@ -219,11 +215,11 @@ namespace BiliLite.Api
         }
 
         /// <summary>
-        /// 二维码登录获取二维码及AuthCode
+        /// tv版二维码登录获取二维码及AuthCode
         /// </summary>
         /// <param name="mid"></param>
         /// <returns></returns>
-        public ApiModel QRLoginAuthCode(string local_id)
+        public ApiModel QRLoginAuthCodeTV(string local_id)
         {
             ApiModel api = new ApiModel()
             {
@@ -236,11 +232,11 @@ namespace BiliLite.Api
         }
 
         /// <summary>
-        /// 二维码登录轮询
+        /// tv版二维码登录轮询
         /// </summary>
         /// <param name="auth_code"></param>
         /// <returns></returns>
-        public ApiModel QRLoginPoll(string auth_code, string local_id)
+        public ApiModel QRLoginPollTV(string auth_code, string local_id)
         {
             ApiModel api = new ApiModel()
             {
@@ -252,6 +248,69 @@ namespace BiliLite.Api
             return api;
         }
 
+        /// <summary>
+        /// web二维码登录获取二维码及AuthCode
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel QRLoginAuthCode()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// web版二维码登录轮询
+        /// </summary>
+        /// <param name="auth_code"></param>
+        /// <returns></returns>
+        public ApiModel QRLoginPoll(string auth_code)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/web/qrcode/poll",
+                parameter = $"qrcode_key={auth_code}"
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// web版登录获取到的Cookie转app令牌
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel GetCookieToAccessKey()
+        {
+            var apiBody = "api=http://link.acg.tv/forum.php";
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/login/app/third",
+                parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&{apiBody}",
+                need_cookie = true,
+            };
+            api.parameter += ApiHelper.GetSign(apiBody, ApiHelper.AndroidKey);
+            return api;
+        }
+
+        /// <summary>
+        /// web版登录获取到的Cookie转app令牌
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel GetCookieToAccessKey(string url)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = url,
+                need_cookie = true,
+                need_redirect = true,
+            };
+            return api;
+        }
 
         /// <summary>
         /// 读取oauth2信息

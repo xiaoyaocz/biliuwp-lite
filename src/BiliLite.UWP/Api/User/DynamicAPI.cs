@@ -1,9 +1,5 @@
 ﻿using BiliLite.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api.User
 {
@@ -68,7 +64,7 @@ namespace BiliLite.Api.User
             //使用Web的API
             if (SettingHelper.Account.Logined)
             {
-                api.parameter +=  $"&access_key={SettingHelper.Account.AccessKey}";
+                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}";
             }
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -87,7 +83,7 @@ namespace BiliLite.Api.User
             {
                 api.parameter += $"&access_key={SettingHelper.Account.AccessKey}";
             }
-       
+
             return api;
         }
         public ApiModel DynamicRepost(string id,string offset="")
