@@ -1,7 +1,7 @@
 {
-  "version": "4.4.8",
-  "version_num": 40408,
-  "version_desc": "更新内容:\r\n\r\n* 临时修复评论加载问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://b.nsapps.cn",
-  "url": "https://b.nsapps.cn",
-  "download_url": "https://b.nsapps.cn"
+  "version": "4.4.9",
+  "version_num": 40409,
+  "version_desc": "更新内容:\r\n\r\n* 修复扫码登录后使用各个功能都会出现鉴权失败的错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+  "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
+  "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
