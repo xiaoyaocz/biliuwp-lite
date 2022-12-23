@@ -12,7 +12,7 @@ namespace BiliLite.Api
         public const string IL_BASE_URL = "https://biliapi.iliili.cn";
 
         // GIT RAW路径
-        public const string GIT_RAW_URL = "https://git.nsapps.cn/xiaoyaocz/BiliLite/raw/master/";
+        public const string GIT_RAW_URL = "https://raw.githubusercontent.com/ywmoyue/biliuwp-lite/master";
 
         // 哔哩哔哩API
         public const string API_BASE_URL = "https://api.bilibili.com";
