@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
-using Windows.Web.Http.Filters;
-using BiliLite.Models.Common;
+using BiliLite.Helpers;
 
 namespace BiliLite.Api
 {
@@ -56,20 +54,7 @@ namespace BiliLite.Api
 
         public ApiModel Like(string oid, string root, int action, int type)
         {
-            var fiter = new HttpBaseProtocolFilter();
-            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
-            //没有Cookie
-            if (cookies == null || cookies.Count == 0)
-            {
-                throw new Exception("未登录");
-            }
-
-            var csrf = cookies.FirstOrDefault(x => x.Name == "bili_jct")?.Value;
-
-            if (string.IsNullOrEmpty(csrf))
-            {
-                throw new Exception("未登录");
-            }
+            var csrf = Utils.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,

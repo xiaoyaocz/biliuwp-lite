@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BiliLite.Helpers;
-using Flurl;
 using Flurl.Http;
 
 namespace BiliLite.Models.Common
