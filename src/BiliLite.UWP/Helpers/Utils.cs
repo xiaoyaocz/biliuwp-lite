@@ -47,7 +47,11 @@ namespace BiliLite.Helpers
             }
             else
             {
-                return await HttpHelper.Post(api.url, api.body, api.headers);
+                if (api.need_cookie)
+                {
+                    return await HttpHelper.PostWithCookie(api.url, api.body, api.headers);
+                }
+                return await HttpHelper.PostAsync(api.url, api.body, api.headers);
             }
         }
 
