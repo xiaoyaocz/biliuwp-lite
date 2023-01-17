@@ -137,6 +137,7 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
+
        /// <summary>
        /// 发送弹幕
        /// </summary>
@@ -154,12 +155,13 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/dm/post",
-                parameter= ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true)+$"&aid={aid}",
+                parameter= ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+$"&aid={aid}",
                 body =   $"msg={Uri.EscapeDataString(msg)}&mode={mode}&screen_state=1&color={color}&pool=0&progress={Convert.ToInt32(position*1000)}&fontsize=25&rnd={Utils.GetTimestampS()}&from=7&oid={cid}&plat={plat}&type=1"
             };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+
         /// <summary>
         /// 读取播放信息
         /// </summary>
