@@ -1,10 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api
 {
@@ -47,7 +43,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{baseUrl}/pgc/player/web/playurl",
-                parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
+                parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
             {
@@ -57,14 +53,15 @@ namespace BiliLite.Api
             {
                 api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
-            
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
+
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             if (proxy)
             {
                 api.parameter += $"&area={area}";
             }
             return api;
         }
+
         public ApiModel SeasonAndroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)
         {
             ApiModel api = new ApiModel()
@@ -178,6 +175,7 @@ namespace BiliLite.Api
             };
             return api;
         }
+
         /// <summary>
         /// 读取视频在线人数
         /// </summary>
@@ -210,6 +208,7 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
             return api;
         }
+
         /// <summary>
         /// 添加弹幕屏蔽关键词
         /// </summary>
@@ -227,6 +226,7 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
             return api;
         }
+
         /// <summary>
         /// 分段弹幕
         /// </summary>
@@ -254,7 +254,5 @@ namespace BiliLite.Api
             var par=Newtonsoft.Json.JsonConvert.SerializeObject(generate);
             return $"{ApiHelper.IL_BASE_URL}/api/player/generatempd?par={Uri.EscapeDataString(par)}";
         }
-
-
     }
 }
