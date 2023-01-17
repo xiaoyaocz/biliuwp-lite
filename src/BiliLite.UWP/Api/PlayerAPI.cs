@@ -132,9 +132,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/report",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true) + $"&aid={aid}&cid={cid}&epid={epid}&sid={sid}&progress={progress}&realtime={progress}&sub_type=1&type={type}"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}&cid={cid}&epid={epid}&sid={sid}&progress={progress}&realtime={progress}&sub_type=1&type={type}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidVideoKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
        /// <summary>
