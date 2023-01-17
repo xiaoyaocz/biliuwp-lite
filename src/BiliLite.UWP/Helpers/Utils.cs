@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls;
 using Windows.UI;
 using System.IO;
+using System.Linq;
 using BiliLite.Dialogs;
 using Windows.UI.Popups;
 using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -21,6 +22,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using Windows.Web.Http.Filters;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Helpers
 {
@@ -53,6 +56,30 @@ namespace BiliLite.Helpers
                 }
                 return await HttpHelper.PostAsync(api.url, api.body, api.headers);
             }
+        }
+
+        /// <summary>
+        /// 获取CSRF令牌
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCSRFToken()
+        {
+            var fiter = new HttpBaseProtocolFilter();
+            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+            //没有Cookie
+            if (cookies == null || cookies.Count == 0)
+            {
+                throw new Exception("未登录");
+            }
+
+            var csrf = cookies.FirstOrDefault(x => x.Name == "bili_jct")?.Value;
+
+            if (string.IsNullOrEmpty(csrf))
+            {
+                throw new Exception("未登录");
+            }
+
+            return csrf;
         }
 
         /// <summary>
