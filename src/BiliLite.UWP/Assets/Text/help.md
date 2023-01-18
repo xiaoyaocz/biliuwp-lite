@@ -1,10 +1,8 @@
-﻿此页面可能更新不及时，请到[https://b.nsapps.cn/#/docs/help](https://b.nsapps.cn/#/docs/help)查阅最新内容
-
-### 说明
+﻿### 说明
 
 此应用是哔哩哔哩第三方UWP客户端！第三方客户端！第三方客户端！第三方客户端！
 
-使用遇到问题，请先阅读以下内容，如果以下内容无法解决你的问题，请发送邮件至biliuwp@iill.moe
+使用遇到问题，请先阅读以下内容，如果以下内容无法解决你的问题，请至此处开启一个新的讨论https://github.com/ywmoyue/biliuwp-lite/discussions 
 
 
 ### 权限说明
