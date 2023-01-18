@@ -1,7 +1,7 @@
 {
-  "version": "4.4.9",
-  "version_num": 40409,
-  "version_desc": "更新内容:\r\n\r\n* 修复扫码登录后使用各个功能都会出现鉴权失败的错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+  "version": "4.4.10",
+  "version_num": 40410,
+  "version_desc": "更新内容:\r\n\r\n* 修复访问部分up主主页出现非法访问错误\r\n修复点赞评论和发送弹幕错误\r\n修复视频加载错误\r\n修复播放港澳台视频时哔哩漫游报错\r\n修复看视频没有历史记录\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
   "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
   "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
