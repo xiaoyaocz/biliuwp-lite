@@ -29,182 +29,27 @@ namespace BiliLite.Helpers
         /// <param name="headers"></param>
         /// <param name="cookie"></param>
         /// <returns></returns>
-        public async static Task<HttpResults> Get(string url, IDictionary<string, string> headers = null)
-        {
-            try
-            {
-                Debug.WriteLine("GET:" + url);
-                HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-
-                fiter.IgnorableServerCertificateErrors.Add(Windows.Security.Cryptography.Certificates.ChainValidationResult.Expired);
-                using (var client = new HttpClient(fiter))
-                {
-                    if (headers != null)
-                    {
-                        foreach (var item in headers)
-                        {
-                            client.DefaultRequestHeaders.Add(item.Key, item.Value);
-                        }
-                    }
-                    if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
-                    {
-                        client.DefaultRequestHeaders.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
-                    }
-                    var response = await client.GetAsync(new Uri(url));
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        return new HttpResults()
-                        {
-                            code = (int)response.StatusCode,
-                            status = false,
-                            message = StatusCodeToMessage((int)response.StatusCode)
-                        };
-                    }
-
-                    //response.EnsureSuccessStatusCode();
-                    var buffer = await response.Content.ReadAsBufferAsync();
-                    var byteArray = buffer.ToArray();
-                    HttpResults httpResults = new HttpResults()
-                    {
-                        code = (int)response.StatusCode,
-                        status = response.StatusCode == HttpStatusCode.Ok,
-                        results = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length),
-                        message = "",
-                    };
-                    return httpResults;
-                }
-
-
-
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
-                return new HttpResults()
-                {
-                    code = ex.HResult,
-                    status = false,
-                    message = "网络请求出现错误(GET)"
-                };
-            }
-        }
-
         public static async Task<HttpResults> GetRedirectAsync(string url, IDictionary<string, string> headers = null)
         {
-            try
-            {
-                Debug.WriteLine("GET:" + url);
-                var flurlRequest = url.WithHeaders(headers);
-                if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
-                {
-                    flurlRequest.WithHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
-                }
-                var flurlResponse = await flurlRequest.GetAsync();
-
-                var response = flurlResponse.ResponseMessage;
-
-                var success = flurlResponse.Headers.TryGetFirst("location", out var results);
-                HttpResults httpResults = new HttpResults()
-                {
-                    code = (int)response.StatusCode,
-                    status = success,
-                    results = results,
-                    message = "",
-                };
-                return httpResults;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
-                var flurlEx = ex as FlurlHttpException;
-                var message = "其他错误";
-                if (flurlEx != null)
-                {
-                    var exMessage = await flurlEx.Call?.Response?.GetStringAsync();
-                    if (exMessage != null) message = exMessage;
-                }
-                return new HttpResults()
-                {
-                    code = ex.HResult,
-                    status = false,
-                    message = $"网络请求出现错误(GET) : {message}"
-                };
-            }
+            Debug.WriteLine("GET:" + url);
+            var biliRequestBuilder = new BiliRequestBuilder(url)
+                .SetHeaders(headers)
+                .SetNeedRedirect();
+            var biliRequest = biliRequestBuilder.Build();
+            var httpResult = await biliRequest.Send();
+            return httpResult;
         }
 
         public static async Task<HttpResults> GetAsync(string url, IDictionary<string, string> headers = null,
             IDictionary<string, string> cookies = null)
         {
-            try
-            {
-                Debug.WriteLine("GET:" + url);
-                var flurlRequest = url.WithHeaders(headers);
-                if (url.Contains("bilibili.com") || url.Contains("pgc/player/") || url.Contains("x/web-interface"))
-                {
-                    flurlRequest.WithHeader("user-agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
-                }
-
-                if (cookies != null)
-                {
-                    flurlRequest = flurlRequest.WithCookies(cookies);
-                }
-
-                var flurlResponse = await flurlRequest.GetAsync();
-
-                var response = flurlResponse.ResponseMessage;
-                if (!response.IsSuccessStatusCode)
-                {
-                    return new HttpResults()
-                    {
-                        code = (int) response.StatusCode,
-                        status = false,
-                        message = StatusCodeToMessage((int) response.StatusCode)
-                    };
-                }
-
-                var responseCookies = flurlResponse.Cookies.Select(x =>
-                {
-                    return new HttpCookieItem()
-                    {
-                        Name = x.Name,
-                        Domain = x.Domain,
-                        Expires = x.Expires,
-                        HttpOnly = x.HttpOnly,
-                        Value = x.Value,
-                        Secure = x.Secure,
-                    };
-                }).ToList();
-                var results = await flurlResponse.GetStringAsync();
-                //response.EnsureSuccessStatusCode();
-                HttpResults httpResults = new HttpResults()
-                {
-                    code = (int) response.StatusCode,
-                    status = response.StatusCode == System.Net.HttpStatusCode.OK,
-                    results = results,
-                    message = "",
-                    cookies = responseCookies,
-                };
-                return httpResults;
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
-                var flurlEx = ex as FlurlHttpException;
-                var message = "其他错误";
-                if (flurlEx != null)
-                {
-                    var exMessage = await flurlEx.Call?.Response?.GetStringAsync();
-                    if (exMessage != null) message = exMessage;
-                }
-
-                return new HttpResults()
-                {
-                    code = ex.HResult,
-                    status = false,
-                    message = $"网络请求出现错误(GET) : {message}"
-                };
-            }
+            Debug.WriteLine("GET:" + url);
+            var biliRequestBuilder = new BiliRequestBuilder(url)
+                .SetHeaders(headers)
+                .SetCookies(cookies);
+            var biliRequest = biliRequestBuilder.Build();
+            var httpResult = await biliRequest.Send();
+            return httpResult;
         }
 
         public static async Task<HttpResults> GetRedirectWithWebCookie(string url, IDictionary<string, string> headers = null)
@@ -221,7 +66,7 @@ namespace BiliLite.Helpers
                 if (cookies == null || cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
-                    await Get("https://www.bilibili.com");
+                    await GetAsync("https://www.bilibili.com");
                 }
                 cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 string cookie = "";
@@ -248,17 +93,13 @@ namespace BiliLite.Helpers
         {
             try
             {
-                if (headers == null)
-                {
-                    headers = new Dictionary<string, string>();
-                }
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
                 var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 //没有Cookie
                 if(cookies==null|| cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
-                    await Get("https://www.bilibili.com");
+                    await GetAsync("https://www.bilibili.com");
                 }
                 cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
@@ -283,7 +124,7 @@ namespace BiliLite.Helpers
         /// <param name="headers"></param>
         /// <param name="cookie"></param>
         /// <returns></returns>
-        public async static Task<Stream> GetStream(string url, IDictionary<string, string> headers = null)
+        public static async Task<Stream> GetStream(string url, IDictionary<string, string> headers = null)
         {
             Debug.WriteLine("GET:" + url);
             try
@@ -322,7 +163,7 @@ namespace BiliLite.Helpers
         /// <param name="headers"></param>
         /// <param name="cookie"></param>
         /// <returns></returns>
-        public async static Task<IBuffer> GetBuffer(string url, IDictionary<string, string> headers = null)
+        public static async Task<IBuffer> GetBuffer(string url, IDictionary<string, string> headers = null)
         {
             Debug.WriteLine("GET:" + url);
             try
@@ -361,7 +202,7 @@ namespace BiliLite.Helpers
         /// <param name="headers"></param>
         /// <param name="cookie"></param>
         /// <returns></returns>
-        public async static Task<String> GetString(string url, IDictionary<string, string> headers = null, IDictionary<string, string> cookie = null)
+        public static async Task<String> GetString(string url, IDictionary<string, string> headers = null, IDictionary<string, string> cookie = null)
         {
             Debug.WriteLine("GET:" + url);
             try
@@ -405,50 +246,37 @@ namespace BiliLite.Helpers
         /// <param name="cookie"></param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public async static Task<HttpResults> Post(string url, string body, IDictionary<string, string> headers = null, string contentType = "application/x-www-form-urlencoded")
+        public static async Task<HttpResults> PostAsync(string url, string body, IDictionary<string, string> headers = null, IDictionary<string, string> cookies = null)
         {
             Debug.WriteLine("POST:" + url + "\r\nBODY:" + body);
+            var biliRequestBuilder = new BiliRequestBuilder(url)
+                .SetHeaders(headers)
+                .SetCookies(cookies)
+                .SetPostBody(body);
+            var biliRequest = biliRequestBuilder.Build();
+            var httpResult = await biliRequest.Send();
+            return httpResult;
+        }
 
+        public static async Task<HttpResults> PostWithCookie(string url, string body, IDictionary<string, string> headers = null)
+        {
             try
             {
-                using (var client = new HttpClient())
+                HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                //没有Cookie
+                if (cookies == null || cookies.Count == 0)
                 {
-                    if (headers != null)
-                    {
-                        foreach (var item in headers)
-                        {
-                            client.DefaultRequestHeaders.Add(item.Key, item.Value);
-                        }
-                    }
-                    var response = await client.PostAsync(new Uri(url), new HttpStringContent(body, Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/x-www-form-urlencoded"));
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        return new HttpResults()
-                        {
-                            code = (int)response.StatusCode,
-                            status = false,
-                            message = StatusCodeToMessage((int)response.StatusCode)
-                        };
-                    }
-                    var buffer = await response.Content.ReadAsBufferAsync();
-                    var byteArray = buffer.ToArray();
-
-                    HttpResults httpResults = new HttpResults()
-                    {
-                        code = (int)response.StatusCode,
-                        status = response.StatusCode == HttpStatusCode.Ok,
-                        results = Encoding.UTF8.GetString(byteArray),
-                        message = ""
-                    };
-                    return httpResults;
+                    //访问一遍bilibili.com
+                    await GetAsync("https://www.bilibili.com");
                 }
-
-
-
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
+                return await PostAsync(url, body, headers, cookiesCollection);
             }
             catch (Exception ex)
             {
-                LogHelper.Log("POST请求失败" + url, LogType.ERROR, ex);
+                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -457,9 +285,6 @@ namespace BiliLite.Helpers
                 };
             }
         }
-
-
-
 
         private static string StatusCodeToMessage(int code)
         {
@@ -549,7 +374,6 @@ namespace BiliLite.Helpers
             {
                 return null;
             }
-
         }
     }
 }

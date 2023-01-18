@@ -1,10 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api
 {
@@ -22,22 +18,19 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{baseUrl}/x/player/playurl",
-                parameter = ApiHelper.MustParameter(ApiHelper.WebVideoKey, true) + $"&avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingHelper.Account.Logined? SettingHelper.Account.Profile.mid.ToString():"")}"
+                parameter = $"avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingHelper.Account.Logined ? SettingHelper.Account.Profile.mid.ToString() : "")}",
+                need_cookie = true,
             };
             if (dash)
             {
                 api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
-           
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             if (proxy)
             {
                 api.parameter += $"&area={area}";
             }
             return api;
         }
-
-       
 
         public ApiModel SeasonPlayUrl(string aid, string cid, string ep_id, int qn,int season_type, bool dash, bool proxy = false, string area = "")
         {
@@ -50,7 +43,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{baseUrl}/pgc/player/web/playurl",
-                parameter = $"appkey={ApiHelper.WebVideoKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
+                parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
             if (SettingHelper.Account.Logined)
             {
@@ -60,14 +53,15 @@ namespace BiliLite.Api
             {
                 api.parameter += "&fourk=1&fnver=0&fnval=4048";
             }
-            
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
+
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             if (proxy)
             {
                 api.parameter += $"&area={area}";
             }
             return api;
         }
+
         public ApiModel SeasonAndroidPlayUrl(string aid, string cid, int qn, int season_type, bool dash)
         {
             ApiModel api = new ApiModel()
@@ -135,11 +129,12 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/report",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true) + $"&aid={aid}&cid={cid}&epid={epid}&sid={sid}&progress={progress}&realtime={progress}&sub_type=1&type={type}"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}&cid={cid}&epid={epid}&sid={sid}&progress={progress}&realtime={progress}&sub_type=1&type={type}"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidVideoKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
+
        /// <summary>
        /// 发送弹幕
        /// </summary>
@@ -157,12 +152,13 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/dm/post",
-                parameter= ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true)+$"&aid={aid}",
+                parameter= ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+$"&aid={aid}",
                 body =   $"msg={Uri.EscapeDataString(msg)}&mode={mode}&screen_state=1&color={color}&pool=0&progress={Convert.ToInt32(position*1000)}&fontsize=25&rnd={Utils.GetTimestampS()}&from=7&oid={cid}&plat={plat}&type=1"
             };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+
         /// <summary>
         /// 读取播放信息
         /// </summary>
@@ -179,6 +175,7 @@ namespace BiliLite.Api
             };
             return api;
         }
+
         /// <summary>
         /// 读取视频在线人数
         /// </summary>
@@ -211,6 +208,7 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
             return api;
         }
+
         /// <summary>
         /// 添加弹幕屏蔽关键词
         /// </summary>
@@ -228,6 +226,7 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
             return api;
         }
+
         /// <summary>
         /// 分段弹幕
         /// </summary>
@@ -255,7 +254,5 @@ namespace BiliLite.Api
             var par=Newtonsoft.Json.JsonConvert.SerializeObject(generate);
             return $"{ApiHelper.IL_BASE_URL}/api/player/generatempd?par={Uri.EscapeDataString(par)}";
         }
-
-
     }
 }

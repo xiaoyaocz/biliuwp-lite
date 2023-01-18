@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BiliLite.Helpers;
 
 namespace BiliLite.Api
 {
@@ -57,11 +54,13 @@ namespace BiliLite.Api
 
         public ApiModel Like(string oid, string root, int action, int type)
         {
+            var csrf = Utils.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/action",
-                body =  $"&oid={oid}&rpid={root}&action={action}&type={type}"
+                body =  $"&oid={oid}&rpid={root}&action={action}&type={type}&csrf={csrf}",
+                need_cookie = true,
             };
             //api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;

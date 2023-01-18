@@ -71,6 +71,7 @@ namespace BiliLite.Api.User
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/arc/search",
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
+                need_cookie = true,
             };
             return api;
         }
