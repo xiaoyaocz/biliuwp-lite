@@ -123,17 +123,7 @@ namespace BiliLite.Dialogs
                     var validate = Regex.Match(args.Uri.AbsoluteUri, "geetest_validate=(.*?)&").Groups[1].Value;
                     var seccode = Regex.Match(args.Uri.AbsoluteUri, "geetest_seccode=(.*?)&").Groups[1].Value;
                     var recaptcha_token = Regex.Match(args.Uri.AbsoluteUri, "recaptcha_token=(.*?)&").Groups[1].Value;
-                    //重新登录
-                    if (loginVM.LoginType == 0)
-                    {
-                        loginVM.DoPasswordLogin(seccode, validate, challenge, recaptcha_token);
-                    }
-                    //发送短信
-                    if (loginVM.LoginType==1)
-                    {
-                        loginVM.SendSMSCodeWithCaptcha(seccode, validate, challenge, recaptcha_token);
-                    }
-                    //Login(seccode, validate, challenge, recaptcha_token);
+                    loginVM.HandleGeetestSuccess(seccode, validate, challenge, recaptcha_token);
                 }
                 else if (success == 2)
                 {

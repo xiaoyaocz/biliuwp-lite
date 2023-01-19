@@ -56,157 +56,6 @@ namespace BiliLite.Modules
         }
 
         /// <summary>
-        /// 登录V2
-        /// </summary>
-        /// <returns></returns>
-        public async Task<LoginCallbackModel> LoginV2(string username, string password, string captcha = "")
-        {
-            try
-            {
-
-                var results = await accountApi.LoginV2(username, await EncryptedPassword(password), captcha).Request();
-                var m = await results.GetJson<LoginV2Model>();
-                if (m.code == 0)
-                {
-                    m.data.expires_datetime = Utils.TimestampToDatetime(m.ts).AddSeconds(m.data.expires_in);
-                    //设置登录状态
-                    SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY, m.data.access_token);
-                    SettingHelper.SetValue(SettingHelper.Account.USER_ID, m.data.mid);
-                    SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now.AddSeconds(m.data.expires_in));
-                    SettingHelper.SetValue(SettingHelper.Account.REFRESH_KEY, m.data.refresh_token);
-
-                    //执行SSO
-                    //await accountApi.SSO(m.data.access_token).Request();
-                    //读取个人资料
-                    await GetProfile();
-
-                    //发送登录成功事件
-                    MessageCenter.SendLogined();
-
-                    return new LoginCallbackModel()
-                    {
-                        status = LoginStatus.Success,
-                        message = "登录成功"
-                    };
-                }
-                else if (m.code == -2100)
-                {
-                    return new LoginCallbackModel()
-                    {
-                        status = LoginStatus.NeedValidate,
-                        url = m.url,
-                        message = "登录需要验证"
-                    };
-                }
-                else if (m.code == -105)
-                {
-                    return new LoginCallbackModel()
-                    {
-                        status = LoginStatus.NeedCaptcha,
-                        message = "登录需要验证码"
-                    };
-                }
-                else
-                {
-                    return new LoginCallbackModel()
-                    {
-                        status = LoginStatus.Fail,
-                        message = m.message
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("登录错误", LogType.ERROR, ex);
-                return new LoginCallbackModel()
-                {
-                    status = LoginStatus.Error,
-                    message = "登录出现小问题,请重试"
-                };
-            }
-        }
-
-        /// <summary>
-        /// 登录V3
-        /// </summary>
-        /// <returns></returns>
-        public async Task<LoginCallbackModel> LoginV3(string username, string password, string seccode = "", string validate = "", string recaptcha_token = "", string challenge = "", int gee_type = 10)
-        {
-            try
-            {
-
-                var results = await accountApi.LoginV3(username, await EncryptedPassword(password), seccode, validate, challenge, recaptcha_token).Request();
-                if (results.status)
-                {
-                    var m = await results.GetData<LoginDataV3Model>();
-                    if (m.code == 0)
-                    {
-                        if (m.data.status == 0)
-                        {
-                            await SaveLogin(m.data.token_info.access_token, m.data.token_info.refresh_token, m.data.token_info.expires_in, m.data.token_info.mid, m.data.sso,m.data.cookie_info);
-                            return new LoginCallbackModel()
-                            {
-                                status = LoginStatus.Success,
-                                message = "登录成功"
-                            };
-                        }
-                        if (m.data.status == 1 || m.data.status == 2)
-                        {
-                            return new LoginCallbackModel()
-                            {
-                                status = LoginStatus.NeedValidate,
-                                message = "本次登录需要安全验证",
-                                url = m.data.url
-                            };
-                        }
-                        return new LoginCallbackModel()
-                        {
-                            status = LoginStatus.Fail,
-                            message = m.message
-                        };
-                    }
-                    else if (m.code == -105)
-                    {
-                        return new LoginCallbackModel()
-                        {
-                            status = LoginStatus.NeedCaptcha,
-                            url = m.data.url,
-                            message = "登录需要验证码"
-                        };
-                    }
-                    else
-                    {
-                        return new LoginCallbackModel()
-                        {
-                            status = LoginStatus.Fail,
-                            message = m.message
-                        };
-                    }
-                }
-                else
-                {
-                    LogHelper.Log("登录V3请求失败错误", LogType.ERROR);
-                    return new LoginCallbackModel()
-                    {
-                        status = LoginStatus.Error,
-                        message = results.message
-                    };
-                }
-
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Log("登录V3错误", LogType.ERROR, ex);
-                return new LoginCallbackModel()
-                {
-                    status = LoginStatus.Error,
-                    message = "登录出现小问题,请重试"
-                };
-            }
-        }
-
-
-        /// <summary>
         /// 安全验证后保存状态
         /// </summary>
         /// <param name="access_key"></param>
@@ -402,6 +251,16 @@ namespace BiliLite.Modules
             }
         }
 
+        public async void LoginByCookie(List<HttpCookieItem> cookies, string refresh_token)
+        {
+            SaveCookie(cookies);
+            var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
+            var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
+            // var expires = result.cookies[0].Expires;
+            var userId = cookies.FirstOrDefault(x=>x.Name== "DedeUserID").Value;
+            await SaveLogin(accessKey, refresh_token, 3600*240, long.Parse(userId), null, null);
+        }
+
         /// <summary>
         /// 轮询二维码扫描信息
         /// </summary>
@@ -416,12 +275,7 @@ namespace BiliLite.Modules
                     var data = await result.GetData<LoginDataWebModel>();
                     if (data.data.code == LoginQRStatusCode.Success)
                     {
-                        SaveCookie(result.cookies);
-                        var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
-                        var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
-                        // var expires = result.cookies[0].Expires;
-                        var userId = result.cookies.FirstOrDefault(x=>x.Name== "DedeUserID").Value;
-                        await SaveLogin(accessKey, data.data.refresh_token, 3600*240, long.Parse(userId), null, null);
+                        LoginByCookie(result.cookies, data.data.refresh_token);
                         return new LoginCallbackModel()
                         {
                             status = LoginStatus.Success,

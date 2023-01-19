@@ -13,11 +13,9 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method = RestSharp.Method.Post,
-                baseUrl = "https://passport.bilibili.com/api/oauth2/getKey",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey)
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/web/key"
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -47,13 +45,13 @@ namespace BiliLite.Api
         /// <param name="password">密码</param>
         /// <param name="gee_type"></param>
         /// <returns></returns>
-        public  ApiModel LoginV3(string username, string password,string seesionId="",string seccode="",string validate="",string challenge="",string recaptcha_token="", int gee_type = 10)
+        public  ApiModel LoginV3(string username, string password)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-login/oauth2/login",
-                body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}&login_session_id={seesionId}&gee_type={gee_type}&gee_seccode={seccode}&gee_validate={validate}&gee_challenge={challenge}&recaptcha_token={recaptcha_token}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+                body = $"actionKey=appkey&channel=bili&device=phone&permission=ALL&subid=1&username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
             return api;
@@ -125,12 +123,12 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter,ApiHelper.AndroidKey);
             return api;
         }
-        
+
         /// <summary>
         /// 读取验证码
         /// </summary>
         /// <returns></returns>
-        public  ApiModel Captcha()
+        public ApiModel Captcha()
         {
             ApiModel api = new ApiModel()
             {
@@ -140,8 +138,82 @@ namespace BiliLite.Api
                 parameter = $"ts={Utils.GetTimestampS()}"
             };
             return api;
-
         }
+
+        /// <summary>
+        /// 读取极验验证码
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel GeetestCaptcha()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/safecenter/captcha/pre"
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 获取带星号的手机号
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel FetchHideTel(string tmp_token)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://api.bilibili.com/x/safecenter/user/info",
+                parameter = $"tmp_code={tmp_token}"
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 发送验证短信
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel SendVerifySMS(string tmp_token, string recaptcha_token, string gee_challenge, string gee_gt, string geetest_validate, string geetest_seccode)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/safecenter/common/sms/send",
+                body = $"sms_type=loginTelCheck&tmp_code={tmp_token}&recaptcha_token={recaptcha_token}&gee_challenge={gee_challenge}&gee_gt={gee_gt}&gee_validate={geetest_validate}&gee_seccode={geetest_seccode}"
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 提交短信验证码
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel SubmitPwdLoginSMSCheck(string code, string tmp_token, string request_id, string captcha_key)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/safecenter/login/tel/verify",
+                body = $"type=loginTelCheck&code={code}&tmp_code={tmp_token}&request_id={request_id}&captcha_key={captcha_key}"
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 交换获取cookie
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel PwdLoginExchangeCookie(string code)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/web/exchange_cookie",
+                body = $"code={code}"
+            };
+            return api;
+        }
+
         /// <summary>
         /// 个人资料
         /// </summary>

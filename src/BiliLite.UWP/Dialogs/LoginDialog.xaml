@@ -125,10 +125,24 @@
                     </HyperlinkButton>
                 </StackPanel>
             </StackPanel>
+            <!--登录验证码-->
+            <StackPanel Visibility="{x:Bind Path=loginVM.LoginType,Mode=OneWay,Converter={StaticResource display},ConverterParameter=3}">
+                <!--验证码-->
+                <TextBlock  Margin="0 4">验证码已发送至<Run Text="{x:Bind Path=loginVM.HideTel,Mode=OneWay}"/></TextBlock>
+                <Grid>
+                    <TextBox PlaceholderText="请输入验证码" Text="{x:Bind Path=loginVM.Code,Mode=TwoWay}"></TextBox>
+                    <HyperlinkButton HorizontalAlignment="Right" IsEnabled="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay}" Command="{x:Bind Path=loginVM.SendPwdLoginSMSCommand}">
+                        <Grid>
+                            <TextBlock Margin="8 0" Visibility="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay}">发送验证码</TextBlock>
+                            <TextBlock Margin="8 0" Visibility="{x:Bind Path=loginVM.EnableSendSMS,Mode=OneWay,Converter={StaticResource display}}"><Run Text="{x:Bind Path=loginVM.SMSCountDown,Mode=OneWay}"/>秒后可再发送</TextBlock>
+                        </Grid>
+                    </HyperlinkButton>
+                </Grid>
+            </StackPanel>
          
         </StackPanel>
         <!--WebView-->
-        <WebView x:Name="webView" NavigationStarting="webView_NavigationStarting" NavigationCompleted="WebView_NavigationCompleted"  Height="360" Width="320" Visibility="Collapsed"></WebView>
+        <WebView x:Name="webView" NavigationStarting="webView_NavigationStarting" NavigationCompleted="WebView_NavigationCompleted"  Height="444" Width="346" Visibility="Collapsed"></WebView>
     </Grid>
   
 </ContentDialog>
