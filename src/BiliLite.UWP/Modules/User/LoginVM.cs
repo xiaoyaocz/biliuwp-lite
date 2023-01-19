@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
+using System.Web;
 using BiliLite.Models.Common;
 
 namespace BiliLite.Modules.User
@@ -27,6 +27,7 @@ namespace BiliLite.Modules.User
             Countries = new ObservableCollection<CountryItemModel>();
             LoginTypeCommand = new RelayCommand<int>(ChangeLoginType);
             SendSMSCommand = new RelayCommand(SendSMSCode);
+            SendPwdLoginSMSCommand = new RelayCommand(SendPwdLoginVerifySMS);
             RefreshQRCommand = new RelayCommand(RefreshQRCode);
             smsTimer = new Timer(1000);
             smsTimer.Elapsed += SmsTimer_Elapsed;
@@ -36,6 +37,7 @@ namespace BiliLite.Modules.User
         public event EventHandler CloseDialog;
         public ICommand LoginTypeCommand { get; private set; }
         public ICommand SendSMSCommand { get; private set; }
+        public ICommand SendPwdLoginSMSCommand { get; private set; }
         public ICommand RefreshQRCommand { get; private set; }
 
         private int loginType = 1;
@@ -93,6 +95,14 @@ namespace BiliLite.Modules.User
                     Title = "二维码登录";
                     GetQRAuthInfo();
                     break;
+                case 3:
+                    Title = "短信验证";
+                    if (qrTimer != null)
+                    {
+                        qrTimer.Stop();
+                        qrTimer.Dispose();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -100,13 +110,19 @@ namespace BiliLite.Modules.User
 
         public void DoLogin()
         {
-            if (loginType == 1)
+            switch (loginType)
             {
-                DoSMSLogin();
-            }
-            if (loginType == 0)
-            {
-                DoPasswordLogin();
+                case 0:
+                    DoPasswordLogin();
+                    break;
+                case 1:
+                    DoSMSLogin();
+                    break;
+                case 3:
+                    CompletePasswordLoginCheck();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -266,7 +282,7 @@ namespace BiliLite.Modules.User
                         {
                             var uri = new Uri(data.data.recaptcha_url);
                             SetWebViewVisibility?.Invoke(this, true);
-                            OpenWebView?.Invoke(this, new Uri("https://l78z.nsapps.cn/bili_gt.html" + uri.Query + "&app=uwp"));
+                            OpenWebView?.Invoke(this, new Uri("ms-appx-web:///Assets/GeeTest/bili_gt.html" + uri.Query + "&app=uwp"));
                         }
                         else
                         {
@@ -309,7 +325,7 @@ namespace BiliLite.Modules.User
                         {
                             var uri = new Uri(data.data.recaptcha_url);
                             SetWebViewVisibility?.Invoke(this, true);
-                            OpenWebView?.Invoke(this, new Uri("https://l78z.nsapps.cn/bili_gt.html" + uri.Query + "&app=uwp"));
+                            OpenWebView?.Invoke(this, new Uri("ms-appx-web:///Assets/GeeTest/bili_gt.html" + uri.Query + "&app=uwp"));
 
                         }
                         else
@@ -339,7 +355,7 @@ namespace BiliLite.Modules.User
             }
         }
 
-        public async void DoSMSLogin()
+        private async void DoSMSLogin()
         {
             if (CurrentCountry == null)
             {
@@ -398,10 +414,9 @@ namespace BiliLite.Modules.User
             get { return password; }
             set { password = value; DoPropertyChanged("Password"); }
         }
-        string pwdSessionId = "";
-        public async void DoPasswordLogin(string seccode = "", string validate = "", string challenge = "", string recaptcha_token = "")
+
+        private async void DoPasswordLogin()
         {
-            PrimaryButtonEnable = false;
             if (UserName.Length == 0)
             {
                 Utils.ShowMessageToast("请输入用户名");
@@ -412,16 +427,12 @@ namespace BiliLite.Modules.User
                 Utils.ShowMessageToast("请输入密码");
                 return;
             }
+            PrimaryButtonEnable = false;
+
             try
             {
-                if (seccode == "")
-                {
-                    pwdSessionId = Guid.NewGuid().ToString().Replace("-", "");
-                }
-
-
                 var pwd = await account.EncryptedPassword(Password);
-                var results = await accountApi.LoginV3(UserName, pwd, pwdSessionId, seccode, validate, challenge, recaptcha_token).Request();
+                var results = await accountApi.LoginV3(UserName, pwd).Request();
                 if (results.status)
                 {
                     var data = await results.GetData<LoginResultModel>();
@@ -445,6 +456,99 @@ namespace BiliLite.Modules.User
             }
         }
 
+        private async void CompletePasswordLoginCheck()
+        {
+            if (Code.Length == 0)
+            {
+                Utils.ShowMessageToast("请输入验证码");
+                return;
+            }
+            PrimaryButtonEnable = false;
+            try
+            {
+                var req = await accountApi.SubmitPwdLoginSMSCheck(Code, gee_tmp_token, gee_request_id, captchaKey).Request();
+                if (req.status)
+                {
+                    var obj = req.GetJObject();
+                    if (obj["code"].ToInt32() == 0)
+                    {
+                        var code = obj["data"]["code"].ToString();
+                        var result = await PasswordLoginFetchCookie(code);
+                        HnadelResult(result);
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(obj["message"].ToString());
+                        return;
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(req.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowMessageToast(ex.Message);
+
+            }
+            finally
+            {
+                PrimaryButtonEnable = true;
+                EnableSendSMS = true;
+            }
+        }
+
+        private async Task<LoginCallbackModel> PasswordLoginFetchCookie(string code)
+        {
+            try
+            {
+                var req = await accountApi.PwdLoginExchangeCookie(code).Request();
+                if (req.status)
+                {
+                    var obj = req.GetJObject();
+                    if (obj["code"].ToInt32() == 0)
+                    {
+                        var refresh_token = obj["data"]["refresh_token"].ToString();
+                        account.LoginByCookie(req.cookies, refresh_token);
+                        return new LoginCallbackModel()
+                        {
+                            status = LoginStatus.Success,
+                            message = "登录成功"
+                        };
+                    }
+                    else
+                    {
+                        return new LoginCallbackModel()
+                        {
+                            status = LoginStatus.Fail,
+                            message = obj["message"].ToString()
+                        };
+                    }
+                }
+                else
+                {
+                    return new LoginCallbackModel()
+                    {
+                        status = LoginStatus.Fail,
+                        message = req.message
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new LoginCallbackModel()
+                {
+                    status = LoginStatus.Fail,
+                    message = ex.Message
+                };
+            }
+            finally
+            {
+                PrimaryButtonEnable = true;
+                EnableSendSMS = true;
+            }
+        }
         #endregion
 
         #region 二维码登录
@@ -537,6 +641,106 @@ namespace BiliLite.Modules.User
 
         #endregion
 
+        private GeetestRequestModel gee_req;
+        private string gee_tmp_token;
+        private string gee_request_id;
+
+        private string hideTel = "";
+        public string HideTel
+        {
+            get { return hideTel; }
+            set { hideTel = value; DoPropertyChanged("HideTel"); }
+        }
+
+        public void HandleGeetestSuccess(string seccode, string validate, string challenge, string recaptcha_token)
+        {
+            if (gee_req.gee_challenge != challenge)
+            {
+                Utils.ShowMessageToast("验证码失效");
+                return;
+            }
+            gee_req.gee_validate = validate;
+            gee_req.gee_seccode = seccode;
+
+            switch (LoginType)
+            {
+                //切换到短信验证界面并发送验证码
+                case 0:
+                    FetchHideTelNumber();
+                    ChangeLoginType(3);
+                    SendPwdLoginVerifySMS();
+                    break;
+                //发送短信
+                case 1:
+                    SendSMSCodeWithCaptcha(seccode, validate, challenge, recaptcha_token);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async void FetchHideTelNumber()
+        {
+            try
+            {
+                var req = await accountApi.FetchHideTel(gee_tmp_token).Request();
+                if (req.status)
+                {
+                    var obj = req.GetJObject();
+                    if (obj["code"].ToInt32() == 0)
+                    {
+                        HideTel = obj["data"]["account_info"]["hide_tel"].ToString();
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(obj["message"].ToString());
+                        return;
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(req.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("获取验证手机号失败", LogType.ERROR, ex);
+            }
+        }
+
+        private async void SendPwdLoginVerifySMS()
+        {
+            try
+            {
+                var req = await accountApi.SendVerifySMS(gee_tmp_token, gee_req.recaptcha_token, gee_req.gee_challenge, gee_req.gee_gt, gee_req.gee_validate, gee_req.gee_seccode).Request();
+                if (req.status)
+                {
+                    var obj = req.GetJObject();
+                    if (obj["code"].ToInt32() == 0)
+                    {
+                        captchaKey = obj["data"]["captcha_key"].ToString();
+                        EnableSendSMS = false;
+                        //验证码发送成功，倒计时
+                        SMSCountDown = 60;
+                        smsTimer.Start();
+                    }
+                    else
+                    {
+                        Utils.ShowMessageToast(obj["message"].ToString());
+                        return;
+                    }
+                }
+                else
+                {
+                    Utils.ShowMessageToast(req.message);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("发送短信验证码失败", LogType.ERROR, ex);
+            }
+        }
+
         private async Task<LoginCallbackModel> HandelLoginResult(int code, string message, LoginResultModel result)
         {
             if (code == 0)
@@ -552,11 +756,15 @@ namespace BiliLite.Modules.User
                 }
                 if (result.status == 1 || result.status == 2)
                 {
+                    var query = HttpUtility.ParseQueryString(new Uri(result.url).Query);
+                    gee_tmp_token = query.Get("tmp_token");
+                    gee_request_id = query.Get("request_id");
+                    gee_req = await StartGeetestCaptcha();
                     return new LoginCallbackModel()
                     {
-                        status = LoginStatus.NeedValidate,
+                        status = LoginStatus.NeedCaptcha,
                         message = "本次登录需要安全验证",
-                        url = result.url
+                        url = $"http://fake/?gee_gt={gee_req.gee_gt}&gee_challenge={gee_req.gee_challenge}"
                     };
                 }
                 return new LoginCallbackModel()
@@ -601,7 +809,7 @@ namespace BiliLite.Modules.User
                     SetWebViewVisibility?.Invoke(this, true);
                     //验证码重定向
                     //源码:https://github.com/xiaoyaocz/some_web
-                    OpenWebView?.Invoke(this, new Uri("https://l78z.nsapps.cn/bili_gt.html" + uri.Query + "&app=uwp"));
+                    OpenWebView?.Invoke(this, new Uri("ms-appx-web:///Assets/GeeTest/bili_gt.html" + uri.Query + "&app=uwp"));
                     break;
                 case LoginStatus.NeedValidate:
                     SetWebViewVisibility?.Invoke(this, true);
@@ -612,7 +820,30 @@ namespace BiliLite.Modules.User
             }
         }
 
+        private async Task<GeetestRequestModel> StartGeetestCaptcha()
+        {
+            try
+            {
+                var req = await accountApi.GeetestCaptcha().Request();
+                var obj = req.GetJObject();
+                if (req.status && obj["code"].ToInt32() == 0)
+                {
+                    var data = JsonConvert.DeserializeObject<GeetestRequestModel>(obj["data"].ToString());
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("读取极验验证码失败", LogType.ERROR, ex);
+                return null;
+            }
+        }
     }
+
     public class CountryItemModel
     {
         public int id { get; set; }
@@ -644,5 +875,13 @@ namespace BiliLite.Modules.User
         public int expires_in { get; set; }
         public string refresh_token { get; set; }
     }
-   
+
+    public class GeetestRequestModel
+    {
+        public string recaptcha_token { get; set; }
+        public string gee_challenge { get; set; }
+        public string gee_gt { get; set; }
+        public string gee_validate { get; set; }
+        public string gee_seccode { get; set; }
+    }
 }

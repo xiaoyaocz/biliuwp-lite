@@ -12,7 +12,7 @@ namespace BiliLite.Helpers
         private IDictionary<string, string> m_headers;
         private IDictionary<string, string> m_cookies;
         private HttpMethod m_method = HttpMethod.Get;
-        private object m_body;
+        private HttpContent m_body;
         private readonly string m_url;
         private bool m_needRedirect = false;
 
@@ -21,9 +21,10 @@ namespace BiliLite.Helpers
             m_url = url;
         }
 
-        public BiliRequestBuilder SetPostBody(object body)
+        public BiliRequestBuilder SetPostBody(string body)
         {
-            m_body = body;
+            m_body = string.IsNullOrEmpty(body) ? null : new StringContent(
+                body, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
             m_method = HttpMethod.Post;
             return this;
         }
