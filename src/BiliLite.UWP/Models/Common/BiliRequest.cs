@@ -158,13 +158,13 @@ namespace BiliLite.Models.Common
                 }
 
                 var responseMsg = response.ResponseMessage;
-                if (!responseMsg.IsSuccessStatusCode)
-                {
-                    httpResults = ConstructErrorResults(response);
-                }
-                else if (m_needRedirect)
+                if (m_needRedirect)
                 {
                     httpResults = ConstructRedirectResults(response);
+                }
+                else if (!responseMsg.IsSuccessStatusCode)
+                {
+                    httpResults = ConstructErrorResults(response);
                 }
                 else
                 {
