@@ -12,14 +12,13 @@ namespace BiliLite.Models.Common
     public class BiliRequest
     {
         private readonly HttpMethod m_method;
-        private readonly object m_body;
+        private readonly HttpContent m_body;
         private readonly IFlurlRequest m_request;
         private readonly string m_url;
         private bool m_needRedirect;
 
         public BiliRequest(string url, IDictionary<string, string> headers, IDictionary<string, string> cookies,
-            HttpMethod method,
-            object body = null, bool needRedirect = false)
+            HttpMethod method, HttpContent body = null, bool needRedirect = false)
         {
             m_url = url;
             m_method = method;
@@ -155,17 +154,17 @@ namespace BiliLite.Models.Common
                 }
                 else if (m_method == HttpMethod.Post)
                 {
-                    response = await m_request.PostUrlEncodedAsync(m_body);
+                    response = await m_request.PostAsync(m_body);
                 }
 
                 var responseMsg = response.ResponseMessage;
-                if (!responseMsg.IsSuccessStatusCode)
-                {
-                    httpResults = ConstructErrorResults(response);
-                }
-                else if (m_needRedirect)
+                if (m_needRedirect)
                 {
                     httpResults = ConstructRedirectResults(response);
+                }
+                else if (!responseMsg.IsSuccessStatusCode)
+                {
+                    httpResults = ConstructErrorResults(response);
                 }
                 else
                 {

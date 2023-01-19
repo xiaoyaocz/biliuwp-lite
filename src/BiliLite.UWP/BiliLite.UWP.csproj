@@ -460,6 +460,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\GeeTest\bili_gt.html" />
+    <Content Include="Assets\GeeTest\gt.js" />
     <Content Include="Assets\Icon\ic_play.png" />
     <Content Include="Assets\Icon\icon_share.png" />
     <Content Include="Assets\Icon\ic_live_center_gold_recharge.png" />
