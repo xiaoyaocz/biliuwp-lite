@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>极验</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div id="captcha">
+        <p>完成验证后继续登录</p>
+    </div>
+</body>
+<script type="text/javascript" src="gt.js"></script>
+<script>
+
+    window.onload = function () {
+      
+        let appType=getQueryVariable("app");
+        initGeetest({
+            gt: getQueryVariable("gee_gt"),
+            challenge: getQueryVariable("gee_challenge"),
+            offline: false,
+            new_captcha: true,
+            product: "popup",
+            width: "300px",
+            https: true
+        }, function (captchaObj) {
+          
+            captchaObj.appendTo('#captcha');
+            captchaObj.onSuccess(function () {
+                var result = captchaObj.getValidate();
+                window.location.href=`http://geetest.result/?success=1&recaptcha_token=${getQueryVariable("recaptcha_token")}&geetest_challenge=${result.geetest_challenge}&geetest_validate=${result.geetest_validate}&geetest_seccode=${result.geetest_seccode}&app=uwp`
+                console.log({
+                    geetest_challenge: result.geetest_challenge,
+                    geetest_validate: result.geetest_validate,
+                    geetest_seccode: result.geetest_seccode,
+                    recaptcha_token:getQueryVariable("recaptcha_token")
+                });
+            });
+            captchaObj.onError(function (error) {
+                window.location.href=`http://geetest.result/?success=0&msg=${error.msg}&app=uwp`
+            });
+            captchaObj.onClose(function () {
+                window.location.href=`http://geetest.result/?success=2&app=uwp`
+            });
+        })
+    }
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) { return pair[1]; }
+        }
+        return (false);
+    }
+</script>
+
+</html>
