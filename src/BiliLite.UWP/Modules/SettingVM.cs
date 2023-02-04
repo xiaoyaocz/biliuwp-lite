@@ -159,7 +159,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                var result = await playerAPI.GetDanmuFilterWords().Request();
+                var result = await playerAPI.AddDanmuFilterWord(word:word,type:type).Request();
                 if (!result.status)
                 {
                     return false;
