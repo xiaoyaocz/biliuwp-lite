@@ -141,12 +141,22 @@ namespace BiliLite.Pages
             numRightWidth.Value = SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320);
             numRightWidth.Loaded += new RoutedEventHandler((sender, e) =>
             {
-
                 numRightWidth.ValueChanged += new TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs>((obj, args) =>
                 {
                     SettingHelper.SetValue(SettingHelper.UI.RIGHT_DETAIL_WIDTH, args.NewValue);
                 });
             });
+
+            //右侧详情宽度可调整
+            swRightWidthChangeable.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.RIGHT_WIDTH_CHANGEABLE, false);
+            swRightWidthChangeable.Loaded += new RoutedEventHandler((sender, e) =>
+            {
+                swRightWidthChangeable.Toggled += new RoutedEventHandler((obj, args) =>
+                {
+                    SettingHelper.SetValue(SettingHelper.UI.RIGHT_WIDTH_CHANGEABLE, swRightWidthChangeable.IsOn);
+                });
+            });
+
             //图片圆角半径
             numImageCornerRadius.Value = SettingHelper.GetValue<double>(SettingHelper.UI.IMAGE_CORNER_RADIUS, 0);
             ImageCornerRadiusExample.CornerRadius = new CornerRadius(numImageCornerRadius.Value);

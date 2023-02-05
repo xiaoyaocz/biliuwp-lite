@@ -58,7 +58,7 @@ namespace BiliLite.Pages
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             this.RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
-
+            this.RightInfoGridSplitter.IsEnabled = SettingHelper.GetValue<bool>(SettingHelper.UI.RIGHT_WIDTH_CHANGEABLE, false);
         }
 
         private void VideoDetailPage_Loaded(object sender, RoutedEventArgs e)

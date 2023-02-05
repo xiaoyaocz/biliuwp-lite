@@ -11,6 +11,7 @@
     xmlns:convert="using:BiliLite.Converters"
     xmlns:modules="using:BiliLite.Modules"
     xmlns:control="using:BiliLite.Controls"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="datetime" ></convert:DatetimeConvert>
@@ -219,7 +220,7 @@
                                 <KeyboardAccelerator Key="F5"></KeyboardAccelerator>
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
-                        
+
                         <Button Background="Transparent"
                                 Margin="0"
                                 Width="56" 
@@ -241,7 +242,8 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-            <Grid Grid.Column="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+            <Grid Grid.Column="1"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Pivot x:Name="pivot" >
 
                     <PivotItem Margin="0">
@@ -341,8 +343,6 @@
                                     </HyperlinkButton>
                                 </StackPanel>
 
-
-
                                 <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True">发布于 <Run Text="{x:Bind Path=videoDetailVM.VideoInfo.pubdate,Mode=OneWay,Converter={StaticResource datetime}}"/></TextBlock>
                                 <StackPanel x:Name="stDesc" Margin="0 8 0 0" >
                                     <TextBlock x:Name="txtDesc" 
@@ -438,8 +438,27 @@
                     </PivotItem>
                 </Pivot>
             </Grid>
-
-
+            
+            <controls:GridSplitter
+                IsEnabled="False"
+                x:Name="RightInfoGridSplitter"
+                GripperCursor="Default"
+                HorizontalAlignment="Left"
+                Grid.Column="1"
+                ResizeDirection="Auto"
+                ResizeBehavior="BasedOnAlignment"
+                CursorBehavior="ChangeOnSplitterHover"
+                Width="16">
+                <controls:GridSplitter.Background>
+                    <SolidColorBrush Opacity="0"></SolidColorBrush>
+                </controls:GridSplitter.Background>
+                <controls:GridSplitter.GripperForeground>
+                    <SolidColorBrush Opacity="0"></SolidColorBrush>
+                </controls:GridSplitter.GripperForeground>
+                <controls:GridSplitter.RenderTransform>
+                    <TranslateTransform X="-8" />
+                </controls:GridSplitter.RenderTransform>
+            </controls:GridSplitter>
         </Grid>
         <Grid Visibility="{x:Bind Path=videoDetailVM.ShowError,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <StackPanel VerticalAlignment="Center">

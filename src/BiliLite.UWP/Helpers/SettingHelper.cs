@@ -76,6 +76,11 @@ namespace BiliLite.Helpers
             public const string RIGHT_DETAIL_WIDTH = "PlayerRightDetailWidth";
 
             /// <summary>
+            /// 右侧详情宽度可调整
+            /// </summary>
+            public const string RIGHT_WIDTH_CHANGEABLE = "PlayerRightDetailWidthChangeable";
+
+            /// <summary>
             /// 图片圆角半径
             /// </summary>
             public const string IMAGE_CORNER_RADIUS = "ImageCornerRadius";
