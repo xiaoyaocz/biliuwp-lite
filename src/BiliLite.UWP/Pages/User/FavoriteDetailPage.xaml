@@ -91,6 +91,7 @@
                                           DesiredWidth="600"
                                           x:Name="listView"
                                           ItemClick="Video_ItemClick"
+                                          PointerPressed="Video_ItemPressed"
                                           StretchContentForSingleRow="False"
                                           ItemContainerStyle="{StaticResource ItemStyle}"
                                           ItemTemplate="{StaticResource VideoDataTemplate}"

@@ -1,25 +1,16 @@
 ﻿using BiliLite.Pages;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Helpers;
-using System.Text;
-using Microsoft.Toolkit.Uwp.Helpers;
 using BiliLite.Controls;
+using BiliLite.Models.Common;
+using BiliLite.Extensions;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
@@ -61,10 +52,6 @@ namespace BiliLite
             }
         }
         
-      
-
-
-
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -81,9 +68,27 @@ namespace BiliLite
              await Utils.CheckVersion();
 //#endif
         }
+
         private void MessageCenter_ChangeTitleEvent(object sender, string e)
         {
-            (tabView.SelectedItem as TabViewItem).Header = e;
+            if (sender == null)
+            {
+                (tabView.SelectedItem as TabViewItem).Header = e;
+                return;
+            }
+
+            foreach (var item in tabView.TabItems)
+            {
+                var tabViewItem = item as TabViewItem;
+                if (tabViewItem == null) continue;
+                var frame = tabViewItem.Content as MyFrame;
+                if (frame == null) continue;
+                if (sender == frame.Content)
+                {
+                    tabViewItem.Header = e;
+                    break;
+                }
+            }
         }
 
         private void NavigationHelper_NavigateToPageEvent(object sender, NavigationInfo e)
@@ -100,15 +105,14 @@ namespace BiliLite
             item.Content = frame;
            
             tabView.TabItems.Add(item);
-            tabView.SelectedItem = item;
+            if(!e.dontGoTo)
+               tabView.SelectedItem = item;
             item.UpdateLayout();
         }
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-
-            var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
-
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.MOUSE_BACK, true) && (par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed))
+            if (SettingHelper.GetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back 
+                && e.IsUseMiddleButton(sender))
             {
                 //如果打开了图片浏览，则关闭图片浏览
                 if (gridViewer.Visibility == Visibility.Visible)

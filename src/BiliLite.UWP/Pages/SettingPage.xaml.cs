@@ -1,5 +1,6 @@
 ﻿using BiliLite.Api;
 using BiliLite.Helpers;
+using BiliLite.Models.Common;
 using BiliLite.Modules;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.UI;
@@ -7,21 +8,13 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Networking.BackgroundTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -189,13 +182,14 @@ namespace BiliLite.Pages
                     SettingHelper.SetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, swPreviewImageNavigateToPage.IsOn);
                 });
             });
-            //鼠标侧键返回
-            swMouseClosePage.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.MOUSE_BACK, true);
-            swMouseClosePage.Loaded += new RoutedEventHandler((sender, e) =>
+
+            // 鼠标中键/侧键行为
+            cbMouseMiddleAction.SelectedIndex = SettingHelper.GetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back);
+            cbDetailDisplay.Loaded += new RoutedEventHandler((sender, e) =>
             {
-                swMouseClosePage.Toggled += new RoutedEventHandler((obj, args) =>
+                cbMouseMiddleAction.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
-                    SettingHelper.SetValue(SettingHelper.UI.MOUSE_BACK, swMouseClosePage.IsOn);
+                    SettingHelper.SetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, cbMouseMiddleAction.SelectedIndex);
                 });
             });
 
@@ -229,7 +223,7 @@ namespace BiliLite.Pages
                 });
             });
 
-            //鼠标侧键返回
+            //隐藏首页右上角广告按钮
             swHideADBtn.IsOn = SettingHelper.GetValue<bool>(SettingHelper.UI.HIDE_AD, false);
             swHideADBtn.Loaded += new RoutedEventHandler((sender, e) =>
             {

@@ -191,10 +191,15 @@
                                     </ComboBox.Items>
                                 </ComboBox>
                             </StackPanel>
-
                             <StackPanel Margin="0 0 0 8">
-                                <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键关闭页面</TextBlock>
-                                <ToggleSwitch x:Name="swMouseClosePage" ></ToggleSwitch>
+                                <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键行为</TextBlock>
+                                <ComboBox x:Name="cbMouseMiddleAction" SelectedIndex="0" MinWidth="200">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem>关闭页面</ComboBoxItem>
+                                        <ComboBoxItem>新标签页打开视频但不进入</ComboBoxItem>
+                                        <ComboBoxItem>无操作</ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
                             </StackPanel>
                             <StackPanel Margin="0 0 0 8" >
                                 <TextBlock  Margin="0 8"  FontSize="16">使用浏览器打开无法处理的链接</TextBlock>

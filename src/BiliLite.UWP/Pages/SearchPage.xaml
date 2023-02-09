@@ -38,6 +38,7 @@
                                           Grid.Row="1"
                                           Padding="8"
                                           ItemClick="Search_ItemClick"
+                                          PointerPressed="Search_ItemPressed"
                                           StretchContentForSingleRow="False"
                                           ItemsSource="{x:Bind Path=Videos,Mode=OneWay}"
                                           ItemHeight="100" Grid.ColumnSpan="2">

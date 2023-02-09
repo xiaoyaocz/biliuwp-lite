@@ -85,6 +85,7 @@
                 IsItemClickEnabled="True" 
                 ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}"
                 ItemClick="AdaptiveGridView_ItemClick"
+                PointerPressed="AdaptiveGridView_PointerPressed"
                 ItemTemplateSelector="{x:Bind Path=dynamicVM.dynamicItemDataTemplateSelector,Mode=OneWay}"
                 Loading="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"
                 OneRowModeEnabled="False">

@@ -52,7 +52,7 @@
             </ListView>
         </Flyout>
         <DataTemplate x:Key="Grid" x:DataType="modules:RecommendItemModel">
-            <Grid ContextFlyout="{StaticResource Menu}">
+            <Grid ContextFlyout="{StaticResource Menu}" x:Name="RecommendItemGrid" PointerPressed="RecommendItemGrid_PointerPressed">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="48"/>

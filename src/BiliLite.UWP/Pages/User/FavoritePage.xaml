@@ -132,7 +132,7 @@
                                           ItemTemplate="{StaticResource VideoDataTemplate}"
                                           ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                           ScrollViewer.VerticalScrollMode="Disabled"
-                                           ItemClick="VideoFavorite_ItemClick"
+                                          ItemClick="VideoFavorite_ItemClick"
                                           ItemHeight="80">
                                 <toolkit:AdaptiveGridView.Header>
                                     <Grid Margin="12 8 0 0">
@@ -162,6 +162,7 @@
                                           LoadMoreCommand="{x:Bind Path=animeVM.LoadMoreCommand,Mode=OneWay}"
                                           CanLoadMore="{x:Bind Path=animeVM.ShowLoadMore,Mode=OneWay}"
                                           ItemClick="BangumiSeason_ItemClick"
+                                          PointerPressed="BangumiSeason_ItemPressed"
                                           StretchContentForSingleRow="False"
                                           ItemContainerStyle="{StaticResource SeasonItemStyle}"
                                           ItemTemplate="{StaticResource SeasonDataTemplate}"
@@ -232,6 +233,7 @@
                                           IsItemClickEnabled="True"
                                           DesiredWidth="500"
                                           ItemClick="BangumiSeason_ItemClick"
+                                          PointerPressed="BangumiSeason_ItemPressed"
                                           LoadMoreCommand="{x:Bind Path=cinemaVM.LoadMoreCommand,Mode=OneWay}"
                                           CanLoadMore="{x:Bind Path=cinemaVM.ShowLoadMore,Mode=OneWay}"
                                           StretchContentForSingleRow="False"

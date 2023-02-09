@@ -114,7 +114,7 @@ namespace BiliLite.Pages
             else
             {
                 Title = seasonDetailVM?.Detail?.title ?? "视频详情";
-                MessageCenter.ChangeTitle(Title);
+                MessageCenter.ChangeTitle(this, Title);
             }
 
         }
@@ -235,7 +235,7 @@ namespace BiliLite.Pages
         public void ChangeTitle(string title)
         {
             Title = title;
-            if ((this.Parent as Frame).Parent is TabViewItem)
+            if ((this.Parent as Frame)?.Parent is TabViewItem)
             {
                 if (this.Parent != null)
                 {
@@ -244,7 +244,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                MessageCenter.ChangeTitle(title);
+                MessageCenter.ChangeTitle(this, title);
             }
         }
         private void btnShare_Click(object sender, RoutedEventArgs e)

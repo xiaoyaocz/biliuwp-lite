@@ -1,10 +1,6 @@
 ﻿using BiliLite.Models;
 using Microsoft.Toolkit.Uwp.Helpers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Helpers
 {
@@ -110,9 +106,9 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string BACKGROUND_IMAGE = "BackgroundImage";
             /// <summary>
-            /// 鼠标功能键返回、关闭页面
+            /// 鼠标功能键行为
             /// </summary>
-            public const string MOUSE_BACK = "MouseBack";
+            public const string MOUSE_MIDDLE_ACTION = "MouseMiddleAction";
             /// <summary>
             /// 隐藏赞助按钮
             /// </summary>
@@ -260,6 +256,7 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string SHIELD_LEVEL = "VideoDanmuShieldLevel";
         }
+
         public class Live
         {
             /// <summary>
