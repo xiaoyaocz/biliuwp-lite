@@ -1,18 +1,9 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Helpers;
 using BiliLite.Modules;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -60,13 +51,29 @@ namespace BiliLite.Pages
 
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-           var item= e.ClickedItem as RankItemModel;
-            MessageCenter.NavigateToPage(this,new NavigationInfo() { 
-                icon= Symbol.Play,
-                page=typeof(VideoDetailPage),
-                title=item.title,
-                parameters=item.aid
+            var item= e.ClickedItem as RankItemModel;
+            RankItemModelOpen(sender, item);
+        }
+
+        private void RankItemModelOpen(object sender, RankItemModel item, bool dontGoTo = false)
+        {
+            if (item == null) return;
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Symbol.Play,
+                page = typeof(VideoDetailPage),
+                title = item.title,
+                parameters = item.aid,
+                dontGoTo = dontGoTo
             });
+        }
+
+        private void AdaptiveGridView_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!e.IsMiddleButtonNewTap(sender)) return;
+            var element = e.OriginalSource as FrameworkElement;
+            var item = element.DataContext as RankItemModel;
+            RankItemModelOpen(sender, item, true);
         }
 
         private void AddToWatchLater_Click(object sender, RoutedEventArgs e)

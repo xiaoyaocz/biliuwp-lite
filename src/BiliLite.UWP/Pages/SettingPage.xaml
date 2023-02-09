@@ -143,8 +143,14 @@
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                             </GridView>
-                            <TextBlock  Margin="0 16 0 8" FontSize="16">右侧视频详情宽度(下次打开视频生效)</TextBlock>
-                            <controls:NumberBox x:Name="numRightWidth" Minimum="40" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="320" SpinButtonPlacementMode="Compact" SmallChange="20" ></controls:NumberBox>
+
+                            <StackPanel x:Name="RightWidthChangable" Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">右侧视频详情</TextBlock>
+                                <TextBlock  FontSize="14">右侧视频详情宽度(下次打开视频生效)</TextBlock>
+                                <controls:NumberBox x:Name="numRightWidth" Minimum="40" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="320" SpinButtonPlacementMode="Compact" SmallChange="20" ></controls:NumberBox>
+                                <ToggleSwitch x:Name="swRightWidthChangeable" Header="右侧视频详情宽度可调整(下次打开视频生效)"></ToggleSwitch>
+                            </StackPanel>
+
                             <TextBlock  Margin="0 0 0 8" FontSize="16">图片圆角半径(重启生效)</TextBlock>
                             <controls:NumberBox x:Name="numImageCornerRadius" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
                             <Border x:Name="ImageCornerRadiusExample" Width="120" Height="120" HorizontalAlignment="Left" Background="#99808080">
@@ -185,10 +191,15 @@
                                     </ComboBox.Items>
                                 </ComboBox>
                             </StackPanel>
-
                             <StackPanel Margin="0 0 0 8">
-                                <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键关闭页面</TextBlock>
-                                <ToggleSwitch x:Name="swMouseClosePage" ></ToggleSwitch>
+                                <TextBlock  Margin="0 8"  FontSize="16">鼠标中键/侧键行为</TextBlock>
+                                <ComboBox x:Name="cbMouseMiddleAction" SelectedIndex="0" MinWidth="200">
+                                    <ComboBox.Items>
+                                        <ComboBoxItem>关闭页面</ComboBoxItem>
+                                        <ComboBoxItem>新标签页打开视频但不进入</ComboBoxItem>
+                                        <ComboBoxItem>无操作</ComboBoxItem>
+                                    </ComboBox.Items>
+                                </ComboBox>
                             </StackPanel>
                             <StackPanel Margin="0 0 0 8" >
                                 <TextBlock  Margin="0 8"  FontSize="16">使用浏览器打开无法处理的链接</TextBlock>

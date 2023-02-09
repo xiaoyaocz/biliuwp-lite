@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -127,7 +128,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                MessageCenter.ChangeTitle(title);
+                MessageCenter.ChangeTitle(this, title);
             }
         }
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -153,79 +154,97 @@ namespace BiliLite.Pages
         }
         private void Search_ItemClick(object sender, ItemClickEventArgs e)
         {
-           
-            if (e.ClickedItem is SearchVideoItem)
+            SearchItemModelOpen(e.ClickedItem);
+        }
+
+        private void SearchItemModelOpen(object item, bool dontGoTo = false)
+        {
+            if (item is SearchVideoItem)
             {
-                var data = e.ClickedItem as SearchVideoItem;
+                var data = item as SearchVideoItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = data.title,
-                    parameters = data.aid
+                    parameters = data.aid,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
-            if (e.ClickedItem is SearchAnimeItem)
+            if (item is SearchAnimeItem)
             {
-                var data = e.ClickedItem as SearchAnimeItem;
+                var data = item as SearchAnimeItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
                     title = data.title,
-                    parameters = data.season_id
+                    parameters = data.season_id,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
-            if (e.ClickedItem is SearchUserItem)
+            if (item is SearchUserItem)
             {
-                var data = e.ClickedItem as SearchUserItem;
+                var data = item as SearchUserItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
                     title = data.uname,
                     page = typeof(UserInfoPage),
-                    parameters = data.mid
+                    parameters = data.mid,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
-            if (e.ClickedItem is SearchLiveRoomItem)
+            if (item is SearchLiveRoomItem)
             {
-                var data = e.ClickedItem as SearchLiveRoomItem;
+                var data = item as SearchLiveRoomItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     title = data.title,
                     page = typeof(LiveDetailPage),
-                    parameters = data.roomid
+                    parameters = data.roomid,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
-            if (e.ClickedItem is SearchArticleItem)
+            if (item is SearchArticleItem)
             {
-                var data = e.ClickedItem as SearchArticleItem;
+                var data = item as SearchArticleItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(WebPage),
                     title = data.title,
-                    parameters = "https://www.bilibili.com/read/cv" + data.id
+                    parameters = "https://www.bilibili.com/read/cv" + data.id,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
-            if (e.ClickedItem is SearchTopicItem)
+            if (item is SearchTopicItem)
             {
-                var data = e.ClickedItem as SearchTopicItem;
+                var data = item as SearchTopicItem;
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Document,
                     page = typeof(WebPage),
                     title = data.title,
-                    parameters = data.arcurl
+                    parameters = data.arcurl,
+                    dontGoTo = dontGoTo
                 });
                 return;
             }
+        }
+
+        private void Search_ItemPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!e.IsMiddleButtonNewTap(sender)) return;
+            var element = e.OriginalSource as FrameworkElement;
+            var item = element.DataContext;
+            SearchItemModelOpen(item, true);
         }
 
         private void cbArea_SelectionChanged(object sender, SelectionChangedEventArgs e)

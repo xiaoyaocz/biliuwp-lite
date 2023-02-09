@@ -38,6 +38,7 @@
         </Grid>
         <controls:MyAdaptiveGridView 
             ItemClick="ListResult_ItemClick"
+            PointerPressed="MyAdaptiveGridView_PointerPressed"
             LoadMoreCommand="{x:Bind Path=seasonIndexVM.LoadMoreCommand,Mode=OneWay}"
             CanLoadMore="True"
             ItemsSource="{x:Bind Path=seasonIndexVM.Result,Mode=OneWay}"

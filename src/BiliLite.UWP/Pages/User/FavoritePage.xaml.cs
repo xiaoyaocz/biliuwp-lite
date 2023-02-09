@@ -1,4 +1,5 @@
 ﻿using BiliLite.Dialogs;
+using BiliLite.Extensions;
 using BiliLite.Helpers;
 using BiliLite.Modules;
 using System;
@@ -101,13 +102,28 @@ namespace BiliLite.Pages.User
         private void BangumiSeason_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data= e.ClickedItem as FollowSeasonModel;
+            FollowSeasonModelOpen(sender, data);
+        }
+
+        private void FollowSeasonModelOpen(object sender, FollowSeasonModel item, bool dontGoTo = false)
+        {
+            if (item == null) return;
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(SeasonDetailPage),
-                title = data.title,
-                parameters = data.season_id
+                title = item.title,
+                parameters = item.season_id,
+                dontGoTo = dontGoTo
             });
+        }
+
+        private void BangumiSeason_ItemPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!e.IsMiddleButtonNewTap(sender)) return;
+            var element = e.OriginalSource as FrameworkElement;
+            var item = element.DataContext as FollowSeasonModel;
+            FollowSeasonModelOpen(sender, item, true);
         }
 
         private void VideoFavorite_ItemClick(object sender, ItemClickEventArgs e)

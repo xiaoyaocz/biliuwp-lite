@@ -44,6 +44,7 @@
                     <toolkit:AdaptiveGridView 
                     OneRowModeEnabled="False"
                         ItemClick="AdaptiveGridView_ItemClick"
+                        PointerPressed="AdaptiveGridView_PointerPressed"
                     StretchContentForSingleRow="False"
                     ItemsSource="{x:Bind Path=Items,Mode=OneWay}"
                     ItemHeight="100" DesiredWidth="600" 

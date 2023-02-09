@@ -89,6 +89,7 @@
                             MoveOffset="600" 
                             AlwayShowButton="False" 
                             ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
+                            PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
                             ItemsSource="{x:Bind Path=homeBangumi.Follows,Mode=OneWay}" 
                             SelectionMode="None" 
                             Margin="-4 0 0 0"
@@ -151,6 +152,7 @@
                             </HyperlinkButton>
                         </Grid>
                         <controls:ScrollGridView ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
+                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
                                                  Margin="-4 0 0 0"
                                                  MoveOffset="600" 
                                                  AlwayShowButton="False" 
@@ -208,7 +210,16 @@
                         </Grid>
                         <controls:ScrollGridView x:Name="gridView" 
                                                  Margin="-4 0 0 0"
-                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" ItemsSource="{x:Bind Path=homeBangumi.HomeData.ranks,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItem}" IsItemClickEnabled="True">
+                                                 MoveOffset="600" AlwayShowButton="False" SelectionMode="None" 
+                                                 ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}"
+                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}" 
+                                                 ItemsSource="{x:Bind Path=homeBangumi.HomeData.ranks,Mode=OneWay}" 
+                                                 ScrollViewer.VerticalScrollMode="Disabled" 
+                                                 ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                                                 ScrollViewer.HorizontalScrollMode="Disabled" 
+                                                 ItemTemplate="{StaticResource HotAnimeItem}"
+                                                 IsItemClickEnabled="True">
                             <GridView.ItemContainerStyle>
                                 <Style TargetType="GridViewItem">
                                     <Setter Property="Margin" Value="4"></Setter>
@@ -232,7 +243,17 @@
                         </Grid>
                         <controls:ScrollGridView MoveOffset="600"
                                                  Margin="-4 0 0 0"
-                                                 AlwayShowButton="False" SelectionMode="None" ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" ItemsSource="{x:Bind Path=homeBangumi.HomeData.hots,Mode=OneWay}" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollMode="Disabled" ItemTemplate="{StaticResource HotAnimeItem}" IsItemClickEnabled="True">
+                                                 AlwayShowButton="False" 
+                                                 SelectionMode="None" 
+                                                 ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
+                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
+                                                 ItemsSource="{x:Bind Path=homeBangumi.HomeData.hots,Mode=OneWay}" 
+                                                 ScrollViewer.VerticalScrollMode="Disabled" 
+                                                 ScrollViewer.VerticalScrollBarVisibility="Hidden" 
+                                                 ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
+                                                 ScrollViewer.HorizontalScrollMode="Disabled" 
+                                                 ItemTemplate="{StaticResource HotAnimeItem}" 
+                                                 IsItemClickEnabled="True">
                             <GridView.ItemContainerStyle>
                                 <Style TargetType="GridViewItem">
                                     <Setter Property="Margin" Value="4"></Setter>

@@ -12,14 +12,14 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-     Name="5421.502643927C6AD"
-    Publisher="CN=xiaoyaocz"
-    Version="4.4.8.0" />
+     Name="5422.502643927C6AD"
+    Publisher="CN=muyan"
+    Version="4.5.0.0" />
   <mp:PhoneIdentity PhoneProductId="8bceed6a-7e89-4141-a693-923401d5b2ac" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
   
   <Properties>
     <DisplayName>哔哩哔哩 UWP</DisplayName>
-    <PublisherDisplayName>逍遥橙子</PublisherDisplayName>
+    <PublisherDisplayName>木言</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 

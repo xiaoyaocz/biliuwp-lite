@@ -1,7 +1,7 @@
 {
-    "version": "4.4.11",
-    "version_num": 40411,
-    "version_desc": "更新内容:\r\n\r\n* 修复扫码登录\r\n\r\n* 修复密码登录\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.5.0",
+    "version_num": 40500,
+    "version_desc": "更新内容:\r\n\r\n* 支持视频详情页右侧宽度可调整\r\n\r\n* 支持设置鼠标中键行为\r\n\r\n* 修复屏蔽词接口和调用错误问题\r\n\r\n* 修复下载视频导出错误\r\n\r\n* 修复视频评论、回复视频评论、删除回复错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }

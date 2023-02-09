@@ -3,24 +3,17 @@ using BiliLite.Models;
 using BiliLite.Pages;
 using BiliLite.Pages.Other;
 using BiliLite.Pages.User;
-using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 using Windows.Web.Http.Filters;
 
 namespace BiliLite.Helpers
@@ -44,9 +37,9 @@ namespace BiliLite.Helpers
         {
             MiniWindowEvent?.Invoke(null, mini);
         }
-        public static void ChangeTitle(string title)
+        public static void ChangeTitle(BasePage page,string title)
         {
-            ChangeTitleEvent?.Invoke(null, title);
+            ChangeTitleEvent?.Invoke(page, title);
         }
         /// <summary>
         /// 发送登录完成事件
@@ -104,7 +97,7 @@ namespace BiliLite.Helpers
         ///统一处理Url
         /// </summary>
         /// <param name="par"></param>
-        public async static Task<bool> HandelUrl(string url)
+        public async static Task<bool> HandelUrl(string url, bool dontGoTo = false)
         {
             if (url.First() == '@')
             {
@@ -134,7 +127,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = "视频加载中...",
-                    parameters = video
+                    parameters = video,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -146,7 +140,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = "视频加载中...",
-                    parameters = video
+                    parameters = video,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -158,7 +153,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = "视频加载中...",
-                    parameters = video
+                    parameters = video,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -170,7 +166,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = "视频加载中...",
-                    parameters = video
+                    parameters = video,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -187,7 +184,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(VideoDetailPage),
                     title = "视频加载中...",
-                    parameters = video_bv
+                    parameters = video_bv,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -211,7 +209,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
                     title = "剧集加载中...",
-                    parameters = bangumi
+                    parameters = bangumi,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -223,6 +222,7 @@ namespace BiliLite.Helpers
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
                     title = "剧集加载中...",
+                    dontGoTo = dontGoTo,
                     parameters = new object[] {
                         await Utils.BangumiEpidToSid(bangumi),
                             bangumi
@@ -265,7 +265,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Video,
                     page = typeof(LiveDetailPage),
                     title = "直播间加载中...",
-                    parameters = live
+                    parameters = live,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -301,7 +302,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Document,
                     page = typeof(WebPage),
                     title = "专栏加载中...",
-                    parameters = "https://www.bilibili.com/read/cv" + article
+                    parameters = "https://www.bilibili.com/read/cv" + article,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -321,7 +323,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.MusicInfo,
                     page = typeof(WebPage),
                     title = "音乐",
-                    parameters = "https://m.bilibili.com/audio/au" + music
+                    parameters = "https://m.bilibili.com/audio/au" + music,
+                    dontGoTo = dontGoTo,
                 });
 
                 return true;
@@ -340,7 +343,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.MusicInfo,
                     page = typeof(WebPage),
                     title = "歌单",
-                    parameters = "https://m.bilibili.com/audio/am" + musicmenu
+                    parameters = "https://m.bilibili.com/audio/am" + musicmenu,
+                    dontGoTo = dontGoTo,
                 });
                 //InfoNavigateToEvent(typeof(MusicMenuPage), musicmenu);
                 return true;
@@ -363,7 +367,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Comment,
                     page = typeof(DynamicDetailPage),
                     title = "动态",
-                    parameters = album
+                    parameters = album,
+                    dontGoTo = dontGoTo,
                 });
                 //InfoNavigateToEvent(typeof(DynamicInfoPage), album);
                 return true;
@@ -385,7 +390,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Contact,
                     page = typeof(UserInfoPage),
                     title = "用户信息",
-                    parameters = user
+                    parameters = user,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -402,7 +408,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Tag,
                     page = typeof(TagDetailPage),
                     title = "话题",
-                    parameters = new object[] { "", topic }
+                    parameters = new object[] { "", topic },
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -415,7 +422,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Tag,
                     page = typeof(TagDetailPage),
                     title = "话题",
-                    parameters = new object[] { data, "" }
+                    parameters = new object[] { data, "" },
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -437,7 +445,8 @@ namespace BiliLite.Helpers
                     parameters = new FavoriteDetailArgs()
                     {
                         Id = medialist_id,
-                    }
+                    },
+                    dontGoTo = dontGoTo,
                 });
 
                 return true;
@@ -457,7 +466,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.World,
                     page = typeof(WebPage),
                     title = "投稿",
-                    parameters = "https://member.bilibili.com/v2#/upload/video/frame"
+                    parameters = "https://member.bilibili.com/v2#/upload/video/frame",
+                    dontGoTo = dontGoTo,
                 });
 
                 return true;
@@ -474,7 +484,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.Comment,
                     page = typeof(FavoritePage),
                     title = "我的收藏",
-                    parameters = OpenFavoriteType.Bangumi
+                    parameters = OpenFavoriteType.Bangumi,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -490,7 +501,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.World,
                     page = typeof(WebPage),
                     title = "赛事",
-                    parameters = "https://www.bilibili.com/v/game/match"
+                    parameters = "https://www.bilibili.com/v/game/match",
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -501,7 +513,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.World,
                     page = typeof(WebPage),
                     title = "赛事",
-                    parameters = "https://www.bilibili.com/v/game/match"
+                    parameters = "https://www.bilibili.com/v/game/match",
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -521,7 +534,8 @@ namespace BiliLite.Helpers
                     icon = Symbol.World,
                     page = typeof(WebPage),
                     title = "加载中...",
-                    parameters = url
+                    parameters = url,
+                    dontGoTo = dontGoTo,
                 });
                 return true;
             }
@@ -596,6 +610,7 @@ namespace BiliLite.Helpers
         public Type page { get; set; }
         public string title { get; set; }
         public object parameters { get; set; }
+        public bool dontGoTo { get; set; } = false;
     }
 
 

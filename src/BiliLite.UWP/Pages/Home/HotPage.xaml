@@ -16,11 +16,9 @@
         <covert:ColorConvert x:Key="colorConvert"></covert:ColorConvert>
     </Page.Resources>
     <Grid>
-
-
-
         <controls:MyAdaptiveGridView 
                     ItemClick="gridHot_ItemClick"
+                    PointerPressed="gridHot_ItemPressed"
                     OneRowModeEnabled="False"
                     Padding="8"
                     StretchContentForSingleRow="False"

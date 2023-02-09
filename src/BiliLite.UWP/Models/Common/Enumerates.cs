@@ -46,4 +46,22 @@
         /// </summary>
         NotScanned = 86101,
     }
+
+    public enum MouseMiddleActions
+    {
+        /// <summary>
+        /// 返回或关闭页面
+        /// </summary>
+        Back=0,
+
+        /// <summary>
+        /// 打开新标签页但不跳转 
+        /// </summary>
+        NewTap=1,
+
+        /// <summary>
+        /// 无操作
+        /// </summary>
+        None=2,
+    }
 }

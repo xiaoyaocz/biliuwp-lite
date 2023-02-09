@@ -40,6 +40,7 @@ namespace BiliLite.Api
             //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+
         public ApiModel Reply(string oid,string root, int pn, int type, int ps = 30)
         {
             ApiModel api = new ApiModel()
@@ -68,33 +69,40 @@ namespace BiliLite.Api
 
         public ApiModel ReplyComment(string oid, string root, string parent, string message, int type)
         {
+            var csrf = Utils.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/add",
-                body =  $"&oid={oid}&root={root}&parent={parent}&type={type}&message={message}"
+                body =  $"&oid={oid}&root={root}&parent={parent}&type={type}&message={message}&csrf={csrf}",
+                need_cookie = true,
             };
            // api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
+
         public ApiModel DeleteComment(string oid, string rpid, int type)
         {
+            var csrf = Utils.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/del",
-                body =  $"&oid={oid}&rpid={rpid}&type={type}"
+                body = $"&oid={oid}&rpid={rpid}&type={type}&csrf={csrf}",
+                need_cookie = true,
             };
            // api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
         public ApiModel AddComment(string oid, CommentType type,string message)
         {
+            var csrf = Utils.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/add",
-                body = $"&oid={oid}&type={(int)type}&message={Uri.EscapeDataString(message)}"
+                body = $"&oid={oid}&type={(int)type}&message={Uri.EscapeDataString(message)}&csrf={csrf}",
+                need_cookie = true,
             };
             //api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;

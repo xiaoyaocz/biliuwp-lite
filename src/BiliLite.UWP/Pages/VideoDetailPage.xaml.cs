@@ -1,27 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Modules;
 using Microsoft.UI.Xaml.Controls;
 using BiliLite.Helpers;
-using Windows.Media.Playback;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel.DataTransfer;
 using BiliLite.Controls;
 using Windows.System;
 using BiliLite.Dialogs;
-using Microsoft.Toolkit.Uwp.Helpers;
 using System.Threading.Tasks;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -58,7 +48,7 @@ namespace BiliLite.Pages
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             this.RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
-
+            this.RightInfoGridSplitter.IsEnabled = SettingHelper.GetValue<bool>(SettingHelper.UI.RIGHT_WIDTH_CHANGEABLE, false);
         }
 
         private void VideoDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -135,7 +125,7 @@ namespace BiliLite.Pages
             else
             {
                 Title = videoDetailVM?.VideoInfo?.title ?? "视频详情";
-                MessageCenter.ChangeTitle(Title); 
+                MessageCenter.ChangeTitle(this, Title); 
             }
 
         }
@@ -255,7 +245,7 @@ namespace BiliLite.Pages
         }
         public void ChangeTitle(string title)
         {
-            if ((this.Parent as Frame).Parent is TabViewItem)
+            if ((this.Parent as Frame)?.Parent is TabViewItem)
             {
                 if (this.Parent != null)
                 {
@@ -264,7 +254,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                MessageCenter.ChangeTitle(title);
+                MessageCenter.ChangeTitle(this, title);
             }
         }
 

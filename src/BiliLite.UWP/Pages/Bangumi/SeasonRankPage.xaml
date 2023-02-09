@@ -32,13 +32,14 @@
             <Pivot.ItemTemplate>
                 <DataTemplate x:DataType="modules:SeasonRankModel">
                     <toolkit:AdaptiveGridView 
-                    OneRowModeEnabled="False"
+                        OneRowModeEnabled="False"
                         ItemClick="AdaptiveGridView_ItemClick"
-                    StretchContentForSingleRow="False"
-                    ItemsSource="{x:Bind Path=Items,Mode=OneWay}"
-                    ItemHeight="100" DesiredWidth="600" 
-                    Padding="8"
-                    SelectionMode="None" IsItemClickEnabled="True">
+                        PointerPressed="AdaptiveGridView_PointerPressed"
+                        StretchContentForSingleRow="False"
+                        ItemsSource="{x:Bind Path=Items,Mode=OneWay}"
+                        ItemHeight="100" DesiredWidth="600" 
+                        Padding="8"
+                        SelectionMode="None" IsItemClickEnabled="True">
                         <toolkit:AdaptiveGridView.ItemContainerStyle>
                             <Style TargetType="GridViewItem">
                                 <Setter Property="Margin" Value="4"></Setter>

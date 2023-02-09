@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.Models;
 using BiliLite.Helpers;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
 using BiliLite.Pages.User;
 using BiliLite.Pages.Bangumi;
-using BiliLite.Pages;
+using Windows.UI.Xaml.Input;
+using BiliLite.Extensions;
+using Windows.UI.Xaml;
 
 namespace BiliLite.Modules
 {
@@ -113,18 +113,36 @@ namespace BiliLite.Modules
             get { return _homeData; }
             set { _homeData = value; DoPropertyChanged("HomeData"); }
         }
+
+        private void SeasonItemOpen(object sender, object seasonId, string title, bool dontGoTo = false)
+        {
+            if (seasonId == null) return;
+            MessageCenter.NavigateToPage(sender, new NavigationInfo()
+            {
+                icon = Symbol.Play,
+                page = typeof(Pages.SeasonDetailPage),
+                parameters = seasonId,
+                title = title.ToString(),
+                dontGoTo = dontGoTo,
+            });
+        }
       
         public void SeasonItemClick(object sender,ItemClickEventArgs e)
         {
             var seasonId = e.ClickedItem.GetType().GetProperty("season_id").GetValue(e.ClickedItem, null);
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null)??"";
-            MessageCenter.NavigateToPage(sender,new NavigationInfo() {
-                icon= Symbol.Play,
-                page=typeof(Pages.SeasonDetailPage),
-                parameters= seasonId,
-                title= title.ToString()
-            });
+            SeasonItemOpen(sender, seasonId, title.ToString());
         }
+
+        public void SeasonItemPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!e.IsMiddleButtonNewTap(sender)) return;
+            var element = e.OriginalSource as FrameworkElement;
+            var seasonId = element.DataContext.GetType()?.GetProperty("season_id")?.GetValue(element.DataContext, null);
+            var title = element.DataContext.GetType()?.GetProperty("title")?.GetValue(element.DataContext, null) ?? "";
+            SeasonItemOpen(sender, seasonId, title?.ToString(), true);
+        }
+
         public void LinkItemClick(object sender, ItemClickEventArgs e)
         {
             var weblink = e.ClickedItem.GetType().GetProperty("link").GetValue(e.ClickedItem, null);

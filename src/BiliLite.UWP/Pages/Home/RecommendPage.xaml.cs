@@ -1,21 +1,14 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Helpers;
 using BiliLite.Modules;
 using BiliLite.Modules.User;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -88,44 +81,7 @@ namespace BiliLite.Pages.Home
         private async void RecommendGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as Modules.RecommendItemModel;
-            if (data.uri == null&&data.ad_info!=null)
-            {
-                var url = data.ad_info.creative_content.url;
-                if (!url.Contains("http://")&& !url.Contains("https://"))
-                {
-                    url = data.ad_info.creative_content.click_url ?? data.ad_info.creative_content.url;
-                }
-                await MessageCenter.HandelUrl(url);
-              
-                //MessageCenter.NavigateToPage(this, new NavigationInfo()
-                //{
-                //    icon = Symbol.World,
-                //    page = typeof(WebPage),
-                //    parameters = url,
-                //    title = "广告"
-                //});
-                return;
-            }
-            if (data.card_goto== "new_tunnel")
-            { 
-                MessageCenter.NavigateToPage(this, new NavigationInfo()
-                {
-                    icon = Symbol.Favorite,
-                    page = typeof(User.FavoritePage),
-                    parameters = User.OpenFavoriteType.Bangumi,
-                    title = "我的收藏"
-                });
-                return;
-            }
-            if (await MessageCenter.HandelUrl(data.uri))
-            {
-                return;
-            }
-            var browserUri = data.three_point_v2.FirstOrDefault(x => x.type == "browser")?.url ?? "";
-            if (!string.IsNullOrEmpty(browserUri)&& await MessageCenter.HandelUrl(browserUri))
-            {
-                return;
-            }
+            await VideoItemClicked(data);
         }
 
    
@@ -133,12 +89,10 @@ namespace BiliLite.Pages.Home
         {
              recommendVM.Refresh();
         }
-
      
         private async void BannerItem_Click(object sender, RoutedEventArgs e)
         {
             await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as RecommendBannerItemModel).uri);
-           
         }
 
         private async void ListMenu_ItemClick(object sender, ItemClickEventArgs e)
@@ -200,6 +154,57 @@ namespace BiliLite.Pages.Home
             RecommendGridView.DesiredWidth = 260;
             RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
         }
+
+        private async void RecommendItemGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (!e.IsMiddleButtonNewTap(sender)) return;
+            var element = e.OriginalSource as FrameworkElement;
+            var data = element.DataContext as RecommendItemModel;
+            await VideoItemClicked(data, true);
+        }
+
+        private async Task VideoItemClicked(RecommendItemModel data, bool dontGoTo = false)
+        {
+            if(data==null)
+            if (data.uri == null && data.ad_info != null)
+            {
+                var url = data.ad_info.creative_content.url;
+                if (!url.Contains("http://") && !url.Contains("https://"))
+                {
+                    url = data.ad_info.creative_content.click_url ?? data.ad_info.creative_content.url;
+                }
+                await MessageCenter.HandelUrl(url, dontGoTo);
+
+                //MessageCenter.NavigateToPage(this, new NavigationInfo()
+                //{
+                //    icon = Symbol.World,
+                //    page = typeof(WebPage),
+                //    parameters = url,
+                //    title = "广告"
+                //});
+                return;
+            }
+            if (data.card_goto == "new_tunnel")
+            {
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Favorite,
+                    page = typeof(User.FavoritePage),
+                    parameters = User.OpenFavoriteType.Bangumi,
+                    title = "我的收藏",
+                    dontGoTo = dontGoTo
+                });
+                return;
+            }
+            if (await MessageCenter.HandelUrl(data.uri, dontGoTo))
+            {
+                return;
+            }
+            var browserUri = data.three_point_v2.FirstOrDefault(x => x.type == "browser")?.url ?? "";
+            if (!string.IsNullOrEmpty(browserUri) && await MessageCenter.HandelUrl(browserUri, dontGoTo))
+            {
+                return;
+            }
+        }
     }
-  
 }

@@ -203,9 +203,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/dm/filter/user",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true) 
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) 
             };
-            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -221,9 +221,9 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/dm/filter/user/add",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidVideoKey, true)+ $"&filter={Uri.EscapeDataString(word)}&type={type}"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ $"&filter={Uri.EscapeDataString(word)}&type={type}"
             };
-            api.body += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidVideoKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 

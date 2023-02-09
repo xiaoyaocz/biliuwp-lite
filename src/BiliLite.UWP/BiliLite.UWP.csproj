@@ -253,6 +253,7 @@
     <Compile Include="Dialogs\LoginDialog.xaml.cs">
       <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\PointerRoutedEventArgsExtensions.cs" />
     <Compile Include="Helpers\AppHelper.cs" />
     <Compile Include="Helpers\BiliRequestBuilder.cs" />
     <Compile Include="Helpers\CCToSrt.cs" />
@@ -272,6 +273,7 @@
     </Compile>
     <Compile Include="Models\ApiModel.cs" />
     <Compile Include="Models\Common\BiliRequest.cs" />
+    <Compile Include="Models\Common\ChangeTitleEventArgs.cs" />
     <Compile Include="Models\Common\Constants.cs" />
     <Compile Include="Models\Dynamic\DynamicModel.cs" />
     <Compile Include="Models\Dynamic\DynamicUserProfileModel.cs" />

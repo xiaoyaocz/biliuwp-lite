@@ -50,6 +50,7 @@
                          ItemHeight="288"
                           DesiredWidth="180"
                           ItemClick="AdaptiveGridView_ItemClick"
+                        PointerPressed="AdaptiveGridView_PointerPressed"
                           ItemsSource="{x:Bind Path=seasons}"
                                           SelectionMode="None"
                                           IsItemClickEnabled="True">
