@@ -24,6 +24,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using Windows.Web.Http.Filters;
 using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Helpers
 {

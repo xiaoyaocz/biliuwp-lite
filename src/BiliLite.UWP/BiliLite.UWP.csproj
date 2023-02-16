@@ -127,34 +127,34 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Api\AccountApi.cs" />
-    <Compile Include="Api\ApiHelper.cs" />
-    <Compile Include="Api\CommentApi.cs" />
-    <Compile Include="Api\EmoteApi.cs" />
-    <Compile Include="Api\GitApi.cs" />
-    <Compile Include="Api\Home\AnimeAPI.cs" />
-    <Compile Include="Api\Home\ChannelAPI.cs" />
-    <Compile Include="Api\Home\CinemaAPI.cs" />
-    <Compile Include="Api\Home\HotAPI.cs" />
-    <Compile Include="Api\Home\LiveAPI.cs" />
-    <Compile Include="Api\Home\RecommendAPI.cs" />
-    <Compile Include="Api\Live\LiveAreaAPI.cs" />
-    <Compile Include="Api\Live\LiveCenterAPI.cs" />
-    <Compile Include="Api\Live\LiveRecommendAPI.cs" />
-    <Compile Include="Api\Live\LiveRoomAPI.cs" />
-    <Compile Include="Api\PlayerAPI.cs" />
-    <Compile Include="Api\RankAPI.cs" />
-    <Compile Include="Api\RegionAPI.cs" />
-    <Compile Include="Api\SearchAPI.cs" />
-    <Compile Include="Api\SeasonApi.cs" />
-    <Compile Include="Api\SeasonIndexAPI.cs" />
-    <Compile Include="Api\User\DynamicAPI.cs" />
-    <Compile Include="Api\User\FavoriteAPI.cs" />
-    <Compile Include="Api\User\FollowAPI.cs" />
-    <Compile Include="Api\User\AtAPI.cs" />
-    <Compile Include="Api\User\UserDetailAPI.cs" />
-    <Compile Include="Api\User\WatchLaterAPI.cs" />
-    <Compile Include="Api\VideoAPI.cs" />
+    <Compile Include="Models\Requests\Api\AccountApi.cs" />
+    <Compile Include="Services\ApiHelper.cs" />
+    <Compile Include="Models\Requests\Api\CommentApi.cs" />
+    <Compile Include="Models\Requests\Api\EmoteApi.cs" />
+    <Compile Include="Models\Requests\Api\GitApi.cs" />
+    <Compile Include="Models\Requests\Api\Home\AnimeAPI.cs" />
+    <Compile Include="Models\Requests\Api\Home\ChannelAPI.cs" />
+    <Compile Include="Models\Requests\Api\Home\CinemaAPI.cs" />
+    <Compile Include="Models\Requests\Api\Home\HotAPI.cs" />
+    <Compile Include="Models\Requests\Api\Home\LiveAPI.cs" />
+    <Compile Include="Models\Requests\Api\Home\RecommendAPI.cs" />
+    <Compile Include="Models\Requests\Api\Live\LiveAreaAPI.cs" />
+    <Compile Include="Models\Requests\Api\Live\LiveCenterAPI.cs" />
+    <Compile Include="Models\Requests\Api\Live\LiveRecommendAPI.cs" />
+    <Compile Include="Models\Requests\Api\Live\LiveRoomAPI.cs" />
+    <Compile Include="Models\Requests\Api\PlayerAPI.cs" />
+    <Compile Include="Models\Requests\Api\RankAPI.cs" />
+    <Compile Include="Models\Requests\Api\RegionAPI.cs" />
+    <Compile Include="Models\Requests\Api\SearchAPI.cs" />
+    <Compile Include="Models\Requests\Api\SeasonApi.cs" />
+    <Compile Include="Models\Requests\Api\SeasonIndexAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\DynamicAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\FavoriteAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\FollowAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\AtAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\UserDetailAPI.cs" />
+    <Compile Include="Models\Requests\Api\User\WatchLaterAPI.cs" />
+    <Compile Include="Models\Requests\Api\VideoAPI.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -918,8 +918,8 @@
     <PRIResource Include="Strings\zh-cn\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Api\Grpc\" />
     <Folder Include="Assets\Tools\" />
+    <Folder Include="Models\Requests\Api\Grpc\" />
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
