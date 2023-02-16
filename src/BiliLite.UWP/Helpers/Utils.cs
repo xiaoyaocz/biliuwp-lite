@@ -24,6 +24,8 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using Windows.Web.Http.Filters;
 using BiliLite.Models.Common;
+using BiliLite.Services;
+using BiliLite.Models;
 
 namespace BiliLite.Helpers
 {
@@ -469,6 +471,24 @@ namespace BiliLite.Helpers
                 return string.IsNullOrEmpty(proxyUrlTW) ? proxyUrl : proxyUrlTW;
             }
             return proxyUrl;
+        }
+
+        public static void SaveCookie(List<HttpCookieItem> cookies)
+        {
+            if (cookies != null)
+            {
+                var filter = new HttpBaseProtocolFilter();
+                foreach (var cookieItem in cookies)
+                {
+                    filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.Name, cookieItem.Domain, "/")
+                    {
+                        HttpOnly = cookieItem.HttpOnly,
+                        Secure = cookieItem.Secure,
+                        Expires = cookieItem.Expires,
+                        Value = cookieItem.Value,
+                    });
+                }
+            }
         }
     }
     public class NewVersion
