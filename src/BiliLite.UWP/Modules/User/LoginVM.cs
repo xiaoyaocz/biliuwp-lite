@@ -654,14 +654,16 @@ namespace BiliLite.Modules.User
 
         public void HandleGeetestSuccess(string seccode, string validate, string challenge, string recaptcha_token)
         {
-            if (gee_req.gee_challenge != challenge)
+            if (gee_req != null)
             {
-                Utils.ShowMessageToast("验证码失效");
-                return;
+                if (gee_req.gee_challenge != challenge)
+                {
+                    Utils.ShowMessageToast("验证码失效");
+                    return;
+                }
+                gee_req.gee_validate = validate;
+                gee_req.gee_seccode = seccode;
             }
-            gee_req.gee_validate = validate;
-            gee_req.gee_seccode = seccode;
-
             switch (LoginType)
             {
                 //切换到短信验证界面并发送验证码
