@@ -1,5 +1,6 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Models;
+using BiliLite.Models.Common;
 using BiliLite.Pages;
 using BiliLite.Pages.Other;
 using BiliLite.Pages.User;
@@ -73,7 +74,8 @@ namespace BiliLite.Helpers
                     "http://biligame.com",
                     "http://bigfun.cn",
                     "http://bigfunapp.cn",
-                    "http://dreamcast.hk"
+                    "http://dreamcast.hk",
+                    Constants.COOKIE_DOMAIN,
                 };
                 //删除Cookie
                 HttpBaseProtocolFilter httpBaseProtocolFilter = new HttpBaseProtocolFilter();

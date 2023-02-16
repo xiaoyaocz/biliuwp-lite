@@ -98,8 +98,9 @@ namespace BiliLite.Helpers
                 //没有Cookie
                 if(cookies==null|| cookies.Count == 0)
                 {
-                    //访问一遍bilibili.com
-                    await GetAsync("https://www.bilibili.com");
+                    //访问一遍bilibili.com拿Cookie
+                    var getCookieResult = await GetAsync("https://www.bilibili.com");
+                    Utils.SaveCookie(getCookieResult.cookies);
                 }
                 cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
                 var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);

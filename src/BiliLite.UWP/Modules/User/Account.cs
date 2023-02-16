@@ -131,24 +131,6 @@ namespace BiliLite.Modules
             }
         }
 
-        public void SaveCookie(List<HttpCookieItem> cookies)
-        {
-            if (cookies != null)
-            {
-                var filter = new HttpBaseProtocolFilter();
-                foreach (var cookieItem in cookies)
-                {
-                    filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.Name, cookieItem.Domain, "/")
-                    {
-                        HttpOnly = cookieItem.HttpOnly,
-                        Secure = cookieItem.Secure,
-                        Expires = cookieItem.Expires,
-                        Value = cookieItem.Value,
-                    });
-                }
-            }
-        }
-
         public async Task<MyProfileModel> GetProfile()
         {
             try
@@ -253,7 +235,7 @@ namespace BiliLite.Modules
 
         public async void LoginByCookie(List<HttpCookieItem> cookies, string refresh_token)
         {
-            SaveCookie(cookies);
+            Utils.SaveCookie(cookies);
             var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
             var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
             // var expires = result.cookies[0].Expires;
