@@ -19,3 +19,11 @@ https://app.bilibili.com/
 从逍遥橙子大佬那fork出来，大佬不维护了，群也解散了，要维护只能自己搞了
 
 https://github.com/xiaoyaocz/biliuwp-lite
+
+## 下载
+
+https://github.com/ywmoyue/biliuwp-lite/releases
+
+## 讨论
+
+https://github.com/ywmoyue/biliuwp-lite/discussions
