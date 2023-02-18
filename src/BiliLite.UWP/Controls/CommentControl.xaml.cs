@@ -1136,7 +1136,10 @@ namespace BiliLite.Controls
     }
     public class CommentMemberUserSailingModel
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public CommentMemberUserSailingPendantModel pendant { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public CommentMemberUserSailingCardbgModel cardbg { get; set; }
     }
     public class CommentMemberUserSailingPendantModel
@@ -1147,7 +1150,6 @@ namespace BiliLite.Controls
     }
     public class CommentMemberUserSailingCardbgModel
     {
-        public int id { get; set; }
         public string name { get; set; }
         public string image { get; set; }
         public string jump_url { get; set; }
