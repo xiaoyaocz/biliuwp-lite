@@ -1,7 +1,7 @@
 {
-    "version": "4.5.1",
-    "version_num": 40501,
-    "version_desc": "更新内容:\r\n\r\n* 修复验证码登录\r\n\r\n* 修复未登录时无法使用搜索\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.5.2",
+    "version_num": 40502,
+    "version_desc": "更新内容:\r\n\r\n* 修复视频导出错误\r\n\r\n* 修复部分视频评论加载失败错误\r\n\r\n* 修复动态页加载失败错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
