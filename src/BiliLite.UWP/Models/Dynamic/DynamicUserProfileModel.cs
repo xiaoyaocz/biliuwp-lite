@@ -56,7 +56,7 @@ namespace BiliLite.Models.Dynamic
     }
     public class DynamicCardDescUserProfileDecorateCardModel
     {
-        public int id { get; set; }
+        public long id { get; set; }
         public string name { get; set; }
         public string big_card_url { get; set; }
         public string jump_url { get; set; }

@@ -27,3 +27,16 @@ https://github.com/ywmoyue/biliuwp-lite/releases
 ## 讨论
 
 https://github.com/ywmoyue/biliuwp-lite/discussions
+
+## 构建
+
+* 版本发布可能不够及时，有些问题可能dev分支修复了却没发版本，有一定编程基础的可以自行Clone项目下来自己构建 
+
+### 步骤
+1. 使用Terminal运行
+```sh
+git clone -b dev https://github.com/ywmoyue/biliuwp-lite.git
+```
+2. 双击项目中的BiliLite.sln文件使用VisualStudio2019以上的版本打开
+3. 右键点击BiliLite.Packages项目，选择设为启动项目
+4. 按ctrl+f5开始构建并执行，成功后关闭VS即可
