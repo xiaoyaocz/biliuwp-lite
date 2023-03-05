@@ -1,9 +1,5 @@
 ﻿using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BiliLite.Api
 {
@@ -20,6 +16,19 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
+
+        public ApiModel DetailWebInterface(string id, bool isBvId)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://api.bilibili.com/x/web-interface/view",
+                parameter = $"&{(isBvId ? "bvid=" : "aid=")}{id}",
+                need_cookie = true,
+            };
+            return api;
+        }
+
         public ApiModel DetailProxy(string id, bool isbvid)
         {
             ApiModel api = new ApiModel()

@@ -1,10 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BiliLite.Services;
 
 namespace BiliLite.Api.User
 {
@@ -113,6 +107,21 @@ namespace BiliLite.Api.User
             return api;
         }
 
-
+        /// <summary>
+        /// 查询用户与自己关系_仅查关注
+        /// </summary>
+        /// <param name="mid"></param>
+        /// <returns></returns>
+        public ApiModel GetAttention(string mid)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation",
+                parameter = $"fid={mid}",
+                need_cookie = true
+            };
+            return api;
+        }
     }
 }
