@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.Live;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,10 +17,10 @@ namespace BiliLite.Modules.Live.LiveCenter
 {
     public class LiveAttentionVM:IModules
     {
-        readonly Api.Live.LiveCenterAPI liveCenterAPI;
+        readonly LiveCenterAPI liveCenterAPI;
         public LiveAttentionVM()
         {
-            liveCenterAPI = new Api.Live.LiveCenterAPI();
+            liveCenterAPI = new LiveCenterAPI();
             RefreshCommand = new RelayCommand(Refresh);
         }
         private ObservableCollection<LiveFollowAnchorModel> _Follow;

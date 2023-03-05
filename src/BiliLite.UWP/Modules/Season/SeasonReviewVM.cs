@@ -1,31 +1,25 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel;
-using Windows.Services.Maps;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace BiliLite.Modules.Season
 {
     public class SeasonReviewVM : IModules
     {
-        readonly Api.SeasonApi seasonApi;
+        readonly SeasonApi seasonApi;
        
         public SeasonReviewVM()
         {
           
             Items = new ObservableCollection<SeasonShortReviewItemModel>();
-            seasonApi = new Api.SeasonApi();
+            seasonApi = new SeasonApi();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }
@@ -126,7 +120,7 @@ namespace BiliLite.Modules.Season
             }
             try
             {
-                var api = seasonApi.LikeReview(MediaID,item.review_id, Api.ReviewType.Short);
+                var api = seasonApi.LikeReview(MediaID,item.review_id, ReviewType.Short);
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -170,7 +164,7 @@ namespace BiliLite.Modules.Season
             }
             try
             {
-                var api = seasonApi.DislikeReview(MediaID,item.review_id, Api.ReviewType.Short);
+                var api = seasonApi.DislikeReview(MediaID,item.review_id, ReviewType.Short);
                 var results = await api.Request();
                 if (results.status)
                 {

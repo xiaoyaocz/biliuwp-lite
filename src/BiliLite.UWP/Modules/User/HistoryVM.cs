@@ -1,11 +1,9 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -13,10 +11,10 @@ namespace BiliLite.Modules.User
 {
     public class HistoryVM : IModules
     {
-        Api.AccountApi accountApi;
+        AccountApi accountApi;
         public HistoryVM()
         {
-            accountApi = new Api.AccountApi();
+            accountApi = new AccountApi();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }

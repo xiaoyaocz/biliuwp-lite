@@ -13,6 +13,7 @@ using BiliLite.Controls;
 using Windows.System;
 using BiliLite.Dialogs;
 using System.Threading.Tasks;
+using BiliLite.Models.Requests.Api;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -204,8 +205,8 @@ namespace BiliLite.Pages
                 player.InitializePlayInfo(playInfos, index);
                 comment.LoadComment(new LoadCommentInfo()
                 {
-                    CommentMode = (int)Api.CommentApi.CommentType.Video,
-                    CommentSort = Api.CommentApi.CommentSort.Hot,
+                    CommentMode = (int)CommentApi.CommentType.Video,
+                    CommentSort = CommentApi.CommentSort.Hot,
                     Oid = videoDetailVM.VideoInfo.aid
                 });
             }

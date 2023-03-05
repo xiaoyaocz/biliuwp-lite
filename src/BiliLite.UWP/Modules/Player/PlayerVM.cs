@@ -1,7 +1,7 @@
-﻿using BiliLite.Api;
-using BiliLite.Controls;
+﻿using BiliLite.Controls;
 using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using BiliLite.Modules.Player.Playurl;
 using BiliLite.Player;
 using Newtonsoft.Json;

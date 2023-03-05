@@ -1,6 +1,6 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

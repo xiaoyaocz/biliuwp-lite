@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api
+namespace BiliLite.Models.Requests.Api
 {
     public class SeasonIndexAPI
     {
@@ -34,13 +29,13 @@ namespace BiliLite.Api
         /// <param name="condition">拼接的条件,&par1=1&par2=2</param>
         /// <param name="pagesize">页数</param>
         /// <returns></returns>
-        public ApiModel Result(int page,int season_type,string condition,int pagesize=24)
+        public ApiModel Result(int page, int season_type, string condition, int pagesize = 24)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/season/index/result",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false) + condition+ $"&page={page}&pagesize={pagesize}&season_type={season_type}&type=0"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false) + condition + $"&page={page}&pagesize={pagesize}&season_type={season_type}&type=0"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

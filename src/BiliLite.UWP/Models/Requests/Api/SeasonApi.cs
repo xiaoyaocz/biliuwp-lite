@@ -1,17 +1,13 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api
+namespace BiliLite.Models.Requests.Api
 {
     public class SeasonApi
     {
-       
-        public ApiModel Detail(string season_id,bool proxy=false)
+
+        public ApiModel Detail(string season_id, bool proxy = false)
         {
             var baseUrl = ApiHelper.API_BASE_URL;
 
@@ -24,7 +20,7 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-       
+
         public ApiModel DetailWeb(string season_id)
         {
             ApiModel api = new ApiModel()
@@ -33,7 +29,7 @@ namespace BiliLite.Api
                 baseUrl = $"https://bangumi.bilibili.com/view/web_api/season",
                 parameter = $"season_id={season_id}"
             };
-           
+
             return api;
         }
         /// <summary>
@@ -41,7 +37,7 @@ namespace BiliLite.Api
         /// </summary>
         /// <param name="media_id"></param>
         /// <returns></returns>
-        public ApiModel ShortReview(int media_id,string next="",int sort=0)
+        public ApiModel ShortReview(int media_id, string next = "", int sort = 0)
         {
             ApiModel api = new ApiModel()
             {
@@ -60,7 +56,7 @@ namespace BiliLite.Api
         /// </summary>
         /// <param name="media_id"></param>
         /// <returns></returns>
-        public ApiModel LikeReview(int media_id, int review_id, ReviewType review_type= ReviewType.Short)
+        public ApiModel LikeReview(int media_id, int review_id, ReviewType review_type = ReviewType.Short)
         {
             ApiModel api = new ApiModel()
             {
@@ -87,30 +83,31 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
-       /// <summary>
-       /// 发表点评
-       /// </summary>
-       /// <param name="media_id">ID</param>
-       /// <param name="content">内容</param>
-       /// <param name="share_feed">是否分享动态</param>
-       /// <param name="score">分数（10分制）</param>
-       /// <returns></returns>
-        public ApiModel SendShortReview(int media_id, string content,bool share_feed,int score)
+        /// <summary>
+        /// 发表点评
+        /// </summary>
+        /// <param name="media_id">ID</param>
+        /// <param name="content">内容</param>
+        /// <param name="share_feed">是否分享动态</param>
+        /// <param name="score">分数（10分制）</param>
+        /// <returns></returns>
+        public ApiModel SendShortReview(int media_id, string content, bool share_feed, int score)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"https://bangumi.bilibili.com/review/api/short/post",
-                body = $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&media_id={media_id}&content={Uri.EscapeDataString(content)}&share_feed={(share_feed?1:0)}&score={score}"
+                body = $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&media_id={media_id}&content={Uri.EscapeDataString(content)}&share_feed={(share_feed ? 1 : 0)}&score={score}"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
     }
+
     public enum ReviewType
     {
-        Long=1,
-        Short=2,
-        
+        Long = 1,
+        Short = 2,
+
     }
 }

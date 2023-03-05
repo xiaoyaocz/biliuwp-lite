@@ -1,16 +1,11 @@
 ﻿using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.User
+namespace BiliLite.Models.Requests.Api.User
 {
-
     public class AtApi
     {
-        public ApiModel RecommendAt(int page = 1,int pagesize = 20)
+        public ApiModel RecommendAt(int page = 1, int pagesize = 20)
         {
             ApiModel api = new ApiModel()
             {
@@ -21,7 +16,8 @@ namespace BiliLite.Api.User
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel SearchUser(string keyword,int page = 1, int pagesize = 20)
+
+        public ApiModel SearchUser(string keyword, int page = 1, int pagesize = 20)
         {
             ApiModel api = new ApiModel()
             {

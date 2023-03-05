@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.Home;
 using BiliLite.Modules.Live.LiveCenter;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,11 +17,11 @@ namespace BiliLite.Modules
 {
     public class LiveVM : IModules
     {
-        readonly Api.Home.LiveAPI liveAPI;
+        readonly LiveAPI liveAPI;
         public readonly LiveAttentionVM liveAttentionVM;
         public LiveVM()
         {
-            liveAPI = new Api.Home.LiveAPI();
+            liveAPI = new LiveAPI();
             liveAttentionVM = new LiveAttentionVM();
         }
         private bool _showFollows = false;

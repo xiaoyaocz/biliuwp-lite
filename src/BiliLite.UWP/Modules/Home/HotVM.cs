@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using BiliLite.Models;
 using BiliLite.Helpers;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Windows.UI.Xaml.Controls;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
+using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
 {
     public class HotVM : IModules
     {
-        readonly Api.Home.HotAPI hotAPI;
+        readonly HotAPI hotAPI;
         public HotVM()
         {
-            hotAPI = new Api.Home.HotAPI();
+            hotAPI = new HotAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand=new RelayCommand(LoadMore);
         }

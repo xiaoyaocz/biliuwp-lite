@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,10 @@ namespace BiliLite.Modules
 {
     public class MyFollowVideoVM : IModules
     {
-        readonly Api.User.FavoriteApi  favoriteAPI;
+        readonly FavoriteApi favoriteAPI;
         public MyFollowVideoVM()
         {
-            favoriteAPI = new Api.User.FavoriteApi();
+            favoriteAPI = new FavoriteApi();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }

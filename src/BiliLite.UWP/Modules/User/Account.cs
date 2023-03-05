@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
 using Newtonsoft.Json;
 using System;
@@ -15,6 +14,7 @@ using Windows.Storage.Streams;
 using Windows.Web.Http.Filters;
 using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Modules
 {

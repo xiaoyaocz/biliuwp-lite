@@ -1,6 +1,7 @@
 ﻿using BiliLite.Controls.Dynamic;
 using BiliLite.Helpers;
 using BiliLite.Models.Dynamic;
+using BiliLite.Models.Requests.Api.User;
 using BiliLite.Pages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,10 +18,10 @@ namespace BiliLite.Modules.User
 {
     public class DynamicRepostVM:IModules
     {
-        readonly Api.User.DynamicAPI dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public DynamicRepostVM()
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
             UserCommand = new RelayCommand<object>(OpenUser);

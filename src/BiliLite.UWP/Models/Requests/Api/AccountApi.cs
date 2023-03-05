@@ -2,10 +2,10 @@
 using BiliLite.Services;
 using System;
 
-namespace BiliLite.Api
+namespace BiliLite.Models.Requests.Api
 {
     public class AccountApi
-    {   
+    {
         /// <summary>
         /// 读取登录密码加密信息
         /// </summary>
@@ -27,15 +27,15 @@ namespace BiliLite.Api
         /// <param name="password">密码</param>
         /// <param name="captcha">验证码</param>
         /// <returns></returns>
-        public  ApiModel LoginV2(string username, string password, string captcha = "")
+        public ApiModel LoginV2(string username, string password, string captcha = "")
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/login",
-                body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}{((captcha == "") ? "" : "&captcha=" + captcha)}&" + ApiHelper.MustParameter(ApiHelper.AndroidKey)
+                body = $"username={Uri.EscapeDataString(username)}&password={Uri.EscapeDataString(password)}{(captcha == "" ? "" : "&captcha=" + captcha)}&" + ApiHelper.MustParameter(ApiHelper.AndroidKey)
             };
-            api.body += ApiHelper.GetSign(api.body,ApiHelper.AndroidKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -46,7 +46,7 @@ namespace BiliLite.Api
         /// <param name="password">密码</param>
         /// <param name="gee_type"></param>
         /// <returns></returns>
-        public  ApiModel LoginV3(string username, string password)
+        public ApiModel LoginV3(string username, string password)
         {
             ApiModel api = new ApiModel()
             {
@@ -85,7 +85,7 @@ namespace BiliLite.Api
             return api;
         }
 
-        public ApiModel SendSMSWithCaptcha(string cid, string phone, string session_id,string seccode = "", string validate = "", string challenge = "", string recaptcha_token = "")
+        public ApiModel SendSMSWithCaptcha(string cid, string phone, string session_id, string seccode = "", string validate = "", string challenge = "", string recaptcha_token = "")
         {
             ApiModel api = new ApiModel()
             {
@@ -96,7 +96,7 @@ namespace BiliLite.Api
             api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
             return api;
         }
-        public ApiModel SMSLogin(string cid, string phone, string code,string session_id,string captcha_key)
+        public ApiModel SMSLogin(string cid, string phone, string code, string session_id, string captcha_key)
         {
             ApiModel api = new ApiModel()
             {
@@ -112,16 +112,16 @@ namespace BiliLite.Api
         /// </summary>
         /// <param name="access_key"></param>
         /// <returns></returns>
-        public  ApiModel SSO(string access_key)
+        public ApiModel SSO(string access_key)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://passport.bilibili.com/api/login/sso",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,false) + $"&access_key={access_key}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false) + $"&access_key={access_key}",
                 headers = ApiHelper.GetDefaultHeaders()
             };
-            api.parameter += ApiHelper.GetSign(api.parameter,ApiHelper.AndroidKey);
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -225,7 +225,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/account/myinfo",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true)
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -258,13 +258,13 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "http://app.biliapi.net/x/v2/space",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ $"&vmid={mid}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&vmid={mid}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
-        public ApiModel History(int pn=1,int ps=24)
+        public ApiModel History(int pn = 1, int ps = 24)
         {
             ApiModel api = new ApiModel()
             {
@@ -296,7 +296,7 @@ namespace BiliLite.Api
         {
             ApiModel api = new ApiModel()
             {
-                method =  RestSharp.Method.Post,
+                method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-tv-login/qrcode/auth_code",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidTVKey, false) + $"&local_id={local_id}",
             };
@@ -395,7 +395,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/info",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey)+ "&access_token="+SettingHelper.Account.AccessKey
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey) + "&access_token=" + SettingHelper.Account.AccessKey
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -411,7 +411,7 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/refreshToken",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey)+ $"&access_token={SettingHelper.Account.AccessKey}&refresh_token={SettingHelper.GetValue<string>(SettingHelper.Account.REFRESH_KEY, "")}"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey) + $"&access_token={SettingHelper.Account.AccessKey}&refresh_token={SettingHelper.GetValue(SettingHelper.Account.REFRESH_KEY, "")}"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;

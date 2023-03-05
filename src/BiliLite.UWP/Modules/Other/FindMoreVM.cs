@@ -1,18 +1,17 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BiliLite.Modules.Other
 {
     public class FindMoreVM : IModules
     {
-        readonly Api.GitApi gitApi;
+        readonly GitApi gitApi;
         public FindMoreVM()
         {
-            gitApi = new Api.GitApi();
+            gitApi = new GitApi();
         }
         private bool _loading = true;
         public bool Loading

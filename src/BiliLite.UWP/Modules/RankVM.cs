@@ -1,20 +1,20 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BiliLite.Modules
 {
     public class RankVM : IModules
     {
-        readonly Api.RankAPI rankAPI;
+        readonly RankAPI rankAPI;
         public RankVM()
         {
-            rankAPI = new Api.RankAPI();
+            rankAPI = new RankAPI();
         }
         private bool _loading = true;
         public bool Loading

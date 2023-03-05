@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api.Live;
 using Microsoft.Toolkit.Collections;
 using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
@@ -39,7 +40,7 @@ namespace BiliLite.Modules.Live
     {
         public string Title { get; set; }
         public string SortType { get; set; }
-        readonly Api.Live.LiveRecommendAPI recommendAPI;
+        readonly LiveRecommendAPI recommendAPI;
 
         //private IncrementalLoadingCollection<LiveRecommendItemSource, LiveRecommendItemModel> _items;
         //public IncrementalLoadingCollection<LiveRecommendItemSource, LiveRecommendItemModel> Items
@@ -55,7 +56,7 @@ namespace BiliLite.Modules.Live
         {
             Title = title;
             SortType = sort;
-            recommendAPI = new Api.Live.LiveRecommendAPI();
+            recommendAPI = new LiveRecommendAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
             Items = new ObservableCollection<LiveRecommendItemModel>();
@@ -147,10 +148,10 @@ namespace BiliLite.Modules.Live
 
     public class LiveRecommendItemSource : IIncrementalSource<LiveRecommendItemModel>
     {
-        readonly Api.Live.LiveRecommendAPI recommendAPI;
+        readonly LiveRecommendAPI recommendAPI;
         public LiveRecommendItemSource(List<LiveRecommendItemModel> items, string sort)
         {
-            recommendAPI = new Api.Live.LiveRecommendAPI();
+            recommendAPI = new LiveRecommendAPI();
             sort_type = sort;
             recommends = items;
         }

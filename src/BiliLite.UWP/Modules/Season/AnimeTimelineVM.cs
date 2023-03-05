@@ -9,17 +9,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
-
+using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
 {
     public class AnimeTimelineVM : IModules
     {
-        readonly Api.Home.AnimeAPI animeApi;
+        readonly AnimeAPI animeApi;
         public AnimeType animeType { get; set; }
         public AnimeTimelineVM(AnimeType type)
         {
-            animeApi = new Api.Home.AnimeAPI();
+            animeApi = new AnimeAPI();
             AnimeTypeItems = new List<AnimeTypeItem>()
                 {
                     new AnimeTypeItem()

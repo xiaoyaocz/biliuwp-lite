@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.User
+namespace BiliLite.Models.Requests.Api.User
 {
     public class UserDetailAPI
     {
@@ -20,9 +15,8 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/acc/info",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,needAccesskey:true)+$"&mid={mid}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, needAccesskey: true) + $"&mid={mid}",
             };
-
             return api;
         }
         /// <summary>
@@ -36,7 +30,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "https://app.bilibili.com/x/v2/space",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,needAccesskey:true) + $"&vmid={mid}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, needAccesskey: true) + $"&vmid={mid}",
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -52,9 +46,9 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/stat",
-                parameter =  $"vmid={mid}",
+                parameter = $"vmid={mid}",
             };
-         
+
             return api;
         }
 
@@ -65,7 +59,7 @@ namespace BiliLite.Api.User
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数量</param>
         /// <returns></returns>
-        public ApiModel SubmitVideos(string mid, int page = 1, int pagesize = 30,string keyword="",int tid=0, SubmitVideoOrder order= SubmitVideoOrder.pubdate)
+        public ApiModel SubmitVideos(string mid, int page = 1, int pagesize = 30, string keyword = "", int tid = 0, SubmitVideoOrder order = SubmitVideoOrder.pubdate)
         {
             ApiModel api = new ApiModel()
             {
@@ -115,15 +109,15 @@ namespace BiliLite.Api.User
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数量</param>
         /// <returns></returns>
-        public ApiModel Followings(string mid, int page = 1, int pagesize = 30,int tid=0,string keyword="",FollowingsOrder order= FollowingsOrder.attention)
+        public ApiModel Followings(string mid, int page = 1, int pagesize = 30, int tid = 0, string keyword = "", FollowingsOrder order = FollowingsOrder.attention)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followings",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey,true) + $"&vmid={mid}&ps={pagesize}&pn={page}&order=desc&order_type={(order== FollowingsOrder.attention? "attention":"")}",
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&vmid={mid}&ps={pagesize}&pn={page}&order=desc&order_type={(order == FollowingsOrder.attention ? "attention" : "")}",
             };
-            if (tid==-1&& keyword != "")
+            if (tid == -1 && keyword != "")
             {
                 api.baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followings/search";
                 api.parameter += $"&name={keyword}";
@@ -178,12 +172,14 @@ namespace BiliLite.Api.User
         click,
         stow
     }
+
     public enum SubmitArticleOrder
     {
         publish_time,
         view,
         fav
     }
+
     public enum FollowingsOrder
     {
         /// <summary>

@@ -1,12 +1,12 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -14,14 +14,14 @@ namespace BiliLite.Modules
 {
     public class SeasonDetailVM : IModules
     {
-        readonly Api.SeasonApi seasonApi;
+        readonly SeasonApi seasonApi;
         readonly PlayerAPI PlayerAPI;
-        readonly Api.User.FollowAPI followAPI;
+        readonly FollowAPI followAPI;
         public SeasonDetailVM()
         {
-            seasonApi = new Api.SeasonApi();
+            seasonApi = new SeasonApi();
             PlayerAPI = new PlayerAPI();
-            followAPI = new Api.User.FollowAPI();
+            followAPI = new FollowAPI();
             FollowCommand = new RelayCommand(DoFollow);
         }
         private SeasonDetailModel _Detail;

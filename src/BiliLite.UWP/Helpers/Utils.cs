@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Controls;
+﻿using BiliLite.Controls;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -26,6 +25,8 @@ using Windows.Web.Http.Filters;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Models;
+using BiliLite.Models.Requests;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Helpers
 {
@@ -147,7 +148,7 @@ namespace BiliLite.Helpers
             MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(seconds), commands);
             ms.Show();
         }
-        public static void ShowComment(string oid, int commentMode, Api.CommentApi.CommentSort commentSort)
+        public static void ShowComment(string oid, int commentMode, CommentApi.CommentSort commentSort)
         {
             CommentDialog ms = new CommentDialog();
             ms.Show(oid, commentMode, commentSort);

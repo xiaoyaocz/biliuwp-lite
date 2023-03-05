@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api
+namespace BiliLite.Models.Requests.Api
 {
     public class RankAPI
     {
@@ -24,7 +19,7 @@ namespace BiliLite.Api
         /// <param name="rid">分区ID</param>
         /// <param name="type">all=全站，origin=原创，rookie=新人</param>
         /// <returns></returns>
-        public ApiModel Rank(int rid,string type)
+        public ApiModel Rank(int rid, string type)
         {
             ApiModel api = new ApiModel()
             {

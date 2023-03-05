@@ -23,10 +23,10 @@ using Windows.UI.Xaml.Documents;
 using System.Threading.Tasks;
 using BiliLite.Helpers;
 using BiliLite.Pages;
-using BiliLite.Api;
-using static BiliLite.Api.CommentApi;
+using static BiliLite.Models.Requests.Api.CommentApi;
 using BiliLite.Modules;
 using BiliLite.Dialogs;
+using BiliLite.Models.Requests.Api;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 

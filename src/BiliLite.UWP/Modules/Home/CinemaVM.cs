@@ -1,5 +1,7 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.Home;
+using BiliLite.Models.Requests.Api.User;
 using BiliLite.Pages.Bangumi;
 using BiliLite.Pages.User;
 using Newtonsoft.Json.Linq;
@@ -14,12 +16,12 @@ namespace BiliLite.Modules
 {
     public class CinemaVM : IModules
     {
-        readonly Api.User.FollowAPI followAPI;
-        readonly Api.Home.CinemaAPI cinemaAPI;
+        readonly FollowAPI followAPI;
+        readonly CinemaAPI cinemaAPI;
         public CinemaVM()
         {
-            cinemaAPI = new Api.Home.CinemaAPI();
-            followAPI = new Api.User.FollowAPI();
+            cinemaAPI = new CinemaAPI();
+            followAPI = new FollowAPI();
             Entrances = new List<PageEntranceModel>() {
                 new PageEntranceModel(){
                     Logo="ms-appx:///Assets/Icon/榜单.png",

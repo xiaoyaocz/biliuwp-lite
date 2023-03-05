@@ -13,7 +13,6 @@ using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
 using BiliLite.Models.Common;
-using Flurl.Http;
 
 namespace BiliLite.Helpers
 {

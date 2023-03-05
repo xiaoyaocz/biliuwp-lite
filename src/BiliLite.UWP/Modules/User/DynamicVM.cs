@@ -19,9 +19,10 @@ using Windows.ApplicationModel.Store.Preview.InstallControl;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
-using static BiliLite.Api.User.DynamicAPI;
+using static BiliLite.Models.Requests.Api.User.DynamicAPI;
 using BiliLite.Dialogs;
 using Windows.UI.Xaml.Documents;
+using BiliLite.Models.Requests.Api.User;
 
 namespace BiliLite.Modules.User
 {
@@ -43,10 +44,10 @@ namespace BiliLite.Modules.User
     public class DynamicVM : IModules
     {
         readonly WatchLaterVM watchLaterVM;
-        readonly Api.User.DynamicAPI dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public DynamicVM()
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             watchLaterVM = new WatchLaterVM();
             dynamicItemDataTemplateSelector = new DynamicItemDataTemplateSelector();
             RefreshCommand = new RelayCommand(Refresh);

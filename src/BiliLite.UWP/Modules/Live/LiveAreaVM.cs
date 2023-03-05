@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api.Live;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,10 +11,10 @@ namespace BiliLite.Modules.Live
 {
     public class LiveAreaVM:IModules
     {
-        readonly Api.Live.LiveAreaAPI liveAreaAPI;
+        readonly LiveAreaAPI liveAreaAPI;
         public LiveAreaVM()
         {
-            liveAreaAPI = new Api.Live.LiveAreaAPI();
+            liveAreaAPI = new LiveAreaAPI();
             
         }
         private bool _loading = false;

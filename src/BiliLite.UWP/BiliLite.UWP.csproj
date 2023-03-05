@@ -275,7 +275,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\ApiModel.cs" />
-    <Compile Include="Models\Common\BiliRequest.cs" />
+    <Compile Include="Models\Requests\BiliRequest.cs" />
     <Compile Include="Models\Common\ChangeTitleEventArgs.cs" />
     <Compile Include="Models\Common\Constants.cs" />
     <Compile Include="Models\Dynamic\DynamicModel.cs" />
@@ -463,6 +463,8 @@
     <Compile Include="Player\BiliPlayer.cs" />
     <Compile Include="Player\IBiliPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\Requests\ApiModel.cs" />
+    <Compile Include="Models\Common\ApiKeyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\GeeTest\bili_gt.html" />

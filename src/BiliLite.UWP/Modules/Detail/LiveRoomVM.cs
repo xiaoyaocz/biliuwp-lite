@@ -1,7 +1,7 @@
-﻿using BiliLite.Api;
-using BiliLite.Api.Live;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Models.Requests.Api.Live;
 using BiliLite.Modules.Live;
 using BiliLite.Modules.LiveRoomDetailModels;
 using Newtonsoft.Json;
@@ -1325,7 +1325,7 @@ namespace BiliLite.Modules
 
     public class LiveRoomAnchorLotteryVM : IModules
     {
-        readonly Api.Live.LiveRoomAPI liveRoomAPI;
+        readonly LiveRoomAPI liveRoomAPI;
         public LiveRoomAnchorLotteryVM()
         {
             liveRoomAPI = new LiveRoomAPI();

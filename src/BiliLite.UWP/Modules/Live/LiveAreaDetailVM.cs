@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api.Live;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,10 @@ namespace BiliLite.Modules.Live
         public int ParentAreaID { get; set; }
         
 
-        readonly Api.Live.LiveAreaAPI liveAreaAPI;
+        readonly LiveAreaAPI liveAreaAPI;
         public LiveAreaDetailVM(int area_id, int parent_id)
         {
-            liveAreaAPI = new Api.Live.LiveAreaAPI();
+            liveAreaAPI = new LiveAreaAPI();
             AreaID = area_id;
             ParentAreaID = parent_id;
             Items = new ObservableCollection<LiveRecommendItemModel>();

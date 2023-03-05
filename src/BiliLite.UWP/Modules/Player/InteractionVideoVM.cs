@@ -1,5 +1,5 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;

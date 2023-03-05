@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.Live;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -16,11 +17,11 @@ namespace BiliLite.Modules.Live.LiveCenter
 {
     public class LiveCenterHistoryVM : IModules
     {
-        readonly Api.Live.LiveCenterAPI liveCenterAPI;
+        readonly LiveCenterAPI liveCenterAPI;
 
         public LiveCenterHistoryVM()
         {
-            liveCenterAPI = new Api.Live.LiveCenterAPI();
+            liveCenterAPI = new LiveCenterAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }

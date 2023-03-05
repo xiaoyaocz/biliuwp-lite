@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,21 +9,23 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Models.Requests.Api.User;
 
 namespace BiliLite.Modules
 {
     public class VideoDetailVM:IModules
     {
-        readonly Api.User.FavoriteApi favoriteAPI;
+        readonly FavoriteApi favoriteAPI;
         readonly VideoAPI videoAPI;
         readonly PlayerAPI  PlayerAPI;
-        readonly Api.User.FollowAPI followAPI;
+        readonly FollowAPI followAPI;
         public VideoDetailVM()
         {
             videoAPI = new VideoAPI();
-            favoriteAPI = new Api.User.FavoriteApi();
+            favoriteAPI = new FavoriteApi();
             PlayerAPI = new PlayerAPI();
-            followAPI = new Api.User.FollowAPI();
+            followAPI = new FollowAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LikeCommand = new RelayCommand(DoLike);
             DislikeCommand = new RelayCommand(DoDislike);

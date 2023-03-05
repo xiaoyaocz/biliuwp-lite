@@ -1,6 +1,7 @@
 ﻿using BiliLite.Controls.Dynamic;
 using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -18,15 +19,15 @@ namespace BiliLite.Modules.User
 {
     public class SendDynamicVM : IModules
     {
-        readonly Api.User.DynamicAPI dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public SendDynamicVM()
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             Images = new ObservableCollection<UploadImagesModel>();
         }
         public SendDynamicVM(DynamicItemDisplayModel repostInfo)
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             RepostInfo = repostInfo;
             IsRepost = true;
         }

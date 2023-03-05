@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using BiliLite.Models.Common;
+using BiliLite.Models.Requests;
 
 namespace BiliLite.Helpers
 {

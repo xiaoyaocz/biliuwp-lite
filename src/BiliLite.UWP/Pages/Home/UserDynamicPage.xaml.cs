@@ -1,4 +1,6 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Models.Requests.Api.User;
 using BiliLite.Modules.User;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
@@ -58,34 +60,34 @@ namespace BiliLite.Pages.Home
             pivotRight.SelectedIndex = 1;
             repostCount.Text = e.ShareCount.ToString();
             commentCount.Text = e.CommentCount.ToString();
-            Api.CommentApi.CommentType commentType= Api.CommentApi.CommentType.Dynamic;
+            CommentApi.CommentType commentType= CommentApi.CommentType.Dynamic;
             var id = e.ReplyID;
             switch (e.Type)
             {
               
                 case Controls.Dynamic.DynamicDisplayType.Photo:
-                    commentType = Api.CommentApi.CommentType.Photo;
+                    commentType = CommentApi.CommentType.Photo;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Video:
               
-                    commentType = Api.CommentApi.CommentType.Video;
+                    commentType = CommentApi.CommentType.Video;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Season:
                     id = e.OneRowInfo.AID;
-                    commentType = Api.CommentApi.CommentType.Video;
+                    commentType = CommentApi.CommentType.Video;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.ShortVideo:
-                    commentType = Api.CommentApi.CommentType.MiniVideo;
+                    commentType = CommentApi.CommentType.MiniVideo;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Music:
-                    commentType = Api.CommentApi.CommentType.Song;
+                    commentType = CommentApi.CommentType.Song;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Article:
-                    commentType = Api.CommentApi.CommentType.Article;
+                    commentType = CommentApi.CommentType.Article;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.MediaList:
                     if (e.OneRowInfo.Tag != "收藏夹")
-                        commentType = Api.CommentApi.CommentType.Video;
+                        commentType = CommentApi.CommentType.Video;
                     break;
                 default:
                     id = e.DynamicID;
@@ -98,7 +100,7 @@ namespace BiliLite.Pages.Home
             //    commentSort = Api.CommentApi.commentSort.Hot,
             //    oid = id
             //});
-            Utils.ShowComment(id, (int)commentType, Api.CommentApi.CommentSort.Hot);
+            Utils.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -138,7 +140,7 @@ namespace BiliLite.Pages.Home
         {
             if ((int)dynamicVM.UserDynamicType != pivot.SelectedIndex)
             {
-                dynamicVM.UserDynamicType = (Api.User.DynamicAPI.UserDynamicType)pivot.SelectedIndex;
+                dynamicVM.UserDynamicType = (DynamicAPI.UserDynamicType)pivot.SelectedIndex;
                 dynamicVM.Refresh();
             }
           

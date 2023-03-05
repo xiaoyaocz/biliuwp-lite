@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +10,7 @@ using System.Windows.Input;
 using BiliLite.Models;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Modules
 {

@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Controls;
+﻿using BiliLite.Controls;
 using BiliLite.Helpers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -13,6 +12,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using BiliLite.gRPC.Api;
 using Proto.Reply;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Modules.Player.Playurl
 {
