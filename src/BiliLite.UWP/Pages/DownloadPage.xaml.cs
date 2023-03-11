@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Extensions;
+using BiliLite.Services;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -276,14 +278,13 @@ namespace BiliLite.Pages
                 try
                 {
                     var toSimplified = SettingHelper.GetValue<bool>(SettingHelper.Roaming.TO_SIMPLIFIED, true);
-                    CCToSrt ccToSrt = new CCToSrt();
                     var folder = await StorageFolder.GetFolderFromPathAsync(item.Path);
                     foreach (var subtitle in item.SubtitlePath)
                     {
                         var outSrtFile = await folder.CreateFileAsync(subtitle.Name + ".srt", CreationCollisionOption.ReplaceExisting);
                         var subtitleFile = await StorageFile.GetFileFromPathAsync(Path.Combine(item.Path, subtitle.Url));
                         var content = await FileIO.ReadTextAsync(subtitleFile);
-                        var result = ccToSrt.ConvertToSrt(content, toSimplified && subtitle.Name.Contains("繁体"));
+                        var result = content.CcConvertToSrt(toSimplified && subtitle.Name.Contains("繁体"));
                         await FileIO.WriteTextAsync(outSrtFile, result);
                         subtitles.Add(outSrtFile.Path);
                     }

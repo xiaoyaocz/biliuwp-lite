@@ -13,6 +13,7 @@ using BiliLite.Models;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
 using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Helpers
 {
@@ -60,14 +61,14 @@ namespace BiliLite.Helpers
                     headers = new Dictionary<string, string>();
                 }
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 //没有Cookie
                 if (cookies == null || cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
                     await GetAsync("https://www.bilibili.com");
                 }
-                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 string cookie = "";
                 foreach (var item in cookies)
                 {
@@ -93,7 +94,7 @@ namespace BiliLite.Helpers
             try
             {
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 //没有Cookie
                 if(cookies==null|| cookies.Count == 0)
                 {
@@ -101,7 +102,7 @@ namespace BiliLite.Helpers
                     var getCookieResult = await GetAsync("https://www.bilibili.com");
                     Utils.SaveCookie(getCookieResult.cookies);
                 }
-                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
                 return await GetAsync(url, headers, cookiesCollection);
             }
@@ -263,14 +264,14 @@ namespace BiliLite.Helpers
             try
             {
                 HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 //没有Cookie
                 if (cookies == null || cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
                     await GetAsync("https://www.bilibili.com");
                 }
-                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
                 var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
                 return await PostAsync(url, body, headers, cookiesCollection);
             }

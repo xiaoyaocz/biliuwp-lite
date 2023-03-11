@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Appointments;
 using Windows.UI.Xaml.Media.Imaging;
+using BiliLite.Extensions;
 
 
 namespace BiliLite.Modules.Live.LiveCenter

@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Media.Imaging;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Live
 {

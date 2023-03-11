@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Net.Http;
+using BiliLite.Extensions;
 using BiliLite.gRPC.Api;
 using Proto.Reply;
 using BiliLite.Models.Requests.Api;

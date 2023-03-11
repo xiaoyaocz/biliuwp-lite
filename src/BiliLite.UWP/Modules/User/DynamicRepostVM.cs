@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules.User
 {
@@ -160,13 +162,13 @@ namespace BiliLite.Modules.User
                 switch (item.desc.user_profile.card?.official_verify?.type ?? 3)
                 {
                     case 0:
-                        data.Verify = AppHelper.VERIFY_PERSONAL_IMAGE;
+                        data.Verify = Constants.App.VERIFY_PERSONAL_IMAGE;
                         break;
                     case 1:
-                        data.Verify = AppHelper.VERIFY_OGANIZATION_IMAGE;
+                        data.Verify = Constants.App.VERIFY_OGANIZATION_IMAGE;
                         break;
                     default:
-                        data.Verify = AppHelper.TRANSPARENT_IMAGE;
+                        data.Verify = Constants.App.TRANSPARENT_IMAGE;
                         break;
                 }
                 if (!string.IsNullOrEmpty(item.desc.user_profile.pendant?.image))

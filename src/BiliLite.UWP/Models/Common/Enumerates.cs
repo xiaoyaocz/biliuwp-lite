@@ -64,4 +64,24 @@
         /// </summary>
         None=2,
     }
+
+    public enum DownloadType
+    {
+        /// <summary>
+        /// 视频
+        /// </summary>
+        Video = 0,
+        /// <summary>
+        /// 番剧、电影、电视剧等
+        /// </summary>
+        Season = 1,
+        /// <summary>
+        /// 音乐，暂不支持
+        /// </summary>
+        Music = 2,
+        /// <summary>
+        /// 课程，暂不支持
+        /// </summary>
+        Cheese = 3
+    }
 }

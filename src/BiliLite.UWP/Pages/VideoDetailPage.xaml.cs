@@ -13,6 +13,8 @@ using BiliLite.Controls;
 using Windows.System;
 using BiliLite.Dialogs;
 using System.Threading.Tasks;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -158,7 +160,7 @@ namespace BiliLite.Pages
             if (videoDetailVM.VideoInfo != null)
             {
                 avid = videoDetailVM.VideoInfo.aid;
-                var desc = ControlHelper.StringToRichText(videoDetailVM.VideoInfo.desc, null);
+                var desc = videoDetailVM.VideoInfo.desc.ToRichTextBlock(null);
 
                 contentDesc.Content = desc;
                 ChangeTitle(videoDetailVM.VideoInfo.title);

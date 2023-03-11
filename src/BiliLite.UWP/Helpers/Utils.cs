@@ -22,10 +22,10 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using Windows.Web.Http.Filters;
+using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Models;
-using BiliLite.Models.Requests;
 using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Helpers
@@ -33,42 +33,13 @@ namespace BiliLite.Helpers
     public static class Utils
     {
         /// <summary>
-        /// 发送请求，扩展方法
-        /// </summary>
-        /// <param name="api"></param>
-        /// <returns></returns>
-        public static async Task<HttpResults> Request(this ApiModel api)
-        {
-            if (api.method == RestSharp.Method.Get)
-            {
-                if (api.need_redirect)
-                {
-                    return await HttpHelper.GetRedirectWithWebCookie(api.url, api.headers);
-                }
-                if (api.need_cookie)
-                {
-                    return await HttpHelper.GetWithWebCookie(api.url, api.headers);
-                }
-                return await HttpHelper.GetAsync(api.url, api.headers);
-            }
-            else
-            {
-                if (api.need_cookie)
-                {
-                    return await HttpHelper.PostWithCookie(api.url, api.body, api.headers);
-                }
-                return await HttpHelper.PostAsync(api.url, api.body, api.headers);
-            }
-        }
-
-        /// <summary>
         /// 获取CSRF令牌
         /// </summary>
         /// <returns></returns>
         public static string GetCSRFToken()
         {
             var fiter = new HttpBaseProtocolFilter();
-            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
             //没有Cookie
             if (cookies == null || cookies.Count == 0)
             {
@@ -276,7 +247,7 @@ namespace BiliLite.Helpers
         }
         public static string ToSimplifiedChinese(string content)
         {
-            content = ChineseConverter.TraditionalToSimplified(content);
+            content = content.TraditionalToSimplified();
             return content;
         }
         public static bool SetClipboard(string content)

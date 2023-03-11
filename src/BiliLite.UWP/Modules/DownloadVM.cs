@@ -17,6 +17,9 @@ using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using BiliLite.Models.Common;
+using BiliLite.Models.Download;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {

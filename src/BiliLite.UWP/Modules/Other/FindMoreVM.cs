@@ -3,6 +3,7 @@ using BiliLite.Models.Requests.Api;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Other
 {

@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -42,8 +43,8 @@ namespace BiliLite.Pages
         }
         private async void SetBackground()
         {
-            var background = SettingHelper.GetValue(SettingHelper.UI.BACKGROUND_IMAGE,AppHelper.BACKGROUND_IAMGE_URL);
-            if (background== AppHelper.BACKGROUND_IAMGE_URL)
+            var background = SettingHelper.GetValue(SettingHelper.UI.BACKGROUND_IMAGE,Constants.App.BACKGROUND_IAMGE_URL);
+            if (background== Constants.App.BACKGROUND_IAMGE_URL)
             {
                 backgroundImage.Source = new BitmapImage(new Uri(background));
             }
@@ -139,7 +140,7 @@ namespace BiliLite.Pages
 
         private void btnSetDefaultBackground_Click(object sender, RoutedEventArgs e)
         {
-            SettingHelper.SetValue(SettingHelper.UI.BACKGROUND_IMAGE, AppHelper.BACKGROUND_IAMGE_URL);
+            SettingHelper.SetValue(SettingHelper.UI.BACKGROUND_IMAGE, Constants.App.BACKGROUND_IAMGE_URL);
             SetBackground();
         }
 

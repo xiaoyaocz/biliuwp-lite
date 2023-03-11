@@ -6,6 +6,7 @@ using BiliLite.Helpers;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Windows.Input;
+using BiliLite.Extensions;
 using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules

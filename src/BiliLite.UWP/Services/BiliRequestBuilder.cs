@@ -2,7 +2,7 @@
 using System.Net.Http;
 using BiliLite.Models.Requests;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Services
 {
     /// <summary>
     /// 网络请求构造器

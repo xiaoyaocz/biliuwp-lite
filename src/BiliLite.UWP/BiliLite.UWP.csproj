@@ -128,7 +128,17 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ApiModelExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\Download\DownloadSaveEpisodeInfo.cs" />
+    <Compile Include="Models\Download\DownloadSaveInfo.cs" />
+    <Compile Include="Models\Download\DownloadSubtitleInfo.cs" />
+    <Compile Include="Models\Download\DownloadUrlInfo.cs" />
+    <Compile Include="Models\Download\DownloadGUIDInfo.cs" />
+    <Compile Include="Models\Download\DownloadInfo.cs" />
+    <Compile Include="Models\Common\ChineseDictionary.cs" />
     <Compile Include="Models\Common\CustomizedErrorException.cs" />
+    <Compile Include="Models\Common\Subtitle.cs" />
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
     <Compile Include="Models\Responses\UserAttentionResponse.cs" />
     <Compile Include="Services\ApiHelper.cs" />
@@ -257,12 +267,9 @@
       <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\PointerRoutedEventArgsExtensions.cs" />
-    <Compile Include="Helpers\AppHelper.cs" />
-    <Compile Include="Helpers\BiliRequestBuilder.cs" />
-    <Compile Include="Helpers\CCToSrt.cs" />
-    <Compile Include="Helpers\ChineseConverter.cs" />
-    <Compile Include="Helpers\ControlHelper.cs" />
-    <Compile Include="Helpers\DownloadHelper.cs" />
+    <Compile Include="Services\AppHelper.cs" />
+    <Compile Include="Services\BiliRequestBuilder.cs" />
+    <Compile Include="Services\DownloadHelper.cs" />
     <Compile Include="Helpers\ExceptionHandler.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
@@ -276,7 +283,7 @@
     </Compile>
     <Compile Include="Models\ApiModel.cs" />
     <Compile Include="Models\Requests\BiliRequest.cs" />
-    <Compile Include="Models\Common\ChangeTitleEventArgs.cs" />
+    <Compile Include="Models\Events\ChangeTitleEventArgs.cs" />
     <Compile Include="Models\Common\Constants.cs" />
     <Compile Include="Models\Dynamic\DynamicModel.cs" />
     <Compile Include="Models\Dynamic\DynamicUserProfileModel.cs" />

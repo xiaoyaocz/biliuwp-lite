@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Player
 {

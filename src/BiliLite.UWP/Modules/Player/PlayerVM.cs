@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Services.Maps;
 using Windows.Storage;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {

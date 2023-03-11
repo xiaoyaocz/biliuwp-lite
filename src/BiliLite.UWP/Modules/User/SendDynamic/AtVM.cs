@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User
 {

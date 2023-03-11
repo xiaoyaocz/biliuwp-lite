@@ -12,6 +12,7 @@ using System.Web;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using Windows.Web.Http.Filters;
+using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
@@ -195,7 +196,7 @@ namespace BiliLite.Modules
                 data.pendant = space_obj["data"]["card"]["pendant"]["image"].ToString();
                 if (data.pendant == "")
                 {
-                    data.pendant = AppHelper.TRANSPARENT_IMAGE;
+                    data.pendant = Constants.App.TRANSPARENT_IMAGE;
                 }
                 data.vip_type = mine_obj["data"]["vip_type"].ToInt32();
                 return data;

@@ -75,7 +75,7 @@ namespace BiliLite.Helpers
                     "http://bigfun.cn",
                     "http://bigfunapp.cn",
                     "http://dreamcast.hk",
-                    Constants.COOKIE_DOMAIN,
+                    Constants.GET_COOKIE_DOMAIN,
                 };
                 //删除Cookie
                 HttpBaseProtocolFilter httpBaseProtocolFilter = new HttpBaseProtocolFilter();

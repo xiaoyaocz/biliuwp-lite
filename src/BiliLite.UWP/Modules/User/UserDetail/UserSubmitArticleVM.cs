@@ -13,6 +13,7 @@ using System.Windows.Input;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User.UserDetail
 {

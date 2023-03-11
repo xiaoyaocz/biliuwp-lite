@@ -26,6 +26,8 @@ using BiliLite.Pages;
 using static BiliLite.Models.Requests.Api.CommentApi;
 using BiliLite.Modules;
 using BiliLite.Dialogs;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
@@ -982,7 +984,7 @@ namespace BiliLite.Controls
                 //tx.Blocks.Add(paragraph);
                 //return tx;
 
-                return ControlHelper.StringToRichText(message, emote);
+                return message.ToRichTextBlock(emote);
             }
 
         }
@@ -1049,7 +1051,7 @@ namespace BiliLite.Controls
                     case 6:
                         return "ms-appx:///Assets/Icon/lv6.png";
                     default:
-                        return AppHelper.TRANSPARENT_IMAGE;
+                        return Constants.App.TRANSPARENT_IMAGE;
                 }
             }
         }
@@ -1063,13 +1065,13 @@ namespace BiliLite.Controls
                 {
                     if (pendant.image == "")
                     {
-                        return AppHelper.TRANSPARENT_IMAGE;
+                        return Constants.App.TRANSPARENT_IMAGE;
                     }
                     return pendant.image;
                 }
                 else
                 {
-                    return AppHelper.TRANSPARENT_IMAGE;
+                    return Constants.App.TRANSPARENT_IMAGE;
                 }
             }
         }
@@ -1093,11 +1095,11 @@ namespace BiliLite.Controls
                 switch (official_verify.type)
                 {
                     case 0:
-                        return AppHelper.VERIFY_PERSONAL_IMAGE;
+                        return Constants.App.VERIFY_PERSONAL_IMAGE;
                     case 1:
-                        return AppHelper.VERIFY_OGANIZATION_IMAGE;
+                        return Constants.App.VERIFY_OGANIZATION_IMAGE;
                     default:
-                        return AppHelper.TRANSPARENT_IMAGE;
+                        return Constants.App.TRANSPARENT_IMAGE;
                 }
             }
         }

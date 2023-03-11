@@ -20,6 +20,8 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using static BiliLite.Modules.Live.LiveDanmaku;
 
 namespace BiliLite.Modules
@@ -117,7 +119,7 @@ namespace BiliLite.Modules
                         ShowGiftMessage = true;
                         hide_gift_flag = 1;
                         var info = message as GiftMsgModel;
-                        info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? AppHelper.TRANSPARENT_IMAGE;
+                        info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? Constants.App.TRANSPARENT_IMAGE;
                         GiftMessage.Add(info);
                         if (!timer_auto_hide_gift.Enabled)
                         {
@@ -1672,11 +1674,11 @@ namespace BiliLite.Modules
                     switch (verify_type)
                     {
                         case 0:
-                            return AppHelper.VERIFY_PERSONAL_IMAGE;
+                            return Constants.App.VERIFY_PERSONAL_IMAGE;
                         case 1:
-                            return AppHelper.VERIFY_OGANIZATION_IMAGE;
+                            return Constants.App.VERIFY_OGANIZATION_IMAGE;
                         default:
-                            return AppHelper.TRANSPARENT_IMAGE;
+                            return Constants.App.TRANSPARENT_IMAGE;
                     }
                 }
             }
@@ -1721,7 +1723,7 @@ namespace BiliLite.Modules
             public string uname { get; set; }
             public string face { get; set; }
             public int score { get; set; }
-            public string icon { get; set; } = AppHelper.TRANSPARENT_IMAGE;
+            public string icon { get; set; } = Constants.App.TRANSPARENT_IMAGE;
             public bool show_right
             {
                 get

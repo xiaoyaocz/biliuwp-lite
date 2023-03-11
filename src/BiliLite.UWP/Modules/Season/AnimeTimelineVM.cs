@@ -8,6 +8,7 @@ using BiliLite.Helpers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Extensions;
 using Newtonsoft.Json.Linq;
 using BiliLite.Models.Requests.Api.Home;
 

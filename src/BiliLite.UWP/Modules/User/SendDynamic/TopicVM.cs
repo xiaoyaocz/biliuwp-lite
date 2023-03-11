@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User.SendDynamic
 {

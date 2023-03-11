@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Appointments;
 using Windows.UI.Xaml.Media.Imaging;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
