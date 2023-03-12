@@ -1,7 +1,8 @@
 ﻿using BiliLite.Dialogs;
 using BiliLite.Extensions;
-using BiliLite.Helpers;
+using BiliLite.Models.Common;
 using BiliLite.Modules;
+using BiliLite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;

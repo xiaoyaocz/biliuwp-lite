@@ -14,6 +14,8 @@ using BiliLite.Extensions;
 using Windows.UI.Xaml;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Models.Requests.Api.Home;
+using BiliLite.Services;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules
 {

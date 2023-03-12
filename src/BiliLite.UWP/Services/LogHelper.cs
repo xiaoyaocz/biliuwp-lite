@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using BiliLite.Models.Common;
+using NLog;
 using NLog.Config;
 using System;
 using System.Collections.Generic;
@@ -8,24 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace BiliLite.Helpers
+namespace BiliLite.Services
 {
-    public enum LogType
-    {
-        INFO,
-        DEBUG,
-        ERROR,
-        FATAL
-    }
     public class LogHelper
     {
         public static LoggingConfiguration config;
-        public static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public static Logger logger = LogManager.GetCurrentClassLogger();
         public static void Log(string message, LogType type, Exception ex = null)
         {
             if (config == null)
             {
-                config = new NLog.Config.LoggingConfiguration();
+                config = new LoggingConfiguration();
                 Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
                 var logfile = new NLog.Targets.FileTarget()
                 {
@@ -38,7 +32,7 @@ namespace BiliLite.Helpers
                 config.AddRule(LogLevel.Debug, LogLevel.Debug, logfile);
                 config.AddRule(LogLevel.Error, LogLevel.Error, logfile);
                 config.AddRule(LogLevel.Fatal, LogLevel.Fatal, logfile);
-                NLog.LogManager.Configuration = config;
+                LogManager.Configuration = config;
             }
             Debug.WriteLine("[" + LogType.INFO.ToString() + "]" + message);
             switch (type)

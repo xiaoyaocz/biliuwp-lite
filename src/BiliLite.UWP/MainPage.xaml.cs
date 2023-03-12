@@ -11,6 +11,7 @@ using BiliLite.Helpers;
 using BiliLite.Controls;
 using BiliLite.Models.Common;
 using BiliLite.Extensions;
+using BiliLite.Services;
 
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 

@@ -8,6 +8,7 @@ using Windows.Storage;
 using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Models.Download;
+using BiliLite.Extensions;
 
 namespace BiliLite.Services
 {
@@ -58,7 +59,7 @@ namespace BiliLite.Services
         {
             try
             {
-                var buffer = await HttpHelper.GetBuffer(url + "@200w.jpg");
+                var buffer = await (url + "@200w.jpg").GetBuffer();
                 StorageFile file = await folder.CreateFileAsync("cover.jpg", CreationCollisionOption.OpenIfExists);
                 await FileIO.WriteBufferAsync(file, buffer);
                 //Path.Combine(path,"cover.jpg")
@@ -73,7 +74,7 @@ namespace BiliLite.Services
         {
             try
             {
-                var buffer = await HttpHelper.GetBuffer(url);
+                var buffer = await url.GetBuffer();
                 StorageFile file = await episodeFolder.CreateFileAsync("danmaku.xml", CreationCollisionOption.OpenIfExists);
                 await FileIO.WriteBufferAsync(file, buffer);
                 //Path.Combine(path,"cover.jpg")
@@ -142,7 +143,7 @@ namespace BiliLite.Services
                 {
                     url = "https:" + url;
                 }
-                var buffer = await HttpHelper.GetBuffer(url);
+                var buffer = await url.GetBuffer();
                 StorageFile file = await episodeFolder.CreateFileAsync(subtitleInfo.Name + ".json", CreationCollisionOption.OpenIfExists);
                 await FileIO.WriteBufferAsync(file, buffer);
                 //Path.Combine(path,"cover.jpg")

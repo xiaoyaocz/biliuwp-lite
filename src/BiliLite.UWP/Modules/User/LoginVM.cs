@@ -13,6 +13,7 @@ using System.Web;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {

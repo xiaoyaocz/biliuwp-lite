@@ -25,6 +25,7 @@ using Windows.UI.Xaml.Documents;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api.User;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {

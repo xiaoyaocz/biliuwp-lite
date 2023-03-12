@@ -162,7 +162,7 @@ namespace BiliLite.Helpers
         {
             try
             {
-                var re = await HttpHelper.GetString($"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}");
+                var re = await $"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}".GetString();
                 var obj = JObject.Parse(re);
                 return obj["result"]["season_id"].ToString();
             }

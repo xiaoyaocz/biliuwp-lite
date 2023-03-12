@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using BiliLite.Extensions;
+using BiliLite.Services;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules
 {

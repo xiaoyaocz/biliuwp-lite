@@ -13,7 +13,8 @@ using System.Windows.Input;
 using Windows.ApplicationModel.Appointments;
 using Windows.UI.Xaml.Media.Imaging;
 using BiliLite.Extensions;
-
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.Live.LiveCenter
 {

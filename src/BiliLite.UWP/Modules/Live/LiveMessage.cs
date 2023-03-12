@@ -13,6 +13,8 @@ using Windows.UI.Xaml;
 using BiliLite.Helpers;
 using Windows.UI.Xaml.Media;
 using System.ComponentModel;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 /*
 * 参考文档:
 * https://github.com/lovelyyoshino/Bilibili-Live-API/blob/master/API.WebSocket.md

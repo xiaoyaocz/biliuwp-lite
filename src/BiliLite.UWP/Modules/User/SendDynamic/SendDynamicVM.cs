@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using BiliLite.Extensions;
+using BiliLite.Models.Responses;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {

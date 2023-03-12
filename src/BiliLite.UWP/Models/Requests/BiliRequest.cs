@@ -4,7 +4,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BiliLite.Helpers;
+using BiliLite.Models.Common;
+using BiliLite.Models.Responses;
+using BiliLite.Services;
 using Flurl.Http;
 
 namespace BiliLite.Models.Requests

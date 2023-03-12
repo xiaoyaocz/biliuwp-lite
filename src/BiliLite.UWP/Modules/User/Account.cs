@@ -16,6 +16,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {

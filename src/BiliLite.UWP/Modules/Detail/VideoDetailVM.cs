@@ -12,6 +12,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.User;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {

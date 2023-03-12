@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using BiliLite.Helpers;
 using BiliLite.Models.Requests;
+using BiliLite.Models.Responses;
 
 namespace BiliLite.Extensions
 {
@@ -17,24 +17,24 @@ namespace BiliLite.Extensions
             {
                 if (api.need_redirect)
                 {
-                    return await HttpHelper.GetRedirectWithWebCookie(api.url, api.headers);
+                    return await api.url.GetRedirectHttpResultsWithWebCookie(api.headers);
                 }
 
                 if (api.need_cookie)
                 {
-                    return await HttpHelper.GetWithWebCookie(api.url, api.headers);
+                    return await api.url.GetHttpResultsWithWebCookie(api.headers);
                 }
 
-                return await HttpHelper.GetAsync(api.url, api.headers);
+                return await api.url.GetHttpResultsAsync(api.headers);
             }
             else
             {
                 if (api.need_cookie)
                 {
-                    return await HttpHelper.PostWithCookie(api.url, api.body, api.headers);
+                    return await api.url.PostHttpResultsWithCookie(api.body, api.headers);
                 }
 
-                return await HttpHelper.PostAsync(api.url, api.body, api.headers);
+                return await api.url.PostHttpResultsAsync(api.body, api.headers);
             }
         }
     }

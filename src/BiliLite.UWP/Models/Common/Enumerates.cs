@@ -1,5 +1,13 @@
 ﻿namespace BiliLite.Models.Common
 {
+    public enum LogType
+    {
+        INFO,
+        DEBUG,
+        ERROR,
+        FATAL
+    }
+
     public enum LoginStatus
     {
         /// <summary>

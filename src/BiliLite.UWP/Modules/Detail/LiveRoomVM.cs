@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Media;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using static BiliLite.Modules.Live.LiveDanmaku;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {

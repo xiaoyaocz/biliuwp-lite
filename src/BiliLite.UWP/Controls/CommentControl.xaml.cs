@@ -29,6 +29,7 @@ using BiliLite.Dialogs;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 

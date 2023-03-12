@@ -1,6 +1,7 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
+using BiliLite.Models.Common;
 using BiliLite.Modules.Season;
+using BiliLite.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;

@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using Windows.Services.Maps;
 using Windows.Storage;
 using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
@@ -119,7 +121,7 @@ namespace BiliLite.Modules
                 {
                     url = "https:" + url;
                 }
-                var results = await HttpHelper.GetString(url);
+                var results = await url.GetString();
                 return JsonConvert.DeserializeObject<SubtitleModel>(results);
             }
             catch (Exception)
@@ -136,7 +138,7 @@ namespace BiliLite.Modules
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                var data = await HttpHelper.GetStream(PlayerAPI.SegDanmaku(cid, segment_index).url);
+                var data = await PlayerAPI.SegDanmaku(cid, segment_index).url.GetStream();
                 var result = Proto.Reply.DmSegMobileReply.Parser.ParseFrom(data);
                 foreach (var item in result.Elems)
                 {

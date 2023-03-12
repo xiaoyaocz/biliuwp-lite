@@ -15,6 +15,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {

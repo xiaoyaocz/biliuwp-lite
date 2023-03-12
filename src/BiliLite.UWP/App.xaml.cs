@@ -1,4 +1,7 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Helpers;
+using BiliLite.Models.Common;
+using BiliLite.Models.Events;
 using BiliLite.Modules;
 using BiliLite.Services;
 using FFmpegInteropX;

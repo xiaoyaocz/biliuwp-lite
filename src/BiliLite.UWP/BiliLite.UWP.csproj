@@ -129,7 +129,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\ApiModelExtensions.cs" />
+    <Compile Include="Extensions\HttpResultsExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Models\Common\NavigationInfo.cs" />
+    <Compile Include="Models\Responses\HttpResults.cs" />
+    <Compile Include="Models\Events\AysncUnhandledExceptionEventArgs.cs" />
     <Compile Include="Models\Download\DownloadSaveEpisodeInfo.cs" />
     <Compile Include="Models\Download\DownloadSaveInfo.cs" />
     <Compile Include="Models\Download\DownloadSubtitleInfo.cs" />
@@ -270,10 +274,10 @@
     <Compile Include="Services\AppHelper.cs" />
     <Compile Include="Services\BiliRequestBuilder.cs" />
     <Compile Include="Services\DownloadHelper.cs" />
-    <Compile Include="Helpers\ExceptionHandler.cs" />
-    <Compile Include="Helpers\HttpHelper.cs" />
-    <Compile Include="Helpers\LogHelper.cs" />
-    <Compile Include="Helpers\MessageCenter.cs" />
+    <Compile Include="Extensions\ExceptionHandler.cs" />
+    <Compile Include="Extensions\StringHttpExtensions.cs" />
+    <Compile Include="Services\LogHelper.cs" />
+    <Compile Include="Services\MessageCenter.cs" />
     <Compile Include="Helpers\SettingHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="Helpers\Utils.cs" />

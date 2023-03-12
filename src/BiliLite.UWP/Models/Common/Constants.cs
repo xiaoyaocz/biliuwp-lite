@@ -7,6 +7,11 @@
         /// </summary>
         public const string GET_COOKIE_DOMAIN = "https://bilibili.com";
 
+        /// <summary>
+        /// b站官网域名
+        /// </summary>
+        public const string BILIBILI_DOMAIN = "https://www.bilibili.com";
+
         public static class App
         {
             /// <summary>

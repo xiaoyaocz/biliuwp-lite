@@ -1,6 +1,7 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
+using BiliLite.Models.Common;
 using BiliLite.Modules;
+using BiliLite.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -10,7 +11,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace BiliLite.Pages.Bangumi
 {
-    
+
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>

@@ -1,6 +1,7 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Pages.Bangumi;
+using BiliLite.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
