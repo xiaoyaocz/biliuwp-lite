@@ -53,6 +53,10 @@
                 </ListView>
             </PivotItem>
         </DataTemplate>
+        <MenuFlyout x:Name="TitleRightTappedMenu">
+            <MenuFlyoutItem Text="复制标题" x:Name="CopyTitleBtn" Click="CopyTitleBtn_Click"/>
+            <MenuFlyoutItem Text="复制作者" x:Name="CopyAuthorBtn" Click="CopyAuthorBtn_Click"/>
+        </MenuFlyout>
     </Page.Resources>
     <Grid>
         <Grid Visibility="{x:Bind Path=videoDetailVM.Loaded,Mode=OneWay}">
@@ -269,7 +273,7 @@
                                         <TextBlock Grid.Column="1" FontSize="14"  TextWrapping="Wrap" Text="{x:Bind Path=videoDetailVM.VideoInfo.argue_msg,Mode=OneWay}"></TextBlock>
                                     </Grid>
                                 </Border>
-                                <TextBlock  TextWrapping="Wrap" FontSize="18" Text="{x:Bind Path=videoDetailVM.VideoInfo.title,Mode=OneWay}"></TextBlock>
+                                <TextBlock  TextWrapping="Wrap" FontSize="18" Text="{x:Bind Path=videoDetailVM.VideoInfo.title,Mode=OneWay}" RightTapped="TitleText_RightTapped" x:Name="TitleText"></TextBlock>
                                 <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True"><Run Text="{x:Bind Path=videoDetailVM.VideoInfo.stat.view,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>播放 · <Run Text="{x:Bind Path=videoDetailVM.VideoInfo.stat.danmaku,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>弹幕 <Run Text="{x:Bind Path=videoDetailVM.VideoInfo.bvid,Mode=OneWay}"/></TextBlock>
                                 <HyperlinkButton x:Name="btnOpenUser" Click="btnOpenUser_Click" Margin="0 8 0 0" Foreground="{ThemeResource TextColor}" Visibility="{x:Bind Path=videoDetailVM.VideoInfo.showStaff,Mode=OneWay,Converter={StaticResource display}}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0">
                                     <Grid>

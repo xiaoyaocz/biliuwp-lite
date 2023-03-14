@@ -17,6 +17,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using Windows.UI.Xaml.Controls.Primitives;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -578,6 +579,28 @@ namespace BiliLite.Pages
         private void btnOpenQR_Click(object sender, RoutedEventArgs e)
         {
             qrFlyout.ShowAt(btnMore);
+        }
+
+        private void TitleText_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var option = new FlyoutShowOptions();
+            var element = sender as UIElement;
+            option.Position=e.GetPosition(element);
+            TitleRightTappedMenu.ShowAt(element, option);
+        }
+
+        private void CopyTitleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new DataPackage();
+            data.SetText(videoDetailVM.VideoInfo.title);
+            Clipboard.SetContent(data);
+        }
+
+        private void CopyAuthorBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new DataPackage();
+            data.SetText(videoDetailVM.VideoInfo.owner.name);
+            Clipboard.SetContent(data);
         }
     }
 }
