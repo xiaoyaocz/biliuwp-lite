@@ -26,6 +26,9 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Windows.UI;
 using BiliLite.Helpers;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.Live
 {
@@ -400,7 +403,7 @@ namespace BiliLite.Modules.Live
             try
             {
                 var chat = $"https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id={_roomId}&platform=pc&player=web";
-                string results = await HttpHelper.GetString(chat);
+                string results = await chat.GetString();
                 var obj = JObject.Parse(results);
                 if (obj["code"].ToInt32()==0)
                 {

@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
 using Newtonsoft.Json.Linq;
 using System;
@@ -8,21 +7,27 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Models.Responses;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Models.Requests.Api.User;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
     public class VideoDetailVM:IModules
     {
-        readonly Api.User.FavoriteApi favoriteAPI;
+        readonly FavoriteApi favoriteAPI;
         readonly VideoAPI videoAPI;
         readonly PlayerAPI  PlayerAPI;
-        readonly Api.User.FollowAPI followAPI;
+        readonly FollowAPI followAPI;
         public VideoDetailVM()
         {
             videoAPI = new VideoAPI();
-            favoriteAPI = new Api.User.FavoriteApi();
+            favoriteAPI = new FavoriteApi();
             PlayerAPI = new PlayerAPI();
-            followAPI = new Api.User.FollowAPI();
+            followAPI = new FollowAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LikeCommand = new RelayCommand(DoLike);
             DislikeCommand = new RelayCommand(DoDislike);
@@ -79,7 +84,7 @@ namespace BiliLite.Modules
             get { return _videoInfo; }
             set { _videoInfo = value; DoPropertyChanged("VideoInfo"); }
         }
-
+        
         private double _staffHeight = 88.0;
         public double StaffHeight
         {
@@ -150,42 +155,59 @@ namespace BiliLite.Modules
                 Loaded = false;
                 Loading = true;
                 ShowError = false;
+                var needGetUserReq = false;
+                // 正常app获取视频详情
                 var results = await videoAPI.Detail(id, isbvid).Request();
-                if (results.status)
+                if (!results.status)
                 {
-                    var data = await results.GetJson<ApiDataModel<VideoDetailModel>>();
-                    if (!data.success)
-                    {
-                        var result_proxy = await videoAPI.DetailProxy(id, isbvid).Request();
-                        if (result_proxy.status)
-                        {
-                            data = await result_proxy.GetJson<ApiDataModel<VideoDetailModel>>();
-                        }
-                    }
-                    if (data.success)
-                    {
-                        VideoInfo = data.data;
-                        Loaded = true;
+                    throw new CustomizedErrorException(results.message);
+                }
 
-                        await LoadFavorite(data.data.aid);
-                    }
-                    else
+                var data = await results.GetJson<ApiDataModel<VideoDetailModel>>();
+                if (!data.success)
+                {
+                    // 通过代理获取视频详情
+                    var result_proxy = await videoAPI.DetailProxy(id, isbvid).Request();
+                    if (result_proxy.status)
                     {
-                        ShowError = true;
-                        ErrorMsg = data.message;
-                        //Utils.ShowMessageToast(data.message);
+                        data = await result_proxy.GetJson<ApiDataModel<VideoDetailModel>>();
                     }
                 }
-                else
-                {
-                    ShowError = true;
-                    ErrorMsg = results.message;
-                    //Utils.ShowMessageToast(results.message);
 
+                if (!data.success)
+                {
+                    // 通过web获取视频详情
+                    var webResult = await videoAPI.DetailWebInterface(id, isbvid).Request();
+                    if (webResult.status)
+                    {
+                        data = await webResult.GetJson<ApiDataModel<VideoDetailModel>>();
+                        needGetUserReq = true;
+                    }
                 }
+
+                if (!data.success)
+                {
+                    throw new CustomizedErrorException(data.message);
+                }
+
+                VideoInfo = data.data;
+                if (needGetUserReq)
+                {
+                    await GetAttentionUp();
+                }
+                Loaded = true;
+
+                await LoadFavorite(data.data.aid);
             }
             catch (Exception ex)
             {
+                if (ex is CustomizedErrorException customizedErrorException)
+                {
+                    ShowError = true;
+                    ErrorMsg = ex.Message;
+                    return;
+                }
+
                 var handel = HandelError<AnimeHomeModel>(ex);
                 Utils.ShowMessageToast(handel.message);
                 ShowError = true;
@@ -467,7 +489,24 @@ namespace BiliLite.Modules
            
 
         }
-      
+
+        public async Task GetAttentionUp()
+        {
+            VideoInfo.req_user ??= new VideoDetailReqUserModel();
+            VideoInfo.req_user.attention = -999;
+            if (!SettingHelper.Account.Logined)
+            {
+                return;
+            }
+
+            var result = await followAPI.GetAttention(VideoInfo.owner.mid).Request();
+            if (!result.status) return;
+            var data = await result.GetJson<ApiDataModel<UserAttentionResponse>>();
+            if (data.data.Attribute == 2 || data.data.Attribute == 6)
+            {
+                VideoInfo.req_user.attention = 1;
+            }
+        }
 
         public async void DoAttentionUP()
         {
@@ -611,18 +650,20 @@ namespace BiliLite.Modules
         /// UP主
         /// </summary>
         public VideoDetailOwnerModel owner { get; set; }
+
         /// <summary>
         /// UP主信息扩展
         /// </summary>
-        public VideoDetailOwnerExtModel owner_ext { get; set; }
+        public VideoDetailOwnerExtModel owner_ext { get; set; } = new VideoDetailOwnerExtModel();
         /// <summary>
         /// 数据
         /// </summary>
         public VideoDetailStatModel stat { get; set; }
+
         /// <summary>
         /// 用户数据
         /// </summary>
-        public VideoDetailReqUserModel req_user { get; set; }
+        public VideoDetailReqUserModel req_user { get; set; } = new VideoDetailReqUserModel();
         /// <summary>
         /// Tag
         /// </summary>

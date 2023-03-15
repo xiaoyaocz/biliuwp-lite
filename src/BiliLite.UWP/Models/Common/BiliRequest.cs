@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BiliLite.Helpers;
 using Flurl.Http;
 
-namespace BiliLite.Models.Common
+namespace BiliLite.Models.Requests
 {
     public class BiliRequest
     {

@@ -11,16 +11,18 @@ using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
+using BiliLite.Extensions;
 using BiliLite.Modules.User;
+using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
 {
     public class RecommendVM : IModules
     {
-        readonly Api.Home.RecommendAPI recommendAPI;
+        readonly RecommendAPI recommendAPI;
         public RecommendVM()
         {
-            recommendAPI = new Api.Home.RecommendAPI();
+            recommendAPI = new RecommendAPI();
             Banner = new ObservableCollection<RecommendBannerItemModel>();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);

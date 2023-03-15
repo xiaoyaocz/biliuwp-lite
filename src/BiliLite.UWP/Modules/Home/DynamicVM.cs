@@ -1,4 +1,5 @@
 ﻿using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api.User;
 using Microsoft.Toolkit.Collections;
 using Newtonsoft.Json;
 using System;
@@ -11,15 +12,16 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
     public class DynamicVM : IModules
     {
-        readonly Api.User.DynamicAPI dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public DynamicVM()
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             dynamicItemDataTemplateSelector = new DynamicItemDataTemplateSelector();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
@@ -46,10 +48,10 @@ namespace BiliLite.Modules
             try
             {
                 Loading = true;
-                var api = dynamicAPI.DyanmicNew(Api.User.DynamicAPI.UserDynamicType.Video);
+                var api = dynamicAPI.DyanmicNew(DynamicAPI.UserDynamicType.Video);
                 if (idx != "")
                 {
-                    api = dynamicAPI.HistoryDynamic(idx, Api.User.DynamicAPI.UserDynamicType.Video);
+                    api = dynamicAPI.HistoryDynamic(idx, DynamicAPI.UserDynamicType.Video);
                 }
                 var results = await api.Request();
                 if (results.status)

@@ -11,7 +11,8 @@ using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
-using BiliLite.Api;
+using BiliLite.Extensions;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Modules
 {

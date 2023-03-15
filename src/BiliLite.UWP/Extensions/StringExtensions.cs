@@ -1,20 +1,93 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Newtonsoft.Json;
 using System.Text;
+using System;
+using BiliLite.Helpers;
+using BiliLite.Models.Common;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Extensions
 {
-    public static class ControlHelper
+    /// <summary>
+    /// cc转为SRT
+    /// </summary>
+    /// <param name="json">CC字幕</param>
+    /// <param name="toSimplified">转为简体</param>
+    /// <returns></returns>
+    public static class StringExtensions
     {
-        public static RichTextBlock StringToRichText(string txt,JObject emote)
+        public static string CcConvertToSrt(this string json, bool toSimplified = false)
+        {
+            var subtitle = JsonConvert.DeserializeObject<Subtitle>(json);
+            var stringBuilder = new StringBuilder();
+            var i = 1;
+            foreach (var item in subtitle.body)
+            {
+                var start = TimeSpan.FromSeconds(item.from);
+                var end = TimeSpan.FromSeconds(item.to);
+                stringBuilder.AppendLine(i.ToString());
+                stringBuilder.AppendLine($"{start:hh\\:mm\\:ss\\,fff} --> {end:hh\\:mm\\:ss\\,fff}");
+                var content = item.content;
+                if (toSimplified)
+                {
+                    content = Utils.ToSimplifiedChinese(content);
+                }
+
+                stringBuilder.AppendLine(content);
+                stringBuilder.AppendLine();
+                i++;
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 简体转繁体
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string SimplifiedToTraditional(this string input)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var key in input)
+            {
+                stringBuilder.Append(ChineseDictionary.chsDictionary.ContainsKey(key)
+                    ? ChineseDictionary.chsDictionary[key]
+                    : key);
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 繁体转简体
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string TraditionalToSimplified(this string input)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var key in input)
+            {
+                stringBuilder.Append(ChineseDictionary.chtDictionary.ContainsKey(key)
+                    ? ChineseDictionary.chtDictionary[key]
+                    : key);
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// 文本转富文本控件
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <param name="emote"></param>
+        /// <returns></returns>
+        public static RichTextBlock ToRichTextBlock(this string txt, JObject emote)
         {
             string input = txt;
             try
@@ -37,7 +110,7 @@ namespace BiliLite.Helpers
                     //处理av号
                     input = HandelVideoID(input);
 
-                   
+
 
                     //生成xaml
                     var xaml = string.Format(@"<RichTextBlock HorizontalAlignment=""Stretch"" TextWrapping=""Wrap""  xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
@@ -68,8 +141,10 @@ namespace BiliLite.Helpers
                 return tx;
 
             }
-
         }
+
+        #region Private methods
+
         /// <summary>
         /// 处理表情
         /// </summary>
@@ -83,11 +158,16 @@ namespace BiliLite.Helpers
                 if (emote != null && emote.ContainsKey(item.Groups[0].Value))
                 {
                     var emoji = emote[item.Groups[0].Value];
-                    input = input.Replace(item.Groups[0].Value, string.Format(@"<InlineUIContainer><Border  Margin=""0 -4 4 -4""><Image Source=""{0}"" Width=""{1}"" Height=""{1}"" /></Border></InlineUIContainer>", emoji["url"].ToString(), emoji["meta"]["size"].ToInt32() == 1 ? "20" : "36"));
+                    input = input.Replace(item.Groups[0].Value,
+                        string.Format(
+                            @"<InlineUIContainer><Border  Margin=""0 -4 4 -4""><Image Source=""{0}"" Width=""{1}"" Height=""{1}"" /></Border></InlineUIContainer>",
+                            emoji["url"].ToString(), emoji["meta"]["size"].ToInt32() == 1 ? "20" : "36"));
                 }
             }
+
             return input;
         }
+
         /// <summary>
         /// 处理视频AVID,BVID,CVID
         /// </summary>
@@ -108,8 +188,13 @@ namespace BiliLite.Helpers
                     {
                         continue;
                     }
+
                     keyword.Add(item.Groups[0].Value);
-                    var data = @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " + string.Format(@" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>", item.Groups[0].Value, "bilibili://video/" + item.Groups[0].Value);
+                    var data =
+                        @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " +
+                        string.Format(
+                            @" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>",
+                            item.Groups[0].Value, "bilibili://video/" + item.Groups[0].Value);
                     input = input.Replace(item.Groups[0].Value, data);
                 }
 
@@ -121,8 +206,13 @@ namespace BiliLite.Helpers
                     {
                         continue;
                     }
+
                     keyword.Add(item.Groups[0].Value);
-                    var data = @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " + string.Format(@" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>", item.Groups[0].Value, "bilibili://video/" + item.Groups[0].Value);
+                    var data =
+                        @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " +
+                        string.Format(
+                            @" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>",
+                            item.Groups[0].Value, "bilibili://video/" + item.Groups[0].Value);
                     input = input.Replace(item.Groups[0].Value, data);
                 }
 
@@ -135,16 +225,22 @@ namespace BiliLite.Helpers
                     {
                         continue;
                     }
+
                     keyword.Add(item.Groups[0].Value);
-                    var data = @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " + string.Format(@" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>", item.Groups[0].Value, "bilibili://article/" + item.Groups[1].Value);
+                    var data =
+                        @"<InlineUIContainer><HyperlinkButton Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " +
+                        string.Format(
+                            @" CommandParameter=""{1}"" ><TextBlock>{0}</TextBlock></HyperlinkButton></InlineUIContainer>",
+                            item.Groups[0].Value, "bilibili://article/" + item.Groups[1].Value);
                     input = input.Replace(item.Groups[0].Value, data);
                 }
             }
+
             keyword.Clear();
             keyword = null;
             return input;
         }
-       
+
         /// <summary>
         /// 处理URL链接
         /// </summary>
@@ -154,16 +250,21 @@ namespace BiliLite.Helpers
         {
             //处理AV号
             List<string> keyword = new List<string>();
-            MatchCollection url = Regex.Matches(input, @"(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
+            MatchCollection url = Regex.Matches(input,
+                @"(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]");
             foreach (Match item in url)
             {
                 if (keyword.Contains(item.Groups[0].Value))
                 {
                     continue;
                 }
+
                 keyword.Add(item.Groups[0].Value);
-                var data = @"<InlineUIContainer><HyperlinkButton x:Name=""btn"" Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " +
-                    string.Format(@" CommandParameter=""{0}"" ><TextBlock>🔗网页链接</TextBlock></HyperlinkButton></InlineUIContainer>", item.Groups[0].Value);
+                var data =
+                    @"<InlineUIContainer><HyperlinkButton x:Name=""btn"" Command=""{Binding LaunchUrlCommand}""  IsEnabled=""True"" Margin=""0 -4 0 -4"" Padding=""0"" " +
+                    string.Format(
+                        @" CommandParameter=""{0}"" ><TextBlock>🔗网页链接</TextBlock></HyperlinkButton></InlineUIContainer>",
+                        item.Groups[0].Value);
                 input = input.Replace(item.Groups[0].Value, data);
             }
 
@@ -177,8 +278,10 @@ namespace BiliLite.Helpers
             //    input = input.Replace(item.Groups[0].Value, data);
             //}
 
-          
+
             //return input;
         }
+
+        #endregion
     }
 }

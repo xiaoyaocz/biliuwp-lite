@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.Live;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -11,16 +12,17 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Appointments;
 using Windows.UI.Xaml.Media.Imaging;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Live.LiveCenter
 {
     public class LiveAttentionUnLiveVM : IModules
     {
-        readonly Api.Live.LiveCenterAPI liveCenterAPI;
+        readonly LiveCenterAPI liveCenterAPI;
 
         public LiveAttentionUnLiveVM()
         {
-            liveCenterAPI = new Api.Live.LiveCenterAPI();
+            liveCenterAPI = new LiveCenterAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }

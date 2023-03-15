@@ -12,6 +12,10 @@ using BiliLite.Pages.Bangumi;
 using Windows.UI.Xaml.Input;
 using BiliLite.Extensions;
 using Windows.UI.Xaml;
+using BiliLite.Models.Requests.Api.User;
+using BiliLite.Models.Requests.Api.Home;
+using BiliLite.Services;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules
 {
@@ -23,13 +27,13 @@ namespace BiliLite.Modules
 
     public class AnimeVM : IModules
     {
-        readonly Api.User.FollowAPI followAPI;
-        readonly Api.Home.AnimeAPI bangumiApi;
+        readonly FollowAPI followAPI;
+        readonly AnimeAPI bangumiApi;
         readonly AnimeType animeType;
         public AnimeVM(AnimeType type)
         {
-            bangumiApi = new Api.Home.AnimeAPI();
-            followAPI = new Api.User.FollowAPI();
+            bangumiApi = new AnimeAPI();
+            followAPI = new FollowAPI();
             animeType = type;
             Entrances = new List<PageEntranceModel>() {
                 new PageEntranceModel(){

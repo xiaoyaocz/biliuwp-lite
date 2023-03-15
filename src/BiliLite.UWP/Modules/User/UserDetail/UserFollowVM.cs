@@ -1,6 +1,6 @@
-﻿using BiliLite.Api.User;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +13,8 @@ using System.Windows.Input;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules.User.UserDetail
 {
@@ -233,11 +235,11 @@ namespace BiliLite.Modules.User.UserDetail
                 switch (official_verify.type)
                 {
                     case 0:
-                        return AppHelper.VERIFY_PERSONAL_IMAGE;
+                        return Constants.App.VERIFY_PERSONAL_IMAGE;
                     case 1:
-                        return AppHelper.VERIFY_OGANIZATION_IMAGE;
+                        return Constants.App.VERIFY_OGANIZATION_IMAGE;
                     default:
-                        return AppHelper.TRANSPARENT_IMAGE;
+                        return Constants.App.TRANSPARENT_IMAGE;
                 }
             }
         }

@@ -1,16 +1,12 @@
-﻿using BiliLite.Api;
-using BiliLite.Api.User;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
-using Newtonsoft.Json;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User
 {

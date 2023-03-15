@@ -13,6 +13,11 @@ using BiliLite.Controls;
 using Windows.System;
 using BiliLite.Dialogs;
 using System.Threading.Tasks;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
+using Windows.UI.Xaml.Controls.Primitives;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -157,7 +162,7 @@ namespace BiliLite.Pages
             if (videoDetailVM.VideoInfo != null)
             {
                 avid = videoDetailVM.VideoInfo.aid;
-                var desc = ControlHelper.StringToRichText(videoDetailVM.VideoInfo.desc, null);
+                var desc = videoDetailVM.VideoInfo.desc.ToRichTextBlock(null);
 
                 contentDesc.Content = desc;
                 ChangeTitle(videoDetailVM.VideoInfo.title);
@@ -204,8 +209,8 @@ namespace BiliLite.Pages
                 player.InitializePlayInfo(playInfos, index);
                 comment.LoadComment(new LoadCommentInfo()
                 {
-                    CommentMode = (int)Api.CommentApi.CommentType.Video,
-                    CommentSort = Api.CommentApi.CommentSort.Hot,
+                    CommentMode = (int)CommentApi.CommentType.Video,
+                    CommentSort = CommentApi.CommentSort.Hot,
                     Oid = videoDetailVM.VideoInfo.aid
                 });
             }
@@ -574,6 +579,28 @@ namespace BiliLite.Pages
         private void btnOpenQR_Click(object sender, RoutedEventArgs e)
         {
             qrFlyout.ShowAt(btnMore);
+        }
+
+        private void TitleText_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var option = new FlyoutShowOptions();
+            var element = sender as UIElement;
+            option.Position=e.GetPosition(element);
+            TitleRightTappedMenu.ShowAt(element, option);
+        }
+
+        private void CopyTitleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new DataPackage();
+            data.SetText(videoDetailVM.VideoInfo.title);
+            Clipboard.SetContent(data);
+        }
+
+        private void CopyAuthorBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new DataPackage();
+            data.SetText(videoDetailVM.VideoInfo.owner.name);
+            Clipboard.SetContent(data);
         }
     }
 }

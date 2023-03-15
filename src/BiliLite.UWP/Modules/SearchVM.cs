@@ -5,21 +5,24 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using Newtonsoft.Json;
 using BiliLite.Pages;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
     public class ISearchVM : IModules
     {
         public SearchType SearchType { get; set; }
-        public Api.SearchAPI searchAPI;
+        public SearchAPI searchAPI;
         public ISearchVM()
         {
-            searchAPI = new Api.SearchAPI();
+            searchAPI = new SearchAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
         }
@@ -905,11 +908,11 @@ namespace BiliLite.Modules
                 switch (official_verify.type)
                 {
                     case 0:
-                        return AppHelper.VERIFY_PERSONAL_IMAGE;
+                        return Constants.App.VERIFY_PERSONAL_IMAGE;
                     case 1:
-                        return AppHelper.VERIFY_OGANIZATION_IMAGE;
+                        return Constants.App.VERIFY_OGANIZATION_IMAGE;
                     default:
-                        return AppHelper.TRANSPARENT_IMAGE;
+                        return Constants.App.TRANSPARENT_IMAGE;
                 }
             }
         }

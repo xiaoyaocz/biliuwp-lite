@@ -1,6 +1,7 @@
 ﻿using BiliLite.Controls.Dynamic;
 using BiliLite.Helpers;
 using BiliLite.Models.Dynamic;
+using BiliLite.Models.Requests.Api.User;
 using BiliLite.Pages;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,15 +13,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {
     public class DynamicRepostVM:IModules
     {
-        readonly Api.User.DynamicAPI dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public DynamicRepostVM()
         {
-            dynamicAPI = new Api.User.DynamicAPI();
+            dynamicAPI = new DynamicAPI();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
             UserCommand = new RelayCommand<object>(OpenUser);
@@ -159,13 +163,13 @@ namespace BiliLite.Modules.User
                 switch (item.desc.user_profile.card?.official_verify?.type ?? 3)
                 {
                     case 0:
-                        data.Verify = AppHelper.VERIFY_PERSONAL_IMAGE;
+                        data.Verify = Constants.App.VERIFY_PERSONAL_IMAGE;
                         break;
                     case 1:
-                        data.Verify = AppHelper.VERIFY_OGANIZATION_IMAGE;
+                        data.Verify = Constants.App.VERIFY_OGANIZATION_IMAGE;
                         break;
                     default:
-                        data.Verify = AppHelper.TRANSPARENT_IMAGE;
+                        data.Verify = Constants.App.TRANSPARENT_IMAGE;
                         break;
                 }
                 if (!string.IsNullOrEmpty(item.desc.user_profile.pendant?.image))

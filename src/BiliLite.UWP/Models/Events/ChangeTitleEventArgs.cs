@@ -1,4 +1,4 @@
-﻿namespace BiliLite.Models.Common
+﻿namespace BiliLite.Models.Events
 {
     public class ChangeTitleEventArgs
     {

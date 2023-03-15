@@ -1,23 +1,5 @@
-﻿using BiliLite.Api;
-using BiliLite.Controls;
-using BiliLite.Helpers;
-using BiliLite.Models;
-using Google.Protobuf.WellKnownTypes;
-using Microsoft.Toolkit.Uwp.UI.Animations.Behaviors;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using BiliLite.Controls;
 using System.Threading.Tasks;
-using Windows.Services.Maps;
-using ZXing;
 
 namespace BiliLite.Modules.Player.Playurl
 {

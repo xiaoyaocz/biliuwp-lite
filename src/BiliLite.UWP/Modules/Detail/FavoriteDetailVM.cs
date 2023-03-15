@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,19 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
     public class FavoriteDetailVM:IModules
     {
-        readonly Api.User.FavoriteApi  favoriteApi;
+        readonly FavoriteApi favoriteApi;
         public int Page { get; set; } = 1;
         public string Keyword { get; set; } = "";
         public string Id { get; set; }
         public int Type { get; set; }
         public FavoriteDetailVM()
         {
-            favoriteApi = new Api.User.FavoriteApi();
+            favoriteApi = new FavoriteApi();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
             CollectCommand=new RelayCommand(DoCollect);

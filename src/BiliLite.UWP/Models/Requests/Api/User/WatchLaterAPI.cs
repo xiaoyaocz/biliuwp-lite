@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.User
+namespace BiliLite.Models.Requests.Api.User
 {
     public class WatchLaterAPI
     {
@@ -37,7 +32,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/toview/clear",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) 
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)
             };
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
@@ -48,7 +43,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/toview/del",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true)+ "&viewed=true"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&viewed=true"
             };
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
@@ -59,7 +54,7 @@ namespace BiliLite.Api.User
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/history/toview/del",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&aid="+id
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&aid=" + id
             };
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;

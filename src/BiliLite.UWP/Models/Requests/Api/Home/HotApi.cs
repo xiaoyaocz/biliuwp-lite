@@ -1,15 +1,10 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.Home
+namespace BiliLite.Models.Requests.Api.Home
 {
     public class HotAPI
     {
-        public ApiModel Popular(string idx = "0",string last_param="")
+        public ApiModel Popular(string idx = "0", string last_param = "")
         {
             ApiModel api = new ApiModel()
             {

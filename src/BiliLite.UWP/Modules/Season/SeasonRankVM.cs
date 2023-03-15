@@ -1,20 +1,21 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Season
 {
     public class SeasonRankVM:IModules
     {
-        readonly Api.RankAPI rankAPI;
+        readonly RankAPI rankAPI;
         public SeasonRankVM()
         {
-            rankAPI = new Api.RankAPI();
+            rankAPI = new RankAPI();
            
         }
         private bool _loading = true;

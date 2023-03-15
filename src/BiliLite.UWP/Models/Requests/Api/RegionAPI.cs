@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api
+namespace BiliLite.Models.Requests.Api
 {
     public class RegionAPI
     {
@@ -27,12 +22,12 @@ namespace BiliLite.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://app.bilibili.com/x/v2/region/dynamic",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false)+ $"&rid={rid}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, false) + $"&rid={rid}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel RegionDynamic(int rid,string next_aid)
+        public ApiModel RegionDynamic(int rid, string next_aid)
         {
             ApiModel api = new ApiModel()
             {
@@ -45,7 +40,7 @@ namespace BiliLite.Api
         }
 
 
-        public ApiModel RegionChildDynamic(int rid, int tag_id=0)
+        public ApiModel RegionChildDynamic(int rid, int tag_id = 0)
         {
             ApiModel api = new ApiModel()
             {
@@ -57,7 +52,7 @@ namespace BiliLite.Api
             return api;
         }
 
-        public ApiModel RegionChildDynamic(int rid,string next, int tag_id = 0)
+        public ApiModel RegionChildDynamic(int rid, string next, int tag_id = 0)
         {
             ApiModel api = new ApiModel()
             {
@@ -68,7 +63,7 @@ namespace BiliLite.Api
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel RegionChildList(int rid,string order, int page , int tag_id = 0)
+        public ApiModel RegionChildList(int rid, string order, int page, int tag_id = 0)
         {
             ApiModel api = new ApiModel()
             {

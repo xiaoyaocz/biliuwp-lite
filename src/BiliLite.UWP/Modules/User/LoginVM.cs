@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using System.Web;
+using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {
@@ -19,11 +22,11 @@ namespace BiliLite.Modules.User
         public Account account;
         Timer smsTimer;
         Timer qrTimer;
-        Api.AccountApi accountApi;
+        AccountApi accountApi;
         public LoginVM()
         {
             account = new Account();
-            accountApi = new Api.AccountApi();
+            accountApi = new AccountApi();
             Countries = new ObservableCollection<CountryItemModel>();
             LoginTypeCommand = new RelayCommand<int>(ChangeLoginType);
             SendSMSCommand = new RelayCommand(SendSMSCode);

@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.Home
+namespace BiliLite.Models.Requests.Api.Home
 {
     public class RecommendAPI
     {
@@ -22,7 +17,7 @@ namespace BiliLite.Api.Home
             return api;
         }
 
-        public ApiModel Dislike(string _goto,string id,string mid,int reason_id,int rid,int tag_id)
+        public ApiModel Dislike(string _goto, string id, string mid, int reason_id, int rid, int tag_id)
         {
             ApiModel api = new ApiModel()
             {

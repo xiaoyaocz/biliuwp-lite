@@ -2,6 +2,7 @@
 using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Pages;
+using BiliLite.Services;
 using System;
 using System.Linq;
 using Windows.ApplicationModel.Core;

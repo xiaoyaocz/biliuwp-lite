@@ -1,6 +1,6 @@
-﻿using BiliLite.Api.User;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User
 {

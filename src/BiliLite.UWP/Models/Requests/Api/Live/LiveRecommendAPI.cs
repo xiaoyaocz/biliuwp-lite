@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.Live
+namespace BiliLite.Models.Requests.Api.Live
 {
     public class LiveRecommendAPI
     {
@@ -15,7 +10,7 @@ namespace BiliLite.Api.Live
         /// <param name="page"></param>
         /// <param name="sort_type">最新开播：live_time，热门：online，互动直播：sort_type_169</param>
         /// <returns></returns>
-        public ApiModel LiveRoomList(int page=1,string sort_type= "online")
+        public ApiModel LiveRoomList(int page = 1, string sort_type = "online")
         {
             ApiModel api = new ApiModel()
             {

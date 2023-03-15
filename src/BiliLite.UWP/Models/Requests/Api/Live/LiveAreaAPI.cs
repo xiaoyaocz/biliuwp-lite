@@ -1,11 +1,6 @@
 ﻿using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.Live
+namespace BiliLite.Models.Requests.Api.Live
 {
     public class LiveAreaAPI
     {
@@ -20,7 +15,7 @@ namespace BiliLite.Api.Live
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel LiveAreaRoomList(int area_id=0,int parent_area_id=0, int page = 1, string sort_type = "online")
+        public ApiModel LiveAreaRoomList(int area_id = 0, int parent_area_id = 0, int page = 1, string sort_type = "online")
         {
             ApiModel api = new ApiModel()
             {

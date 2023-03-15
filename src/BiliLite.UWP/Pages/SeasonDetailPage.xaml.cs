@@ -1,6 +1,7 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Dialogs;
 using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api;
 using BiliLite.Modules;
 using BiliLite.Modules.Season;
 using Microsoft.UI.Xaml.Controls;
@@ -21,6 +22,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -187,8 +190,8 @@ namespace BiliLite.Pages
             player.InitializePlayInfo(playInfos, index);
             comment.LoadComment(new LoadCommentInfo()
             {
-                CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.CommentSort.Hot,
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
                 Oid = playInfos[index].avid
             });
         }
@@ -218,8 +221,8 @@ namespace BiliLite.Pages
             player.InitializePlayInfo(playInfos, index);
             comment.LoadComment(new LoadCommentInfo()
             {
-                CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.CommentSort.Hot,
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
                 Oid = playInfos[index].avid
             });
         }
@@ -315,8 +318,8 @@ namespace BiliLite.Pages
             CreateQR();
             comment.LoadComment(new LoadCommentInfo()
             {
-                CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.CommentSort.Hot,
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
                 Oid = aid
             });
             changedFlag = false;
@@ -338,8 +341,8 @@ namespace BiliLite.Pages
             ep_id =seasonDetailVM.Episodes[listEpisode.SelectedIndex].id.ToString();
             comment.LoadComment(new LoadCommentInfo()
             {
-                CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.CommentSort.Hot,
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
                 Oid = seasonDetailVM.Episodes[listEpisode.SelectedIndex].aid
             });
             CreateQR();
@@ -360,8 +363,8 @@ namespace BiliLite.Pages
             ep_id = seasonDetailVM.Episodes[listPreview.SelectedIndex].id.ToString();
             comment.LoadComment(new LoadCommentInfo()
             {
-                CommentMode = (int)Api.CommentApi.CommentType.Video,
-                CommentSort = Api.CommentApi.CommentSort.Hot,
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
                 Oid = seasonDetailVM.Episodes[listPreview.SelectedIndex].aid
             });
             CreateQR();

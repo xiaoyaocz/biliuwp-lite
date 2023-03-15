@@ -1,5 +1,6 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
     public class MyFollowSeasonVM : IModules
     {
 
-        readonly Api.User.FollowAPI followAPI;
+        readonly FollowAPI followAPI;
         public MyFollowSeasonVM(bool _isAnime)
         {
-            followAPI = new Api.User.FollowAPI();
+            followAPI = new FollowAPI();
             isAnime = _isAnime;
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);

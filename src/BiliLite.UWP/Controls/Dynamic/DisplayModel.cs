@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Controls.Dynamic
 {
@@ -42,8 +43,8 @@ namespace BiliLite.Controls.Dynamic
         /// </summary>
         public string UserName { get; set; }
         public string Photo { get; set; }
-        public string Verify { get; set; } = AppHelper.TRANSPARENT_IMAGE;
-        public string Pendant { get; set; } = AppHelper.TRANSPARENT_IMAGE;
+        public string Verify { get; set; } = Constants.App.TRANSPARENT_IMAGE;
+        public string Pendant { get; set; } = Constants.App.TRANSPARENT_IMAGE;
 
         /// <summary>
         /// 装扮

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BiliLite.Services;
+﻿using BiliLite.Services;
 
-namespace BiliLite.Api.Home
+namespace BiliLite.Models.Requests.Api.Home
 {
 
     public class AnimeAPI
@@ -35,7 +30,7 @@ namespace BiliLite.Api.Home
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.IL_BASE_URL}/api/anime/timeline",
-                parameter="type="+ type
+                parameter = "type=" + type
             };
             return api;
         }
@@ -45,11 +40,11 @@ namespace BiliLite.Api.Home
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.IL_BASE_URL}/api/anime/bangumiFalls",
-                parameter= $"wid={wid}&cursor={cursor}"
+                parameter = $"wid={wid}&cursor={cursor}"
             };
             return api;
         }
 
-       
+
     }
 }

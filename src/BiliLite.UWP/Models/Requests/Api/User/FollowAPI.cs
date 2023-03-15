@@ -1,12 +1,6 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BiliLite.Services;
 
-namespace BiliLite.Api.User
+namespace BiliLite.Models.Requests.Api.User
 {
     public class FollowAPI
     {
@@ -17,7 +11,7 @@ namespace BiliLite.Api.User
         /// <param name="status">0=全部，1=想看，2=在看，3=看过</param>
         /// <param name="pagesize">每页数量</param>
         /// <returns></returns>
-        public ApiModel MyFollowBangumi(int page=1, int status = 0,int pagesize=20)
+        public ApiModel MyFollowBangumi(int page = 1, int status = 0, int pagesize = 20)
         {
             ApiModel api = new ApiModel()
             {
@@ -82,7 +76,7 @@ namespace BiliLite.Api.User
         /// 设置状态
         /// </summary>
         /// <returns></returns>
-        public ApiModel SetSeasonStatus(string season_id,int status)
+        public ApiModel SetSeasonStatus(string season_id, int status)
         {
             ApiModel api = new ApiModel()
             {
@@ -94,7 +88,7 @@ namespace BiliLite.Api.User
             return api;
         }
 
-        
+
         /// <summary>
         /// 关注
         /// </summary>
@@ -113,6 +107,21 @@ namespace BiliLite.Api.User
             return api;
         }
 
-
+        /// <summary>
+        /// 查询用户与自己关系_仅查关注
+        /// </summary>
+        /// <param name="mid"></param>
+        /// <returns></returns>
+        public ApiModel GetAttention(string mid)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation",
+                parameter = $"fid={mid}",
+                need_cookie = true
+            };
+            return api;
+        }
     }
 }

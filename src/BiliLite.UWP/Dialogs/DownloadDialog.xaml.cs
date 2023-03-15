@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common;
+using BiliLite.Models.Download;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -63,7 +65,7 @@ namespace BiliLite.Dialogs
                 avid = episode.AVID,
                 cid = episode.CID,
                 ep_id = episode.EpisodeID,
-                play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
+                play_mode = downloadItem.Type == DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                 season_id = downloadItem.SeasonID,
                 season_type = downloadItem.SeasonType,
                 area=Utils.ParseArea(downloadItem.Title,downloadItem.UpMid)
@@ -135,7 +137,7 @@ namespace BiliLite.Dialogs
                         avid = item.AVID,
                         cid = item.CID,
                         ep_id = item.EpisodeID,
-                        play_mode = downloadItem.Type == Helpers.DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
+                        play_mode = downloadItem.Type == DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
                         season_id = downloadItem.SeasonID,
                         season_type = downloadItem.SeasonType,
                         area = Utils.ParseArea(downloadItem.Title, downloadItem.UpMid)
@@ -280,7 +282,7 @@ namespace BiliLite.Dialogs
         public string Subtitle { get; set; }
         public string Cover { get; set; }
         public long UpMid { get; set; } = 0;
-        public Helpers.DownloadType Type { get; set; }
+        public DownloadType Type { get; set; }
         private List<DownloadEpisodeItem> _episodes;
 
         public List<DownloadEpisodeItem> Episodes

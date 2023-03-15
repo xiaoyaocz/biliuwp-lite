@@ -1,5 +1,6 @@
 ﻿using BiliLite.Controls.Dynamic;
 using BiliLite.Helpers;
+using BiliLite.Models.Requests.Api;
 using BiliLite.Modules;
 using BiliLite.Modules.User;
 using BiliLite.Modules.User.SendDynamic;
@@ -56,7 +57,7 @@ namespace BiliLite.Dialogs
             FaceFlyout.ShowAt(sender as Button);
             if (emoteVM.Packages == null || emoteVM.Packages.Count == 0)
             {
-                await emoteVM.GetEmote(Api.EmoteBusiness.dynamic);
+                await emoteVM.GetEmote(EmoteBusiness.dynamic);
             }
         }
 

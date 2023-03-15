@@ -1,6 +1,6 @@
-﻿using BiliLite.Api.User;
-using BiliLite.Helpers;
+﻿using BiliLite.Helpers;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api.User;
 using BiliLite.Modules;
 using Newtonsoft.Json.Linq;
 using System;
@@ -17,6 +17,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Extensions;
+using BiliLite.Models.Responses;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 

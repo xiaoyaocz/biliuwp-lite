@@ -1,12 +1,8 @@
 ﻿using BiliLite.Helpers;
 using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BiliLite.Api.Live
+namespace BiliLite.Models.Requests.Api.Live
 {
     public class LiveRoomAPI
     {
@@ -62,7 +58,7 @@ namespace BiliLite.Api.Live
         /// 直播礼物列表
         /// </summary>
         /// <returns></returns>
-        public ApiModel GiftList(int area_v2_id,int area_v2_parent_id,int roomId)
+        public ApiModel GiftList(int area_v2_id, int area_v2_parent_id, int roomId)
         {
             ApiModel api = new ApiModel()
             {
@@ -141,14 +137,14 @@ namespace BiliLite.Api.Live
         /// 赠送背包礼物
         /// </summary>
         /// <returns></returns>
-        public ApiModel SendBagGift(long ruid,int gift_id,int num,int bag_id,int roomId)
+        public ApiModel SendBagGift(long ruid, int gift_id, int num, int bag_id, int roomId)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/gift/v2/live/bag_send",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
-                body=$"uid={SettingHelper.Account.UserID}&ruid={ruid}&send_ruid=0&gift_id={gift_id}&gift_num={num}&bag_id={bag_id}&biz_id={roomId}&rnd={new Random().Next(1000,999999).ToString("000000")}&biz_code=live&data_behavior_id=&data_source_id="
+                body = $"uid={SettingHelper.Account.UserID}&ruid={ruid}&send_ruid=0&gift_id={gift_id}&gift_num={num}&bag_id={bag_id}&biz_id={roomId}&rnd={new Random().Next(1000, 999999).ToString("000000")}&biz_code=live&data_behavior_id=&data_source_id="
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -158,7 +154,7 @@ namespace BiliLite.Api.Live
         /// 赠送礼物
         /// </summary>
         /// <returns></returns>
-        public ApiModel SendGift(long ruid, int gift_id, int num, int roomId,string coin_type,int price)
+        public ApiModel SendGift(long ruid, int gift_id, int num, int roomId, string coin_type, int price)
         {
             ApiModel api = new ApiModel()
             {
@@ -167,7 +163,7 @@ namespace BiliLite.Api.Live
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
             api.body += $"&biz_code=live&biz_id={roomId}&coin_type={coin_type}&gift_id={gift_id}&gift_num={num}&mobi_app=android&platform=android&price={price}&rnd={Utils.GetTimestampMS()}&ruid={ruid}&uid={SettingHelper.Account.UserID}";
-            api.body +=ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
 
@@ -183,7 +179,7 @@ namespace BiliLite.Api.Live
                 baseUrl = $"https://api.live.bilibili.com/api/sendmsg",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
-            api.body = $"cid={roomId}&mid={SettingHelper.Account.UserID}&msg={Uri.EscapeDataString( text)}&rnd={Utils.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
+            api.body = $"cid={roomId}&mid={SettingHelper.Account.UserID}&msg={Uri.EscapeDataString(text)}&rnd={Utils.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
@@ -212,7 +208,7 @@ namespace BiliLite.Api.Live
         /// <param name="roomId">房间号</param>
         /// <param name="page">页码</param>
         /// <returns></returns>
-        public ApiModel GuardList(long ruid, int roomId,int page)
+        public ApiModel GuardList(long ruid, int roomId, int page)
         {
             ApiModel api = new ApiModel()
             {
@@ -252,7 +248,7 @@ namespace BiliLite.Api.Live
         /// <param name="rank_type"></param>
         /// <param name="next_offset">gold-rank=金瓜子排行，today-rank=今日礼物排行，seven-rank=7日礼物排行</param>
         /// <returns></returns>
-        public ApiModel RoomRankList(long ruid, int roomId,string rank_type,int next_offset=0)
+        public ApiModel RoomRankList(long ruid, int roomId, string rank_type, int next_offset = 0)
         {
             ApiModel api = new ApiModel()
             {

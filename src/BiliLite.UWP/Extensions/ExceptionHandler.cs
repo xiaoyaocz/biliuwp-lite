@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BiliLite.Models.Events;
+using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Extensions
 {
-    internal class ExceptionHandlingSynchronizationContext : SynchronizationContext
+    public class ExceptionHandlingSynchronizationContext : SynchronizationContext
     {
         /// <summary>
         /// 注册事件.  需要在OnLaunched和OnActivated事件中调用
@@ -133,11 +130,5 @@ namespace BiliLite.Helpers
         }
 
         public event EventHandler<AysncUnhandledExceptionEventArgs> UnhandledException;
-    }
-
-    public class AysncUnhandledExceptionEventArgs : EventArgs
-    {
-        public bool Handled { get; set; }
-        public Exception Exception { get; set; }
     }
 }

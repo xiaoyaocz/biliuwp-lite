@@ -1,4 +1,5 @@
 ﻿using BiliLite.Controls;
+using BiliLite.Helpers;
 using BiliLite.Models;
 using BiliLite.Models.Common;
 using BiliLite.Pages;
@@ -17,7 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http.Filters;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Services
 {
     /// <summary>
     /// 页面跳转
@@ -38,7 +39,7 @@ namespace BiliLite.Helpers
         {
             MiniWindowEvent?.Invoke(null, mini);
         }
-        public static void ChangeTitle(BasePage page,string title)
+        public static void ChangeTitle(BasePage page, string title)
         {
             ChangeTitleEvent?.Invoke(page, title);
         }
@@ -58,7 +59,7 @@ namespace BiliLite.Helpers
         {
             SettingHelper.SetValue<string>(SettingHelper.Account.ACCESS_KEY, null);
             SettingHelper.SetValue<long>(SettingHelper.Account.USER_ID, 0);
-            SettingHelper.SetValue<DateTime>(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
+            SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
             SettingHelper.SetValue<string>(SettingHelper.Account.REFRESH_KEY, null);
             SettingHelper.SetValue<MyProfileModel>(SettingHelper.Account.USER_PROFILE, null);
             ClaerCookie();
@@ -75,7 +76,7 @@ namespace BiliLite.Helpers
                     "http://bigfun.cn",
                     "http://bigfunapp.cn",
                     "http://dreamcast.hk",
-                    Constants.COOKIE_DOMAIN,
+                    Constants.GET_COOKIE_DOMAIN,
                 };
                 //删除Cookie
                 HttpBaseProtocolFilter httpBaseProtocolFilter = new HttpBaseProtocolFilter();
@@ -526,7 +527,7 @@ namespace BiliLite.Helpers
 
             if (url.Contains("http://") || url.Contains("https://"))
             {
-                if (SettingHelper.GetValue<bool>(SettingHelper.UI.OPEN_URL_BROWSER, false))
+                if (SettingHelper.GetValue(SettingHelper.UI.OPEN_URL_BROWSER, false))
                 {
                     await Launcher.LaunchUriAsync(new Uri(url));
                     return true;
@@ -563,12 +564,12 @@ namespace BiliLite.Helpers
 
         public static void OpenImageViewer(List<string> images, int index)
         {
-            var par = new Controls.ImageViewerParameter()
+            var par = new ImageViewerParameter()
             {
                 Images = images,
                 Index = index
             };
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false))
+            if (SettingHelper.GetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false))
             {
                 OpenWindow(typeof(ImageViewerPage), par);
             }
@@ -605,15 +606,4 @@ namespace BiliLite.Helpers
         }
 
     }
-
-    public class NavigationInfo
-    {
-        public Symbol icon { get; set; } = Symbol.Document;
-        public Type page { get; set; }
-        public string title { get; set; }
-        public object parameters { get; set; }
-        public bool dontGoTo { get; set; } = false;
-    }
-
-
 }

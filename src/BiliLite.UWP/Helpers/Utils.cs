@@ -1,5 +1,4 @@
-﻿using BiliLite.Api;
-using BiliLite.Controls;
+﻿using BiliLite.Controls;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
 using System;
@@ -23,43 +22,16 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using Windows.Web.Http.Filters;
+using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Models;
+using BiliLite.Models.Requests.Api;
 
 namespace BiliLite.Helpers
 {
     public static class Utils
     {
-        /// <summary>
-        /// 发送请求，扩展方法
-        /// </summary>
-        /// <param name="api"></param>
-        /// <returns></returns>
-        public static async Task<HttpResults> Request(this ApiModel api)
-        {
-            if (api.method == RestSharp.Method.Get)
-            {
-                if (api.need_redirect)
-                {
-                    return await HttpHelper.GetRedirectWithWebCookie(api.url, api.headers);
-                }
-                if (api.need_cookie)
-                {
-                    return await HttpHelper.GetWithWebCookie(api.url, api.headers);
-                }
-                return await HttpHelper.GetAsync(api.url, api.headers);
-            }
-            else
-            {
-                if (api.need_cookie)
-                {
-                    return await HttpHelper.PostWithCookie(api.url, api.body, api.headers);
-                }
-                return await HttpHelper.PostAsync(api.url, api.body, api.headers);
-            }
-        }
-
         /// <summary>
         /// 获取CSRF令牌
         /// </summary>
@@ -67,7 +39,7 @@ namespace BiliLite.Helpers
         public static string GetCSRFToken()
         {
             var fiter = new HttpBaseProtocolFilter();
-            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.COOKIE_DOMAIN));
+            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
             //没有Cookie
             if (cookies == null || cookies.Count == 0)
             {
@@ -147,7 +119,7 @@ namespace BiliLite.Helpers
             MessageToast ms = new MessageToast(message, TimeSpan.FromSeconds(seconds), commands);
             ms.Show();
         }
-        public static void ShowComment(string oid, int commentMode, Api.CommentApi.CommentSort commentSort)
+        public static void ShowComment(string oid, int commentMode, CommentApi.CommentSort commentSort)
         {
             CommentDialog ms = new CommentDialog();
             ms.Show(oid, commentMode, commentSort);
@@ -190,7 +162,7 @@ namespace BiliLite.Helpers
         {
             try
             {
-                var re = await HttpHelper.GetString($"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}");
+                var re = await $"https://bangumi.bilibili.com/view/web_api/season?ep_id={epid}".GetString();
                 var obj = JObject.Parse(re);
                 return obj["result"]["season_id"].ToString();
             }
@@ -275,7 +247,7 @@ namespace BiliLite.Helpers
         }
         public static string ToSimplifiedChinese(string content)
         {
-            content = ChineseConverter.TraditionalToSimplified(content);
+            content = content.TraditionalToSimplified();
             return content;
         }
         public static bool SetClipboard(string content)
