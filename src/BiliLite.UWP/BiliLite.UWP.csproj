@@ -130,6 +130,7 @@
   <ItemGroup>
     <Compile Include="Extensions\ApiModelExtensions.cs" />
     <Compile Include="Extensions\HttpResultsExtensions.cs" />
+    <Compile Include="Extensions\ObservableCollectionExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\Common\NavigationInfo.cs" />
     <Compile Include="Models\Responses\HttpResults.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Models\Common\CustomizedErrorException.cs" />
     <Compile Include="Models\Common\Subtitle.cs" />
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
+    <Compile Include="Models\Responses\SearchSuggestResponse.cs" />
     <Compile Include="Models\Responses\UserAttentionResponse.cs" />
     <Compile Include="Services\ApiHelper.cs" />
     <Compile Include="Models\Requests\Api\CommentApi.cs" />
@@ -476,6 +478,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Requests\ApiModel.cs" />
     <Compile Include="Models\Common\ApiKeyInfo.cs" />
+    <Compile Include="Services\SearchService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\GeeTest\bili_gt.html" />

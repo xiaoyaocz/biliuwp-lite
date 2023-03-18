@@ -183,5 +183,16 @@ namespace BiliLite.Models.Requests.Api
             }
             return api;
         }
+
+        public ApiModel SearchSuggest(string content)
+        {
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://s.search.bilibili.com/main/suggest",
+                parameter = $"term={content}&main_ver=v1"
+            };
+            return api;
+        }
     }
 }

@@ -60,6 +60,7 @@ namespace BiliLite.Modules
             get { return _ShowLoadMore; }
             set { _ShowLoadMore = value; DoPropertyChanged("ShowLoadMore"); }
         }
+
         public async virtual void Refresh()
         {
             HasData = false;
@@ -161,6 +162,17 @@ namespace BiliLite.Modules
             set { _SelectItem = value; }
         }
 
+        private ObservableCollection<string> m_suggestSearchContents;
+
+        public ObservableCollection<string> SuggestSearchContents
+        {
+            get => m_suggestSearchContents;
+            set
+            {
+                m_suggestSearchContents = value;
+                DoPropertyChanged("SuggestSearchContents");
+            }
+        }
     }
     public class SearchVideoVM : ISearchVM
     {
