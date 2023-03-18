@@ -349,11 +349,7 @@ namespace BiliLite.Modules
                 {
                     return desc_button.text;
                 }
-                if (card_goto=="live")
-                {
-                    return args.up_name;
-                }
-                return "";
+                return args.up_name;
             }
         }
 
