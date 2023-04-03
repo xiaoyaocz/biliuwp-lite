@@ -129,6 +129,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\ApiModelExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\HttpResultsExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -279,6 +280,7 @@
     <Compile Include="Extensions\ExceptionHandler.cs" />
     <Compile Include="Extensions\StringHttpExtensions.cs" />
     <Compile Include="Services\LogHelper.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageCenter.cs" />
     <Compile Include="Helpers\SettingHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
@@ -599,6 +601,9 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="BiliLite.UWP_TemporaryKey.pfx" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
@@ -878,6 +883,9 @@
     </PackageReference>
     <PackageReference Include="Google.Protobuf">
       <Version>3.19.4</Version>
+    </PackageReference>
+    <PackageReference Include="log4net">
+      <Version>2.0.15</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>

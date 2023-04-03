@@ -49,6 +49,7 @@ namespace BiliLite
             FFmpegInteropLogging.SetLogLevel(LogLevel.Info);
             FFmpegInteropLogging.SetLogProvider(this);
             SqlHelper.InitDB();
+            LogHelper.Init();
             this.Suspending += OnSuspending;
         }
         private void RegisterExceptionHandlingSynchronizationContext()

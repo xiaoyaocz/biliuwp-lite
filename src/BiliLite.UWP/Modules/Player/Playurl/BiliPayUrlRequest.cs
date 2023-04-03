@@ -14,6 +14,7 @@ using BiliLite.Extensions;
 using BiliLite.gRPC.Api;
 using Proto.Reply;
 using BiliLite.Models.Requests.Api;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.Player.Playurl
 {
@@ -688,7 +689,6 @@ namespace BiliLite.Modules.Player.Playurl
             }
             catch (Exception ex)
             {
-
                 return BiliPlayUrlQualitesInfo.Failure(ex.Message);
             }
 

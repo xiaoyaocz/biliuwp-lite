@@ -131,8 +131,8 @@ Webp图片扩展安装地址:[ms-windows-store://pdp/?productid=9PG2DK419DRG](ms
 
 ### 日志文件
 
-路径:`%USERPROFILE%\AppData\Local\Packages\5421.502643927C6AD_wp9dg7z2zqgtj\LocalState\log`
+路径:`%USERPROFILE%\AppData\Local\Packages\5422.502643927C6AD_vn31kc91nth4r\LocalState\log`
 
-为了你的账号安全，发送日志时请一定要移除access_key=...里的内容
+为了你的账号安全，发送日志时请一定要确保access_key/access_token/csrf=...里的内容已清除或已经被修改为{hasValue}
 
 [点击打开日志存放目录](OpenLog)
