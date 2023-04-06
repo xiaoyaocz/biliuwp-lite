@@ -143,6 +143,17 @@ namespace BiliLite.Extensions
             }
         }
 
+        public static string ProtectValues(this string url, params string[] keys)
+        {
+            foreach (string key in keys)
+            {
+                string pattern = $@"({key}=)([^&]*)";
+                string replacement = $"$1{{hasValue}}";
+                url = Regex.Replace(url, pattern, replacement);
+            }
+            return url;
+        }
+
         #region Private methods
 
         /// <summary>

@@ -1,7 +1,7 @@
 {
-    "version": "4.5.3",
-    "version_num": 40503,
-    "version_desc": "更新内容:\r\n\r\n* 支持视频详情页右侧标题可右键复制\r\n\r\n* 修复少部分视频打不开问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.5.4",
+    "version_num": 40504,
+    "version_desc": "更新内容:\r\n\r\n* 首页推荐视频同时显示标签和up主名字\r\n\r\n* 添加搜索建议\r\n\r\n* 优化日志输出\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }

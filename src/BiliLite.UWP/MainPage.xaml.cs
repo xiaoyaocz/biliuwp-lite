@@ -65,9 +65,9 @@ namespace BiliLite
                     Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
                 }
             }
-//#if !DEBUG
+#if !DEBUG
              await Utils.CheckVersion();
-//#endif
+#endif
         }
 
         private void MessageCenter_ChangeTitleEvent(object sender, string e)

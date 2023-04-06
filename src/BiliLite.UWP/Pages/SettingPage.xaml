@@ -518,6 +518,21 @@
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
+                    <TextBlock FontSize="15">其他</TextBlock>
+                </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">自动清理日志文件</TextBlock>
+                        <ToggleSwitch x:Name="swAutoClearLogFile"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">自动清理几天前的日志</TextBlock>
+                        <controls:NumberBox x:Name="numAutoClearLogDay" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">保护日志中敏感信息</TextBlock>
+                        <ToggleSwitch x:Name="swProtectLogInfo"></ToggleSwitch>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
                     <TextBlock FontSize="15">帮助</TextBlock>
                 </PivotItem.Header>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -538,6 +553,7 @@
                         <TextBlock  Margin="0 0 0 8"  FontSize="14">Logo绘制 : xiaoyaomengo</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">反馈</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">Github Discussions : https://github.com/ywmoyue/biliuwp-lite/discussions</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">邮箱(请在发邮件时附带Github Discussion贴子链接) : ruamuyan@outlook.com</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">说明</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">这是一个第三方客户端，应用所有数据来源均来自哔哩哔哩。</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">本程序仅供学习交流编程技术使用。</TextBlock>

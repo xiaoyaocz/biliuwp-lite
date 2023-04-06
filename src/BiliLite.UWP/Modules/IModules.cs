@@ -1,13 +1,9 @@
-﻿using BiliLite.Models;
+﻿using BiliLite.Extensions;
+using BiliLite.Models;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 
 namespace BiliLite.Modules
 {
@@ -15,7 +11,7 @@ namespace BiliLite.Modules
     { 
         public virtual ReturnModel<T> HandelError<T>(Exception ex)
         {
-            if (LogHelper.IsNetworkError(ex))
+            if (ex.IsNetworkError())
             {
                 return new ReturnModel<T>()
                 {

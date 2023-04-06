@@ -1,24 +1,12 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
-using BiliLite.Pages.Home;
 using BiliLite.Services;
 using Microsoft.Toolkit.Uwp.Connectivity;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -169,7 +157,7 @@ namespace BiliLite.Pages
                 return;
             }
 
-            if (await MessageCenter.HandelUrl(SearchBox.Text))
+            if (await MessageCenter.HandelUrl(args.QueryText))
             {
                 return;
             }
@@ -178,10 +166,10 @@ namespace BiliLite.Pages
             {
                 icon = Symbol.Find,
                 page = typeof(SearchPage),
-                title = "搜索:" + SearchBox.Text,
+                title = "搜索:" + args.QueryText,
                 parameters = new SearchParameter()
                 {
-                    keyword = SearchBox.Text,
+                    keyword = args.QueryText,
                     searchType = SearchType.Video
                 }
             });
@@ -317,6 +305,21 @@ namespace BiliLite.Pages
                     Tab = UserTab.Dynamic
                 }
             });
+        }
+
+        private async void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+            var text = sender.Text;
+            var suggestSearchContents = await new SearchService().GetSearchSuggestContents(text);
+            if (homeVM.SuggestSearchContents == null)
+            {
+                homeVM.SuggestSearchContents = new System.Collections.ObjectModel.ObservableCollection<string>(suggestSearchContents);
+            }
+            else
+            {
+                homeVM.SuggestSearchContents.ReplaceRange(suggestSearchContents);
+            }
         }
     }
 }

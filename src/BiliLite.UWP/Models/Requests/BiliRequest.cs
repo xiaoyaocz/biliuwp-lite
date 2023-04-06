@@ -143,13 +143,21 @@ namespace BiliLite.Models.Requests
             return httpResults;
         }
 
+        private async Task LogRequest()
+        {
+            var body = "";
+            if (m_body != null)
+                body = await m_body?.ReadAsStringAsync();
+            LogHelper.Log($"http request: [{m_method}]{m_url} {body}", LogType.INFO);
+        }
+
         public async Task<HttpResults> Send()
         {
+            await LogRequest();
             IFlurlResponse response = null;
             HttpResults httpResults;
             try
             {
-
                 if (m_method == HttpMethod.Get)
                 {
                     response = await m_request.GetAsync();

@@ -1,12 +1,8 @@
 ﻿using BiliLite.Helpers;
-using BiliLite.Models;
 using FontAwesome5;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 using System.Collections.ObjectModel;
 
 namespace BiliLite.Modules
@@ -170,6 +166,16 @@ namespace BiliLite.Modules
 
         }
 
+        private ObservableCollection<string> m_suggestSearchContents;
+
+        public ObservableCollection<string> SuggestSearchContents
+        {
+            get => m_suggestSearchContents; 
+            set { 
+                m_suggestSearchContents = value; 
+                DoPropertyChanged("SuggestSearchContents"); 
+            }
+        }
     }
     public class HomeNavItem : IModules
     {

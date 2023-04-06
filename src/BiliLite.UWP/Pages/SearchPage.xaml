@@ -401,7 +401,15 @@
                 <ComboBoxItem>香港地区</ComboBoxItem>
                 <ComboBoxItem>台湾地区</ComboBoxItem>
             </ComboBox>
-            <AutoSuggestBox x:Name="txtKeyword" Grid.Column="1" VerticalAlignment="Center" QuerySubmitted="txtKeyword_QuerySubmitted" PlaceholderText="随便搜索点什么东西吧"  QueryIcon="Find"></AutoSuggestBox>
+            <AutoSuggestBox 
+                x:Name="txtKeyword" 
+                Grid.Column="1" 
+                VerticalAlignment="Center" 
+                QuerySubmitted="txtKeyword_QuerySubmitted" 
+                TextChanged="txtKeyword_TextChanged" 
+                ItemsSource="{x:Bind Path=searchVM.SuggestSearchContents,Mode=OneWay}"
+                PlaceholderText="随便搜索点什么东西吧" 
+                QueryIcon="Find"></AutoSuggestBox>
         </Grid>
         <Pivot Grid.Row="1" x:Name="pivot" ItemsSource="{x:Bind Path=searchVM.SearchItems}" ItemTemplateSelector="{StaticResource ResourceKey=tplSelect}" SelectedItem="{x:Bind Path=searchVM.SelectItem,Mode=TwoWay}" SelectionChanged="pivot_SelectionChanged">
             <Pivot.HeaderTemplate>

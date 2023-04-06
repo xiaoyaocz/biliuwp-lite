@@ -4,19 +4,9 @@ using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -96,29 +86,32 @@ namespace BiliLite.Pages
             }
             pivot.SelectedIndex = (int)par.searchType;
         }
+
         private async void txtKeyword_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if (string.IsNullOrEmpty( txtKeyword.Text))
+            var queryText = args.QueryText;
+            if (string.IsNullOrEmpty(queryText))
             {
                 Utils.ShowMessageToast("关键字不能为空啊，喂(#`O′)");
                 return;
             }
 
-            if (await MessageCenter.HandelUrl(txtKeyword.Text))
+            if (await MessageCenter.HandelUrl(queryText))
             {
                 return;
             }
-            txtKeyword.Text = txtKeyword.Text.TrimStart('@');
+            queryText = queryText.TrimStart('@');
             foreach (var item in searchVM.SearchItems)
             {
-                item.Keyword = txtKeyword.Text;
-                item.Area= searchVM.Area.area;
+                item.Keyword = queryText;
+                item.Area = searchVM.Area.area;
                 item.Page = 1;
                 item.HasData = false;
             }
             searchVM.SelectItem.Refresh();
-            ChangeTitle("搜索:"+txtKeyword.Text);
+            ChangeTitle("搜索:" + queryText);
         }
+
         public void ChangeTitle(string title)
         {
             if ((this.Parent as Frame).Parent is TabViewItem)
@@ -260,6 +253,21 @@ namespace BiliLite.Pages
                     item.HasData = false;
                 }
                 searchVM.SelectItem.Refresh();
+            }
+        }
+
+        private async void txtKeyword_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+            var text = sender.Text;
+            var suggestSearchContents = await new SearchService().GetSearchSuggestContents(text);
+            if (searchVM.SuggestSearchContents == null)
+            {
+                searchVM.SuggestSearchContents = new System.Collections.ObjectModel.ObservableCollection<string>(suggestSearchContents);
+            }
+            else
+            {
+                searchVM.SuggestSearchContents.ReplaceRange(suggestSearchContents);
             }
         }
     }
