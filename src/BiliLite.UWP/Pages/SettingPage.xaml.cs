@@ -39,6 +39,7 @@ namespace BiliLite.Pages
             LoadDanmu();
             LoadLiveDanmu();
             LoadDownlaod();
+            LoadOther();
         }
         private void LoadUI()
         {
@@ -648,6 +649,28 @@ namespace BiliLite.Pages
             swDownloadLoadOld.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingHelper.SetValue(SettingHelper.Download.LOAD_OLD_DOWNLOAD, swDownloadLoadOld.IsOn);
+            });
+        }
+
+        private void LoadOther()
+        {
+            //自动清理日志文件
+            swAutoClearLogFile.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Other.AUTO_CLEAR_LOG_FILE, true);
+            swAutoClearLogFile.Toggled += new RoutedEventHandler((e, args) =>
+            {
+                SettingHelper.SetValue(SettingHelper.Other.AUTO_CLEAR_LOG_FILE, swAutoClearLogFile.IsOn);
+            });
+            //自动清理多少天前的日志文件
+            numAutoClearLogDay.Value = SettingHelper.GetValue<int>(SettingHelper.Other.AUTO_CLEAR_LOG_FILE_DAY, 7);
+            numAutoClearLogDay.ValueChanged += ((e, args) =>
+            {
+                SettingHelper.SetValue(SettingHelper.Other.AUTO_CLEAR_LOG_FILE_DAY, numAutoClearLogDay.Value);
+            });
+            //保护日志敏感信息
+            swProtectLogInfo.IsOn = SettingHelper.GetValue<bool>(SettingHelper.Other.PROTECT_LOG_INFO, true);
+            swProtectLogInfo.Toggled += ((e, args) =>
+            {
+                SettingHelper.SetValue(SettingHelper.Other.PROTECT_LOG_INFO, swProtectLogInfo.IsOn);
             });
         }
 

@@ -535,5 +535,23 @@ namespace BiliLite.Helpers
             public const string DEFAULT_VIDEO_TYPE = "DownloadDefaultVideoType";
 
         }
+
+        public class Other
+        {
+            /// <summary>
+            /// 自动清理日志文件
+            /// </summary>
+            public const string AUTO_CLEAR_LOG_FILE = "autoClearLogFile";
+
+            /// <summary>
+            /// 自动清理多少天前的日志文件
+            /// </summary>
+            public const string AUTO_CLEAR_LOG_FILE_DAY = "autoClearLogFileDay";
+
+            /// <summary>
+            /// 保护日志敏感信息
+            /// </summary>
+            public const string PROTECT_LOG_INFO = "protectLogInfo";
+        }
     }
 }

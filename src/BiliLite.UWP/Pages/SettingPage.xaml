@@ -518,6 +518,21 @@
             </PivotItem>
             <PivotItem Margin="0">
                 <PivotItem.Header>
+                    <TextBlock FontSize="15">其他</TextBlock>
+                </PivotItem.Header>
+                <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">自动清理日志文件</TextBlock>
+                        <ToggleSwitch x:Name="swAutoClearLogFile"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">自动清理几天前的日志</TextBlock>
+                        <controls:NumberBox x:Name="numAutoClearLogDay" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">保护日志中敏感信息</TextBlock>
+                        <ToggleSwitch x:Name="swProtectLogInfo"></ToggleSwitch>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Margin="0">
+                <PivotItem.Header>
                     <TextBlock FontSize="15">帮助</TextBlock>
                 </PivotItem.Header>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
