@@ -139,7 +139,7 @@ namespace BiliLite.Modules.User.UserDetail
 
     public class FavFolderItemModel
     {
-        public int id { get; set; }
+        public long id { get; set; }
         public int fid { get; set; }
         public long mid { get; set; }
         public int media_count { get; set; }

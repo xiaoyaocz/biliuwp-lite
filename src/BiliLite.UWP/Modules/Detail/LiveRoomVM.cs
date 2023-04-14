@@ -1599,7 +1599,7 @@ namespace BiliLite.Modules
             public string bullet_head { get; set; }
             public string bullet_tail { get; set; }
             public int limit_interval { get; set; }
-            public int bind_ruid { get; set; }
+            public long bind_ruid { get; set; }
             public int bind_roomid { get; set; }
             public int bag_coin_type { get; set; }
             public int broadcast_id { get; set; }
@@ -1704,7 +1704,7 @@ namespace BiliLite.Modules
         {
             public string username { get; set; }
             public long uid { get; set; }
-            public int ruid { get; set; }
+            public long ruid { get; set; }
             public string face { get; set; }
             public int guard_level { get; set; }
             public string rank_img
