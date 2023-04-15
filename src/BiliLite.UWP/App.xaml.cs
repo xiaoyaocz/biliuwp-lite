@@ -36,6 +36,8 @@ namespace BiliLite
     /// </summary>
     sealed partial class App : Application, ILogProvider
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
         /// 已执行，逻辑上等同于 main() 或 WinMain()。
@@ -49,7 +51,7 @@ namespace BiliLite
             FFmpegInteropLogging.SetLogLevel(LogLevel.Info);
             FFmpegInteropLogging.SetLogProvider(this);
             SqlHelper.InitDB();
-            LogHelper.Init();
+            LogService.Init();
             this.Suspending += OnSuspending;
         }
         private void RegisterExceptionHandlingSynchronizationContext()
@@ -63,7 +65,7 @@ namespace BiliLite
             e.Handled = true;
             try
             {
-                LogHelper.Log("程序运行出现错误", LogType.ERROR, e.Exception);
+                logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
                 Utils.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)
@@ -75,7 +77,7 @@ namespace BiliLite
             e.Handled = true;
             try
             {
-                LogHelper.Log("程序运行出现错误", LogType.ERROR, e.Exception);
+                logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
                 Utils.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)

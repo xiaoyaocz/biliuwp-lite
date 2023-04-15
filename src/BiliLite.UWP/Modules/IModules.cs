@@ -4,12 +4,16 @@ using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace BiliLite.Modules
 {
     public class IModules : INotifyPropertyChanged
-    { 
-        public virtual ReturnModel<T> HandelError<T>(Exception ex)
+    {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
+        public virtual ReturnModel<T> HandelError<T>(Exception ex, [CallerMemberName] string methodName = null)
         {
             if (ex.IsNetworkError())
             {
@@ -21,7 +25,8 @@ namespace BiliLite.Modules
             }
             else
             {
-                LogHelper.Log(ex.Message, LogType.ERROR, ex);
+                var type = new StackTrace().GetFrame(1).GetMethod().ReflectedType;
+                logger.Log(ex.Message, LogType.ERROR, ex, methodName, type.Name);
                 return new ReturnModel<T>()
                 {
                     success = false,

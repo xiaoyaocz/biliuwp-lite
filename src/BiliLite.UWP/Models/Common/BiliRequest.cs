@@ -173,7 +173,7 @@ namespace BiliLite.Models.Requests
             }
             catch (Exception ex)
             {
-                LogHelper.Log($"{m_method.Method}请求失败" + m_url, LogType.ERROR, ex);
+                logger.Log($"{m_method.Method}请求失败" + m_url, LogType.ERROR, ex);
                 httpResults = await ConstructExResults(ex);
             }
 

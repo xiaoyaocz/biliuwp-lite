@@ -77,6 +77,7 @@ namespace BiliLite.Modules.Live
     }
     public class LiveDanmaku : IDisposable
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
 
         public event EventHandler<LiveDanmuModel> NewMessage;
 
@@ -344,7 +345,7 @@ namespace BiliLite.Modules.Live
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Log("加载直播弹幕失败", LogType.ERROR, ex);
+                    logger.Log("加载直播弹幕失败", LogType.ERROR, ex);
                 }
 
                 await Task.Delay(delay);

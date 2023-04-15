@@ -24,6 +24,8 @@ namespace BiliLite.Modules
 {
     public class PlayerVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly gRPC.Api.PlayURL playUrlApi;
         readonly PlayerAPI PlayerAPI;
         readonly BiliPlayUrl biliPlayUrl;
@@ -173,7 +175,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("弹幕加载失败:" + ex.Message);
-                LogHelper.Log("grpc弹幕加载失败", LogType.FATAL, ex);
+                logger.Log("grpc弹幕加载失败", LogType.FATAL, ex);
             }
             return danmuList;
         }

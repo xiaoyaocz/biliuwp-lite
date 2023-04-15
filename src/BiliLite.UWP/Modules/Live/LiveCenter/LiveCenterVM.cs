@@ -20,6 +20,8 @@ namespace BiliLite.Modules.Live.LiveCenter
 {
     public class LiveCenterVM:IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly LiveCenterAPI liveCenterAPI;
         public LiveCenterVM()
         {
@@ -63,7 +65,7 @@ namespace BiliLite.Modules.Live.LiveCenter
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取签到信息失败", LogType.ERROR, ex);
+                logger.Log("读取签到信息失败", LogType.ERROR, ex);
                 Utils.ShowMessageToast("读取签到信息失败");
             }
         }

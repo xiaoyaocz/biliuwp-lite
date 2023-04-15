@@ -21,6 +21,8 @@ namespace BiliLite.Modules.User
 {
     public class UserDetailVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public string mid { get; set; }
         private readonly UserDetailAPI userDetailAPI;
         private readonly FollowAPI  followAPI;
@@ -66,7 +68,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.ERROR, ex);
                 Utils.ShowMessageToast("读取个人资料失败");
             }
         }
@@ -96,7 +98,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.ERROR, ex);
                 return null;
             }
         }
@@ -133,7 +135,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.ERROR, ex);
                 return null;
             }
         }

@@ -20,6 +20,8 @@ namespace BiliLite.Extensions
     /// </summary>
     public static class StringHttpExtensions
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         /// <summary>
         /// 发送一个获取重定向值的get请求
         /// </summary>
@@ -74,7 +76,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -100,7 +102,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -126,7 +128,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求Stream失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Stream失败" + url, LogType.ERROR, ex);
                 return null;
             }
         }
@@ -150,7 +152,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求Buffer失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Buffer失败" + url, LogType.ERROR, ex);
                 return null;
             }
         }
@@ -172,7 +174,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求String失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求String失败" + url, LogType.ERROR, ex);
                 return null;
             }
         }
@@ -216,7 +218,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                LogHelper.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,

@@ -37,6 +37,8 @@ namespace BiliLite.Pages
     }
     public sealed partial class VideoDetailPage : PlayPage
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         VideoDetailVM videoDetailVM;
         string avid = "";
         string bvid = "";
@@ -233,7 +235,7 @@ namespace BiliLite.Pages
             }
             catch (Exception ex)
             {
-                LogHelper.Log("创建二维码失败avid" + avid, LogType.ERROR, ex);
+                logger.Log("创建二维码失败avid" + avid, LogType.ERROR, ex);
                 Utils.ShowMessageToast("创建二维码失败");
             }
 

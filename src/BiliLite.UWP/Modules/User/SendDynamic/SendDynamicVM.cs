@@ -23,6 +23,8 @@ namespace BiliLite.Modules.User
 {
     public class SendDynamicVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly DynamicAPI dynamicAPI;
         public SendDynamicVM()
         {
@@ -109,7 +111,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("图片上传失败", LogType.FATAL, ex);
+                logger.Log("图片上传失败", LogType.FATAL, ex);
                 Utils.ShowMessageToast("图片上传失败");
             }
             finally
@@ -188,7 +190,7 @@ namespace BiliLite.Modules.User
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("转发动态失败"+ex.Message);
-                LogHelper.Log("转发动态失败", LogType.ERROR, ex);
+                logger.Log("转发动态失败", LogType.ERROR, ex);
                 return false;
             }
 
@@ -279,7 +281,7 @@ namespace BiliLite.Modules.User
             {
                
                 Utils.ShowMessageToast("发表动态发生错误");
-                LogHelper.Log("发表动态失败", LogType.ERROR, ex);
+                logger.Log("发表动态失败", LogType.ERROR, ex);
                 return false;
             }
 

@@ -14,6 +14,8 @@ namespace BiliLite.Services
 {
     public static class DownloadHelper
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public static BackgroundTransferGroup group = BackgroundTransferGroup.CreateGroup("BiliDownlad");//下载组，方便管理
         public static async Task AddDownload(DownloadInfo downloadInfo)
         {
@@ -67,7 +69,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log("封面下载失败:" + url, LogType.ERROR, ex);
+                logger.Log("封面下载失败:" + url, LogType.ERROR, ex);
             }
         }
         private static async Task DownloadDanmaku(string url, StorageFolder episodeFolder)
@@ -82,7 +84,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log("弹幕下载失败:" + url, LogType.ERROR, ex);
+                logger.Log("弹幕下载失败:" + url, LogType.ERROR, ex);
             }
         }
         private static async Task SaveInfo(DownloadInfo info, StorageFolder folder, StorageFolder episodeFolder)
@@ -131,7 +133,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log("文件保存失败:" + episodeFolder.Path, LogType.ERROR,ex);
+                logger.Log("文件保存失败:" + episodeFolder.Path, LogType.ERROR,ex);
             }
         }
         private static async Task DownloadSubtitle(DownloadSubtitleInfo subtitleInfo, StorageFolder episodeFolder)
@@ -151,7 +153,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log($"字幕下载失败:{subtitleInfo.Name}={subtitleInfo.Url}", LogType.ERROR, ex);
+                logger.Log($"字幕下载失败:{subtitleInfo.Name}={subtitleInfo.Url}", LogType.ERROR, ex);
             }
         }
         private static async void DownloadVideo(DownloadInfo downloadInfo, DownloadUrlInfo url, StorageFolder episodeFolder)

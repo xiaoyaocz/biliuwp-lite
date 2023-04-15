@@ -19,6 +19,8 @@ namespace BiliLite.Modules.User
 {
     public class LoginVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public Account account;
         Timer smsTimer;
         Timer qrTimer;
@@ -160,7 +162,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("登录二次验证失败", LogType.ERROR, ex);
+                logger.Log("登录二次验证失败", LogType.ERROR, ex);
             }
         }
 
@@ -611,7 +613,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
+                logger.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
                 Utils.ShowMessageToast("加载二维码失败");
             }
             finally
@@ -709,7 +711,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("获取验证手机号失败", LogType.ERROR, ex);
+                logger.Log("获取验证手机号失败", LogType.ERROR, ex);
             }
         }
 
@@ -742,7 +744,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("发送短信验证码失败", LogType.ERROR, ex);
+                logger.Log("发送短信验证码失败", LogType.ERROR, ex);
             }
         }
 
@@ -843,7 +845,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取极验验证码失败", LogType.ERROR, ex);
+                logger.Log("读取极验验证码失败", LogType.ERROR, ex);
                 return null;
             }
         }

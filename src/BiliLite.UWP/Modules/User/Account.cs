@@ -22,6 +22,8 @@ namespace BiliLite.Modules
 {
     public class Account
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         private SettingVM settingVM;
         public AccountApi accountApi;
         string guid = "";
@@ -117,7 +119,7 @@ namespace BiliLite.Modules
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Log($"SSO失败", LogType.ERROR, ex);
+                    logger.Log($"SSO失败", LogType.ERROR, ex);
                 }
 
                 //读取个人资料
@@ -128,7 +130,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
+                logger.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
                 return false;
             }
         }
@@ -152,7 +154,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.ERROR, ex);
                 return null;
             }
         }
