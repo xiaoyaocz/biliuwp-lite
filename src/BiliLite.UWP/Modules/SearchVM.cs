@@ -176,6 +176,8 @@ namespace BiliLite.Modules
     }
     public class SearchVideoVM : ISearchVM
     {
+        ILogger _logger = GlobalLogger.FromCurrentType();
+
         public SearchVideoVM()
         {
             OrderFilters = new List<SearchFilterItem>() {
@@ -247,52 +249,50 @@ namespace BiliLite.Modules
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await searchAPI.WebSearchVideo(Keyword, Page, SelectOrder.value, SelectDuration.value, SelectRegion.value,Area).Request();
-                if (results.status)
+                var results = await searchAPI.WebSearchVideo(Keyword, Page, SelectOrder.value, SelectDuration.value, SelectRegion.value, Area).Request();
+                if (!results.status)
                 {
-                    var data = await results.GetJson<ApiDataModel<JObject>>();
-                    if (data.success)
+                    throw new CustomizedErrorException(results.message);
+                }
+                var data = await results.GetJson<ApiDataModel<JObject>>();
+                if (!data.success)
+                {
+                    throw new CustomizedErrorException(data.message);
+                }
+                var result = JsonConvert.DeserializeObject<ObservableCollection<SearchVideoItem>>(data.data["result"]?.ToString() ?? "[]");
+                if (Page == 1)
+                {
+                    if (result == null || result.Count == 0)
                     {
-                        var result = JsonConvert.DeserializeObject<ObservableCollection<SearchVideoItem>>(data.data["result"]?.ToString() ?? "[]");
-                        if (Page == 1)
-                        {
-                            if (result == null || result.Count == 0)
-                            {
-                                Nothing = true;
-                                Videos?.Clear();
-                                return;
-                            }
-                            Videos = result;
-                        }
-                        else
-                        {
-                            if (data.data != null)
-                            {
-                                foreach (var item in result)
-                                {
-                                    Videos.Add(item);
-                                }
-                            }
-                        }
-                        if (Page < data.data["numPages"].ToInt32())
-                        {
-                            ShowLoadMore = true;
-                            Page++;
-                        }
-                        HasData = true;
+                        Nothing = true;
+                        Videos?.Clear();
+                        return;
                     }
-                    else
+                    Videos = result;
+                }
+                else if (data.data != null)
+                {
+                    foreach (var item in result)
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Videos.Add(item);
                     }
                 }
-                else
+                if (Page < data.data["numPages"].ToInt32())
                 {
-                    Utils.ShowMessageToast(results.message);
+                    ShowLoadMore = true;
+                    Page++;
                 }
+                HasData = true;
+
             }
             catch (Exception ex)
             {
+                if (ex is CustomizedErrorException customizedErrorException)
+                {
+                    Utils.ShowMessageToast(ex.Message);
+                    _logger.Error("搜索失败", ex);
+                }
+
                 var handel = HandelError<AnimeHomeModel>(ex);
                 Utils.ShowMessageToast(handel.message);
             }
@@ -301,9 +301,8 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
-
-
     }
+
     public class SearchArticleVM : ISearchVM
     {
         public SearchArticleVM()
