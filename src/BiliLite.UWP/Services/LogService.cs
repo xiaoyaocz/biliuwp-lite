@@ -73,7 +73,7 @@ namespace BiliLite.Services
         {
             Debug.WriteLine("[" + LogType.INFO.ToString() + "]" + message);
             if (IsProtectLogInfo)
-                message = message.ProtectValues("access_key", "csrf", "access_token");
+                message = message.ProtectValues("access_key", "csrf", "access_token", "sign");
 
             var logEvent = new LogEventInfo(LogLevel.Info, null, message);
             switch (type)
