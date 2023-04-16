@@ -83,6 +83,8 @@ namespace BiliLite.Modules.Live
     }
     public class LiveMessage : IDisposable
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public delegate void MessageHandler(MessageType type, object message);
         public event MessageHandler NewMessage;
         ClientWebSocket ws;
@@ -117,7 +119,7 @@ namespace BiliLite.Modules.Live
                     {
                         return;
                     }
-                    LogHelper.Log("直播接收包出错", LogType.ERROR, ex);
+                    logger.Log("直播接收包出错", LogType.ERROR, ex);
                 }
                
             }

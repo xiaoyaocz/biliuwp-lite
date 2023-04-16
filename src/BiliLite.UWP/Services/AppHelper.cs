@@ -13,6 +13,8 @@ namespace BiliLite.Services
 {
     public static class AppHelper
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public static List<Modules.Home.RegionItem> Regions { get; set; }
         private static RegionAPI regionAPI = new RegionAPI();
 
@@ -26,7 +28,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取默认分区失败！" + ex.Message, LogType.ERROR, ex);
+                logger.Log("读取默认分区失败！" + ex.Message, LogType.ERROR, ex);
                 return new List<Modules.Home.RegionItem>();
             }
         }
@@ -68,7 +70,7 @@ namespace BiliLite.Services
             catch (Exception ex)
             {
                 Regions = await AppHelper.GetDefaultRegions();
-                LogHelper.Log("读取分区失败" + ex.Message, LogType.ERROR, ex);
+                logger.Log("读取分区失败" + ex.Message, LogType.ERROR, ex);
             }
         }
 

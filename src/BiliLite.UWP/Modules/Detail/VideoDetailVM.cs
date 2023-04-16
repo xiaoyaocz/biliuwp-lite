@@ -18,6 +18,8 @@ namespace BiliLite.Modules
 {
     public class VideoDetailVM:IModules
     {
+        ILogger _logger = GlobalLogger.FromCurrentType();
+
         readonly FavoriteApi favoriteAPI;
         readonly VideoAPI videoAPI;
         readonly PlayerAPI  PlayerAPI;
@@ -205,6 +207,7 @@ namespace BiliLite.Modules
                 {
                     ShowError = true;
                     ErrorMsg = ex.Message;
+                    _logger.Error("视频详情获取失败", ex);
                     return;
                 }
 

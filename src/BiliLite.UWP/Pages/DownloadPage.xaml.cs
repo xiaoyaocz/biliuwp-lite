@@ -30,6 +30,8 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class DownloadPage : BasePage
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         DownloadVM downloadVM;
         public DownloadPage()
         {
@@ -175,7 +177,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("目录删除失败，请检查是否文件是否被占用");
-                LogHelper.Log("删除下载视频失败", LogType.FATAL, ex);
+                logger.Log("删除下载视频失败", LogType.FATAL, ex);
             }
         }
 
@@ -234,7 +236,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("目录删除失败，请检查是否文件是否被占用");
-                LogHelper.Log("删除下载视频失败", LogType.FATAL, ex);
+                logger.Log("删除下载视频失败", LogType.FATAL, ex);
             }
 
 
@@ -293,7 +295,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     Utils.ShowMessageToast("转换SRT字幕失败");
-                    LogHelper.Log("转换字幕失败", LogType.ERROR, ex);
+                    logger.Log("转换字幕失败", LogType.ERROR, ex);
                 }
 
             }

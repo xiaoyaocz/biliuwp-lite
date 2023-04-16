@@ -37,6 +37,8 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class LiveDetailPage : BasePage
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         DisplayRequest dispRequest;
         readonly MediaSourceConfig _config;
         FFmpegInteropX.FFmpegMediaSource interopMSS;
@@ -140,7 +142,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     //记录错误，不弹出通知
-                    LogHelper.Log(ex.Message, LogType.ERROR, ex);
+                    logger.Log(ex.Message, LogType.ERROR, ex);
                 }
                
             }
@@ -187,7 +189,7 @@ namespace BiliLite.Pages
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
              {
-                 LogHelper.Log("直播加载失败", LogType.ERROR, new Exception(args.ErrorMessage));
+                 logger.Log("直播加载失败", LogType.ERROR, new Exception(args.ErrorMessage));
                  await new MessageDialog($"啊，直播加载失败了\r\n错误信息:{args.ErrorMessage}\r\n请尝试在直播设置中打开/关闭硬解试试", "播放失败").ShowAsync();
              });
 

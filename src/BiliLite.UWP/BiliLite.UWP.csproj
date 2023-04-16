@@ -279,7 +279,8 @@
     <Compile Include="Services\DownloadHelper.cs" />
     <Compile Include="Extensions\ExceptionHandler.cs" />
     <Compile Include="Extensions\StringHttpExtensions.cs" />
-    <Compile Include="Services\LogHelper.cs" />
+    <Compile Include="Services\GlobalLogger.cs" />
+    <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageCenter.cs" />
     <Compile Include="Helpers\SettingHelper.cs" />
@@ -601,9 +602,6 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="BiliLite.UWP_TemporaryKey.pfx" />
-    <None Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />

@@ -34,6 +34,8 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class SeasonDetailPage : PlayPage
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         SeasonDetailVM seasonDetailVM;
         SeasonReviewVM seasonReviewVM;
         string season_id = "";
@@ -388,7 +390,7 @@ namespace BiliLite.Pages
             }
             catch (Exception ex)
             {
-                LogHelper.Log("创建二维码失败epid" + ep_id, LogType.ERROR, ex);
+                logger.Log("创建二维码失败epid" + ep_id, LogType.ERROR, ex);
                 Utils.ShowMessageToast("创建二维码失败");
             }
 

@@ -25,6 +25,8 @@ namespace BiliLite.Services
     /// </summary>
     public static class MessageCenter
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public static event EventHandler<bool> MiniWindowEvent;
         public static event EventHandler<NavigationInfo> NavigateToPageEvent;
         public static event EventHandler<string> ChangeTitleEvent;
@@ -92,7 +94,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                LogHelper.Log("清除用户Cookie", LogType.ERROR, ex);
+                logger.Log("清除用户Cookie", LogType.ERROR, ex);
             }
         }
 

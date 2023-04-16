@@ -9,26 +9,23 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
-using static BiliLite.Modules.Live.LiveDanmaku;
 using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
     public class LiveRoomVM : IModules, IDisposable
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         public LiveRoomAnchorLotteryVM anchorLotteryVM;
         readonly LiveRoomAPI liveRoomAPI;
         readonly PlayerAPI PlayerAPI;
@@ -438,7 +435,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取直播头衔失败", LogType.FATAL, ex);
+                logger.Log("读取直播头衔失败", LogType.FATAL, ex);
             }
         }
         /// <summary>
@@ -852,7 +849,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("读取礼物信息失败");
-                LogHelper.Log("读取礼物信息失败", LogType.ERROR, ex);
+                logger.Log("读取礼物信息失败", LogType.ERROR, ex);
             }
         }
 
@@ -919,7 +916,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("读取舰队失败");
-                LogHelper.Log("读取舰队失败", LogType.ERROR, ex);
+                logger.Log("读取舰队失败", LogType.ERROR, ex);
             }
             finally
             {
@@ -989,7 +986,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("读取直播免费瓜子时间失败");
-                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
 
@@ -1020,7 +1017,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("读取直播免费瓜子时间失败");
-                LogHelper.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
 
@@ -1074,7 +1071,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
                 Utils.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1108,7 +1105,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
                 Utils.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1163,7 +1160,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("发送弹幕出现错误", LogType.ERROR, ex);
+                logger.Log("发送弹幕出现错误", LogType.ERROR, ex);
                 Utils.ShowMessageToast("发送弹幕出现错误");
                 return false;
             }
@@ -1218,6 +1215,8 @@ namespace BiliLite.Modules
 
     public class LiveRoomRankVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly LiveRoomAPI liveRoomAPI;
         public LiveRoomRankVM(int roomid, long uid, string title, string type)
         {
@@ -1307,7 +1306,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Utils.ShowMessageToast("读取直播排行榜失败："+ RankType);
-                LogHelper.Log("读取直播排行榜失败"+ RankType, LogType.ERROR, ex);
+                logger.Log("读取直播排行榜失败"+ RankType, LogType.ERROR, ex);
             }
             finally
             {
@@ -1328,6 +1327,8 @@ namespace BiliLite.Modules
 
     public class LiveRoomAnchorLotteryVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly LiveRoomAPI liveRoomAPI;
         public LiveRoomAnchorLotteryVM()
         {
@@ -1413,7 +1414,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("加载主播抽奖信息失败", LogType.ERROR, ex);
+                logger.Log("加载主播抽奖信息失败", LogType.ERROR, ex);
             }
         }
 
@@ -1599,7 +1600,7 @@ namespace BiliLite.Modules
             public string bullet_head { get; set; }
             public string bullet_tail { get; set; }
             public int limit_interval { get; set; }
-            public int bind_ruid { get; set; }
+            public long bind_ruid { get; set; }
             public int bind_roomid { get; set; }
             public int bag_coin_type { get; set; }
             public int broadcast_id { get; set; }
@@ -1704,7 +1705,7 @@ namespace BiliLite.Modules
         {
             public string username { get; set; }
             public long uid { get; set; }
-            public int ruid { get; set; }
+            public long ruid { get; set; }
             public string face { get; set; }
             public int guard_level { get; set; }
             public string rank_img

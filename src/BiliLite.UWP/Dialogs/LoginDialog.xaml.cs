@@ -26,6 +26,8 @@ namespace BiliLite.Dialogs
 {
     public sealed partial class LoginDialog : ContentDialog
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         JSBridge.biliapp _biliapp = new JSBridge.biliapp();
         JSBridge.secure _secure = new JSBridge.secure();
         private LoginVM loginVM;
@@ -144,7 +146,7 @@ namespace BiliLite.Dialogs
             }
             catch (Exception ex)
             {
-                LogHelper.Log("注入JS对象失败", LogType.ERROR, ex);
+                logger.Log("注入JS对象失败", LogType.ERROR, ex);
             }
         }
 

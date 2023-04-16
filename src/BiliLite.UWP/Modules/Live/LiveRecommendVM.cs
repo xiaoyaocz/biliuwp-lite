@@ -151,6 +151,8 @@ namespace BiliLite.Modules.Live
 
     public class LiveRecommendItemSource : IIncrementalSource<LiveRecommendItemModel>
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         readonly LiveRecommendAPI recommendAPI;
         public LiveRecommendItemSource(List<LiveRecommendItemModel> items, string sort)
         {
@@ -188,7 +190,7 @@ namespace BiliLite.Modules.Live
             }
             catch (Exception ex)
             {
-                LogHelper.Log("加载直播推荐信息失败", LogType.ERROR, ex);
+                logger.Log("加载直播推荐信息失败", LogType.ERROR, ex);
                 Utils.ShowMessageToast("加载直播推荐信息失败");
                 return new List<LiveRecommendItemModel>();
             }

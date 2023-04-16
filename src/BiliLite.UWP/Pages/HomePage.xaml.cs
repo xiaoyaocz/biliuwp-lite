@@ -18,6 +18,8 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class HomePage : Page
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         DownloadVM downloadVM;
         readonly HomeVM homeVM;
         readonly Account account;
@@ -79,7 +81,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     homeVM.IsLogin = false;
-                    LogHelper.Log("读取access_key信息失败", LogType.INFO, ex);
+                    logger.Log("读取access_key信息失败", LogType.INFO, ex);
                     Utils.ShowMessageToast("读取登录信息失败，请重新登录");
                     //throw;
                 }

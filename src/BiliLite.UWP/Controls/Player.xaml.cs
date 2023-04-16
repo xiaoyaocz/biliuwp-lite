@@ -61,6 +61,8 @@ namespace BiliLite.Controls
     public sealed partial class Player : UserControl, IDisposable, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         private void DoPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -1434,7 +1436,7 @@ namespace BiliLite.Controls
             }
             catch (Exception ex)
             {
-                LogHelper.Log("暂停出现错误", LogType.ERROR, ex);
+                logger.Log("暂停出现错误", LogType.ERROR, ex);
             }
 
         }

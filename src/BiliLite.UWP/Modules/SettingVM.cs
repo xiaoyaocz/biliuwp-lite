@@ -17,6 +17,8 @@ namespace BiliLite.Modules
 {
     public class SettingVM : IModules
     {
+        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+
         PlayerAPI playerAPI;
         public SettingVM()
         {
@@ -154,7 +156,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("读取弹幕屏蔽词失败", LogType.ERROR, ex);
+                logger.Log("读取弹幕屏蔽词失败", LogType.ERROR, ex);
             }
         }
 
@@ -172,7 +174,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                LogHelper.Log("添加弹幕屏蔽词失败", LogType.ERROR, ex);
+                logger.Log("添加弹幕屏蔽词失败", LogType.ERROR, ex);
                 return false;
             }
         }
