@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
+using OpenCCNET;
 
 namespace BiliLite.Extensions
 {
@@ -34,7 +35,7 @@ namespace BiliLite.Extensions
                 var content = item.content;
                 if (toSimplified)
                 {
-                    content = Utils.ToSimplifiedChinese(content);
+                    content = content.ToHansFromTW(true);
                 }
 
                 stringBuilder.AppendLine(content);
@@ -52,15 +53,7 @@ namespace BiliLite.Extensions
         /// <returns></returns>
         public static string SimplifiedToTraditional(this string input)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var key in input)
-            {
-                stringBuilder.Append(ChineseDictionary.chsDictionary.ContainsKey(key)
-                    ? ChineseDictionary.chsDictionary[key]
-                    : key);
-            }
-
-            return stringBuilder.ToString();
+            return input.ToHKFromHans();
         }
 
         /// <summary>
@@ -70,15 +63,7 @@ namespace BiliLite.Extensions
         /// <returns></returns>
         public static string TraditionalToSimplified(this string input)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var key in input)
-            {
-                stringBuilder.Append(ChineseDictionary.chtDictionary.ContainsKey(key)
-                    ? ChineseDictionary.chtDictionary[key]
-                    : key);
-            }
-
-            return stringBuilder.ToString();
+            return input.ToHansFromTW(true);
         }
 
         /// <summary>

@@ -142,7 +142,6 @@
     <Compile Include="Models\Download\DownloadUrlInfo.cs" />
     <Compile Include="Models\Download\DownloadGUIDInfo.cs" />
     <Compile Include="Models\Download\DownloadInfo.cs" />
-    <Compile Include="Models\Common\ChineseDictionary.cs" />
     <Compile Include="Models\Common\CustomizedErrorException.cs" />
     <Compile Include="Models\Common\Subtitle.cs" />
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
@@ -914,6 +913,9 @@
     </PackageReference>
     <PackageReference Include="NSDanmaku">
       <Version>2.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCCNET">
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>107.3.0</Version>

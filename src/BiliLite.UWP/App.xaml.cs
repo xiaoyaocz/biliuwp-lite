@@ -52,6 +52,7 @@ namespace BiliLite
             FFmpegInteropLogging.SetLogProvider(this);
             SqlHelper.InitDB();
             LogService.Init();
+            OpenCCNET.ZhConverter.Initialize();
             this.Suspending += OnSuspending;
         }
         private void RegisterExceptionHandlingSynchronizationContext()
