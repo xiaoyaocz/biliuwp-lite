@@ -285,9 +285,7 @@
         <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{ThemeResource HighLightColor}"></SolidColorBrush>
     </UserControl.Resources>
     <Grid Background="Black">
-
-
-        <SplitView x:Name="SplitView"  PanePlacement="Right" PaneBackground="#C8000000">
+        <SplitView x:Name="SplitView" PanePlacement="Right" PaneBackground="#C8000000">
             <SplitView.Pane>
                 <Grid x:Name="Setting">
                     <Pivot x:Name="SettingPivot" RequestedTheme="Dark">

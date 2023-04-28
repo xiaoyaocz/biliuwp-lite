@@ -16,6 +16,7 @@ namespace BiliLite.Services
             if (!suggestSearchResult.status) return null;
             var suggestSearch = await suggestSearchResult.GetResult<SearchSuggestResponse>();
             if (suggestSearch == null) return null;
+            if (suggestSearch.result == null) return null;
             var suggestSearchContent = suggestSearch.result.Tag.Select(x => x.Value);
             return suggestSearchContent.ToList();
         }

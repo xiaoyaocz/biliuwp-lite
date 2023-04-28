@@ -101,7 +101,7 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                if(SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
                 {
                     player.IsFullScreen = true;
                 }
@@ -114,10 +114,10 @@ namespace BiliLite.Pages
                 {
                     playlist = e.Parameter as VideoPlaylist;
 
-                  
+
                     var element = PlayListTpl.GetElement(new Windows.UI.Xaml.ElementFactoryGetArgs()) as PivotItem;
                     element.DataContext = playlist;
-                 
+
                     pivot.Items.Insert(0, element);
                     pivot.SelectedIndex = 0;
                     await InitializeVideo(playlist.Playlist[playlist.Index].ID);
@@ -132,7 +132,7 @@ namespace BiliLite.Pages
             else
             {
                 Title = videoDetailVM?.VideoInfo?.title ?? "视频详情";
-                MessageCenter.ChangeTitle(this, Title); 
+                MessageCenter.ChangeTitle(this, Title);
             }
 
         }
@@ -193,7 +193,7 @@ namespace BiliLite.Pages
                         order = i,
                         play_mode = VideoPlayType.Video,
                         title = "P" + item.page + " " + item.part,
-                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title,videoDetailVM.VideoInfo.owner.mid)
+                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title, videoDetailVM.VideoInfo.owner.mid)
                     });
                     i++;
                 }
@@ -240,14 +240,14 @@ namespace BiliLite.Pages
             }
 
         }
-       
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             if (e.NavigationMode == NavigationMode.Back || e.SourcePageType.Name == "BlankPage")
             {
                 ClosePage();
             }
-               
+
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -381,7 +381,7 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
+                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
@@ -507,11 +507,11 @@ namespace BiliLite.Pages
 
         private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+
             var liveView = sender as ListView;
-            if (liveView.SelectedItem == null ) return;
+            if (liveView.SelectedItem == null) return;
             var item = liveView.SelectedItem as VideoPlaylistItem;
-           
+
             playlist.Index = playlist.Playlist.IndexOf(item);
             await InitializeVideo(item.ID);
 
@@ -520,26 +520,27 @@ namespace BiliLite.Pages
         private void player_AllMediaEndEvent(object sender, EventArgs e)
         {
 
-            if(playlist==null||playlist.Index== playlist.Playlist.Count - 1)
+            if (playlist == null || playlist.Index == playlist.Playlist.Count - 1)
             {
                 Utils.ShowMessageToast("播放完毕");
                 return;
             }
-            var listView= (pivot.Items[0] as PivotItem).Content as ListView;
-         
-            listView.SelectedIndex = playlist.Index + 1; 
+            var listView = (pivot.Items[0] as PivotItem).Content as ListView;
+
+            listView.SelectedIndex = playlist.Index + 1;
         }
 
         private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            if (videoDetailVM.VideoInfo == null|| videoDetailVM.VideoInfo.pages==null || videoDetailVM.VideoInfo.pages.Count == 0) return;
-            var downloadItem = new DownloadItem() { 
-                Cover= videoDetailVM.VideoInfo.pic,
-                ID=videoDetailVM.VideoInfo.aid,
-                Episodes =new List<DownloadEpisodeItem>(),
-                Subtitle= videoDetailVM.VideoInfo.bvid,
-                Title=videoDetailVM.VideoInfo.title,
-                Type= DownloadType.Video,
+            if (videoDetailVM.VideoInfo == null || videoDetailVM.VideoInfo.pages == null || videoDetailVM.VideoInfo.pages.Count == 0) return;
+            var downloadItem = new DownloadItem()
+            {
+                Cover = videoDetailVM.VideoInfo.pic,
+                ID = videoDetailVM.VideoInfo.aid,
+                Episodes = new List<DownloadEpisodeItem>(),
+                Subtitle = videoDetailVM.VideoInfo.bvid,
+                Title = videoDetailVM.VideoInfo.title,
+                Type = DownloadType.Video,
                 UpMid = videoDetailVM.VideoInfo.owner.mid.ToInt32(),
             };
             int i = 0;
@@ -547,27 +548,28 @@ namespace BiliLite.Pages
             {
                 //检查正在下载及下载完成是否存在此视频
                 int state = 0;
-                if (DownloadVM.Instance.Downloadings.FirstOrDefault(x=>x.EpisodeID==item.cid)!=null)
+                if (DownloadVM.Instance.Downloadings.FirstOrDefault(x => x.EpisodeID == item.cid) != null)
                 {
                     state = 2;
                 }
-                if (DownloadVM.Instance.Downloadeds.FirstOrDefault(x => x.Epsidoes.FirstOrDefault(y=>y.CID==item.cid)!=null) != null)
+                if (DownloadVM.Instance.Downloadeds.FirstOrDefault(x => x.Epsidoes.FirstOrDefault(y => y.CID == item.cid) != null) != null)
                 {
                     state = 3;
                 }
                 //如果正在下载state=2,下载完成state=3
-                downloadItem.Episodes.Add(new DownloadEpisodeItem() {
-                    AVID= videoDetailVM.VideoInfo.aid,
-                    BVID= videoDetailVM.VideoInfo.bvid,
-                    CID =item.cid,
-                    EpisodeID="",
-                    Index=i,
-                    Title= "P" + item.page + " " + item.part,
-                    State= state
+                downloadItem.Episodes.Add(new DownloadEpisodeItem()
+                {
+                    AVID = videoDetailVM.VideoInfo.aid,
+                    BVID = videoDetailVM.VideoInfo.bvid,
+                    CID = item.cid,
+                    EpisodeID = "",
+                    Index = i,
+                    Title = "P" + item.page + " " + item.part,
+                    State = state
                 });
                 i++;
             }
-            
+
             DownloadDialog downloadDialog = new DownloadDialog(downloadItem);
             await downloadDialog.ShowAsync();
         }
@@ -587,7 +589,7 @@ namespace BiliLite.Pages
         {
             var option = new FlyoutShowOptions();
             var element = sender as UIElement;
-            option.Position=e.GetPosition(element);
+            option.Position = e.GetPosition(element);
             TitleRightTappedMenu.ShowAt(element, option);
         }
 
