@@ -134,6 +134,7 @@
     <Compile Include="Extensions\ObservableCollectionExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Models\Common\NavigationInfo.cs" />
+    <Compile Include="Models\Common\NotePicture.cs" />
     <Compile Include="Models\Responses\HttpResults.cs" />
     <Compile Include="Models\Events\AysncUnhandledExceptionEventArgs.cs" />
     <Compile Include="Models\Download\DownloadSaveEpisodeInfo.cs" />
