@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Markup;
-using System.Text.RegularExpressions;
 using Windows.UI;
 using System.ComponentModel;
-using Windows.UI.Xaml.Documents;
 using System.Threading.Tasks;
 using BiliLite.Helpers;
 using BiliLite.Pages;
@@ -30,6 +19,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -648,6 +638,19 @@ namespace BiliLite.Controls
         {
             LoadComment(_loadCommentInfo);
         }
+
+        private void NotePicturesView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var notePicture = e.ClickedItem as NotePicture;
+            var notePicturesView = sender as AdaptiveGridView;
+            if (notePicture == null || notePicturesView == null) return;
+            var comment = notePicturesView.DataContext as CommentModel;
+            if (comment == null) return;
+            var notePictures = comment.content.pictures;
+            var index = notePictures.IndexOf(notePicture);
+            var pictures = notePictures.Select(x => x.ImgSrc).ToList();
+            MessageCenter.OpenImageViewer(pictures, index);
+        }
     }
 
     public class LoadCommentInfo
@@ -951,7 +954,7 @@ namespace BiliLite.Controls
     }
     public class CommentContentModel
     {
-
+        public List<NotePicture> pictures { get; set; }
         public string message { get; set; }
         public int plat { get; set; }
         public string plat_str
