@@ -299,7 +299,14 @@ namespace BiliLite.Helpers
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersion>(result.results);
                 var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
+                // 获取临时版本号
+                var revision = SystemInformation.ApplicationVersion.Revision;
                 var v = int.Parse(num);
+                // 存在临时版本号时，正式版本号减一
+                if (revision > 0)
+                {
+                    v--;
+                }
                 if (ver.version_num > v)
                 {
                     var dialog = new ContentDialog();
