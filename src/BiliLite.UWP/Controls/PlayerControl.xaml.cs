@@ -2515,6 +2515,13 @@ namespace BiliLite.Controls
                 }
             }
         }
+
+        private void Player_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var rectangle = new RectangleGeometry();
+            rectangle.Rect = new Rect(0, 0, SplitView.ActualWidth, SplitView.ActualHeight);
+            DanmuControl.Clip = rectangle;
+        }
     }
     public class CompareDanmakuModel : IEqualityComparer<DanmakuModel>
     {
