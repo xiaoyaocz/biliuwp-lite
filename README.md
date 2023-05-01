@@ -16,7 +16,9 @@ https://app.bilibili.com/
 
 # BiliLite
 
-从逍遥橙子大佬那fork出来，大佬不维护了，群也解散了，要维护只能自己搞了
+> BiliBili第三方UWP客户端
+
+从逍遥橙子大佬那fork出来
 
 https://github.com/xiaoyaocz/biliuwp-lite
 
