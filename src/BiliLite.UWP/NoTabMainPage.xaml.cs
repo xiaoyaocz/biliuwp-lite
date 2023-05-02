@@ -107,7 +107,7 @@ namespace BiliLite
                 }
             }
 #if !DEBUG
-            await Utils.CheckVersion();
+            await BiliExtensions.CheckVersion();
 #endif
         }
 
