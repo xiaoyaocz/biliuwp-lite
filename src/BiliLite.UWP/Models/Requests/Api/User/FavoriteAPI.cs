@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace BiliLite.Models.Requests.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v3/fav/folder/space/v2",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingService.Account.UserID}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -31,7 +31,7 @@ namespace BiliLite.Models.Requests.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v3/fav/folder/created/list",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingHelper.Account.UserID}&pn={page}&ps=20"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&up_mid={SettingService.Account.UserID}&pn={page}&ps=20"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -46,7 +46,7 @@ namespace BiliLite.Models.Requests.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/medialist/gateway/base/created",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingHelper.Account.UserID}&type=2&pn=1&ps=100"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&rid={aid}&up_mid={SettingService.Account.UserID}&type=2&pn=1&ps=100"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -172,7 +172,7 @@ namespace BiliLite.Models.Requests.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v3/fav/resource/list",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&media_id={fid}&mid={SettingService.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -183,7 +183,7 @@ namespace BiliLite.Models.Requests.Api.User
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/fav/season/list",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}&mid={SettingHelper.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&season_id={season_id}&mid={SettingService.Account.UserID}&keyword={Uri.EscapeDataString(keyword)}&pn={page}&ps=20"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
@@ -30,7 +29,7 @@ namespace BiliLite.Pages
         /// <summary>
         /// 主播
         /// </summary>
-        Anchor=3,
+        Anchor = 3,
         /// <summary>
         /// 用户
         /// </summary>
@@ -77,7 +76,7 @@ namespace BiliLite.Pages
             {
                 par.keyword = e.Parameter.ToString();
             }
-            par.keyword= par.keyword.TrimStart('@');
+            par.keyword = par.keyword.TrimStart('@');
             txtKeyword.Text = par.keyword;
             foreach (var item in searchVM.SearchItems)
             {
@@ -92,7 +91,7 @@ namespace BiliLite.Pages
             var queryText = args.QueryText;
             if (string.IsNullOrEmpty(queryText))
             {
-                Utils.ShowMessageToast("关键字不能为空啊，喂(#`O′)");
+                Notify.ShowMessageToast("关键字不能为空啊，喂(#`O′)");
                 return;
             }
 
@@ -244,7 +243,7 @@ namespace BiliLite.Pages
 
         private void cbArea_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cbArea.SelectedItem!=null)
+            if (cbArea.SelectedItem != null)
             {
                 foreach (var item in searchVM.SearchItems)
                 {

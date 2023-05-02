@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 
@@ -45,9 +45,9 @@ namespace BiliLite.Models.Requests.Api
                 baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/review/short/list",
                 parameter = $"media_id={media_id}&ps=20&sort={sort}&cursor={next}"
             };
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
-                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}";
+                api.parameter += $"&access_key={SettingService.Account.AccessKey}";
             }
             return api;
         }

@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -94,14 +93,14 @@ namespace BiliLite.Modules
 
         public void LoadShieldSetting()
         {
-            LiveWords = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.Live.SHIELD_WORD, new ObservableCollection<string>() { });
-            ShieldWords = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.VideoDanmaku.SHIELD_WORD, new ObservableCollection<string>() { });
+            LiveWords = SettingService.GetValue<ObservableCollection<string>>(SettingConstants.Live.SHIELD_WORD, new ObservableCollection<string>() { });
+            ShieldWords = SettingService.GetValue<ObservableCollection<string>>(SettingConstants.VideoDanmaku.SHIELD_WORD, new ObservableCollection<string>() { });
 
             //正则关键词
-            ShieldRegulars = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.VideoDanmaku.SHIELD_REGULAR, new ObservableCollection<string>() { });
+            ShieldRegulars = SettingService.GetValue<ObservableCollection<string>>(SettingConstants.VideoDanmaku.SHIELD_REGULAR, new ObservableCollection<string>() { });
 
             //用户
-            ShieldUsers = SettingHelper.GetValue<ObservableCollection<string>>(SettingHelper.VideoDanmaku.SHIELD_USER, new ObservableCollection<string>() { });
+            ShieldUsers = SettingService.GetValue<ObservableCollection<string>>(SettingConstants.VideoDanmaku.SHIELD_USER, new ObservableCollection<string>() { });
         }
 
         public async Task SyncDanmuFilter()
@@ -111,7 +110,7 @@ namespace BiliLite.Modules
                 var result = await playerAPI.GetDanmuFilterWords().Request();
                 if (!result.status)
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                     return;
                 }
                 var obj = result.GetJObject();
@@ -126,7 +125,7 @@ namespace BiliLite.Modules
                         {
                             ShieldWords.Add(item);
                         }
-                        SettingHelper.SetValue(SettingHelper.VideoDanmaku.SHIELD_WORD, ShieldWords);
+                        SettingService.SetValue(SettingConstants.VideoDanmaku.SHIELD_WORD, ShieldWords);
                     }
                     {
                         var users = items.Where(x => x.type == 1).Select(x => x.filter).ToList();
@@ -136,7 +135,7 @@ namespace BiliLite.Modules
                         {
                             ShieldRegulars.Add(item);
                         }
-                        SettingHelper.SetValue(SettingHelper.VideoDanmaku.SHIELD_REGULAR, ShieldRegulars);
+                        SettingService.SetValue(SettingConstants.VideoDanmaku.SHIELD_REGULAR, ShieldRegulars);
                     }
                     {
                         var users = items.Where(x => x.type == 2).Select(x => x.filter).ToList();
@@ -146,12 +145,12 @@ namespace BiliLite.Modules
                         {
                             ShieldUsers.Add(item);
                         }
-                        SettingHelper.SetValue(SettingHelper.VideoDanmaku.SHIELD_USER, ShieldUsers);
+                        SettingService.SetValue(SettingConstants.VideoDanmaku.SHIELD_USER, ShieldUsers);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(obj["message"].ToString());
+                    Notify.ShowMessageToast(obj["message"].ToString());
                 }
             }
             catch (Exception ex)
@@ -164,7 +163,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                var result = await playerAPI.AddDanmuFilterWord(word:word,type:type).Request();
+                var result = await playerAPI.AddDanmuFilterWord(word: word, type: type).Request();
                 if (!result.status)
                 {
                     return false;

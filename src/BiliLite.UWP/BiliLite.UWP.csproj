@@ -129,10 +129,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\ApiModelExtensions.cs" />
+    <Compile Include="Extensions\BiliExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\HttpCookieItemsExtensions.cs" />
     <Compile Include="Extensions\HttpResultsExtensions.cs" />
+    <Compile Include="Extensions\Notify.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtension.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TimeExtensions.cs" />
+    <Compile Include="Models\Common\SettingConstants.cs" />
+    <Compile Include="Models\Responses\NewVersionResponse.cs" />
     <Compile Include="Models\Common\NavigationInfo.cs" />
     <Compile Include="Models\Common\NotePicture.cs" />
     <Compile Include="Models\Responses\HttpResults.cs" />
@@ -283,10 +291,9 @@
     <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageCenter.cs" />
-    <Compile Include="Helpers\SettingHelper.cs" />
-    <Compile Include="Helpers\SqlHelper.cs" />
-    <Compile Include="Helpers\Utils.cs" />
-    <Compile Include="Helpers\VideoPlayHistoryHelper.cs" />
+    <Compile Include="Services\SettingService.cs" />
+    <Compile Include="Services\SqlHelper.cs" />
+    <Compile Include="Services\VideoPlayHistoryHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

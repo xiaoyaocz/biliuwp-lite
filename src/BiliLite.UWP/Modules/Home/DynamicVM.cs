@@ -1,13 +1,8 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api.User;
-using Microsoft.Toolkit.Collections;
+﻿using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml;
@@ -74,19 +69,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -118,7 +113,7 @@ namespace BiliLite.Modules
 
 
 
-      
+
     }
     public class DynamicItemModel
     {

@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Modules.User;
@@ -27,7 +26,7 @@ namespace BiliLite.Pages.Home
         public RecommendPage()
         {
             this.InitializeComponent();
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.CACHE_HOME, true))
+            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
             {
                 this.NavigationCacheMode = NavigationCacheMode.Enabled;
             }
@@ -38,32 +37,32 @@ namespace BiliLite.Pages.Home
             recommendVM = new RecommendVM();
             this.DataContext = recommendVM;
         }
-        
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-           
-            if (e.NavigationMode== NavigationMode.New)
+
+            if (e.NavigationMode == NavigationMode.New)
             {
                 if (IsGrid)
                 {
                     RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
                 }
-               
+
                 SetListDisplay();
                 await recommendVM.GetRecommend();
-                if (SettingHelper.GetValue<bool>("推荐右键提示", true))
+                if (SettingService.GetValue<bool>("推荐右键提示", true))
                 {
-                    SettingHelper.SetValue("推荐右键提示", false);
-                    Utils.ShowMessageToast("右键或长按项目可以进行更多操作哦~", 5);
+                    SettingService.SetValue("推荐右键提示", false);
+                    Notify.ShowMessageToast("右键或长按项目可以进行更多操作哦~", 5);
                 }
             }
 
-           
+
         }
         private void SetListDisplay()
         {
-            var grid = SettingHelper.GetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 0) == 0;
+            var grid = SettingService.GetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 0) == 0;
             if (grid != IsGrid)
             {
                 IsGrid = grid;
@@ -76,9 +75,9 @@ namespace BiliLite.Pages.Home
                     btnList_Click(this, null);
                 }
             }
-            
+
         }
-        
+
 
         private async void RecommendGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -86,12 +85,12 @@ namespace BiliLite.Pages.Home
             await VideoItemClicked(data);
         }
 
-   
+
         private void RefreshContainer_RefreshRequested(Microsoft.UI.Xaml.Controls.RefreshContainer sender, Microsoft.UI.Xaml.Controls.RefreshRequestedEventArgs args)
         {
-             recommendVM.Refresh();
+            recommendVM.Refresh();
         }
-     
+
         private async void BannerItem_Click(object sender, RoutedEventArgs e)
         {
             await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as RecommendBannerItemModel).uri);
@@ -100,9 +99,9 @@ namespace BiliLite.Pages.Home
         private async void ListMenu_ItemClick(object sender, ItemClickEventArgs e)
         {
             var threePoint = e.ClickedItem as RecommendThreePointV2ItemModel;
-            if (threePoint.type== "watch_later")
+            if (threePoint.type == "watch_later")
             {
-                var item= (sender as ListView).DataContext as RecommendItemModel;
+                var item = (sender as ListView).DataContext as RecommendItemModel;
                 WatchLaterVM.Instance.AddToWatchlater(item.param);
                 return;
             }
@@ -121,8 +120,8 @@ namespace BiliLite.Pages.Home
 
         private async void ListDislike_ItemClick(object sender, ItemClickEventArgs e)
         {
-           var reasons = e.ClickedItem as RecommendThreePointV2ItemReasonsModel;
-           var threePoint=  (sender as GridView).DataContext as RecommendThreePointV2ItemModel;
+            var reasons = e.ClickedItem as RecommendThreePointV2ItemReasonsModel;
+            var threePoint = (sender as GridView).DataContext as RecommendThreePointV2ItemModel;
             await recommendVM.Dislike(threePoint.idx, threePoint, reasons);
         }
 
@@ -138,9 +137,9 @@ namespace BiliLite.Pages.Home
             btnGrid.Visibility = Visibility.Visible;
             btnList.Visibility = Visibility.Collapsed;
             //设置
-            SettingHelper.SetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 1);
+            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 1);
             RecommendGridView.ItemHeight = 100;
-            RecommendGridView.DesiredWidth =500;
+            RecommendGridView.DesiredWidth = 500;
             RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["List"];
         }
 
@@ -151,7 +150,7 @@ namespace BiliLite.Pages.Home
             btnGrid.Visibility = Visibility.Collapsed;
             btnList.Visibility = Visibility.Visible;
             //设置
-            SettingHelper.SetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 0);
+            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 0);
             RecommendGridView.ItemHeight = 240;
             RecommendGridView.DesiredWidth = 260;
             RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
@@ -167,25 +166,25 @@ namespace BiliLite.Pages.Home
 
         private async Task VideoItemClicked(RecommendItemModel data, bool dontGoTo = false)
         {
-            if(data==null)
-            if (data.uri == null && data.ad_info != null)
-            {
-                var url = data.ad_info.creative_content.url;
-                if (!url.Contains("http://") && !url.Contains("https://"))
+            if (data == null)
+                if (data.uri == null && data.ad_info != null)
                 {
-                    url = data.ad_info.creative_content.click_url ?? data.ad_info.creative_content.url;
-                }
-                await MessageCenter.HandelUrl(url, dontGoTo);
+                    var url = data.ad_info.creative_content.url;
+                    if (!url.Contains("http://") && !url.Contains("https://"))
+                    {
+                        url = data.ad_info.creative_content.click_url ?? data.ad_info.creative_content.url;
+                    }
+                    await MessageCenter.HandelUrl(url, dontGoTo);
 
-                //MessageCenter.NavigateToPage(this, new NavigationInfo()
-                //{
-                //    icon = Symbol.World,
-                //    page = typeof(WebPage),
-                //    parameters = url,
-                //    title = "广告"
-                //});
-                return;
-            }
+                    //MessageCenter.NavigateToPage(this, new NavigationInfo()
+                    //{
+                    //    icon = Symbol.World,
+                    //    page = typeof(WebPage),
+                    //    parameters = url,
+                    //    title = "广告"
+                    //});
+                    return;
+                }
             if (data.card_goto == "new_tunnel")
             {
                 MessageCenter.NavigateToPage(this, new NavigationInfo()

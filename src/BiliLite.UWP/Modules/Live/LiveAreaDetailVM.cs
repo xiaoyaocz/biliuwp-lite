@@ -1,23 +1,20 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api.Live;
+﻿using BiliLite.Models.Requests.Api.Live;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Live
 {
-    public class LiveAreaDetailVM:IModules
+    public class LiveAreaDetailVM : IModules
     {
         public int AreaID { get; set; }
         public int ParentAreaID { get; set; }
-        
+
 
         readonly LiveAreaAPI liveAreaAPI;
         public LiveAreaDetailVM(int area_id, int parent_id)
@@ -65,15 +62,15 @@ namespace BiliLite.Modules.Live
             {
                 Loading = true;
                 CanLoadMore = false;
-                var results = await liveAreaAPI.LiveAreaRoomList(AreaID,ParentAreaID,Page, SelectTag?.sort_type?? "").Request();
+                var results = await liveAreaAPI.LiveAreaRoomList(AreaID, ParentAreaID, Page, SelectTag?.sort_type ?? "").Request();
                 if (results.status)
                 {
                     var data = results.GetJObject();
                     if (data["code"].ToInt32() == 0)
                     {
-                        if (Tags==null)
+                        if (Tags == null)
                         {
-                            Tags= JsonConvert.DeserializeObject<List<LiveTagItemModel>>(data["data"]["new_tags"].ToString());
+                            Tags = JsonConvert.DeserializeObject<List<LiveTagItemModel>>(data["data"]["new_tags"].ToString());
                             SelectTag = Tags[0];
                             SelectTag.Select = true;
                         }
@@ -94,19 +91,19 @@ namespace BiliLite.Modules.Live
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -134,7 +131,7 @@ namespace BiliLite.Modules.Live
         }
 
     }
-    public class LiveTagItemModel:INotifyPropertyChanged
+    public class LiveTagItemModel : INotifyPropertyChanged
     {
         public int id { get; set; }
         public string name { get; set; }

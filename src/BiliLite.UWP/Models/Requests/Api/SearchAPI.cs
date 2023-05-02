@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Services;
 using System;
 
@@ -24,7 +24,7 @@ namespace BiliLite.Models.Requests.Api
                 baseUrl = $"https://app.bilibili.com/x/v2/search",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + "&fnval=16&fnver=0&force_host=0&fourk=1&from_source=app_search&highlight=0&is_org_query=0&qn=112&recommend=1"
             };
-            api.parameter += $"&keyword={Uri.EscapeDataString(keyword)}&local_time={Utils.GetTimestampS()}&pn={pn}&ps={ps}";
+            api.parameter += $"&keyword={Uri.EscapeDataString(keyword)}&local_time={TimeExtensions.GetTimestampS()}&pn={pn}&ps={ps}";
             if (string.IsNullOrEmpty(order))
             {
                 api.parameter += $"&order={order}";
@@ -48,7 +48,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -68,7 +68,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -88,7 +88,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -108,7 +108,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -128,7 +128,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -148,7 +148,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -168,7 +168,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (!string.IsNullOrEmpty(area))
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {

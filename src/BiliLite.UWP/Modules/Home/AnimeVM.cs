@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BiliLite.Models;
-using BiliLite.Helpers;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Controls;
 using Newtonsoft.Json.Linq;
@@ -130,11 +129,11 @@ namespace BiliLite.Modules
                 dontGoTo = dontGoTo,
             });
         }
-      
-        public void SeasonItemClick(object sender,ItemClickEventArgs e)
+
+        public void SeasonItemClick(object sender, ItemClickEventArgs e)
         {
             var seasonId = e.ClickedItem.GetType().GetProperty("season_id").GetValue(e.ClickedItem, null);
-            var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null)??"";
+            var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null) ?? "";
             SeasonItemOpen(sender, seasonId, title.ToString());
         }
 
@@ -166,7 +165,7 @@ namespace BiliLite.Modules
             {
                 Loading = true;
                 var api = bangumiApi.BangumiHome();
-                if (animeType== AnimeType.guochuang)
+                if (animeType == AnimeType.guochuang)
                 {
                     api = bangumiApi.GuochuangHome();
                 }
@@ -180,19 +179,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -215,19 +214,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -249,17 +248,17 @@ namespace BiliLite.Modules
                     {
                         AnimeFallModel.items.Add(item);
                     }
-                   
+
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
-                var handel= HandelError<List<AnimeFallItemModel>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                var handel = HandelError<List<AnimeFallItemModel>>(ex);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -288,7 +287,7 @@ namespace BiliLite.Modules
             get { return _showMore; }
             set { _showMore = value; DoPropertyChanged("ShowMore"); DoPropertyChanged("ShowLoading"); }
         }
-     
+
         public ObservableCollection<AnimeFallItemModel> items { get; set; }
     }
     public class AnimeFallItemModel
@@ -325,7 +324,7 @@ namespace BiliLite.Modules
         }
         public string badge { get; set; }
     }
-  
-
-
 }
+
+
+

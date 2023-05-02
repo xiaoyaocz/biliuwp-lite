@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using BiliLite.Modules.Home;
-using BiliLite.Helpers;
 using System.Windows.Input;
 using BiliLite.Extensions;
 using BiliLite.Models;
@@ -127,7 +126,7 @@ namespace BiliLite.Modules
                         var ls = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["new"].ToString());
                         if (next_id == "")
                         {
-                            var recommend = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["recommend"]?.ToString()??"[]");
+                            var recommend = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["recommend"]?.ToString() ?? "[]");
                             foreach (var item in recommend)
                             {
                                 ls.Insert(0, item);
@@ -147,19 +146,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -236,7 +235,7 @@ namespace BiliLite.Modules
                 {
                     _SelectTag = value;
                 }
-               
+
             }
         }
 
@@ -255,18 +254,18 @@ namespace BiliLite.Modules
             set { _regionVideos = value; DoPropertyChanged("Videos"); }
         }
         public string next_id = "";
-        
+
         public async Task LoadHome()
         {
             try
             {
                 Loading = true;
-                var api = regionAPI.RegionChildDynamic(ID, (SelectTag==null)?0: SelectTag.tid);
+                var api = regionAPI.RegionChildDynamic(ID, (SelectTag == null) ? 0 : SelectTag.tid);
                 if (next_id != "")
                 {
                     api = regionAPI.RegionChildDynamic(ID, next_id, (SelectTag == null) ? 0 : SelectTag.tid);
                 }
-                
+
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -276,18 +275,18 @@ namespace BiliLite.Modules
                         var ls = JsonConvert.DeserializeObject<ObservableCollection<RegionVideoItemModel>>(data["data"]["new"].ToString());
                         if (next_id == "")
                         {
-                            var tags = JsonConvert.DeserializeObject<List<RegionTagItemModel>>(data["data"]["top_tag"]?.ToString()??"[]");
+                            var tags = JsonConvert.DeserializeObject<List<RegionTagItemModel>>(data["data"]["top_tag"]?.ToString() ?? "[]");
                             tags.Insert(0, new RegionTagItemModel()
                             {
                                 tid = 0,
                                 tname = "全部标签"
                             });
-                            if (Tasgs==null|| Tasgs.Count==0)
+                            if (Tasgs == null || Tasgs.Count == 0)
                             {
                                 Tasgs = tags;
                                 SelectTag = Tasgs[0];
                             }
-                           
+
                             Videos = ls;
                         }
                         else
@@ -297,23 +296,23 @@ namespace BiliLite.Modules
                                 Videos.Add(item);
                             }
                         }
-                        next_id = data["data"]["cbottom"]?.ToString()??"";
+                        next_id = data["data"]["cbottom"]?.ToString() ?? "";
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -326,7 +325,7 @@ namespace BiliLite.Modules
             try
             {
                 Loading = true;
-                var api = regionAPI.RegionChildList(ID,SelectOrder.order,page, SelectTag.tid);
+                var api = regionAPI.RegionChildList(ID, SelectOrder.order, page, SelectTag.tid);
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -349,19 +348,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -385,7 +384,7 @@ namespace BiliLite.Modules
                 page = 1;
                 await LoadList();
             }
-            
+
         }
         public async void LoadMore()
         {
@@ -393,7 +392,7 @@ namespace BiliLite.Modules
             {
                 return;
             }
-            if (SelectOrder == null|| SelectOrder.order=="")
+            if (SelectOrder == null || SelectOrder.order == "")
             {
                 await LoadHome();
             }

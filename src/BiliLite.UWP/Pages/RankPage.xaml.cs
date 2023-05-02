@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
@@ -27,14 +26,14 @@ namespace BiliLite.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if(e.NavigationMode== NavigationMode.New)
+            if (e.NavigationMode == NavigationMode.New)
             {
                 var rid = 0;
                 if (e.Parameter != null)
                 {
                     rid = e.Parameter.ToInt32();
                 }
-                 rankVM.LoadRankRegion(rid);
+                rankVM.LoadRankRegion(rid);
             }
         }
 
@@ -45,7 +44,7 @@ namespace BiliLite.Pages
                 return;
             }
             var data = pivot.SelectedItem as RankRegionModel;
-            if (data.Items==null||data.Items.Count==0)
+            if (data.Items == null || data.Items.Count == 0)
             {
                 await rankVM.LoadRankDetail(data);
             }
@@ -53,7 +52,7 @@ namespace BiliLite.Pages
 
         private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var item= e.ClickedItem as RankItemModel;
+            var item = e.ClickedItem as RankItemModel;
             RankItemModelOpen(sender, item);
         }
 

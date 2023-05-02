@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BiliLite.Helpers;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Windows.Input;
@@ -18,7 +17,7 @@ namespace BiliLite.Modules
         {
             hotAPI = new HotAPI();
             RefreshCommand = new RelayCommand(Refresh);
-            LoadMoreCommand=new RelayCommand(LoadMore);
+            LoadMoreCommand = new RelayCommand(LoadMore);
         }
         public ICommand RefreshCommand { get; private set; }
         public ICommand LoadMoreCommand { get; private set; }
@@ -50,14 +49,14 @@ namespace BiliLite.Modules
             try
             {
                 Loading = true;
-            
+
                 var results = await hotAPI.Popular(idx, last_param).Request();
                 if (results.status)
                 {
-                    var data =  results.GetJObject();
-                    if (data["code"].ToInt32()==0)
+                    var data = results.GetJObject();
+                    if (data["code"].ToInt32() == 0)
                     {
-                        if (TopItems==null)
+                        if (TopItems == null)
                         {
                             TopItems = JsonConvert.DeserializeObject<List<HotTopItemModel>>(data["config"]["top_items"].ToString());
                         }
@@ -67,7 +66,7 @@ namespace BiliLite.Modules
                             if (items[i].card_goto != "av")
                                 items.Remove(items[i]);
                         }
-                        if (HotItems==null)
+                        if (HotItems == null)
                         {
                             HotItems = items;
                         }
@@ -81,26 +80,26 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
                 Loading = false;
             }
         }
-    
+
         public async void Refresh()
         {
             if (Loading)
@@ -117,7 +116,7 @@ namespace BiliLite.Modules
             {
                 return;
             }
-            if (HotItems==null|| HotItems.Count==0)
+            if (HotItems == null || HotItems.Count == 0)
             {
                 return;
             }
@@ -125,7 +124,7 @@ namespace BiliLite.Modules
             await GetPopular(last.idx, last.param);
         }
     }
-    public class HotTopItemModel 
+    public class HotTopItemModel
     {
         public int entrance_id { get; set; }
         public string icon { get; set; }

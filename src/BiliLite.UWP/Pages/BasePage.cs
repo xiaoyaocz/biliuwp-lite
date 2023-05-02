@@ -1,5 +1,6 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -10,7 +11,7 @@ namespace BiliLite.Pages
         public string Title { get; set; }
         public BasePage()
         {
-            this.NavigationCacheMode = (SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 1) ? Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled : Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
+            this.NavigationCacheMode = (SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 1) ? Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled : Windows.UI.Xaml.Navigation.NavigationCacheMode.Disabled;
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
@@ -38,8 +39,8 @@ namespace BiliLite.Pages
         {
             if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
             {
-               // (this.Content as Grid).Children.Clear();
-              //  GC.Collect();
+                // (this.Content as Grid).Children.Clear();
+                //  GC.Collect();
             }
             base.OnNavigatingFrom(e);
         }

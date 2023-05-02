@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
@@ -58,7 +57,7 @@ namespace BiliLite.Pages
                 return;
             }
 
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
                 try
                 {
@@ -73,8 +72,8 @@ namespace BiliLite.Pages
                         {
                             homeVM.IsLogin = false;
                             MessageCenter.SendLogout();
-                            Utils.ShowMessageToast("登录过期，请重新登录");
-                            await Utils.ShowLoginDialog();
+                            Notify.ShowMessageToast("登录过期，请重新登录");
+                            await Notify.ShowLoginDialog();
                         }
                     }
                 }
@@ -82,7 +81,7 @@ namespace BiliLite.Pages
                 {
                     homeVM.IsLogin = false;
                     logger.Log("读取access_key信息失败", LogType.INFO, ex);
-                    Utils.ShowMessageToast("读取登录信息失败，请重新登录");
+                    Notify.ShowMessageToast("读取登录信息失败，请重新登录");
                     //throw;
                 }
 
@@ -92,7 +91,7 @@ namespace BiliLite.Pages
 
         private async void LaodUserStatus()
         {
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
                 homeVM.IsLogin = true;
                 await homeVM.LoginUserCard();
@@ -131,7 +130,7 @@ namespace BiliLite.Pages
 
         private async void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            var data = await Utils.ShowLoginDialog();
+            var data = await Notify.ShowLoginDialog();
         }
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
@@ -155,7 +154,7 @@ namespace BiliLite.Pages
         {
             if (string.IsNullOrEmpty(SearchBox.Text))
             {
-                Utils.ShowMessageToast("关键字不能为空");
+                Notify.ShowMessageToast("关键字不能为空");
                 return;
             }
 
@@ -179,9 +178,9 @@ namespace BiliLite.Pages
 
         private async void MenuMyFollow_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             MessageCenter.NavigateToPage(this, new NavigationInfo()
@@ -195,9 +194,9 @@ namespace BiliLite.Pages
 
         private async void MenuMyLive_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             MessageCenter.NavigateToPage(this, new NavigationInfo()
@@ -225,9 +224,9 @@ namespace BiliLite.Pages
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
-                title = SettingHelper.Account.Profile.name,
+                title = SettingService.Account.Profile.name,
                 page = typeof(UserInfoPage),
-                parameters = SettingHelper.Account.UserID
+                parameters = SettingService.Account.UserID
             });
         }
 
@@ -244,9 +243,9 @@ namespace BiliLite.Pages
 
         private async void MenuWatchlater_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             MessageCenter.NavigateToPage(this, new NavigationInfo()
@@ -263,11 +262,11 @@ namespace BiliLite.Pages
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
-                title = SettingHelper.Account.Profile.name,
+                title = SettingService.Account.Profile.name,
                 page = typeof(UserInfoPage),
                 parameters = new UserInfoParameter()
                 {
-                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Mid = SettingService.Account.UserID.ToString(),
                     Tab = UserTab.Fans
                 }
             });
@@ -284,11 +283,11 @@ namespace BiliLite.Pages
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
-                title = SettingHelper.Account.Profile.name,
+                title = SettingService.Account.Profile.name,
                 page = typeof(UserInfoPage),
                 parameters = new UserInfoParameter()
                 {
-                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Mid = SettingService.Account.UserID.ToString(),
                     Tab = UserTab.Attention
                 }
             });
@@ -299,11 +298,11 @@ namespace BiliLite.Pages
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Contact,
-                title = SettingHelper.Account.Profile.name,
+                title = SettingService.Account.Profile.name,
                 page = typeof(UserInfoPage),
                 parameters = new UserInfoParameter()
                 {
-                    Mid = SettingHelper.Account.UserID.ToString(),
+                    Mid = SettingService.Account.UserID.ToString(),
                     Tab = UserTab.Dynamic
                 }
             });

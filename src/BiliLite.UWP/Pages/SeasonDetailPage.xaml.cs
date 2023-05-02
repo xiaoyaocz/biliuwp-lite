@@ -1,6 +1,5 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Dialogs;
-using BiliLite.Helpers;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Modules;
 using BiliLite.Modules.Season;
@@ -24,6 +23,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common;
 using BiliLite.Services;
+using BiliLite.Extensions;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -52,7 +52,7 @@ namespace BiliLite.Pages
             seasonReviewVM = new SeasonReviewVM();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+            RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
         }
 
         private void SeasonDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -94,15 +94,15 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                if (SettingService.GetValue<bool>(SettingConstants.Player.AUTO_FULL_SCREEN, false))
                 {
                     player.IsFullScreen = true;
                 }
                 else
                 {
-                    player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                    player.IsFullWindow = SettingService.GetValue<bool>(SettingConstants.Player.AUTO_FULL_WINDOW, false);
                 }
-                pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
+                pivot.SelectedIndex = SettingService.GetValue<int>(SettingConstants.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is object[])
                 {
                     var pars = e.Parameter as object[];
@@ -150,9 +150,9 @@ namespace BiliLite.Pages
             if (string.IsNullOrEmpty(ep_id) && seasonDetailVM.Detail.user_status?.progress != null)
             {
                 ep_id = seasonDetailVM.Detail.user_status.progress.last_ep_id.ToString();
-                SettingHelper.SetValue<double>("ep" + ep_id, Convert.ToDouble(seasonDetailVM.Detail.user_status.progress.last_time));
+                SettingService.SetValue<double>("ep" + ep_id, Convert.ToDouble(seasonDetailVM.Detail.user_status.progress.last_time));
             }
-            var selectItem = (selectProview?seasonDetailVM.Previews: seasonDetailVM.Episodes).FirstOrDefault(x => x.id.ToString() == ep_id);
+            var selectItem = (selectProview ? seasonDetailVM.Previews : seasonDetailVM.Episodes).FirstOrDefault(x => x.id.ToString() == ep_id);
             if (selectItem != null)
             {
                 index = (selectProview ? seasonDetailVM.Previews : seasonDetailVM.Episodes).IndexOf(selectItem);
@@ -185,7 +185,7 @@ namespace BiliLite.Pages
                     order = i,
                     play_mode = VideoPlayType.Season,
                     title = item.title + " " + item.long_title,
-                    area = Utils.ParseArea(seasonDetailVM.Detail.title, seasonDetailVM.Detail.up_info?.mid??0)
+                    area = seasonDetailVM.Detail.title.ParseArea(seasonDetailVM.Detail.up_info?.mid ?? 0)
                 });
                 i++;
             }
@@ -216,7 +216,7 @@ namespace BiliLite.Pages
                     order = i,
                     play_mode = VideoPlayType.Season,
                     title = item.title + " " + item.long_title,
-                    area=Utils.ParseArea(seasonDetailVM.Detail.title, seasonDetailVM.Detail.up_info?.mid ?? 0)
+                    area = seasonDetailVM.Detail.title.ParseArea(seasonDetailVM.Detail.up_info?.mid ?? 0)
                 });
                 i++;
             }
@@ -230,11 +230,11 @@ namespace BiliLite.Pages
         }
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if(e.NavigationMode== NavigationMode.Back||e.SourcePageType.Name == "BlankPage")
+            if (e.NavigationMode == NavigationMode.Back || e.SourcePageType.Name == "BlankPage")
             {
                 ClosePage();
             }
-            
+
             base.OnNavigatingFrom(e);
         }
         public void ChangeTitle(string title)
@@ -258,30 +258,30 @@ namespace BiliLite.Pages
         }
         private void btnShareCopy_Click(object sender, RoutedEventArgs e)
         {
-            Utils.SetClipboard($"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}");
-            Utils.ShowMessageToast("已复制内容到剪切板");
+            $"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}".SetClipboard();
+            Notify.ShowMessageToast("已复制内容到剪切板");
         }
 
         private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
         {
-            Utils.SetClipboard("http://b23.tv/ss" + season_id);
-            Utils.ShowMessageToast("已复制链接到剪切板");
+            $"http://b23.tv/ss{season_id}".SetClipboard();
+            Notify.ShowMessageToast("已复制链接到剪切板");
         }
 
-       
+
 
         private void PlayerControl_FullScreenEvent(object sender, bool e)
         {
             if (e)
             {
-                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
+                this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -295,7 +295,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -316,7 +316,7 @@ namespace BiliLite.Pages
                 ep_id = seasonDetailVM.Episodes[e].id.ToString();
                 aid = seasonDetailVM.Episodes[e].aid;
             }
-           
+
             CreateQR();
             comment.LoadComment(new LoadCommentInfo()
             {
@@ -340,7 +340,7 @@ namespace BiliLite.Pages
                 UpdatePlayInfoToEpisode(listEpisode.SelectedIndex);
             }
             player.ChangePlayIndex(listEpisode.SelectedIndex);
-            ep_id =seasonDetailVM.Episodes[listEpisode.SelectedIndex].id.ToString();
+            ep_id = seasonDetailVM.Episodes[listEpisode.SelectedIndex].id.ToString();
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)CommentApi.CommentType.Video,
@@ -391,7 +391,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 logger.Log("创建二维码失败epid" + ep_id, LogType.ERROR, ex);
-                Utils.ShowMessageToast("创建二维码失败");
+                Notify.ShowMessageToast("创建二维码失败");
             }
 
         }
@@ -405,7 +405,7 @@ namespace BiliLite.Pages
             var item = SeasonList.SelectedItem as SeasonDetailSeasonItemModel;
             if (item.season_id.ToString() != season_id)
             {
-                
+
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
@@ -452,7 +452,7 @@ namespace BiliLite.Pages
 
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (pivot.SelectedIndex == 3 && (seasonReviewVM.Items == null || seasonReviewVM.Items.Count==0))
+            if (pivot.SelectedIndex == 3 && (seasonReviewVM.Items == null || seasonReviewVM.Items.Count == 0))
             {
                 await seasonReviewVM.GetItems();
             }
@@ -460,11 +460,11 @@ namespace BiliLite.Pages
 
         private void btnReviewLike_Click(object sender, RoutedEventArgs e)
         {
-            var item= (sender as HyperlinkButton).DataContext as SeasonShortReviewItemModel;
+            var item = (sender as HyperlinkButton).DataContext as SeasonShortReviewItemModel;
             seasonReviewVM.Like(item);
         }
 
-       
+
         private void btnReviewDislike_Click(object sender, RoutedEventArgs e)
         {
             var item = (sender as HyperlinkButton).DataContext as SeasonShortReviewItemModel;
@@ -474,12 +474,12 @@ namespace BiliLite.Pages
         private async void btnSendReview_Click(object sender, RoutedEventArgs e)
         {
             if (seasonReviewVM == null || seasonReviewVM.MediaID == 0) return;
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
-            
+
             SendReviewDialog sendReviewDialog = new SendReviewDialog(seasonReviewVM.MediaID);
             await sendReviewDialog.ShowAsync();
         }
@@ -503,12 +503,12 @@ namespace BiliLite.Pages
             var downloadItem = new DownloadItem()
             {
                 Cover = seasonDetailVM.Detail.cover,
-               SeasonID= seasonDetailVM.Detail.season_id,
-               SeasonType=seasonDetailVM.Detail.type,
+                SeasonID = seasonDetailVM.Detail.season_id,
+                SeasonType = seasonDetailVM.Detail.type,
                 Episodes = new List<DownloadEpisodeItem>(),
                 Subtitle = seasonDetailVM.Detail.subtitle,
                 Title = seasonDetailVM.Detail.title,
-                UpMid=seasonDetailVM.Detail.up_info?.mid??0,
+                UpMid = seasonDetailVM.Detail.up_info?.mid ?? 0,
                 Type = DownloadType.Season
             };
             int i = 0;
@@ -531,13 +531,13 @@ namespace BiliLite.Pages
                     CID = item.cid,
                     EpisodeID = item.id.ToString(),
                     Index = i,
-                    Title = item.title+" "+ item.long_title,
+                    Title = item.title + " " + item.long_title,
                     State = state,
-                    AVID=item.aid,
-                    BVID=item.bvid,
-                    ShowBadge= item.show_badge,
-                    Badge=item.badge,
-                    IsPreview=item.IsPreview
+                    AVID = item.aid,
+                    BVID = item.bvid,
+                    ShowBadge = item.show_badge,
+                    Badge = item.badge,
+                    IsPreview = item.IsPreview
                 });
                 i++;
             }

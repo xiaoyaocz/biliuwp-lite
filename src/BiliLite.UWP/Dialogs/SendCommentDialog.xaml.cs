@@ -1,20 +1,8 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api;
+﻿using BiliLite.Models.Requests.Api;
 using BiliLite.Modules;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using BiliLite.Extensions;
 using static BiliLite.Models.Requests.Api.CommentApi;
 
@@ -39,33 +27,33 @@ namespace BiliLite.Dialogs
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (string.IsNullOrEmpty( txt_Comment.Text.Trim()))
+            if (string.IsNullOrEmpty(txt_Comment.Text.Trim()))
             {
-                Utils.ShowMessageToast("检查下你的输入哦");
+                Notify.ShowMessageToast("检查下你的输入哦");
                 return;
             }
             try
             {
                 IsPrimaryButtonEnabled = false;
                 var text = txt_Comment.Text;
-                var result=await commentApi.AddComment(oid,commentType, text).Request();
-                var data =await result.GetData<object>();
+                var result = await commentApi.AddComment(oid, commentType, text).Request();
+                var data = await result.GetData<object>();
                 if (data.code == 0)
                 {
-                    Utils.ShowMessageToast("发表评论成功");
+                    Notify.ShowMessageToast("发表评论成功");
                     this.Hide();
 
                 }
                 else
                 {
-                    Utils.ShowMessageToast(data.message.ToString());
+                    Notify.ShowMessageToast(data.message.ToString());
                 }
 
             }
             catch (Exception)
             {
                 IsPrimaryButtonEnabled = true;
-                Utils.ShowMessageToast("发送评论失败");
+                Notify.ShowMessageToast("发送评论失败");
                 // throw;
             }
         }
@@ -77,13 +65,12 @@ namespace BiliLite.Dialogs
 
         private async void btnOpenFace_Click(object sender, RoutedEventArgs e)
         {
-            
             FaceFlyout.ShowAt(sender as Button);
-            if(emoteVM.Packages==null|| emoteVM.Packages.Count == 0)
+            if (emoteVM.Packages == null || emoteVM.Packages.Count == 0)
             {
                 await emoteVM.GetEmote(EmoteBusiness.reply);
             }
-            
+
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)

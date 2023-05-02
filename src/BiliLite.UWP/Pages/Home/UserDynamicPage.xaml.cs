@@ -1,23 +1,12 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Services;
+using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Modules.User;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Extensions;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -29,7 +18,7 @@ namespace BiliLite.Pages.Home
     public sealed partial class UserDynamicPage : Page
     {
         readonly DynamicVM dynamicVM;
-        private bool IsStaggered { get; set; } =false;
+        private bool IsStaggered { get; set; } = false;
         public UserDynamicPage()
         {
             this.InitializeComponent();
@@ -37,7 +26,7 @@ namespace BiliLite.Pages.Home
             dynamicVM.OpenCommentEvent += DynamicVM_OpenCommentEvent;
             splitView.PaneClosed += SplitView_PaneClosed;
             this.DataContext = dynamicVM;
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.CACHE_HOME, true))
+            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
             {
                 this.NavigationCacheMode = NavigationCacheMode.Enabled;
             }
@@ -55,21 +44,21 @@ namespace BiliLite.Pages.Home
         string dynamic_id;
         private void DynamicVM_OpenCommentEvent(object sender, Controls.Dynamic.DynamicItemDisplayModel e)
         {
-           // splitView.IsPaneOpen = true;
+            // splitView.IsPaneOpen = true;
             dynamic_id = e.DynamicID;
             pivotRight.SelectedIndex = 1;
             repostCount.Text = e.ShareCount.ToString();
             commentCount.Text = e.CommentCount.ToString();
-            CommentApi.CommentType commentType= CommentApi.CommentType.Dynamic;
+            CommentApi.CommentType commentType = CommentApi.CommentType.Dynamic;
             var id = e.ReplyID;
             switch (e.Type)
             {
-              
+
                 case Controls.Dynamic.DynamicDisplayType.Photo:
                     commentType = CommentApi.CommentType.Photo;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Video:
-              
+
                     commentType = CommentApi.CommentType.Video;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.Season:
@@ -100,7 +89,7 @@ namespace BiliLite.Pages.Home
             //    commentSort = Api.CommentApi.commentSort.Hot,
             //    oid = id
             //});
-            Utils.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
+            Notify.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -108,20 +97,20 @@ namespace BiliLite.Pages.Home
             base.OnNavigatedTo(e);
 
             SetStaggered();
-            if (e.NavigationMode== NavigationMode.New && dynamicVM.Items == null)
+            if (e.NavigationMode == NavigationMode.New && dynamicVM.Items == null)
             {
                 await dynamicVM.GetDynamicItems();
-                if (SettingHelper.GetValue<bool>("动态切换提示", true) && SettingHelper.GetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0) != 1)
+                if (SettingService.GetValue<bool>("动态切换提示", true) && SettingService.GetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0) != 1)
                 {
-                    SettingHelper.SetValue("动态切换提示", false);
-                    Utils.ShowMessageToast("右下角可以切换成瀑布流显示哦~", 5);
+                    SettingService.SetValue("动态切换提示", false);
+                    Notify.ShowMessageToast("右下角可以切换成瀑布流显示哦~", 5);
                 }
             }
         }
 
         void SetStaggered()
         {
-            var staggered = SettingHelper.GetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0) == 1;
+            var staggered = SettingService.GetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0) == 1;
             if (staggered != IsStaggered)
             {
                 IsStaggered = staggered;
@@ -143,29 +132,29 @@ namespace BiliLite.Pages.Home
                 dynamicVM.UserDynamicType = (DynamicAPI.UserDynamicType)pivot.SelectedIndex;
                 dynamicVM.Refresh();
             }
-          
+
         }
 
         private void btnGrid_Click(object sender, RoutedEventArgs e)
         {
-            SettingHelper.SetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 1);
+            SettingService.SetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 1);
             IsStaggered = true;
             btnGrid.Visibility = Visibility.Collapsed;
             btnList.Visibility = Visibility.Visible;
             //顶部
             gridTopBar.MaxWidth = double.MaxValue;
-            gridTopBar.Margin = new Thickness(0,0,0,4);
+            gridTopBar.Margin = new Thickness(0, 0, 0, 4);
             borderTopBar.CornerRadius = new CornerRadius(0);
             borderTopBar.Margin = new Thickness(0);
-           
+
             //XAML
-//            var tmp = @" <controls:StaggeredPanel DesiredColumnWidth='450' HorizontalAlignment='Stretch' ColumnSpacing='-12' RowSpacing='8' />";
-//            var xaml = $@"<ItemsPanelTemplate 
-//xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' 
-//xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' 
-//xmlns:controls='using:Microsoft.Toolkit.Uwp.UI.Controls'>
-//                   {tmp}
-//               </ItemsPanelTemplate>";
+            //            var tmp = @" <controls:StaggeredPanel DesiredColumnWidth='450' HorizontalAlignment='Stretch' ColumnSpacing='-12' RowSpacing='8' />";
+            //            var xaml = $@"<ItemsPanelTemplate 
+            //xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' 
+            //xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' 
+            //xmlns:controls='using:Microsoft.Toolkit.Uwp.UI.Controls'>
+            //                   {tmp}
+            //               </ItemsPanelTemplate>";
             //list.ItemsPanel = (ItemsPanelTemplate)XamlReader.Load(xaml);
             list.ItemsPanel = (ItemsPanelTemplate)this.Resources["GridPanel"];
         }
@@ -177,19 +166,19 @@ namespace BiliLite.Pages.Home
             btnGrid.Visibility = Visibility.Visible;
             btnList.Visibility = Visibility.Collapsed;
             //设置
-            SettingHelper.SetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0);
+            SettingService.SetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0);
             //顶部
             gridTopBar.MaxWidth = 800;
-            gridTopBar.Margin = new Thickness(8, 0,8,0);
+            gridTopBar.Margin = new Thickness(8, 0, 8, 0);
             borderTopBar.CornerRadius = new CornerRadius(4);
-            borderTopBar.Margin = new Thickness(12,4,12,4);
+            borderTopBar.Margin = new Thickness(12, 4, 12, 4);
             //XAML
-//            var tmp = @" <ItemsStackPanel/>";
-//            var xaml = $@"<ItemsPanelTemplate 
-//xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' 
-//xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
-//                   {tmp}
-//               </ItemsPanelTemplate>";
+            //            var tmp = @" <ItemsStackPanel/>";
+            //            var xaml = $@"<ItemsPanelTemplate 
+            //xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' 
+            //xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+            //                   {tmp}
+            //               </ItemsPanelTemplate>";
             //list.ItemsPanel = (ItemsPanelTemplate)XamlReader.Load(xaml);
             list.ItemsPanel = (ItemsPanelTemplate)this.Resources["ListPanel"];
         }
@@ -201,7 +190,7 @@ namespace BiliLite.Pages.Home
 
         private void pivotRight_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (pivotRight.SelectedIndex == 0&&splitView.IsPaneOpen&& (repost.dynamicRepostVM.Items==null|| repost.dynamicRepostVM.Items.Count==0))
+            if (pivotRight.SelectedIndex == 0 && splitView.IsPaneOpen && (repost.dynamicRepostVM.Items == null || repost.dynamicRepostVM.Items.Count == 0))
             {
                 repost.LoadData(dynamic_id);
             }

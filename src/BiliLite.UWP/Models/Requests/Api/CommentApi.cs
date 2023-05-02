@@ -1,5 +1,5 @@
 ﻿using System;
-using BiliLite.Helpers;
+using BiliLite.Extensions;
 using BiliLite.Services;
 
 namespace BiliLite.Models.Requests.Api
@@ -56,7 +56,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel Like(string oid, string root, int action, int type)
         {
-            var csrf = Utils.GetCSRFToken();
+            var csrf = BiliExtensions.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -70,7 +70,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel ReplyComment(string oid, string root, string parent, string message, int type)
         {
-            var csrf = Utils.GetCSRFToken();
+            var csrf = BiliExtensions.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -84,7 +84,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel DeleteComment(string oid, string rpid, int type)
         {
-            var csrf = Utils.GetCSRFToken();
+            var csrf = BiliExtensions.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -97,7 +97,7 @@ namespace BiliLite.Models.Requests.Api
         }
         public ApiModel AddComment(string oid, CommentType type, string message)
         {
-            var csrf = Utils.GetCSRFToken();
+            var csrf = BiliExtensions.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,

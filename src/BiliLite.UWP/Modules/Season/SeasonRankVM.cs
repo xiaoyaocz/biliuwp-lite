@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,14 +9,14 @@ using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Season
 {
-    public class SeasonRankVM:IModules
+    public class SeasonRankVM : IModules
     {
         readonly RankAPI rankAPI;
         public SeasonRankVM()
         {
             rankAPI = new RankAPI();
-           
         }
+
         private bool _loading = true;
         public bool Loading
         {
@@ -73,7 +72,7 @@ namespace BiliLite.Modules.Season
                     type=7
                 },
             };
-            Current = RegionItems.FirstOrDefault(x=>x.type.Equals(type));
+            Current = RegionItems.FirstOrDefault(x => x.type.Equals(type));
         }
 
         public async Task LoadRankDetail(SeasonRankModel region)
@@ -87,24 +86,24 @@ namespace BiliLite.Modules.Season
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        var result = await Utils.DeserializeJson<List<SeasonRankItemModel>>(data.data["list"].ToString());
+                        var result = await data.data["list"].ToString().DeserializeJson<List<SeasonRankItemModel>>();
                         region.Items = result;
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -136,7 +135,7 @@ namespace BiliLite.Modules.Season
         public int badge_type { get; set; }
         public int pts { get; set; }
         public bool show_badge { get { return !string.IsNullOrEmpty(badge); } }
-        public bool show_danmaku { get { return stat!=null&&stat.danmaku!=0; } }
+        public bool show_danmaku { get { return stat != null && stat.danmaku != 0; } }
         public SeasonRankItemStatModel stat { get; set; }
         public SeasonRankItemNewEPModel new_ep { get; set; }
     }

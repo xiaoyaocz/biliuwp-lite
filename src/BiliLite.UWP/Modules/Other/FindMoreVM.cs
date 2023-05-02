@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api;
+﻿using BiliLite.Models.Requests.Api;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -36,18 +35,18 @@ namespace BiliLite.Modules.Other
                 {
                     var data = await results.GetJson<List<FindMoreEntranceModel>>();
                     await Task.Delay(2000);
-                    Items=data;
+                    Items = data;
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<List<RankRegionModel>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

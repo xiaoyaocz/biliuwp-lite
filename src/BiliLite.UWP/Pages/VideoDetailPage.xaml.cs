@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Modules;
 using Microsoft.UI.Xaml.Controls;
-using BiliLite.Helpers;
 using Windows.ApplicationModel.DataTransfer;
 using BiliLite.Controls;
 using Windows.System;
@@ -54,8 +53,8 @@ namespace BiliLite.Pages
             this.DataContext = videoDetailVM;
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            this.RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
-            this.RightInfoGridSplitter.IsEnabled = SettingHelper.GetValue<bool>(SettingHelper.UI.RIGHT_WIDTH_CHANGEABLE, false);
+            this.RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+            this.RightInfoGridSplitter.IsEnabled = SettingService.GetValue<bool>(SettingConstants.UI.RIGHT_WIDTH_CHANGEABLE, false);
         }
 
         private void VideoDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -101,15 +100,15 @@ namespace BiliLite.Pages
 
             if (e.NavigationMode == NavigationMode.New)
             {
-                if (SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_SCREEN, false))
+                if (SettingService.GetValue<bool>(SettingConstants.Player.AUTO_FULL_SCREEN, false))
                 {
                     player.IsFullScreen = true;
                 }
                 else
                 {
-                    player.IsFullWindow = SettingHelper.GetValue<bool>(SettingHelper.Player.AUTO_FULL_WINDOW, false);
+                    player.IsFullWindow = SettingService.GetValue<bool>(SettingConstants.Player.AUTO_FULL_WINDOW, false);
                 }
-                pivot.SelectedIndex = SettingHelper.GetValue<int>(SettingHelper.UI.DETAIL_DISPLAY, 0);
+                pivot.SelectedIndex = SettingService.GetValue<int>(SettingConstants.UI.DETAIL_DISPLAY, 0);
                 if (e.Parameter is VideoPlaylist)
                 {
                     playlist = e.Parameter as VideoPlaylist;
@@ -154,12 +153,12 @@ namespace BiliLite.Pages
             await videoDetailVM.LoadVideoDetail(id, is_bvid);
             if (this.VideoCover != null)
             {
-                this.VideoCover.Visibility = SettingHelper.GetValue<bool>(SettingHelper.UI.SHOW_DETAIL_COVER, true) ? Visibility.Visible : Visibility.Collapsed;
+                this.VideoCover.Visibility = SettingService.GetValue<bool>(SettingConstants.UI.SHOW_DETAIL_COVER, true) ? Visibility.Visible : Visibility.Collapsed;
             }
-            if (SettingHelper.GetValue<bool>("一键三连提示", true))
+            if (SettingService.GetValue<bool>("一键三连提示", true))
             {
-                SettingHelper.SetValue("一键三连提示", false);
-                Utils.ShowMessageToast("右键或长按点赞按钮可以一键三连哦~", 5);
+                SettingService.SetValue("一键三连提示", false);
+                Notify.ShowMessageToast("右键或长按点赞按钮可以一键三连哦~", 5);
             }
             if (videoDetailVM.VideoInfo != null)
             {
@@ -193,7 +192,7 @@ namespace BiliLite.Pages
                         order = i,
                         play_mode = VideoPlayType.Video,
                         title = "P" + item.page + " " + item.part,
-                        area = Utils.ParseArea(videoDetailVM.VideoInfo.title, videoDetailVM.VideoInfo.owner.mid)
+                        area = videoDetailVM.VideoInfo.title.ParseArea(videoDetailVM.VideoInfo.owner.mid)
                     });
                     i++;
                 }
@@ -203,7 +202,7 @@ namespace BiliLite.Pages
                     var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
                     if (history != null)
                     {
-                        SettingHelper.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
+                        SettingService.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
                         index = videoDetailVM.VideoInfo.pages.IndexOf(history);
                         //player.InitializePlayInfo(playInfos, );
                     }
@@ -236,7 +235,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 logger.Log("创建二维码失败avid" + avid, LogType.ERROR, ex);
-                Utils.ShowMessageToast("创建二维码失败");
+                Notify.ShowMessageToast("创建二维码失败");
             }
 
         }
@@ -275,30 +274,30 @@ namespace BiliLite.Pages
             {
                 stDesc.MaxHeight = 1000.0;
             }
-            Utils.ShowMessageToast("右键或长按可以复制内容");
+            Notify.ShowMessageToast("右键或长按可以复制内容");
         }
 
         private void txtDesc_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (Utils.SetClipboard((sender as TextBlock).Text))
+            if ((sender as TextBlock).Text.SetClipboard())
             {
-                Utils.ShowMessageToast("已将内容复制到剪切板");
+                Notify.ShowMessageToast("已将内容复制到剪切板");
             }
             else
             {
-                Utils.ShowMessageToast("复制失败");
+                Notify.ShowMessageToast("复制失败");
             }
         }
 
         private void txtDesc_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            if (Utils.SetClipboard((sender as TextBlock).Text))
+            if ((sender as TextBlock).Text.SetClipboard())
             {
-                Utils.ShowMessageToast("已将内容复制到剪切板");
+                Notify.ShowMessageToast("已将内容复制到剪切板");
             }
             else
             {
-                Utils.ShowMessageToast("复制失败");
+                Notify.ShowMessageToast("复制失败");
             }
         }
 
@@ -337,7 +336,7 @@ namespace BiliLite.Pages
 
         private void AppBarButton_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            Utils.ShowMessageToast("长按");
+            Notify.ShowMessageToast("长按");
         }
 
         private void btnLike_Holding(object sender, HoldingRoutedEventArgs e)
@@ -366,14 +365,14 @@ namespace BiliLite.Pages
         }
         private void btnShareCopy_Click(object sender, RoutedEventArgs e)
         {
-            Utils.SetClipboard($"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}");
-            Utils.ShowMessageToast("已复制内容到剪切板");
+            $"{videoDetailVM.VideoInfo.title}\r\n{videoDetailVM.VideoInfo.short_link}".SetClipboard();
+            Notify.ShowMessageToast("已复制内容到剪切板");
         }
 
         private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
         {
-            Utils.SetClipboard(videoDetailVM.VideoInfo.short_link);
-            Utils.ShowMessageToast("已复制链接到剪切板");
+            videoDetailVM.VideoInfo.short_link.SetClipboard();
+            Notify.ShowMessageToast("已复制链接到剪切板");
         }
 
 
@@ -381,14 +380,14 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                this.Margin = new Thickness(0, SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
+                this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -402,7 +401,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                RightInfo.Width = new GridLength(SettingHelper.GetValue<double>(SettingHelper.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -483,9 +482,9 @@ namespace BiliLite.Pages
 
         private async void btnCreateFavBox_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             CreateFavFolderDialog createFavFolderDialog = new CreateFavFolderDialog();
@@ -522,7 +521,7 @@ namespace BiliLite.Pages
 
             if (playlist == null || playlist.Index == playlist.Playlist.Count - 1)
             {
-                Utils.ShowMessageToast("播放完毕");
+                Notify.ShowMessageToast("播放完毕");
                 return;
             }
             var listView = (pivot.Items[0] as PivotItem).Content as ListView;
@@ -595,16 +594,12 @@ namespace BiliLite.Pages
 
         private void CopyTitleBtn_Click(object sender, RoutedEventArgs e)
         {
-            var data = new DataPackage();
-            data.SetText(videoDetailVM.VideoInfo.title);
-            Clipboard.SetContent(data);
+            videoDetailVM.VideoInfo.title.SetClipboard();
         }
 
         private void CopyAuthorBtn_Click(object sender, RoutedEventArgs e)
         {
-            var data = new DataPackage();
-            data.SetText(videoDetailVM.VideoInfo.owner.name);
-            Clipboard.SetContent(data);
+            videoDetailVM.VideoInfo.owner.name.SetClipboard();
         }
     }
 }

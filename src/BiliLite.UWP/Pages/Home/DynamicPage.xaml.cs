@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
@@ -24,7 +23,7 @@ namespace BiliLite.Pages.Home
             dynamicVM = new DynamicVM();
             dynamicVM.dynamicItemDataTemplateSelector.resource = this.Resources;
             this.DataContext = dynamicVM;
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.CACHE_HOME, true))
+            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
             {
                 this.NavigationCacheMode = NavigationCacheMode.Enabled;
             }
@@ -56,7 +55,7 @@ namespace BiliLite.Pages.Home
 
         private void DynamicItemModelOpen(object sender, DynamicItemModel item, bool dontGoTo = false)
         {
-            if(item == null) return;
+            if (item == null) return;
             if (item.desc.type == 8)
             {
                 MessageCenter.NavigateToPage(this, new NavigationInfo()

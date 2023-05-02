@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -76,7 +75,7 @@ namespace BiliLite.Modules.User
         public void ChangeLoginType(int type)
         {
             LoginType = type;
-           
+
             switch (type)
             {
                 case 0:
@@ -86,7 +85,7 @@ namespace BiliLite.Modules.User
                         qrTimer.Stop();
                         qrTimer.Dispose();
                     }
-                    Utils.ShowMessageToast("为了您的账号安全,建议扫描二维码登录");
+                    Notify.ShowMessageToast("为了您的账号安全,建议扫描二维码登录");
                     break;
                 case 1:
                     Title = "短信登录";
@@ -137,18 +136,18 @@ namespace BiliLite.Modules.User
             {
                 if (jObject["access_token"] != null)
                 {
-                    var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()), null,null);
+                    var m = await account.SaveLogin(jObject["access_token"].ToString(), jObject["refresh_token"].ToString(), jObject["expires_in"].ToInt32(), Convert.ToInt64(jObject["mid"].ToString()), null, null);
 
                     if (m)
                     {
                         CloseDialog?.Invoke(this, null);
-                        Utils.ShowMessageToast("登录成功");
+                        Notify.ShowMessageToast("登录成功");
                     }
                     else
                     {
                         PrimaryButtonEnable = true;
                         SetWebViewVisibility?.Invoke(this, false);
-                        Utils.ShowMessageToast("登录失败,请重试");
+                        Notify.ShowMessageToast("登录失败,请重试");
                     }
                     //await UserManage.LoginSucess(jObject["access_token"].ToString());
                 }
@@ -156,7 +155,7 @@ namespace BiliLite.Modules.User
                 {
                     PrimaryButtonEnable = true;
                     SetWebViewVisibility?.Invoke(this, false);
-                    Utils.ShowMessageToast("登录失败,请重试");
+                    Notify.ShowMessageToast("登录失败,请重试");
                 }
 
             }
@@ -229,18 +228,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
         }
@@ -265,12 +264,12 @@ namespace BiliLite.Modules.User
         {
             if (CurrentCountry == null)
             {
-                Utils.ShowMessageToast("请选择国家/地区");
+                Notify.ShowMessageToast("请选择国家/地区");
                 return;
             }
             if (Phone.Length == 0)
             {
-                Utils.ShowMessageToast("请输入手机号");
+                Notify.ShowMessageToast("请输入手机号");
                 return;
             }
 
@@ -300,18 +299,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
 
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
                 EnableSendSMS = true;
             }
         }
@@ -344,18 +343,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
 
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
                 EnableSendSMS = true;
             }
         }
@@ -364,17 +363,17 @@ namespace BiliLite.Modules.User
         {
             if (CurrentCountry == null)
             {
-                Utils.ShowMessageToast("请选择国家/地区");
+                Notify.ShowMessageToast("请选择国家/地区");
                 return;
             }
             if (Phone.Length == 0)
             {
-                Utils.ShowMessageToast("请输入手机号");
+                Notify.ShowMessageToast("请输入手机号");
                 return;
             }
             if (Code.Length == 0)
             {
-                Utils.ShowMessageToast("请输入验证码");
+                Notify.ShowMessageToast("请输入验证码");
                 return;
             }
             try
@@ -389,13 +388,13 @@ namespace BiliLite.Modules.User
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
 
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
                 EnableSendSMS = true;
             }
         }
@@ -424,12 +423,12 @@ namespace BiliLite.Modules.User
         {
             if (UserName.Length == 0)
             {
-                Utils.ShowMessageToast("请输入用户名");
+                Notify.ShowMessageToast("请输入用户名");
                 return;
             }
             if (Password.Length == 0)
             {
-                Utils.ShowMessageToast("请输入密码");
+                Notify.ShowMessageToast("请输入密码");
                 return;
             }
             PrimaryButtonEnable = false;
@@ -447,12 +446,12 @@ namespace BiliLite.Modules.User
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
 
             }
             finally
@@ -465,7 +464,7 @@ namespace BiliLite.Modules.User
         {
             if (Code.Length == 0)
             {
-                Utils.ShowMessageToast("请输入验证码");
+                Notify.ShowMessageToast("请输入验证码");
                 return;
             }
             PrimaryButtonEnable = false;
@@ -483,18 +482,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj["message"].ToString());
+                        Notify.ShowMessageToast(obj["message"].ToString());
                         return;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(req.message);
+                    Notify.ShowMessageToast(req.message);
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
 
             }
             finally
@@ -607,14 +606,14 @@ namespace BiliLite.Modules.User
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
 
             }
             catch (Exception ex)
             {
                 logger.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
-                Utils.ShowMessageToast("加载二维码失败");
+                Notify.ShowMessageToast("加载二维码失败");
             }
             finally
             {
@@ -636,12 +635,12 @@ namespace BiliLite.Modules.User
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 var result = await account.PollQRAuthInfo(qrAuthInfo.qrcode_key);
-                  if (result.status == LoginStatus.Success)
-                  {
-                      qrTimer.Stop();
+                if (result.status == LoginStatus.Success)
+                {
+                    qrTimer.Stop();
                     CloseDialog?.Invoke(this, null);
-                  }
-              });
+                }
+            });
         }
 
         #endregion
@@ -663,7 +662,7 @@ namespace BiliLite.Modules.User
             {
                 if (gee_req.gee_challenge != challenge)
                 {
-                    Utils.ShowMessageToast("验证码失效");
+                    Notify.ShowMessageToast("验证码失效");
                     return;
                 }
                 gee_req.gee_validate = validate;
@@ -700,13 +699,13 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj["message"].ToString());
+                        Notify.ShowMessageToast(obj["message"].ToString());
                         return;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(req.message);
+                    Notify.ShowMessageToast(req.message);
                 }
             }
             catch (Exception ex)
@@ -733,13 +732,13 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj["message"].ToString());
+                        Notify.ShowMessageToast(obj["message"].ToString());
                         return;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(req.message);
+                    Notify.ShowMessageToast(req.message);
                 }
             }
             catch (Exception ex)
@@ -809,7 +808,7 @@ namespace BiliLite.Modules.User
                 case LoginStatus.Fail:
                 case LoginStatus.Error:
                     PrimaryButtonEnable = true;
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                     break;
                 case LoginStatus.NeedCaptcha:
                     var uri = new Uri(result.url);

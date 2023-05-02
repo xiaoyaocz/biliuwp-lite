@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -137,7 +136,7 @@ namespace BiliLite.Modules
                 }
             };
             SelectItem = SearchItems[0];
-           
+
         }
         private ObservableCollection<ISearchVM> _items;
         public ObservableCollection<ISearchVM> SearchItems
@@ -289,12 +288,12 @@ namespace BiliLite.Modules
             {
                 if (ex is CustomizedErrorException customizedErrorException)
                 {
-                    Utils.ShowMessageToast(ex.Message);
+                    Notify.ShowMessageToast(ex.Message);
                     _logger.Error("搜索失败", ex);
                 }
 
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -326,7 +325,7 @@ namespace BiliLite.Modules
                 new SearchFilterItem("轻小说","16"),
                 new SearchFilterItem("科技","17"),
             };
-            
+
             SelectRegion = RegionFilters[0];
         }
         public List<SearchFilterItem> OrderFilters { get; set; }
@@ -340,7 +339,7 @@ namespace BiliLite.Modules
 
         public List<SearchFilterItem> DurationFilters { get; set; }
 
-      
+
         public List<SearchFilterItem> RegionFilters { get; set; }
         private SearchFilterItem _SelectRegion;
         public SearchFilterItem SelectRegion
@@ -404,18 +403,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -491,18 +490,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -576,7 +575,7 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        var result = JsonConvert.DeserializeObject<ObservableCollection<SearchUserItem>>(data.data["result"]?.ToString()??"[]");
+                        var result = JsonConvert.DeserializeObject<ObservableCollection<SearchUserItem>>(data.data["result"]?.ToString() ?? "[]");
                         if (Page == 1)
                         {
                             if (result == null || result.Count == 0)
@@ -606,18 +605,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -689,18 +688,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -771,18 +770,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -803,10 +802,11 @@ namespace BiliLite.Modules
         public string name { get; set; }
         public string value { get; set; }
     }
-    
+
     public class SearchArea
     {
-        public SearchArea(string name,string area) { 
+        public SearchArea(string name, string area)
+        {
             this.name = name;
             this.area = area;
         }
@@ -872,7 +872,7 @@ namespace BiliLite.Modules
         public string cover
         {
             get { return _pic; }
-            set { _pic =  value; }
+            set { _pic = value; }
         }
 
         public string angle_title { get; set; }
@@ -932,7 +932,7 @@ namespace BiliLite.Modules
         {
             get
             {
-                if (official_verify!=null&& !string.IsNullOrEmpty( official_verify.desc))
+                if (official_verify != null && !string.IsNullOrEmpty(official_verify.desc))
                 {
                     return official_verify.desc;
                 }
@@ -1014,9 +1014,9 @@ namespace BiliLite.Modules
         {
             get
             {
-                if (image_urls!=null&& image_urls.Count!=0)
+                if (image_urls != null && image_urls.Count != 0)
                 {
-                    return "https:"+image_urls[0];
+                    return "https:" + image_urls[0];
                 }
                 return null;
             }

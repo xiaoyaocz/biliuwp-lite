@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using BiliLite.Models;
-using BiliLite.Helpers;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Windows.UI.Xaml.Controls;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Windows.Input;
 using BiliLite.Extensions;
@@ -54,10 +48,10 @@ namespace BiliLite.Modules
             get { return _loading; }
             set { _loading = value; DoPropertyChanged("Loading"); }
         }
-      
+
 
         private bool CanLoadMore = true;
-      
+
 
         private bool _Conditionsloading = true;
         public bool ConditionsLoading
@@ -144,14 +138,14 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<SeasonIndexConditionFilterModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -164,7 +158,7 @@ namespace BiliLite.Modules
             try
             {
                 if (Loading) return;
-               
+
                 if (Page == 1)
                 {
                     CanLoadMore = true;
@@ -209,21 +203,21 @@ namespace BiliLite.Modules
                         }
                         else
                         {
-                           
+
                             CanLoadMore = false;
-                            Utils.ShowMessageToast("加载完了");
+                            Notify.ShowMessageToast("加载完了");
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<SeasonIndexConditionFilterModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -331,7 +325,7 @@ namespace BiliLite.Modules
                 }
                 else
                 {
-                    return Utils.HandelTimestamp(renewal_time.ToString()) + "更新";
+                    return renewal_time.ToString().HandelTimestamp() + "更新";
                 }
             }
         }

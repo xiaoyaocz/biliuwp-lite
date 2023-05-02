@@ -1,24 +1,14 @@
 ﻿using BiliLite.Controls.Dynamic;
-using BiliLite.Helpers;
+using BiliLite.Extensions;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Modules;
 using BiliLite.Modules.User;
 using BiliLite.Modules.User.SendDynamic;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -46,12 +36,12 @@ namespace BiliLite.Dialogs
             topicVM = new TopicVM();
             sendDynamicVM = new SendDynamicVM(dynamicItem);
         }
-       
+
         private void btn_Close_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
         }
-        
+
         private async void btnEmoji_Click(object sender, RoutedEventArgs e)
         {
             FaceFlyout.ShowAt(sender as Button);
@@ -95,7 +85,7 @@ namespace BiliLite.Dialogs
         private async void btnAt_Click(object sender, RoutedEventArgs e)
         {
             AtFlyout.ShowAt(sender as Button);
-            if (atVM.Users.Count==0&&string.IsNullOrEmpty( atVM.Keyword))
+            if (atVM.Users.Count == 0 && string.IsNullOrEmpty(atVM.Keyword))
             {
                 await atVM.GetUser();
             }
@@ -132,7 +122,7 @@ namespace BiliLite.Dialogs
         {
             if (sendDynamicVM.Images.Count == 9)
             {
-                Utils.ShowMessageToast("只能上传9张图片哦");
+                Notify.ShowMessageToast("只能上传9张图片哦");
                 return;
             }
             var picker = new FileOpenPicker();
@@ -157,7 +147,7 @@ namespace BiliLite.Dialogs
             btnSend.IsEnabled = false;
             if (sendDynamicVM.IsRepost)
             {
-                result=await sendDynamicVM.SendRepost();
+                result = await sendDynamicVM.SendRepost();
             }
             else
             {
@@ -171,7 +161,7 @@ namespace BiliLite.Dialogs
             {
                 btnSend.IsEnabled = true;
             }
-            
+
         }
     }
 }

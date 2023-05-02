@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BiliLite.Models;
-using BiliLite.Helpers;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
@@ -14,6 +13,8 @@ using System.Windows.Input;
 using BiliLite.Extensions;
 using BiliLite.Modules.User;
 using BiliLite.Models.Requests.Api.Home;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
@@ -93,7 +94,7 @@ namespace BiliLite.Modules
                             }
 
                         }
-                        
+
                         if (Items == null)
                         {
                             Items = items;
@@ -110,19 +111,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj["message"].ToString());
+                        Notify.ShowMessageToast(obj["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
 
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -152,7 +153,7 @@ namespace BiliLite.Modules
             catch (Exception)
             {
             }
-           
+
         }
         public async void LoadMore()
         {
@@ -170,7 +171,7 @@ namespace BiliLite.Modules
         {
             if (Loading)
             {
-                Utils.ShowMessageToast("正在加载中....");
+                Notify.ShowMessageToast("正在加载中....");
                 return;
             }
             Banner = null;
@@ -182,9 +183,9 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+                if (!SettingService.Account.Logined && await Notify.ShowLoginDialog())
                 {
-                    Utils.ShowMessageToast("请先登录");
+                    Notify.ShowMessageToast("请先登录");
                     return;
                 }
                 var recommendItem = Items.FirstOrDefault(x => x.idx == idx);
@@ -203,18 +204,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj["message"].ToString());
+                        Notify.ShowMessageToast(obj["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
 

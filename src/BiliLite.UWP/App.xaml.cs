@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Models.Events;
 using BiliLite.Modules;
@@ -7,26 +6,16 @@ using BiliLite.Services;
 using FFmpegInteropX;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace BiliLite
@@ -67,7 +56,7 @@ namespace BiliLite
             try
             {
                 logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
-                Utils.ShowMessageToast("程序出现一个错误，已记录");
+                Notify.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)
             {
@@ -79,7 +68,7 @@ namespace BiliLite
             try
             {
                 logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
-                Utils.ShowMessageToast("程序出现一个错误，已记录");
+                Notify.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)
             {
@@ -98,13 +87,13 @@ namespace BiliLite
         /// <param name="e">有关启动请求和过程的详细信息。</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-          
-            Navigation(e.Arguments,e.PrelaunchActivated);
-            
+
+            Navigation(e.Arguments, e.PrelaunchActivated);
+
         }
 
 
-        private async void Navigation(object arguments, bool prelaunch=false)
+        private async void Navigation(object arguments, bool prelaunch = false)
         {
             // We don't have ARM64 support of SYEngine.
             if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
@@ -120,7 +109,7 @@ namespace BiliLite
             catch (Exception)
             {
             }
-          
+
             InitBili();
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -133,9 +122,9 @@ namespace BiliLite
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                
+
                 //主题颜色
-                rootFrame.RequestedTheme = (ElementTheme)SettingHelper.GetValue<int>(SettingHelper.UI.THEME, 0);
+                rootFrame.RequestedTheme = (ElementTheme)SettingService.GetValue<int>(SettingConstants.UI.THEME, 0);
 
                 // 将框架放在当前窗口中
                 Window.Current.Content = rootFrame;
@@ -149,7 +138,7 @@ namespace BiliLite
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
 
-                    var mode = SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0);
+                    var mode = SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0);
                     if (mode == 0)
                     {
                         rootFrame.Navigate(typeof(MainPage), arguments);
@@ -163,9 +152,9 @@ namespace BiliLite
                 {
                     if (arguments != null && !string.IsNullOrEmpty(arguments.ToString()))
                     {
-                       await MessageCenter.HandelUrl(arguments.ToString());
+                        await MessageCenter.HandelUrl(arguments.ToString());
                     }
-                    
+
                 }
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();
@@ -182,11 +171,11 @@ namespace BiliLite
                 if (display.ScreenWidthInRawPixels >= 1920 && (display.ScreenWidthInRawPixels / display.ScreenHeightInRawPixels > 16 / 9))
                 {
                     //如果屏幕分辨率大于16：9,设置为List
-                    SettingHelper.SetValue<int>(SettingHelper.UI.RECMEND_DISPLAY_MODE, 1);
+                    SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 1);
                 }
             }
             //圆角
-            App.Current.Resources["ImageCornerRadius"] = new CornerRadius(SettingHelper.GetValue<double>(SettingHelper.UI.IMAGE_CORNER_RADIUS, 0));
+            App.Current.Resources["ImageCornerRadius"] = new CornerRadius(SettingService.GetValue<double>(SettingConstants.UI.IMAGE_CORNER_RADIUS, 0));
             await AppHelper.SetRegions();
             DownloadVM.Instance.LoadDownloading();
             DownloadVM.Instance.LoadDownloaded();
@@ -231,7 +220,7 @@ namespace BiliLite
         }
         private static Color TitltBarButtonColor(UISettings uISettings)
         {
-            var settingTheme = SettingHelper.GetValue<int>(SettingHelper.UI.THEME, 0);
+            var settingTheme = SettingService.GetValue<int>(SettingConstants.UI.THEME, 0);
             var uiSettings = new Windows.UI.ViewManagement.UISettings();
             var color = uiSettings.GetColorValue(UIColorType.Foreground);
             if (settingTheme != 0)
@@ -243,13 +232,13 @@ namespace BiliLite
         protected override void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);
-          
+
             if (args.Kind == ActivationKind.Protocol)
             {
                 ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
-                Navigation(eventArgs.Uri.AbsoluteUri ,false);
+                Navigation(eventArgs.Uri.AbsoluteUri, false);
             }
-           
+
         }
 
     }

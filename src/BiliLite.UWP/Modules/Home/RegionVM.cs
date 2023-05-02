@@ -1,9 +1,9 @@
-﻿using BiliLite.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Home
 {
@@ -41,7 +41,7 @@ namespace BiliLite.Modules.Home
             {
                 Regions = await AppHelper.GetDefaultRegions();
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -49,7 +49,7 @@ namespace BiliLite.Modules.Home
             }
         }
 
-        
+
     }
 
     public class RegionItem

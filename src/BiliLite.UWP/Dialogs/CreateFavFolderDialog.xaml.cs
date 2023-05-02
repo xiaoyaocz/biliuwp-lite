@@ -1,19 +1,6 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api.User;
+﻿using BiliLite.Models.Requests.Api.User;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using BiliLite.Extensions;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
@@ -33,35 +20,35 @@ namespace BiliLite.Dialogs
         {
             if (string.IsNullOrEmpty(txtTitle.Text))
             {
-                Utils.ShowMessageToast("请输入收藏夹名称");
+                Notify.ShowMessageToast("请输入收藏夹名称");
                 return;
             }
             try
             {
                 IsPrimaryButtonEnabled = false;
-                var result = await favoriteApi.CreateFavorite(txtTitle.Text,txtDesc.Text,checkPrivacy.IsChecked.Value).Request();
+                var result = await favoriteApi.CreateFavorite(txtTitle.Text, txtDesc.Text, checkPrivacy.IsChecked.Value).Request();
                 if (result.status)
                 {
                     var data = await result.GetData<object>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("创建成功");
+                        Notify.ShowMessageToast("创建成功");
                         Success = true;
                         this.Hide();
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {

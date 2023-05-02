@@ -1,17 +1,18 @@
-﻿using System;
+﻿using BiliLite.Models.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Services
 {
     public class VideoPlayHistoryHelper
     {
         private const int ABPLAY_HISTORES_MAX = 200;
         private static Dictionary<string, ABPlayHistoryEntry> ABPlayHistories;
 
-        public class ABPlayHistoryEntry {
+        public class ABPlayHistoryEntry
+        {
             public double PointA { get; set; }
             public double PointB { get; set; } = double.MaxValue;
         }
@@ -22,7 +23,7 @@ namespace BiliLite.Helpers
         /// <param name="cleanup">是否顺带清理一下历史记录</param>
         public static void LoadABPlayHistories(bool cleanup)
         {
-            ABPlayHistories = SettingHelper.GetValue(SettingHelper.Player.PLAYER_ABPLAY_HISTORIES, new Dictionary<string, ABPlayHistoryEntry>(ABPLAY_HISTORES_MAX));
+            ABPlayHistories = SettingService.GetValue(SettingConstants.Player.PLAYER_ABPLAY_HISTORIES, new Dictionary<string, ABPlayHistoryEntry>(ABPLAY_HISTORES_MAX));
 
             if (ABPlayHistories.Count > ABPLAY_HISTORES_MAX && cleanup)
             {
@@ -33,7 +34,7 @@ namespace BiliLite.Helpers
                     ABPlayHistories.Remove(ABPlayHistories.Keys.First());
                 }
 
-                SettingHelper.SetValue(SettingHelper.Player.PLAYER_ABPLAY_HISTORIES, ABPlayHistories);
+                SettingService.SetValue(SettingConstants.Player.PLAYER_ABPLAY_HISTORIES, ABPlayHistories);
             }
         }
 
@@ -57,13 +58,14 @@ namespace BiliLite.Helpers
             if (history == null)
             {
                 ABPlayHistories.Remove(info.season_id != 0 ? "ep" + info.ep_id : info.cid);
-            } else
+            }
+            else
             {
                 ABPlayHistories[info.season_id != 0 ? "ep" + info.ep_id : info.cid] = history;
             }
 
             //TODO: 这种信息或许用数据库存更合适
-            await Task.Run(() => SettingHelper.SetValue(SettingHelper.Player.PLAYER_ABPLAY_HISTORIES, ABPlayHistories));
+            await Task.Run(() => SettingService.SetValue(SettingConstants.Player.PLAYER_ABPLAY_HISTORIES, ABPlayHistories));
         }
     }
 }

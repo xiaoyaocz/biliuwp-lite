@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.Live;
 using BiliLite.Modules.Live;
@@ -46,7 +45,7 @@ namespace BiliLite.Modules
             anchorLotteryVM = new LiveRoomAnchorLotteryVM();
             MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
             MessageCenter.LogoutedEvent += MessageCenter_LogoutedEvent;
-            Logined = SettingHelper.Account.Logined;
+            Logined = SettingService.Account.Logined;
             Messages = new ObservableCollection<DanmuMsgModel>();
             GiftMessage = new ObservableCollection<GiftMsgModel>();
             Guards = new ObservableCollection<LiveGuardRankItem>();
@@ -58,7 +57,7 @@ namespace BiliLite.Modules
             timer.Elapsed += Timer_Elapsed;
             timer_box.Elapsed += Timer_box_Elapsed;
             timer_auto_hide_gift.Elapsed += Timer_auto_hide_gift_Elapsed;
-          
+
             LoadMoreGuardCommand = new RelayCommand(LoadMoreGuardList);
             ShowBagCommand = new RelayCommand(SetShowBag);
             RefreshBagCommand = new RelayCommand(RefreshBag);
@@ -85,7 +84,7 @@ namespace BiliLite.Modules
                         m.uname_color = new SolidColorBrush(Colors.Gray);
                         if (m.medalColor != null && m.medalColor != "")
                         {
-                            m.ul_color = new SolidColorBrush(Utils.ToColor(m.ulColor));
+                            m.ul_color = new SolidColorBrush(m.ulColor.StrToColor());
                         }
                         else
                         {
@@ -93,7 +92,7 @@ namespace BiliLite.Modules
                         }
                         if (m.medalColor != null && m.medalColor != "")
                         {
-                            m.medal_color = new SolidColorBrush(Utils.ToColor(m.medalColor));
+                            m.medal_color = new SolidColorBrush(m.medalColor.StrToColor());
                         }
 
                         if (Messages.Count >= CleanCount)
@@ -182,20 +181,20 @@ namespace BiliLite.Modules
                         LotteryEnd?.Invoke(this, info);
                     }
                     break;
-               
+
                 case MessageType.GuardBuy:
                     break;
                 default:
                     break;
             }
         }
-       
+
         public ICommand LoadMoreGuardCommand { get; private set; }
         public ICommand ShowBagCommand { get; private set; }
         public ICommand RefreshBagCommand { get; private set; }
         private async void Timer_auto_hide_gift_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,  () =>
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 if (GiftMessage != null && GiftMessage.Count != 0)
                 {
@@ -240,26 +239,26 @@ namespace BiliLite.Modules
                     });
                     return;
                 }
-                var start_time = Utils.TimestampToDatetime(LiveInfo.room_info.live_start_time);
+                var start_time = TimeExtensions.TimestampToDatetime(LiveInfo.room_info.live_start_time);
                 var ts = DateTime.Now - start_time;
-               
+
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    for (int i = 0; i < SuperChats.Count; i++)
-                    {
-                        var item = SuperChats[i];
-                        if (item.time<=0)
-                        {
-                            SuperChats.Remove(item);
-                        }
-                        else
-                        {
-                            item.time -= 1;
-                        }
-                    }
-                   
-                    LiveTime = ts.ToString(@"hh\:mm\:ss");
-                });
+                                {
+                                    for (int i = 0; i < SuperChats.Count; i++)
+                                    {
+                                        var item = SuperChats[i];
+                                        if (item.time <= 0)
+                                        {
+                                            SuperChats.Remove(item);
+                                        }
+                                        else
+                                        {
+                                            item.time -= 1;
+                                        }
+                                    }
+
+                                    LiveTime = ts.ToString(@"hh\:mm\:ss");
+                                });
             }
             catch (Exception)
             {
@@ -471,18 +470,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception)
             {
-                Utils.ShowMessageToast("读取播放地址失败");
+                Notify.ShowMessageToast("读取播放地址失败");
             }
             finally
             {
@@ -507,12 +506,12 @@ namespace BiliLite.Modules
                 {
                     liveMessage.NewMessage -= LiveMessage_NewMessage;
                     liveMessage = null;
-                   
+
                 }
                 liveMessage = new LiveMessage();
                 liveMessage.NewMessage += LiveMessage_NewMessage;
                 cancelSource = new System.Threading.CancellationTokenSource();
-                
+
                 Loading = true;
                 var result = await liveRoomAPI.LiveRoomInfo(id).Request();
                 if (result.status)
@@ -541,8 +540,8 @@ namespace BiliLite.Modules
                         if (Liveing)
                         {
                             timer.Start();
-                            await GetPlayUrl(RoomID, SettingHelper.GetValue(SettingHelper.Live.DEFAULT_QUALITY,10000));
-                            //GetFreeSilverTime(); 
+                            await GetPlayUrl(RoomID, SettingService.GetValue(SettingConstants.Live.DEFAULT_QUALITY, 10000));
+                            //GetFreeSilverTime();  
                             await LoadSuperChat();
                             if (ReceiveLotteryMsg)
                             {
@@ -561,33 +560,33 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast("加载直播间失败:" + data.message);
+                        Notify.ShowMessageToast("加载直播间失败:" + data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {
                 Loading = false;
             }
         }
-        
+
         private async void ReceiveMessage(int roomId)
         {
             try
             {
                 var uid = 0;
-                if (SettingHelper.Account.Logined)
+                if (SettingService.Account.Logined)
                 {
-                    uid = SettingHelper.Account.UserID;
+                    uid = SettingService.Account.UserID;
                 }
                 if (liveMessage == null)
                 {
@@ -620,7 +619,7 @@ namespace BiliLite.Modules
         {
             try
             {
-               
+
                 var result = await liveRoomAPI.RoomSuperChat(RoomID).Request();
                 if (result.status)
                 {
@@ -628,40 +627,41 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         SuperChats.Clear();
-                        var ls = JsonConvert.DeserializeObject<List<LiveRoomSuperChatModel>>(data.data["list"]?.ToString()??"[]");
+                        var ls = JsonConvert.DeserializeObject<List<LiveRoomSuperChatModel>>(data.data["list"]?.ToString() ?? "[]");
                         foreach (var item in ls)
                         {
-                            SuperChats.Add(new SuperChatMsgModel() { 
-                                background_bottom_color=item.background_bottom_color,
-                                background_color=item.background_color,
-                                background_image=item.background_image,
-                                end_time=item.end_time,
-                                face=item.user_info.face,
-                                face_frame=item.user_info.face_frame,
-                                font_color= string.IsNullOrEmpty(item.font_color)?"#FFFFFF": item.font_color,
-                                max_time=item.end_time-item.start_time,
-                                message=item.message,
-                                price=item.price,
-                                start_time=item.start_time,
-                                time=item.time,
-                                username=item.user_info.uname
+                            SuperChats.Add(new SuperChatMsgModel()
+                            {
+                                background_bottom_color = item.background_bottom_color,
+                                background_color = item.background_color,
+                                background_image = item.background_image,
+                                end_time = item.end_time,
+                                face = item.user_info.face,
+                                face_frame = item.user_info.face_frame,
+                                font_color = string.IsNullOrEmpty(item.font_color) ? "#FFFFFF" : item.font_color,
+                                max_time = item.end_time - item.start_time,
+                                message = item.message,
+                                price = item.price,
+                                start_time = item.start_time,
+                                time = item.time,
+                                username = item.user_info.uname
                             });
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast("读取醒目留言失败:" + data.message);
+                        Notify.ShowMessageToast("读取醒目留言失败:" + data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
         }
         /// <summary>
@@ -671,7 +671,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (SettingHelper.Account.Logined)
+                if (SettingService.Account.Logined)
                 {
                     await liveRoomAPI.RoomEntryAction(RoomID).Request();
                 }
@@ -679,7 +679,7 @@ namespace BiliLite.Modules
             catch (Exception)
             {
             }
-          
+
         }
         /// <summary>
         /// 读取钱包信息
@@ -703,18 +703,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast("读取钱包失败:" + data.message);
+                        Notify.ShowMessageToast("读取钱包失败:" + data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
         }
         /// <summary>
@@ -744,27 +744,27 @@ namespace BiliLite.Modules
                             if (bag_data.success)
                             {
                                 BagGifts.Clear();
-                                var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"]?.ToString()??"[]");
-                                if(ls!=null)
-                                foreach (var item in ls)
-                                {
-                                    var _gift = list.FirstOrDefault(x => x.id == item.gift_id);
-                                    var gift = _gift.ObjectClone();
-                                    gift.gift_num = item.gift_num;
-                                    gift.corner_mark = item.corner_mark;
-                                    gift.bag_id = item.bag_id;
-                                    BagGifts.Add(gift);
-                                }
+                                var ls = JsonConvert.DeserializeObject<List<LiveBagGiftItem>>(bag_data.data["list"]?.ToString() ?? "[]");
+                                if (ls != null)
+                                    foreach (var item in ls)
+                                    {
+                                        var _gift = list.FirstOrDefault(x => x.id == item.gift_id);
+                                        var gift = _gift.ObjectClone();
+                                        gift.gift_num = item.gift_num;
+                                        gift.corner_mark = item.corner_mark;
+                                        gift.bag_id = item.bag_id;
+                                        BagGifts.Add(gift);
+                                    }
                                 //WalletInfo = data.data;
                             }
                             else
                             {
-                                Utils.ShowMessageToast("读取背包失败:" + bag_data.message);
+                                Notify.ShowMessageToast("读取背包失败:" + bag_data.message);
                             }
                         }
                         else
                         {
-                            Utils.ShowMessageToast(bag_result.message);
+                            Notify.ShowMessageToast(bag_result.message);
                         }
                     }
 
@@ -773,7 +773,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
         }
         /// <summary>
@@ -791,22 +791,22 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         Profile = data.data;
-                        Attention = Profile.relation_status >1;
+                        Attention = Profile.relation_status > 1;
                     }
                     else
                     {
-                        Utils.ShowMessageToast("读取主播信息失败:" + data.message);
+                        Notify.ShowMessageToast("读取主播信息失败:" + data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
         }
         /// <summary>
@@ -848,7 +848,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取礼物信息失败");
+                Notify.ShowMessageToast("读取礼物信息失败");
                 logger.Log("读取礼物信息失败", LogType.ERROR, ex);
             }
         }
@@ -915,7 +915,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取舰队失败");
+                Notify.ShowMessageToast("读取舰队失败");
                 logger.Log("读取舰队失败", LogType.ERROR, ex);
             }
             finally
@@ -964,7 +964,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined)
+                if (!SettingService.Account.Logined)
                 {
                     ShowBox = false;
                     OpenBox = false;
@@ -978,14 +978,14 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         ShowBox = true;
-                        freeSilverTime = Utils.TimestampToDatetime(Convert.ToInt64(data.data["time_end"].ToString()));
+                        freeSilverTime = TimeExtensions.TimestampToDatetime(Convert.ToInt64(data.data["time_end"].ToString()));
                         timer_box.Start();
                     }
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
+                Notify.ShowMessageToast("读取直播免费瓜子时间失败");
                 logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
@@ -994,7 +994,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined)
+                if (!SettingService.Account.Logined)
                 {
                     return;
                 }
@@ -1004,7 +1004,7 @@ namespace BiliLite.Modules
                     var data = await result.GetData<JObject>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("宝箱领取成功,瓜子+" + data.data["awardSilver"]);
+                        Notify.ShowMessageToast("宝箱领取成功,瓜子+" + data.data["awardSilver"]);
                         //GetFreeSilverTime();
                         LoadWalletInfo();
                     }
@@ -1016,7 +1016,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取直播免费瓜子时间失败");
+                Notify.ShowMessageToast("读取直播免费瓜子时间失败");
                 logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
@@ -1044,9 +1044,9 @@ namespace BiliLite.Modules
         }
         public async Task SendGift(LiveGiftItem liveGiftItem)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             try
@@ -1061,26 +1061,26 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
-                Utils.ShowMessageToast("赠送礼物出现错误");
+                Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
         }
         public async Task SendBagGift(LiveGiftItem liveGiftItem)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             try
@@ -1095,45 +1095,45 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
-                Utils.ShowMessageToast("赠送礼物出现错误");
+                Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
         }
 
         private void SetShowBag()
         {
-            if (!ShowBag && !SettingHelper.Account.Logined)
+            if (!ShowBag && !SettingService.Account.Logined)
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             ShowBag = !ShowBag;
         }
         private async void RefreshBag()
         {
-            if (!SettingHelper.Account.Logined)
+            if (!SettingService.Account.Logined)
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             await LoadBag();
         }
         public async Task<bool> SendDanmu(string text)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return false;
             }
             try
@@ -1148,20 +1148,20 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                         return false;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("发送弹幕出现错误", LogType.ERROR, ex);
-                Utils.ShowMessageToast("发送弹幕出现错误");
+                Notify.ShowMessageToast("发送弹幕出现错误");
                 return false;
             }
 
@@ -1295,18 +1295,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("读取直播排行榜失败："+ RankType);
-                logger.Log("读取直播排行榜失败"+ RankType, LogType.ERROR, ex);
+                Notify.ShowMessageToast("读取直播排行榜失败：" + RankType);
+                logger.Log("读取直播排行榜失败" + RankType, LogType.ERROR, ex);
             }
             finally
             {
@@ -1339,7 +1339,7 @@ namespace BiliLite.Modules
 
         private async void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,  () =>
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 if (LotteryInfo != null)
                 {

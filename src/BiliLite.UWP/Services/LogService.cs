@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using NLog;
 using NLog.Config;
@@ -18,9 +17,9 @@ namespace BiliLite.Services
         public static LoggingConfiguration config;
         public static Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static bool IsAutoClearLogFile => SettingHelper.GetValue<bool>(SettingHelper.Other.AUTO_CLEAR_LOG_FILE, true);
-        private static int AutoClearLogFileDay => SettingHelper.GetValue<int>(SettingHelper.Other.AUTO_CLEAR_LOG_FILE_DAY, 7);
-        private static bool IsProtectLogInfo => SettingHelper.GetValue<bool>(SettingHelper.Other.PROTECT_LOG_INFO, true);
+        private static bool IsAutoClearLogFile => SettingService.GetValue<bool>(SettingConstants.Other.AUTO_CLEAR_LOG_FILE, true);
+        private static int AutoClearLogFileDay => SettingService.GetValue<int>(SettingConstants.Other.AUTO_CLEAR_LOG_FILE_DAY, 7);
+        private static bool IsProtectLogInfo => SettingService.GetValue<bool>(SettingConstants.Other.PROTECT_LOG_INFO, true);
 
         public static void Init()
         {

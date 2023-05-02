@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,7 +24,7 @@ namespace BiliLite.Modules.User
 
         public string mid { get; set; }
         private readonly UserDetailAPI userDetailAPI;
-        private readonly FollowAPI  followAPI;
+        private readonly FollowAPI followAPI;
         public UserDetailVM()
         {
             userDetailAPI = new UserDetailAPI();
@@ -38,7 +37,7 @@ namespace BiliLite.Modules.User
             get { return _userInfo; }
             set { _userInfo = value; DoPropertyChanged("UserInfo"); }
         }
-      
+
         public ICommand AttentionCommand { get; private set; }
 
         public async void GetUserInfo()
@@ -57,19 +56,19 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
 
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("读取个人资料失败", LogType.ERROR, ex);
-                Utils.ShowMessageToast("读取个人资料失败");
+                Notify.ShowMessageToast("读取个人资料失败");
             }
         }
         public async Task<UserCenterInfoStatModel> GetStat()
@@ -115,9 +114,9 @@ namespace BiliLite.Modules.User
                     if (data.success)
                     {
                         UserCenterSpaceStatModel stat = new UserCenterSpaceStatModel();
-                        stat.article_count = (data.data["article"]?["count"]??0).ToInt32();
-                        stat.video_count = (data.data["archive"]?["count"]??0).ToInt32();
-                        stat.favourite_count = (data.data["favourite2"]?["count"]??0).ToInt32();
+                        stat.article_count = (data.data["article"]?["count"] ?? 0).ToInt32();
+                        stat.video_count = (data.data["archive"]?["count"] ?? 0).ToInt32();
+                        stat.favourite_count = (data.data["favourite2"]?["count"] ?? 0).ToInt32();
                         stat.follower = data.data["card"]["fans"].ToInt32();
                         stat.following = data.data["card"]["attention"].ToInt32();
                         return stat;
@@ -141,7 +140,7 @@ namespace BiliLite.Modules.User
         }
         public async void DoAttentionUP()
         {
-            var result = await AttentionUP(UserInfo.mid.ToString(), UserInfo.is_followed? 2 : 1);
+            var result = await AttentionUP(UserInfo.mid.ToString(), UserInfo.is_followed ? 2 : 1);
             if (result)
             {
                 UserInfo.is_followed = !UserInfo.is_followed;
@@ -149,9 +148,9 @@ namespace BiliLite.Modules.User
         }
         public async Task<bool> AttentionUP(string mid, int mode)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return false;
             }
 
@@ -163,25 +162,25 @@ namespace BiliLite.Modules.User
                     var data = await results.GetJson<ApiDataModel<object>>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("操作成功");
+                        Notify.ShowMessageToast("操作成功");
                         return true;
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                         return false;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
                 return false;
             }
 
@@ -191,7 +190,7 @@ namespace BiliLite.Modules.User
 
 
     }
-   
+
 
 
     public class UserCenterInfoOfficialModel
@@ -268,7 +267,7 @@ namespace BiliLite.Modules.User
         {
             get
             {
-                return following > 0 ? " " + Utils.ToCountString(following) : "";
+                return following > 0 ? " " + following.ToCountString() : "";
             }
         }
         public int follower { get; set; }
@@ -276,7 +275,7 @@ namespace BiliLite.Modules.User
         {
             get
             {
-                return follower > 0 ? " " + Utils.ToCountString(follower) : "";
+                return follower > 0 ? " " + follower.ToCountString() : "";
             }
         }
         public int video_count { get; set; }
@@ -284,7 +283,7 @@ namespace BiliLite.Modules.User
         {
             get
             {
-                return video_count > 0 ? " " + Utils.ToCountString(video_count) : "";
+                return video_count > 0 ? " " + video_count.ToCountString() : "";
             }
         }
         public int article_count { get; set; }
@@ -292,7 +291,7 @@ namespace BiliLite.Modules.User
         {
             get
             {
-                return article_count > 0 ? " " + Utils.ToCountString(article_count) : "";
+                return article_count > 0 ? " " + article_count.ToCountString() : "";
             }
         }
         public int favourite_count { get; set; }
@@ -300,12 +299,12 @@ namespace BiliLite.Modules.User
         {
             get
             {
-                return favourite_count > 0 ? " " + Utils.ToCountString(favourite_count) : "";
+                return favourite_count > 0 ? " " + favourite_count.ToCountString() : "";
             }
         }
 
     }
-    public class UserCenterInfoModel:IModules
+    public class UserCenterInfoModel : IModules
     {
         public long mid { get; set; }
         public string name { get; set; }
@@ -320,7 +319,7 @@ namespace BiliLite.Modules.User
             {
                 switch (level)
                 {
-                   
+
                     case 2:
                         return new SolidColorBrush(Colors.LightGreen);
                     case 3:

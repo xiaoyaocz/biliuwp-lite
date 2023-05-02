@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -17,7 +16,7 @@ using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User.UserDetail
 {
-    public class UserFavlistVM:IModules
+    public class UserFavlistVM : IModules
     {
         public string mid { get; set; }
         private readonly UserDetailAPI userDetailAPI;
@@ -29,7 +28,7 @@ namespace BiliLite.Modules.User.UserDetail
 
 
         }
-       
+
         private bool _Loading = true;
         public bool Loading
         {
@@ -86,7 +85,7 @@ namespace BiliLite.Modules.User.UserDetail
                                 }
                             }
                         }
-                      
+
                         if ((Items == null || Items.Count == 0))
                         {
                             Nothing = true;
@@ -95,19 +94,19 @@ namespace BiliLite.Modules.User.UserDetail
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

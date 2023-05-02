@@ -1,46 +1,16 @@
-﻿using BiliLite.Models;
-using Microsoft.Toolkit.Uwp.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace BiliLite.Helpers
+namespace BiliLite.Models.Common
 {
-    public class SettingHelper
+    public static class SettingConstants
     {
-
-        public static LocalObjectStorageHelper storageHelper = new LocalObjectStorageHelper();
-        public static T GetValue<T>(string key, T _default)
-        {
-            if (storageHelper.KeyExists(key))
-            {
-                return storageHelper.Read<T>(key);
-            }
-            else
-            {
-                return _default;
-            }
-        }
-        public static void SetValue<T>(string key, T value)
-        {
-            storageHelper.Save<T>(key, value);
-        }
         public class UI
         {
             /// <summary>
             /// 加载原图
             /// </summary>
             public const string ORTGINAL_IMAGE = "originalImage";
-            public static bool? _loadOriginalImage = null;
-            public static bool LoadOriginalImage
-            {
-                get
-                {
-                    if (_loadOriginalImage == null)
-                    {
-                        _loadOriginalImage = GetValue(ORTGINAL_IMAGE, false);
-                    }
-                    return _loadOriginalImage.Value;
-                }
-            }
+
             /// <summary>
             /// 主题颜色
             /// </summary>
@@ -122,6 +92,7 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string OPEN_URL_BROWSER = "OpenUrlWithBrowser";
         }
+
         public class Account
         {
             /// <summary>
@@ -144,35 +115,9 @@ namespace BiliLite.Helpers
             /// 到期时间
             /// </summary>
             public const string USER_PROFILE = "userProfile";
-            public static MyProfileModel Profile
-            {
-                get
-                {
-                    return storageHelper.Read<MyProfileModel>(USER_PROFILE);
-                }
-            }
-            public static bool Logined
-            {
-                get
-                {
-                    return storageHelper.KeyExists(Account.ACCESS_KEY) && !string.IsNullOrEmpty(storageHelper.Read<string>(Account.ACCESS_KEY, null));
-                }
-            }
-            public static string AccessKey
-            {
-                get
-                {
-                    return GetValue(ACCESS_KEY, "");
-                }
-            }
-            public static int UserID
-            {
-                get
-                {
-                    return GetValue(USER_ID, 0);
-                }
-            }
+
         }
+
         public class VideoDanmaku
         {
             /// <summary>
@@ -336,6 +281,7 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string HIDE_LOTTERY = "LiveHideLottery";
         }
+
         public class Player
         {
             /// <summary>
@@ -447,7 +393,7 @@ namespace BiliLite.Helpers
             /// 自动打开AI字幕
             /// </summary>
             public const string AUTO_OPEN_AI_SUBTITLE = "PlayerAutoOpenAISubtitle";
-         
+
 
             /// <summary>
             /// 替换CDN
@@ -459,6 +405,7 @@ namespace BiliLite.Helpers
             /// </summary>
             public const string CDN_SERVER = "PlayerCDNServer";
         }
+
         public class Roaming
         {
             /// <summary>
@@ -483,7 +430,7 @@ namespace BiliLite.Helpers
             /// <summary>
             /// 自定义大陆服务器链接
             /// </summary>
-            public const string CUSTOM_SERVER_URL_CN= "RoamingCustomServerUrlCN";
+            public const string CUSTOM_SERVER_URL_CN = "RoamingCustomServerUrlCN";
 
             /// <summary>
             /// 简体中文
@@ -493,10 +440,8 @@ namespace BiliLite.Helpers
             /// 只使用AkamaiCDN链接
             /// </summary>
             //public const string AKAMAI_CDN = "RoamingAkamaiCDN";
-
-           
-
         }
+
         public class Download
         {
             /// <summary>

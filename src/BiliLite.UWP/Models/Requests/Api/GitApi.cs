@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Services;
 
 namespace BiliLite.Models.Requests.Api
@@ -15,7 +15,7 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.GIT_RAW_URL}/document/new_version.json",
-                parameter = $"ts={Utils.GetTimestampS()}"
+                parameter = $"ts={TimeExtensions.GetTimestampS()}"
             };
             return api;
         }
@@ -30,7 +30,7 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.GIT_RAW_URL}/document/entrance.json",
-                parameter = $"ts={Utils.GetTimestampS()}"
+                parameter = $"ts={TimeExtensions.GetTimestampS()}"
             };
             return api;
         }

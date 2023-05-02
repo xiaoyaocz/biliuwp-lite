@@ -9,7 +9,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
 using BiliLite.Models.Common;
 using BiliLite.Services;
-using BiliLite.Helpers;
 using Flurl.Http;
 using BiliLite.Models.Responses;
 
@@ -237,7 +236,7 @@ namespace BiliLite.Extensions
             {
                 //访问一遍bilibili.com拿Cookie
                 var getCookieResult = await Constants.BILIBILI_DOMAIN.GetHttpResultsAsync();
-                Utils.SaveCookie(getCookieResult.cookies);
+                getCookieResult.cookies.SaveCookie();
             }
             cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
             var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);

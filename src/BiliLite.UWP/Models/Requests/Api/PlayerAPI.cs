@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 
@@ -12,13 +13,13 @@ namespace BiliLite.Models.Requests.Api
 
             if (proxy)
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{baseUrl}/x/player/playurl",
-                parameter = $"avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingHelper.Account.Logined ? SettingHelper.Account.Profile.mid.ToString() : "")}",
+                parameter = $"avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingService.Account.Logined ? SettingService.Account.Profile.mid.ToString() : "")}",
                 need_cookie = true,
             };
             if (dash)
@@ -37,7 +38,7 @@ namespace BiliLite.Models.Requests.Api
             var baseUrl = ApiHelper.API_BASE_URL;
             if (proxy)
             {
-                baseUrl = Utils.ChooseProxyServer(area);
+                baseUrl = area.ChooseProxyServer();
             }
             ApiModel api = new ApiModel()
             {
@@ -45,9 +46,9 @@ namespace BiliLite.Models.Requests.Api
                 baseUrl = $"{baseUrl}/pgc/player/web/playurl",
                 parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&ep_id={ep_id}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
-                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}&mid={SettingHelper.Account.Profile.mid}";
+                api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
             if (dash)
             {
@@ -70,9 +71,9 @@ namespace BiliLite.Models.Requests.Api
                 baseUrl = $"{ApiHelper.API_BASE_URL}/pgc/player/web/playurl",
                 parameter = $"appkey={ApiHelper.AndroidKey.Appkey}&cid={cid}&qn={qn}&type=&otype=json&module=bangumi&season_type={season_type}"
             };
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
-                api.parameter += $"&access_key={SettingHelper.Account.AccessKey}&mid={SettingHelper.Account.Profile.mid}";
+                api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
             if (dash)
             {
@@ -153,7 +154,7 @@ namespace BiliLite.Models.Requests.Api
                 method = RestSharp.Method.Post,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/dm/post",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&aid={aid}",
-                body = $"msg={Uri.EscapeDataString(msg)}&mode={mode}&screen_state=1&color={color}&pool=0&progress={Convert.ToInt32(position * 1000)}&fontsize=25&rnd={Utils.GetTimestampS()}&from=7&oid={cid}&plat={plat}&type=1"
+                body = $"msg={Uri.EscapeDataString(msg)}&mode={mode}&screen_state=1&color={color}&pool=0&progress={Convert.ToInt32(position * 1000)}&fontsize=25&rnd={TimeExtensions.GetTimestampS()}&from=7&oid={cid}&plat={plat}&type=1"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

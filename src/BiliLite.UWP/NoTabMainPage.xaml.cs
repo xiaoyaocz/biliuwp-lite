@@ -1,5 +1,5 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
+using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Pages;
 using BiliLite.Services;
@@ -26,7 +26,7 @@ namespace BiliLite
         {
             this.InitializeComponent();
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            mode = SettingHelper.GetValue<int>(SettingHelper.UI.DISPLAY_MODE, 0);
+            mode = SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0);
             Window.Current.SetTitleBar(TitleBar);
             frame.Navigated += Frame_Navigated;
             MessageCenter.NavigateToPageEvent += NavigationHelper_NavigateToPageEvent;
@@ -51,7 +51,7 @@ namespace BiliLite
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
-            if (SettingHelper.GetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back
+            if (SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back
                 && par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
             {
                 //如果打开了图片浏览，则关闭图片浏览
@@ -79,7 +79,7 @@ namespace BiliLite
             }
             if (e.Content is Pages.BasePage)
             {
-                txtTitle.Text = (e.Content as BasePage).Title ;
+                txtTitle.Text = (e.Content as BasePage).Title;
             }
 
             if (frame.CanGoBack)
@@ -103,7 +103,7 @@ namespace BiliLite
                 var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
                 if (!result)
                 {
-                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
+                    Notify.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
                 }
             }
 #if !DEBUG
@@ -198,17 +198,17 @@ namespace BiliLite
         {
             var frame = new MyFrame();
             frame.Navigated += Frame_Navigated;
-          
+
             this.Children.Add(frame);
         }
 
-      
+
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
             Navigated?.Invoke(sender, e);
         }
 
-        public bool Navigate(Type sourcePageType, object parameter=null)
+        public bool Navigate(Type sourcePageType, object parameter = null)
         {
             var frame = this.Children.Last() as Frame;
             //检查最后一个Frame中是否存在此页面
@@ -220,12 +220,12 @@ namespace BiliLite
             if (frame.Content is PlayPage)
             {
                 (frame.Content as PlayPage).Pause();
-            } 
-            
+            }
+
             //跳转页面
             (this.Children.Last() as Frame).Navigate(sourcePageType, parameter);
-           
-           
+
+
             return true;
         }
         public bool CanGoBack
@@ -250,14 +250,14 @@ namespace BiliLite
             {
                 if (this.Children.Count > 1)
                 {
-                    await frame.AnimateYAsync(0, this.ActualHeight,300);
+                    await frame.AnimateYAsync(0, this.ActualHeight, 300);
                     frame.Navigated -= Frame_Navigated;
                     frame.Close();
 
 
                     this.Children.Remove(frame);
                     //frame = this.Children.Last() as Frame;
-                    
+
                 }
             }
         }

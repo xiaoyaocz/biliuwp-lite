@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,6 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {
@@ -53,9 +54,9 @@ namespace BiliLite.Modules.User
         {
             try
             {
-                if (!SettingHelper.Account.Logined && await Utils.ShowLoginDialog())
+                if (!SettingService.Account.Logined && await Notify.ShowLoginDialog())
                 {
-                    Utils.ShowMessageToast("请先登录");
+                    Notify.ShowMessageToast("请先登录");
                     return;
                 }
                 var results = await watchLaterAPI.Add(aid).Request();
@@ -64,26 +65,26 @@ namespace BiliLite.Modules.User
                     var data = await results.GetJson<ApiDataModel<object>>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("已添加到稍后再看");
+                        Notify.ShowMessageToast("已添加到稍后再看");
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast("添加失败");
+                Notify.ShowMessageToast("添加失败");
             }
 
         }
-      
+
         private bool _loading = false;
 
         public bool Loading
@@ -91,7 +92,7 @@ namespace BiliLite.Modules.User
             get { return _loading; }
             set { _loading = value; DoPropertyChanged("Loading"); }
         }
-       
+
         private bool _Nothing = false;
         public bool Nothing
         {
@@ -99,7 +100,7 @@ namespace BiliLite.Modules.User
             set { _Nothing = value; DoPropertyChanged("Nothing"); }
         }
 
-        
+
         private ObservableCollection<WatchlaterItemModel> _videos;
         public ObservableCollection<WatchlaterItemModel> Videos
         {
@@ -111,7 +112,7 @@ namespace BiliLite.Modules.User
         {
             try
             {
-              
+
                 Loading = true;
                 Nothing = false;
                 var results = await watchLaterAPI.Watchlater().Request();
@@ -134,23 +135,23 @@ namespace BiliLite.Modules.User
                             }
                         }
                         Videos = ls;
-                       
-                      
+
+
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -171,8 +172,8 @@ namespace BiliLite.Modules.User
         {
             try
             {
-              
-                if (!await Utils.ShowDialog("清空稍后再看", "确定要清空全部视频吗?")) return;
+
+                if (!await Notify.ShowDialog("清空稍后再看", "确定要清空全部视频吗?")) return;
                 var results = await watchLaterAPI.Clear().Request();
                 if (results.status)
                 {
@@ -183,25 +184,25 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
         public async void ClearViewed()
         {
             try
             {
-                if (!await Utils.ShowDialog("清除已观看", "确定要清空已观看视频吗?")) return;
+                if (!await Notify.ShowDialog("清除已观看", "确定要清空已观看视频吗?")) return;
                 var results = await watchLaterAPI.Del().Request();
                 if (results.status)
                 {
@@ -212,18 +213,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
 
@@ -242,22 +243,22 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
     }
-  
+
     public class WatchlaterItemModel
     {
         public ICommand DeleteCommand { get; set; }
@@ -270,9 +271,9 @@ namespace BiliLite.Modules.User
         public string dynamic { get; set; }
         public long cid { get; set; }
         public long add_at { get; set; }
-    
+
         public WatchlaterOwnerModel owner { get; set; }
-       
+
         public List<WatchlaterPagesModel> pages { get; set; }
 
         public int progress { get; set; }
@@ -299,7 +300,7 @@ namespace BiliLite.Modules.User
                 {
                     if (progress != 0)
                     {
-                        return "看到 "+TimeSpan.FromSeconds(progress).ToString(@"mm\:ss");
+                        return "看到 " + TimeSpan.FromSeconds(progress).ToString(@"mm\:ss");
                     }
                     else
                     {

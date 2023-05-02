@@ -1,22 +1,17 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api.Live;
+﻿using BiliLite.Models.Requests.Api.Live;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Live
 {
-    public class LiveAreaVM:IModules
+    public class LiveAreaVM : IModules
     {
         readonly LiveAreaAPI liveAreaAPI;
         public LiveAreaVM()
         {
             liveAreaAPI = new LiveAreaAPI();
-            
         }
         private bool _loading = false;
         public bool Loading
@@ -41,26 +36,26 @@ namespace BiliLite.Modules.Live
                 var results = await liveAreaAPI.LiveAreaList().Request();
                 if (results.status)
                 {
-                    var data =await results.GetData<List<LiveAreaModel>>();
+                    var data = await results.GetData<List<LiveAreaModel>>();
                     if (data.success)
                     {
                         Items = data.data;
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

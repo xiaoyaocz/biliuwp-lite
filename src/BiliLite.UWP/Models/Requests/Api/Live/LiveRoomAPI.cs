@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 
@@ -144,7 +145,7 @@ namespace BiliLite.Models.Requests.Api.Live
                 method = RestSharp.Method.Post,
                 baseUrl = $"https://api.live.bilibili.com/gift/v2/live/bag_send",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
-                body = $"uid={SettingHelper.Account.UserID}&ruid={ruid}&send_ruid=0&gift_id={gift_id}&gift_num={num}&bag_id={bag_id}&biz_id={roomId}&rnd={new Random().Next(1000, 999999).ToString("000000")}&biz_code=live&data_behavior_id=&data_source_id="
+                body = $"uid={SettingService.Account.UserID}&ruid={ruid}&send_ruid=0&gift_id={gift_id}&gift_num={num}&bag_id={bag_id}&biz_id={roomId}&rnd={new Random().Next(1000, 999999).ToString("000000")}&biz_code=live&data_behavior_id=&data_source_id="
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -162,7 +163,7 @@ namespace BiliLite.Models.Requests.Api.Live
                 baseUrl = $"https://api.live.bilibili.com/gift/v2/live/send",
                 body = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
-            api.body += $"&biz_code=live&biz_id={roomId}&coin_type={coin_type}&gift_id={gift_id}&gift_num={num}&mobi_app=android&platform=android&price={price}&rnd={Utils.GetTimestampMS()}&ruid={ruid}&uid={SettingHelper.Account.UserID}";
+            api.body += $"&biz_code=live&biz_id={roomId}&coin_type={coin_type}&gift_id={gift_id}&gift_num={num}&mobi_app=android&platform=android&price={price}&rnd={TimeExtensions.GetTimestampMS()}&ruid={ruid}&uid={SettingService.Account.UserID}";
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
@@ -179,7 +180,7 @@ namespace BiliLite.Models.Requests.Api.Live
                 baseUrl = $"https://api.live.bilibili.com/api/sendmsg",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&actionKey=appkey",
             };
-            api.body = $"cid={roomId}&mid={SettingHelper.Account.UserID}&msg={Uri.EscapeDataString(text)}&rnd={Utils.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
+            api.body = $"cid={roomId}&mid={SettingService.Account.UserID}&msg={Uri.EscapeDataString(text)}&rnd={TimeExtensions.GetTimestampMS()}&mode=1&pool=0&type=json&color=16777215&fontsize=25&playTime=0.0";
             api.parameter += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
