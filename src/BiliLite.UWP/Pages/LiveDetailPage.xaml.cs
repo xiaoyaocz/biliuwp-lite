@@ -716,7 +716,7 @@ namespace BiliLite.Pages
             {
                 BottomBtnFull.Visibility = Visibility.Collapsed;
                 BottomBtnExitFull.Visibility = Visibility.Visible;
-                this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -40 : -32, 0, 0);
+                this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
                 RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
                 //全屏
