@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.Media.Playback;
@@ -25,6 +26,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -1162,5 +1164,11 @@ namespace BiliLite.Pages
             Notify.ShowMessageToast("已复制链接到剪切板");
         }
 
+        private void Player_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var rectangle = new RectangleGeometry();
+            rectangle.Rect = new Rect(0, 0, PlayerView.ActualWidth, PlayerView.ActualHeight);
+            DanmuControl.Clip = rectangle;
+        }
     }
 }

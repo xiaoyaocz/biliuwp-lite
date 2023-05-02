@@ -340,6 +340,8 @@
                     </Flyout>
                 </Grid.ContextFlyout>
                 <Grid Background="Black" 
+                      x:Name="PlayerView"
+                      SizeChanged="Player_SizeChanged"
                       PointerMoved="Grid_PointerMoved"   
                    PointerEntered="Grid_PointerEntered" 
                    PointerExited="Grid_PointerExited"
