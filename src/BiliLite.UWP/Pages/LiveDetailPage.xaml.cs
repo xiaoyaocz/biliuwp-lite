@@ -750,8 +750,7 @@ namespace BiliLite.Pages
         private void btnSendGift_Click(object sender, RoutedEventArgs e)
         {
             var giftInfo = (sender as Button).DataContext as LiveGiftItem;
-            liveRoomVM.SendGift(giftInfo);
-
+            liveRoomVM.SendGift(giftInfo).RunWithoutAwait();
         }
 
         private async void TopBtnScreenshot_Click(object sender, RoutedEventArgs e)
@@ -1137,10 +1136,10 @@ namespace BiliLite.Pages
         }
         #endregion
 
-        private void btnSendBagGift_Click(object sender, RoutedEventArgs e)
+        private async void btnSendBagGift_Click(object sender, RoutedEventArgs e)
         {
             var giftInfo = (sender as Button).DataContext as LiveGiftItem;
-            liveRoomVM.SendBagGift(giftInfo);
+            await Task.Run(() => liveRoomVM.SendBagGift(giftInfo)).ConfigureAwait(false);
         }
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {

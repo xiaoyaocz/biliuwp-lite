@@ -545,7 +545,7 @@ namespace BiliLite.Modules
                             await LoadSuperChat();
                             if (ReceiveLotteryMsg)
                             {
-                                anchorLotteryVM.LoadLotteryInfo(RoomID);
+                                anchorLotteryVM.LoadLotteryInfo(RoomID).RunWithoutAwait();
                             }
                         }
                         await GetRoomGiftList();

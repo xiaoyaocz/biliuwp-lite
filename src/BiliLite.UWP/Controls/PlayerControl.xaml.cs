@@ -1340,7 +1340,7 @@ namespace BiliLite.Controls
                 BottomCBQuality.SelectedItem = info.CurrentQuality;
                 //SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, info.data.current.quality);
                 BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
-                ChangeQuality(info.CurrentQuality);
+                ChangeQuality(info.CurrentQuality).RunWithoutAwait();
             }
             else
             {
@@ -2123,7 +2123,7 @@ namespace BiliLite.Controls
                 InteractionChoices.Visibility = Visibility.Visible;
                 return;
             }
-            playerHelper.ReportHistory(CurrentPlayItem, Player.Duration);
+            playerHelper.ReportHistory(CurrentPlayItem, Player.Duration).RunWithoutAwait();
             //列表顺序播放
             if (PlayerSettingPlayMode.SelectedIndex == 0)
             {
@@ -2400,7 +2400,7 @@ namespace BiliLite.Controls
                     location = location,
                     size = 25,
                     time = Player.Position
-                }, true);
+                }, true).RunWithoutAwait();
                 SendDanmakuTextBox.Text = "";
             }
 

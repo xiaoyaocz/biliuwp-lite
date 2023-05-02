@@ -138,6 +138,7 @@
     <Compile Include="Extensions\ObservableCollectionExtension.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\TimeExtensions.cs" />
     <Compile Include="Models\Common\SettingConstants.cs" />
     <Compile Include="Models\Responses\NewVersionResponse.cs" />

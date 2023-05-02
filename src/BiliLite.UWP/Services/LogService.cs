@@ -42,7 +42,7 @@ namespace BiliLite.Services
             if (IsAutoClearLogFile)
             {
                 // todo: add await
-                DeleteFile(storageFolder.Path + @"\log\");
+                DeleteFile(storageFolder.Path + @"\log\").RunWithoutAwait();
             }
         }
 

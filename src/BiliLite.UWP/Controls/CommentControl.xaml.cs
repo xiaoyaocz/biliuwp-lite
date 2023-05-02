@@ -469,7 +469,7 @@ namespace BiliLite.Controls
                         m.loadpage = 1;
                         m.replies.Clear();
                         m.replyText = "";
-                        GetReply(m);
+                        GetReply(m).RunWithoutAwait();
                     }
                     else
                     {

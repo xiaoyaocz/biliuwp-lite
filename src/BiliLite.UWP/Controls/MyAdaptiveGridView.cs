@@ -38,7 +38,7 @@ namespace BiliLite.Controls
 
 
 
-        public bool Loading
+        public new bool Loading
         {
             get { return (bool)GetValue(LoadingProperty); }
             set { SetValue(LoadingProperty, value); }

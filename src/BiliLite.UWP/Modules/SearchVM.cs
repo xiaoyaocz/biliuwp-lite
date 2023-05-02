@@ -72,8 +72,9 @@ namespace BiliLite.Modules
         }
         public bool HasData { get; set; } = false;
 
-        public async virtual Task LoadData()
+        public virtual Task LoadData()
         {
+            throw new NotImplementedException();
         }
     }
 
