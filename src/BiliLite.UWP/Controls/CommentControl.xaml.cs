@@ -28,6 +28,8 @@ namespace BiliLite.Controls
     {
         readonly CommentApi commentApi;
         EmoteVM emoteVM;
+        bool m_disableShowPicture = false;
+
         public CommentControl()
         {
             this.InitializeComponent();
@@ -116,9 +118,9 @@ namespace BiliLite.Controls
         /// 初始化并加载评论
         /// </summary>
         /// <param name="loadCommentInfo"></param>
-        public async void LoadComment(LoadCommentInfo loadCommentInfo)
+        public async void LoadComment(LoadCommentInfo loadCommentInfo, bool disableShowPicture = false)
         {
-
+            m_disableShowPicture = disableShowPicture;
             if (loadCommentInfo.CommentSort == CommentSort.Hot)
             {
                 hot.Visibility = Visibility.Visible;
@@ -640,6 +642,11 @@ namespace BiliLite.Controls
 
         private void NotePicturesView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            if (m_disableShowPicture)
+            {
+                Notify.ShowMessageToast("暂不支持查看图片");
+                return;
+            }
             var notePicture = e.ClickedItem as NotePicture;
             var notePicturesView = sender as AdaptiveGridView;
             if (notePicture == null || notePicturesView == null) return;

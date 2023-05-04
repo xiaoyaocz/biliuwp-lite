@@ -45,8 +45,8 @@ namespace BiliLite.Dialogs
                 CommentMode = commentMode,
                 CommentSort = commentSort,
                 Oid = oid,
-                IsDialog=true
-            });
+                IsDialog = true
+            }, true);
         }
         public async void Close()
         {
