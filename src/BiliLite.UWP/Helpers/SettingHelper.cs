@@ -552,6 +552,8 @@ namespace BiliLite.Helpers
             /// 保护日志敏感信息
             /// </summary>
             public const string PROTECT_LOG_INFO = "protectLogInfo";
+
+            public const string IGNORE_VERSION = "ignoreVersion";
         }
     }
 }
