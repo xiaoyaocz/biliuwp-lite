@@ -298,6 +298,8 @@ namespace BiliLite.Helpers
             {
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersion>(result.results);
+                var ignoreVersion = SettingHelper.GetValue(SettingHelper.Other.IGNORE_VERSION, "");
+                if (ignoreVersion.Equals(ver.version)) return;
                 var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
                 var v = int.Parse(num);
                 if (ver.version_num > v)
@@ -318,12 +320,17 @@ namespace BiliLite.Helpers
                     });
                     dialog.Content = markdownText;
                     dialog.PrimaryButtonText = "查看详情";
-                    dialog.SecondaryButtonText = "忽略";
+                    dialog.CloseButtonText = "取消";
+                    dialog.SecondaryButtonText = "忽略该版本";
 
                     dialog.PrimaryButtonClick += new Windows.Foundation.TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>(async (sender, e) =>
                     {
                         await Windows.System.Launcher.LaunchUriAsync(new Uri(ver.url));
                     });
+                    dialog.SecondaryButtonClick += (sender, e) =>
+                    {
+                        SettingHelper.SetValue(SettingHelper.Other.IGNORE_VERSION, ver.version);
+                    };
                     await dialog.ShowAsync();
                 }
             }
