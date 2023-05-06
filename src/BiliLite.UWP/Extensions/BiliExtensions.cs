@@ -1,6 +1,7 @@
 ﻿using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Responses;
+using BiliLite.Services;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Newtonsoft.Json;
@@ -104,6 +105,8 @@ namespace BiliLite.Extensions
             {
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersionResponse>(result.results);
+                var ignoreVersion = SettingService.GetValue(SettingConstants.Other.IGNORE_VERSION, "");
+                if (ignoreVersion.Equals(ver.Version)) return;
                 var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
                 // 获取临时版本号
                 var revision = SystemInformation.ApplicationVersion.Revision;
@@ -131,12 +134,17 @@ namespace BiliLite.Extensions
                     });
                     dialog.Content = markdownText;
                     dialog.PrimaryButtonText = "查看详情";
-                    dialog.SecondaryButtonText = "忽略";
+                    dialog.CloseButtonText = "取消";
+                    dialog.SecondaryButtonText = "忽略该版本";
 
                     dialog.PrimaryButtonClick += new Windows.Foundation.TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs>(async (sender, e) =>
                     {
                         await Launcher.LaunchUriAsync(new Uri(ver.Url));
                     });
+                    dialog.SecondaryButtonClick += (sender, e) =>
+                    {
+                        SettingService.SetValue(SettingConstants.Other.IGNORE_VERSION, ver.Version);
+                    };
                     await dialog.ShowAsync();
                 }
             }

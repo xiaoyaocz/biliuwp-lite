@@ -497,6 +497,11 @@ namespace BiliLite.Models.Common
             /// 保护日志敏感信息
             /// </summary>
             public const string PROTECT_LOG_INFO = "protectLogInfo";
+
+            /// <summary>
+            /// 忽略版本
+            /// </summary>
+            public const string IGNORE_VERSION = "ignoreVersion";
         }
     }
 }

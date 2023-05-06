@@ -1,7 +1,7 @@
 {
-    "version": "4.5.5",
-    "version_num": 40505,
-    "version_desc": "更新内容:\r\n\r\n* 修复收藏夹无法打开\r\n\r\n* 修复无法获取直播间大航海列表\r\n\r\n* 日志输出添加类型名\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.5.6",
+    "version_num": 40506,
+    "version_desc": "更新内容:\r\n\r\n* 支持忽略更新版本\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
