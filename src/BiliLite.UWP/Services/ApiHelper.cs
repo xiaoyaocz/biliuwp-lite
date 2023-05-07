@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace BiliLite.Services
                 stringBuilder.Append(str1);
             }
             stringBuilder.Append(apiKeyInfo.Secret);
-            result = Utils.ToMD5(stringBuilder.ToString()).ToLower();
+            result = stringBuilder.ToString().ToMD5().ToLower();
             return par + result;
         }
 
@@ -59,7 +59,7 @@ namespace BiliLite.Services
             }
             var results = sb.ToString().TrimEnd('&');
             results = results + apiKeyInfo.Secret;
-            return "&sign=" + Utils.ToMD5(results).ToLower();
+            return "&sign=" + results.ToMD5().ToLower();
         }
 
         /// <summary>
@@ -70,11 +70,11 @@ namespace BiliLite.Services
         public static string MustParameter(ApiKeyInfo apikey, bool needAccesskey = false)
         {
             var url = "";
-            if (needAccesskey && SettingHelper.Account.Logined)
+            if (needAccesskey && SettingService.Account.Logined)
             {
-                url = $"access_key={SettingHelper.Account.AccessKey}&";
+                url = $"access_key={SettingService.Account.AccessKey}&";
             }
-            return url + $"appkey={apikey.Appkey}&build={build}&mobi_app={_mobi_app}&platform={_platform}&ts={Utils.GetTimestampS()}";
+            return url + $"appkey={apikey.Appkey}&build={build}&mobi_app={_mobi_app}&platform={_platform}&ts={TimeExtensions.GetTimestampS()}";
         }
         /// <summary>
         /// 默认一些请求头

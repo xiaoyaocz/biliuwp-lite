@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 using System;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
@@ -9,6 +8,13 @@ using System.Text.RegularExpressions;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
+using OpenCCNET;
+using BiliLite.Services;
+using Windows.UI;
+using Windows.Security.Cryptography.Core;
+using Windows.Security.Cryptography;
+using Windows.Storage.Streams;
+using System.Threading.Tasks;
 
 namespace BiliLite.Extensions
 {
@@ -34,7 +40,7 @@ namespace BiliLite.Extensions
                 var content = item.content;
                 if (toSimplified)
                 {
-                    content = Utils.ToSimplifiedChinese(content);
+                    content = content.ToHansFromTW(true);
                 }
 
                 stringBuilder.AppendLine(content);
@@ -52,15 +58,7 @@ namespace BiliLite.Extensions
         /// <returns></returns>
         public static string SimplifiedToTraditional(this string input)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var key in input)
-            {
-                stringBuilder.Append(ChineseDictionary.chsDictionary.ContainsKey(key)
-                    ? ChineseDictionary.chsDictionary[key]
-                    : key);
-            }
-
-            return stringBuilder.ToString();
+            return input.ToHKFromHans();
         }
 
         /// <summary>
@@ -70,15 +68,7 @@ namespace BiliLite.Extensions
         /// <returns></returns>
         public static string TraditionalToSimplified(this string input)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            foreach (var key in input)
-            {
-                stringBuilder.Append(ChineseDictionary.chtDictionary.ContainsKey(key)
-                    ? ChineseDictionary.chtDictionary[key]
-                    : key);
-            }
-
-            return stringBuilder.ToString();
+            return input.ToHansFromTW(true);
         }
 
         /// <summary>
@@ -152,6 +142,156 @@ namespace BiliLite.Extensions
                 url = Regex.Replace(url, pattern, replacement);
             }
             return url;
+        }
+
+        public static string ChooseProxyServer(this string area)
+        {
+            var proxyUrl = SettingService.GetValue(SettingConstants.Roaming.CUSTOM_SERVER_URL, ApiHelper.ROMAING_PROXY_URL);
+            var proxyUrlCN = SettingService.GetValue(SettingConstants.Roaming.CUSTOM_SERVER_URL_CN, "");
+            var proxyUrlHK = SettingService.GetValue(SettingConstants.Roaming.CUSTOM_SERVER_URL_HK, "");
+            var proxyUrlTW = SettingService.GetValue(SettingConstants.Roaming.CUSTOM_SERVER_URL_TW, "");
+            switch (area)
+            {
+                case "cn":
+                    return string.IsNullOrEmpty(proxyUrlCN) ? proxyUrl : proxyUrlCN;
+                case "hk":
+                    return string.IsNullOrEmpty(proxyUrlHK) ? proxyUrl : proxyUrlHK;
+                case "tw":
+                    return string.IsNullOrEmpty(proxyUrlTW) ? proxyUrl : proxyUrlTW;
+                default:
+                    return proxyUrl;
+            }
+        }
+
+        public static string ParseArea(this string title, long mid)
+        {
+            if (Regex.IsMatch(title, @"僅.*港.*地區"))
+            {
+                return "hk";
+            }
+            else if (Regex.IsMatch(title, @"僅.*台.*地區"))
+            {
+                return "tw";
+            }
+            //如果是哔哩哔哩番剧出差这个账号上传的
+            //且标题不含僅**地區，返回地区设置为港澳台
+            if (mid == 11783021)
+            {
+                return "hk";
+            }
+            return "cn";
+        }
+
+        public static string ParseArea(this string title, string mid)
+        {
+            return title.ParseArea(mid.ToInt32());
+        }
+
+        /// <summary>
+        /// MD5加密
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToMD5(this string input)
+        {
+            var provider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            IBuffer buffer = CryptographicBuffer.ConvertStringToBinary(input, BinaryStringEncoding.Utf8);
+            var hashed = provider.HashData(buffer);
+            var result = CryptographicBuffer.EncodeToHexString(hashed);
+            return result;
+        }
+
+        public static string ToSimplifiedChinese(this string content)
+        {
+            content = content.TraditionalToSimplified();
+            return content;
+        }
+
+        public static string RegexMatch(string input, string regular)
+        {
+            var data = Regex.Match(input, regular);
+            if (data.Groups.Count >= 2 && data.Groups[1].Value != "")
+            {
+                return data.Groups[1].Value;
+            }
+            else
+            {
+                return "";
+            }
+        }
+        public static async Task<T> DeserializeJson<T>(this string results)
+        {
+            return await Task.Run(() =>
+            {
+                return JsonConvert.DeserializeObject<T>(results);
+            });
+        }
+        public static bool SetClipboard(this string content)
+        {
+            try
+            {
+                Windows.ApplicationModel.DataTransfer.DataPackage pack = new Windows.ApplicationModel.DataTransfer.DataPackage();
+                pack.SetText(content);
+                Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(pack);
+                Windows.ApplicationModel.DataTransfer.Clipboard.Flush();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static Color StrToColor(this string obj)
+        {
+            obj = obj.Replace("#", "");
+            if (int.TryParse(obj, out var c))
+            {
+                obj = c.ToString("X2");
+            }
+            Color color = new Color();
+            if (obj.Length <= 6)
+            {
+                obj = obj.PadLeft(6, '0');
+                color.R = byte.Parse(obj.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+                color.G = byte.Parse(obj.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                color.B = byte.Parse(obj.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                color.A = 255;
+            }
+            else
+            {
+                obj = obj.PadLeft(8, '0');
+                color.R = byte.Parse(obj.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+                color.G = byte.Parse(obj.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+                color.B = byte.Parse(obj.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
+                color.A = byte.Parse(obj.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            }
+            return color;
+        }
+
+        public static string HandelTimestamp(this string ts)
+        {
+            if (ts.Length == 10)
+            {
+                ts += "0000000";
+            }
+            DateTime dtStart = new DateTime(1970, 1, 1, 0, 0, 0);
+            long lTime = long.Parse(ts);
+            TimeSpan toNow = new TimeSpan(lTime);
+            DateTime dt = dtStart.Add(toNow).ToLocalTime();
+            TimeSpan span = DateTime.Now.Date - dt.Date;
+            if (span.TotalDays <= 0)
+            {
+                return "今天" + dt.ToString("HH:mm");
+            }
+            else if (span.TotalDays >= 1 && span.TotalDays < 2)
+            {
+                return "昨天" + dt.ToString("HH:mm");
+            }
+            else
+            {
+                return dt.ToString("yyyy-MM-dd HH:mm");
+            }
         }
 
         #region Private methods

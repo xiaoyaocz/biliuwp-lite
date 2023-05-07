@@ -1,22 +1,16 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.Live;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Appointments;
 using Windows.UI.Xaml.Media.Imaging;
 using BiliLite.Extensions;
 
 namespace BiliLite.Modules.Live.LiveCenter
 {
-    public class LiveAttentionVM:IModules
+    public class LiveAttentionVM : IModules
     {
         readonly LiveCenterAPI liveCenterAPI;
         public LiveAttentionVM()
@@ -57,19 +51,19 @@ namespace BiliLite.Modules.Live.LiveCenter
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

@@ -1,21 +1,17 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
-using BiliLite.Modules;
 using BiliLite.Modules.Player.Playurl;
 using BiliLite.Services;
 using FFmpegInteropX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Editing;
@@ -24,11 +20,7 @@ using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
@@ -242,7 +234,7 @@ namespace BiliLite.Controls
             if (RuntimeInformation.ProcessArchitecture != Architecture.Arm64)
             {
                 SYEngine.Core.ForceNetworkMode = true;
-                SYEngine.Core.ForceSoftwareDecode = !SettingHelper.GetValue<bool>(SettingHelper.Player.HARDWARE_DECODING, false);
+                SYEngine.Core.ForceSoftwareDecode = !SettingService.GetValue<bool>(SettingConstants.Player.HARDWARE_DECODING, false);
             }
             //_ffmpegConfig.StreamBufferSize = 655360;//1024 * 30;
 
@@ -287,7 +279,7 @@ namespace BiliLite.Controls
 
                 _playerVideo.Source = MediaSource.CreateFromAdaptiveMediaSource(mediaSource);
                 Buffering = true;
-              
+
                 //设置时长
                 _playerVideo.MediaOpened += new TypedEventHandler<MediaPlayer, object>(async (e, arg) =>
                 {
@@ -1612,7 +1604,7 @@ namespace BiliLite.Controls
                         info += $"Average Frame: {_dashInfo.Video.FrameRate}\r\n";
                         info += $"Audio Codec: {_dashInfo.Audio.Codecs}\r\n";
                         info += $"Audio DataRate: {(_dashInfo.Audio.BandWidth / 1024).ToString("0.0")}Kbps\r\n";
-                        info += $"Video Host: { _dashInfo.Video.Host}\r\n";
+                        info += $"Video Host: {_dashInfo.Video.Host}\r\n";
                         info += $"Audio Host: {_dashInfo.Audio.Host}\r\n";
                     }
                     else
@@ -1730,7 +1722,7 @@ namespace BiliLite.Controls
         private MediaSourceConfig CreateFFmpegInteropConfig(string userAgent, string referer)
         {
 
-            var passthrough = SettingHelper.GetValue<bool>(SettingHelper.Player.HARDWARE_DECODING, true);
+            var passthrough = SettingService.GetValue<bool>(SettingConstants.Player.HARDWARE_DECODING, true);
             var _ffmpegConfig = new MediaSourceConfig();
             if (userAgent != null && userAgent.Length > 0)
             {

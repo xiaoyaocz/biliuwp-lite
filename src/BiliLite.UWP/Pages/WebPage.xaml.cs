@@ -1,5 +1,5 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
+using BiliLite.Extensions;
 using BiliLite.Services;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -161,7 +161,7 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
 
         private void btnShare_Click(object sender, RoutedEventArgs e)
         {
-            Utils.SetClipboard(webView.Source.ToString());
+            webView.Source.ToString().SetClipboard();
         }
 
         private async void webView_NewWindowRequested(WebView sender, WebViewNewWindowRequestedEventArgs args)
@@ -204,7 +204,7 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
                 var re = await MessageCenter.HandelUrl(args.Uri.AbsoluteUri);
                 if (!re)
                 {
-                    Utils.ShowMessageToast("不支持打开的链接" + args.Uri.AbsoluteUri);
+                    Notify.ShowMessageToast("不支持打开的链接" + args.Uri.AbsoluteUri);
                 }
             }
 
@@ -212,7 +212,7 @@ $('.author-container').css('margin','12px 0px -12px 0px');"
 
         private void btnInfo_Click(object sender, RoutedEventArgs e)
         {
-            Utils.ShowMessageToast("虽然看起来像个浏览器，但这完全这不是个浏览器啊！ ╰（‵□′）╯");
+            Notify.ShowMessageToast("虽然看起来像个浏览器，但这完全这不是个浏览器啊！ ╰（‵□′）╯");
         }
     }
 }

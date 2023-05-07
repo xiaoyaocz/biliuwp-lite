@@ -11,7 +11,7 @@
       xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
       xmlns:fa="using:FontAwesome5"
       xmlns:models="using:BiliLite.Models"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <DataTemplate x:Key="HotAnimeItem" x:DataType="model:AnimeRankModel">
             <Grid>
@@ -328,7 +328,7 @@
         <controls:RoundButton x:Name="btnRefresh" Click="btnRefresh_Click" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>
-        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=homeBangumi.Loading,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=homeBangumi.Loading,Mode=OneWay}" Background="Transparent">
             <ProgressRing IsActive="True" VerticalAlignment="Center" HorizontalAlignment="Center"></ProgressRing>
         </Grid>
     </Grid>

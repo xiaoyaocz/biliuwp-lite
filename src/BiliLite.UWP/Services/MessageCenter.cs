@@ -1,5 +1,5 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
+using BiliLite.Extensions;
 using BiliLite.Models;
 using BiliLite.Models.Common;
 using BiliLite.Pages;
@@ -59,11 +59,11 @@ namespace BiliLite.Services
         /// </summary>
         public static void SendLogout()
         {
-            SettingHelper.SetValue<string>(SettingHelper.Account.ACCESS_KEY, null);
-            SettingHelper.SetValue<long>(SettingHelper.Account.USER_ID, 0);
-            SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
-            SettingHelper.SetValue<string>(SettingHelper.Account.REFRESH_KEY, null);
-            SettingHelper.SetValue<MyProfileModel>(SettingHelper.Account.USER_PROFILE, null);
+            SettingService.SetValue<string>(SettingConstants.Account.ACCESS_KEY, null);
+            SettingService.SetValue<long>(SettingConstants.Account.USER_ID, 0);
+            SettingService.SetValue(SettingConstants.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
+            SettingService.SetValue<string>(SettingConstants.Account.REFRESH_KEY, null);
+            SettingService.SetValue<MyProfileModel>(SettingConstants.Account.USER_PROFILE, null);
             ClaerCookie();
             LogoutedEvent?.Invoke(null, null);
         }
@@ -111,7 +111,7 @@ namespace BiliLite.Services
             //短链接处理
             if (url.Contains("b23.tv"))
             {
-                url = await Utils.GetShortLinkLocation(url);
+                url = await BiliExtensions.GetShortLinkLocation(url);
             }
             /*
              * 视频
@@ -124,7 +124,7 @@ namespace BiliLite.Services
              * bilibili://story/722919541
              */
 
-            var video = Utils.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
+            var video = StringExtensions.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
             if (video != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -137,7 +137,7 @@ namespace BiliLite.Services
                 });
                 return true;
             }
-            video = Utils.RegexMatch(url, @"bilibili://video/(\d+)");
+            video = StringExtensions.RegexMatch(url, @"bilibili://video/(\d+)");
             if (video != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -150,7 +150,7 @@ namespace BiliLite.Services
                 });
                 return true;
             }
-            video = Utils.RegexMatch(url, @"bilibili://story/(\d+)");
+            video = StringExtensions.RegexMatch(url, @"bilibili://story/(\d+)");
             if (video != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -163,7 +163,7 @@ namespace BiliLite.Services
                 });
                 return true;
             }
-            video = Utils.RegexMatch(url, @"avid=(\d+)");
+            video = StringExtensions.RegexMatch(url, @"avid=(\d+)");
             if (video != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -181,7 +181,7 @@ namespace BiliLite.Services
             * 视频BV号
             * https://www.bilibili.com/video/BV1EE411w75R
             */
-            var video_bv = Utils.RegexMatch(url, @"BV([a-zA-Z0-9]{5,})");
+            var video_bv = StringExtensions.RegexMatch(url, @"BV([a-zA-Z0-9]{5,})");
             if (video_bv != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -206,7 +206,7 @@ namespace BiliLite.Services
              * https://bangumi.bilibili.com/movie/12364
              */
 
-            var bangumi = Utils.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d{4,})");
+            var bangumi = StringExtensions.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d{4,})");
             if (bangumi != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -219,7 +219,7 @@ namespace BiliLite.Services
                 });
                 return true;
             }
-            bangumi = Utils.RegexMatch(url, @"ep(\d+)");
+            bangumi = StringExtensions.RegexMatch(url, @"ep(\d+)");
             if (bangumi != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -229,7 +229,7 @@ namespace BiliLite.Services
                     title = "剧集加载中...",
                     dontGoTo = dontGoTo,
                     parameters = new object[] {
-                        await Utils.BangumiEpidToSid(bangumi),
+                        await BiliExtensions.BangumiEpidToSid(bangumi),
                             bangumi
                     }
                 });
@@ -262,7 +262,7 @@ namespace BiliLite.Services
             * bilibili://live/5619438
             */
 
-            var live = Utils.RegexMatch(url.Replace("h5", "live").Replace("live.bilibili.com", "live").Replace("/", ""), @"live(\d+)");
+            var live = StringExtensions.RegexMatch(url.Replace("h5", "live").Replace("live.bilibili.com", "live").Replace("/", ""), @"live(\d+)");
             if (live != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -299,7 +299,7 @@ namespace BiliLite.Services
             * bilibili://article/242568
             */
 
-            var article = Utils.RegexMatch(url.Replace("read/mobile/", "article").Replace("read/cv", "article").Replace("/", ""), @"article(\d+)");
+            var article = StringExtensions.RegexMatch(url.Replace("read/mobile/", "article").Replace("read/cv", "article").Replace("/", ""), @"article(\d+)");
             if (article != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -320,7 +320,7 @@ namespace BiliLite.Services
              * bilibili://music/detail/247991
              */
 
-            var music = Utils.RegexMatch(url.Replace("music/detail/", "au").Replace("/", ""), @"au(\d+)");
+            var music = StringExtensions.RegexMatch(url.Replace("music/detail/", "au").Replace("/", ""), @"au(\d+)");
             if (music != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -340,7 +340,7 @@ namespace BiliLite.Services
              * bilibili://music/menu/detail/78723
              */
 
-            var musicmenu = Utils.RegexMatch(url.Replace("menu/detail/", "am").Replace("/", ""), @"am(\d+)");
+            var musicmenu = StringExtensions.RegexMatch(url.Replace("menu/detail/", "am").Replace("/", ""), @"am(\d+)");
             if (musicmenu != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -364,7 +364,7 @@ namespace BiliLite.Services
              * https://t.bilibili.com/84935538081511530
              * bilibili://following/detail/314560419758546547
              */
-            var album = Utils.RegexMatch(url.Replace("bilibili://following/detail/", "album").Replace("h.bilibili.com/ywh/h5/", "album").Replace("h.bilibili.com", "album").Replace("t.bilibili.com", "album").Replace("/", ""), @"album(\d+)");
+            var album = StringExtensions.RegexMatch(url.Replace("bilibili://following/detail/", "album").Replace("h.bilibili.com/ywh/h5/", "album").Replace("h.bilibili.com", "album").Replace("t.bilibili.com", "album").Replace("/", ""), @"album(\d+)");
             if (album != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -387,7 +387,7 @@ namespace BiliLite.Services
             * https://space.bilibili.com/1360010
             * bilibili://author/2622476
             */
-            var user = Utils.RegexMatch(url.Replace("space.bilibili.com", "space").Replace("author", "space").Replace("/", ""), @"space(\d+)");
+            var user = StringExtensions.RegexMatch(url.Replace("space.bilibili.com", "space").Replace("author", "space").Replace("/", ""), @"space(\d+)");
             if (user != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -405,7 +405,7 @@ namespace BiliLite.Services
             * https://www.bilibili.com/tag/7868838/feed
             * bilibili://tag/0/?name=bilibili%e5%a5%bd%e4%b9%a1%e9%9f%b3
             */
-            var topic = Utils.RegexMatch(url, @"tag/(.*?)/feed");
+            var topic = StringExtensions.RegexMatch(url, @"tag/(.*?)/feed");
             if (topic != "")
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -418,7 +418,7 @@ namespace BiliLite.Services
                 });
                 return true;
             }
-            var topic1 = Utils.RegexMatch(url + "/", @"tag/.*?/\?name=(.*?)/");
+            var topic1 = StringExtensions.RegexMatch(url + "/", @"tag/.*?/\?name=(.*?)/");
             if (topic1 != "")
             {
                 var data = Uri.UnescapeDataString(topic1);
@@ -439,7 +439,7 @@ namespace BiliLite.Services
              * https://www.bilibili.com/playlist/detail/pl792
              * https://www.bilibili.com/medialist/detail/ml159001856?type=1
              */
-            var medialist_id = Utils.RegexMatch(url, @"ml(\d+)");
+            var medialist_id = StringExtensions.RegexMatch(url, @"ml(\d+)");
             if (!string.IsNullOrEmpty(medialist_id))
             {
                 NavigateToPage(null, new NavigationInfo()
@@ -529,7 +529,7 @@ namespace BiliLite.Services
 
             if (url.Contains("http://") || url.Contains("https://"))
             {
-                if (SettingHelper.GetValue(SettingHelper.UI.OPEN_URL_BROWSER, false))
+                if (SettingService.GetValue(SettingConstants.UI.OPEN_URL_BROWSER, false))
                 {
                     await Launcher.LaunchUriAsync(new Uri(url));
                     return true;
@@ -551,15 +551,15 @@ namespace BiliLite.Services
 
         public async static Task<string> HandelSeasonID(string url)
         {
-            var bangumi = Utils.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d+)");
+            var bangumi = StringExtensions.RegexMatch(url.Replace("movie", "ss").Replace("anime", "ss").Replace("season", "ss").Replace("/", ""), @"ss(\d+)");
             if (bangumi != "")
             {
                 return bangumi;
             }
-            bangumi = Utils.RegexMatch(url, @"ep(\d+)");
+            bangumi = StringExtensions.RegexMatch(url, @"ep(\d+)");
             if (bangumi != "")
             {
-                return await Utils.BangumiEpidToSid(bangumi);
+                return await BiliExtensions.BangumiEpidToSid(bangumi);
             }
             return "";
         }
@@ -571,7 +571,7 @@ namespace BiliLite.Services
                 Images = images,
                 Index = index
             };
-            if (SettingHelper.GetValue(SettingHelper.UI.NEW_WINDOW_PREVIEW_IMAGE, false))
+            if (SettingService.GetValue(SettingConstants.UI.NEW_WINDOW_PREVIEW_IMAGE, false))
             {
                 OpenWindow(typeof(ImageViewerPage), par);
             }

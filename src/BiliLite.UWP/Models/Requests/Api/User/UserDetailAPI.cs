@@ -14,7 +14,7 @@ namespace BiliLite.Models.Requests.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/acc/info",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/wbi/acc/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, needAccesskey: true) + $"&mid={mid}",
             };
             return api;
@@ -64,7 +64,7 @@ namespace BiliLite.Models.Requests.Api.User
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/arc/search",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/wbi/arc/search",
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
                 need_cookie = true,
             };

@@ -1,12 +1,10 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -15,6 +13,7 @@ using BiliLite.gRPC.Api;
 using Proto.Reply;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules.Player.Playurl
 {
@@ -62,11 +61,11 @@ namespace BiliLite.Modules.Player.Playurl
         public BiliPlayUrlRequest(bool isDownload)
         {
             IsDownload = isDownload;
-            //PriorityAkamaiCDN = SettingHelper.GetValue<bool>(SettingHelper.Roaming.AKAMAI_CDN, false);
-            ReplaceCDNMode = SettingHelper.GetValue<int>(SettingHelper.Player.REPLACE_CDN, 3);
-            CDN = SettingHelper.GetValue<string>(SettingHelper.Player.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
-            IsVIP = (SettingHelper.Account.Logined && SettingHelper.Account.Profile.vip != null && SettingHelper.Account.Profile.vip.status != 0);
-            CodecMode = (PlayUrlCodecMode)SettingHelper.GetValue<int>(IsDownload ? SettingHelper.Download.DEFAULT_VIDEO_TYPE : SettingHelper.Player.DEFAULT_VIDEO_TYPE, 1);
+            //PriorityAkamaiCDN = SettingService.GetValue<bool>(SettingConstants.Roaming.AKAMAI_CDN, false);
+            ReplaceCDNMode = SettingService.GetValue<int>(SettingConstants.Player.REPLACE_CDN, 3);
+            CDN = SettingService.GetValue<string>(SettingConstants.Player.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
+            IsVIP = (SettingService.Account.Logined && SettingService.Account.Profile.vip != null && SettingService.Account.Profile.vip.status != 0);
+            CodecMode = (PlayUrlCodecMode)SettingService.GetValue<int>(IsDownload ? SettingConstants.Download.DEFAULT_VIDEO_TYPE : SettingConstants.Player.DEFAULT_VIDEO_TYPE, 1);
         }
         protected void AddMessage(string type, string msg)
         {
@@ -602,7 +601,7 @@ namespace BiliLite.Modules.Player.Playurl
             {
                 Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
 
-                var playViewReply = await playUrlApi.VideoPlayView(Convert.ToInt64(playInfo.avid), Convert.ToInt64(playInfo.cid), qualityID, 16, codec, SettingHelper.Account.AccessKey);
+                var playViewReply = await playUrlApi.VideoPlayView(Convert.ToInt64(playInfo.avid), Convert.ToInt64(playInfo.cid), qualityID, 16, codec, SettingService.Account.AccessKey);
 
                 var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
                 return grpcResult;
@@ -700,7 +699,7 @@ namespace BiliLite.Modules.Player.Playurl
 
                 Proto.Request.CodeType codec = CodecMode == PlayUrlCodecMode.DASH_H265 ? Proto.Request.CodeType.Code265 : Proto.Request.CodeType.Code264;
 
-                var playViewReply = await playUrlApi.BangumiPlayView(Convert.ToInt64(playInfo.ep_id), Convert.ToInt64(playInfo.cid), qualityID, 0, codec, SettingHelper.Account.AccessKey);
+                var playViewReply = await playUrlApi.BangumiPlayView(Convert.ToInt64(playInfo.ep_id), Convert.ToInt64(playInfo.cid), qualityID, 0, codec, SettingService.Account.AccessKey);
 
                 var grpcResult = await ParseGrpc(qualityID, playViewReply, AndroidUserAgent, "");
                 return grpcResult;

@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
@@ -118,7 +118,7 @@ namespace BiliLite.Modules
                     {
                         data = await GetWebSeasonDetail(season_id);
                     }
-                   
+
                     if (data.success)
                     {
                         if (data.result.limit != null)
@@ -129,7 +129,7 @@ namespace BiliLite.Modules
                                 var data_2 = reulsts_web.GetJObject();
                                 if (data_2["code"].ToInt32() == 0)
                                 {
-                                    data.result.episodes = await Utils.DeserializeJson<List<SeasonDetailEpisodeModel>>(data_2["result"]["episodes"].ToString());
+                                    data.result.episodes = await data_2["result"]["episodes"].ToString().DeserializeJson<List<SeasonDetailEpisodeModel>>();
                                 }
                             }
                         }
@@ -138,7 +138,7 @@ namespace BiliLite.Modules
                             try
                             {
                                 //build 6235200
-                                data.result.episodes = JsonConvert.DeserializeObject<List<SeasonDetailEpisodeModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "positive")?["data"]?["episodes"]?.ToString()??"[]");
+                                data.result.episodes = JsonConvert.DeserializeObject<List<SeasonDetailEpisodeModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "positive")?["data"]?["episodes"]?.ToString() ?? "[]");
                                 data.result.seasons = JsonConvert.DeserializeObject<List<SeasonDetailSeasonItemModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "season")?["data"]?["seasons"]?.ToString() ?? "[]");
                                 var pv = JsonConvert.DeserializeObject<List<SeasonDetailEpisodeModel>>(data.result.modules.FirstOrDefault(x => x["style"].ToString() == "section")?["data"]?["episodes"]?.ToString() ?? "[]");
                                 foreach (var item in pv)
@@ -179,12 +179,12 @@ namespace BiliLite.Modules
                     {
                         ShowError = true;
                         ErrorMsg = data.message;
-                        //Utils.ShowMessageToast(data.message);
+                        //Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    //Utils.ShowMessageToast(results.message);
+                    //Notify.ShowMessageToast(results.message);
                     ShowError = true;
                     ErrorMsg = results.message;
                 }
@@ -192,7 +192,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                //Utils.ShowMessageToast(handel.message);
+                //Notify.ShowMessageToast(handel.message);
                 ShowError = true;
                 ErrorMsg = handel.message;
             }
@@ -207,34 +207,35 @@ namespace BiliLite.Modules
             var reulsts_web = await seasonApi.DetailWeb(season_id).Request();
             if (reulsts_web.status)
             {
-                var data= reulsts_web.GetJObject();
+                var data = reulsts_web.GetJObject();
                 if (data["code"].ToInt32() == 0)
                 {
                     var objText = data["result"].ToString();
                     //处理下会出错的字段
                     objText = objText.Replace("\"staff\"", "staff1");
-                    var model= JsonConvert.DeserializeObject<SeasonDetailModel>(objText);
-                    model.episodes = await Utils.DeserializeJson<List<SeasonDetailEpisodeModel>>(data["result"]["episodes"].ToString());
+                    var model = JsonConvert.DeserializeObject<SeasonDetailModel>(objText);
+                    model.episodes = await data["result"]["episodes"].ToString().DeserializeJson<List<SeasonDetailEpisodeModel>>();
                     model.user_status = new SeasonDetailUserStatusModel()
                     {
-                        follow_status=0,
-                        follow=0
+                        follow_status = 0,
+                        follow = 0
                     };
-                    return new ApiResultModel<SeasonDetailModel>() { code=0,message="",result=model,};
+                    return new ApiResultModel<SeasonDetailModel>() { code = 0, message = "", result = model, };
                 }
             }
-            return new ApiResultModel<SeasonDetailModel>() { 
-                code=-101,
-                message="无法读取内容"
+            return new ApiResultModel<SeasonDetailModel>()
+            {
+                code = -101,
+                message = "无法读取内容"
             };
         }
 
 
         public async void DoFollow()
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
@@ -260,27 +261,27 @@ namespace BiliLite.Modules
                         }
                         if (!string.IsNullOrEmpty(data.result["toast"]?.ToString()))
                         {
-                            Utils.ShowMessageToast(data.result["toast"].ToString());
+                            Notify.ShowMessageToast(data.result["toast"].ToString());
                         }
                         else
                         {
-                            Utils.ShowMessageToast("操作成功");
+                            Notify.ShowMessageToast("操作成功");
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 
@@ -384,7 +385,7 @@ namespace BiliLite.Modules
     }
     public class SeasonDetailUpInfoModel
     {
-        public long mid{ get; set; }
+        public long mid { get; set; }
         public string uname { get; set; }
     }
     public class SeasonDetailPaymentModel

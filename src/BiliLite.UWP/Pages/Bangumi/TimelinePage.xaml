@@ -11,8 +11,7 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:fa="using:FontAwesome5"
-    
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
         <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="White"></SolidColorBrush>
@@ -38,7 +37,7 @@
                 <Style TargetType="PivotItem">
                     <Setter Property="Margin" Value="0"></Setter>
                     <Setter Property="Padding" Value="8"></Setter>
-                    <!--<Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"></Setter>-->
+                    <!--<Setter Property="Background" Value="Transparent"></Setter>-->
                     <!--<Setter Property="Padding" Value="12"></Setter>-->
                 </Style>
             </Pivot.ItemContainerStyle>

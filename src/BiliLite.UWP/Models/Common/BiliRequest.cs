@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BiliLite.Helpers;
 using Flurl.Http;
 
 namespace BiliLite.Models.Requests
@@ -119,8 +118,8 @@ namespace BiliLite.Models.Requests
             var results = await response.GetStringAsync();
             var httpResults = new HttpResults()
             {
-                code = (int) response.StatusCode,
-                status = responseMsg.StatusCode == HttpStatusCode.OK,
+                code = (int)response.StatusCode,
+                status = responseMsg.StatusCode == HttpStatusCode.OK,,
                 results = results,
                 message = "",
                 cookies = responseCookies,

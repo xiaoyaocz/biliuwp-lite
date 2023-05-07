@@ -12,7 +12,7 @@
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
       xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
       xmlns:fa="using:FontAwesome5" 
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
 
     <Grid>
         <winui:RefreshContainer RefreshRequested="RefreshContainer_RefreshRequested">
@@ -212,7 +212,7 @@
         <controls:RoundButton x:Name="btnRefresh" Click="btnRefresh_Click" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>
-        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=liveVM.Loading,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=liveVM.Loading,Mode=OneWay}" Background="Transparent">
             <ProgressRing IsActive="True" VerticalAlignment="Center" HorizontalAlignment="Center"></ProgressRing>
         </Grid>
     </Grid>

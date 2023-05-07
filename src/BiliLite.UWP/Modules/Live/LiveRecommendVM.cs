@@ -1,14 +1,10 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models.Requests.Api.Live;
+﻿using BiliLite.Models.Requests.Api.Live;
 using Microsoft.Toolkit.Collections;
-using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -99,7 +95,7 @@ namespace BiliLite.Modules.Live
                                 Items.Add(item);
                             }
                             //Items = new IncrementalLoadingCollection<LiveRecommendItemSource, LiveRecommendItemModel>(new LiveRecommendItemSource(items, SortType), 30);
-                            if (Items.Count<data["data"]["count"].ToInt32())
+                            if (Items.Count < data["data"]["count"].ToInt32())
                             {
                                 Page++;
                                 CanLoadMore = true;
@@ -108,19 +104,19 @@ namespace BiliLite.Modules.Live
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -178,20 +174,20 @@ namespace BiliLite.Modules.Live
                     }
                     else
                     {
-                        Utils.ShowMessageToast(obj.message);
+                        Notify.ShowMessageToast(obj.message);
                         return new List<LiveRecommendItemModel>();
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                     return new List<LiveRecommendItemModel>();
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("加载直播推荐信息失败", LogType.ERROR, ex);
-                Utils.ShowMessageToast("加载直播推荐信息失败");
+                Notify.ShowMessageToast("加载直播推荐信息失败");
                 return new List<LiveRecommendItemModel>();
             }
         }
@@ -201,7 +197,7 @@ namespace BiliLite.Modules.Live
             {
                 return recommends;
             }
-            
+
             return await GetRecommend(pageIndex + 1);
         }
     }
@@ -220,7 +216,7 @@ namespace BiliLite.Modules.Live
         public string uname { get; set; }
         public string face { get; set; }
         public string uid { get; set; }
-      
+
         public string pendent_ru { get; set; }
         public string pendent_ru_color { get; set; }
         public string pendent_ru_pic { get; set; }

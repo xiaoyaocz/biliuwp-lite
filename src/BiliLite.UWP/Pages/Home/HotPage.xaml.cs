@@ -1,5 +1,4 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Modules.User;
@@ -25,7 +24,7 @@ namespace BiliLite.Pages.Home
             this.InitializeComponent();
             hotVM = new HotVM();
             this.DataContext = hotVM;
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.CACHE_HOME, true))
+            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
             {
                 this.NavigationCacheMode = NavigationCacheMode.Enabled;
             }
@@ -38,7 +37,7 @@ namespace BiliLite.Pages.Home
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.NavigationMode == NavigationMode.New&&hotVM.HotItems==null)
+            if (e.NavigationMode == NavigationMode.New && hotVM.HotItems == null)
             {
                 await hotVM.GetPopular();
             }
@@ -98,7 +97,7 @@ namespace BiliLite.Pages.Home
 
         private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
         {
-           var data=( sender as MenuFlyoutItem).DataContext as HotDataItemModel;
+            var data = (sender as MenuFlyoutItem).DataContext as HotDataItemModel;
             WatchLaterVM.Instance.AddToWatchlater(data.param);
         }
     }

@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,13 +11,13 @@ namespace BiliLite.Modules.User.SendDynamic
 {
     public class TopicVM : IModules
     {
-        readonly DynamicAPI  dynamicAPI;
+        readonly DynamicAPI dynamicAPI;
         public TopicVM()
         {
             dynamicAPI = new DynamicAPI();
             Items = new ObservableCollection<RcmdTopicModel>();
         }
-        
+
         private ObservableCollection<RcmdTopicModel> _items;
 
         public ObservableCollection<RcmdTopicModel> Items
@@ -40,7 +39,7 @@ namespace BiliLite.Modules.User.SendDynamic
             {
                 Loading = true;
                 var api = dynamicAPI.RecommendTopic();
-              
+
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -48,23 +47,23 @@ namespace BiliLite.Modules.User.SendDynamic
                     if (data.success)
                     {
                         Items = JsonConvert.DeserializeObject<ObservableCollection<RcmdTopicModel>>(data.data["rcmds"].ToString());
-                        
+
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -72,7 +71,7 @@ namespace BiliLite.Modules.User.SendDynamic
             }
         }
 
-        
+
     }
 
     public class RcmdTopicModel
@@ -80,7 +79,8 @@ namespace BiliLite.Modules.User.SendDynamic
         public int topic_id { get; set; }
         public string topic_name { get; set; }
         public int is_activity { get; set; }
-        public string display {
+        public string display
+        {
             get { return "#" + topic_name + "#"; }
         }
 

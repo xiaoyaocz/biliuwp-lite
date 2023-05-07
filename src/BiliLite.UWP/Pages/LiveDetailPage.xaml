@@ -13,7 +13,7 @@
     xmlns:model_live="using:BiliLite.Modules.Live"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="datetime" ></convert:DatetimeConvert>
         <convert:ColorConvert x:Key="colorConvert" ></convert:ColorConvert>
@@ -340,6 +340,8 @@
                     </Flyout>
                 </Grid.ContextFlyout>
                 <Grid Background="Black" 
+                      x:Name="PlayerView"
+                      SizeChanged="Player_SizeChanged"
                       PointerMoved="Grid_PointerMoved"   
                    PointerEntered="Grid_PointerEntered" 
                    PointerExited="Grid_PointerExited"
@@ -803,7 +805,7 @@
                 </Grid>
                 
             </Grid>
-            <Grid Grid.Column="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid Grid.Column="1" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>

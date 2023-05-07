@@ -12,8 +12,13 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:control="using:BiliLite.Controls"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
+        <Style TargetType="Button">
+            <Style.Setters>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style.Setters>
+        </Style>
         <convert:DatetimeConvert x:Key="datetime" ></convert:DatetimeConvert>
         <convert:ColorSelecteConvert x:Key="colorSelct" ></convert:ColorSelecteConvert>
         <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#64B0B0B0" />
@@ -69,7 +74,7 @@
                     <RowDefinition/>
                     <RowDefinition Height="Auto" x:Name="BottomInfo"/>
                 </Grid.RowDefinitions>
-                <Grid Background="Black">
+                <Grid Background="Transparent">
                     <control:PlayerControl x:Name="player" AllMediaEndEvent="player_AllMediaEndEvent" FullScreenEvent="PlayerControl_FullScreenEvent" FullWindowEvent="PlayerControl_FullWindowEvent" ChangeEpisodeEvent="PlayerControl_ChangeEpisodeEvent"/>
                 </Grid>
                 <Grid Grid.Row="1">
@@ -247,9 +252,8 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Column="1"  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid Grid.Column="1"  Background="Transparent">
                 <Pivot x:Name="pivot" >
-
                     <PivotItem Margin="0">
                         <PivotItem.Header>
                             <TextBlock Text="详情" FontSize="18"></TextBlock>
@@ -464,7 +468,7 @@
                 </controls:GridSplitter.RenderTransform>
             </controls:GridSplitter>
         </Grid>
-        <Grid Visibility="{x:Bind Path=videoDetailVM.ShowError,Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Visibility="{x:Bind Path=videoDetailVM.ShowError,Mode=OneWay}" Background="Transparent">
             <StackPanel VerticalAlignment="Center">
                 <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
                 <TextBlock Text="{x:Bind Path=videoDetailVM.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>

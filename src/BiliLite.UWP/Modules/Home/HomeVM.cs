@@ -1,9 +1,10 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Services;
 using FontAwesome5;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
+using BiliLite.Models.Common;
 
 namespace BiliLite.Modules
 {
@@ -13,16 +14,16 @@ namespace BiliLite.Modules
         public HomeVM()
         {
             account = new Account();
-            HomeNavItems = SettingHelper.GetValue<ObservableCollection<HomeNavItem>>(SettingHelper.UI.HOEM_ORDER, GetAllNavItems());
+            HomeNavItems = SettingService.GetValue<ObservableCollection<HomeNavItem>>(SettingConstants.UI.HOEM_ORDER, GetAllNavItems());
+            //var chanel=HomeNavItems.FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
             //var chanel=HomeNavItems.FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
             //if (chanel.Title=="频道")
             //{
             //    chanel = GetAllNavItems().FirstOrDefault(x => x.Icon == EFontAwesomeIcon.Solid_Shapes);
-            //    SettingHelper.SetValue(SettingHelper.UI.HOEM_ORDER, HomeNavItems);
+            //    SettingService.SetValue(SettingConstants.UI.HOEM_ORDER, HomeNavItems);
             //}
-         
             SelectItem = HomeNavItems.FirstOrDefault();
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
                 IsLogin = true;
                 foreach (var item in HomeNavItems)
@@ -170,10 +171,11 @@ namespace BiliLite.Modules
 
         public ObservableCollection<string> SuggestSearchContents
         {
-            get => m_suggestSearchContents; 
-            set { 
-                m_suggestSearchContents = value; 
-                DoPropertyChanged("SuggestSearchContents"); 
+            get => m_suggestSearchContents;
+            set
+            {
+                m_suggestSearchContents = value;
+                DoPropertyChanged("SuggestSearchContents");
             }
         }
     }

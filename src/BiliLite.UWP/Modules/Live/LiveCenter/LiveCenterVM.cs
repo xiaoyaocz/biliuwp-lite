@@ -1,24 +1,16 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.Live;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Appointments;
-using Windows.UI.Xaml.Media.Imaging;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 
 namespace BiliLite.Modules.Live.LiveCenter
 {
-    public class LiveCenterVM:IModules
+    public class LiveCenterVM : IModules
     {
         private static readonly ILogger logger = GlobalLogger.FromCurrentType();
 
@@ -54,27 +46,27 @@ namespace BiliLite.Modules.Live.LiveCenter
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
 
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("读取签到信息失败", LogType.ERROR, ex);
-                Utils.ShowMessageToast("读取签到信息失败");
+                Notify.ShowMessageToast("读取签到信息失败");
             }
         }
-       
+
         public async void DoSign()
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
 
@@ -86,23 +78,23 @@ namespace BiliLite.Modules.Live.LiveCenter
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        SignInfo.is_signed =true;
-                        Utils.ShowMessageToast(data.data["text"].ToString());
+                        SignInfo.is_signed = true;
+                        Notify.ShowMessageToast(data.data["text"].ToString());
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 
@@ -111,16 +103,17 @@ namespace BiliLite.Modules.Live.LiveCenter
 
         public void OpenTitle()
         {
-            MessageCenter.NavigateToPage(this,new NavigationInfo() { 
-                icon= Windows.UI.Xaml.Controls.Symbol.World,
-                title="佩戴中心",
-                page=typeof(Pages.WebPage),
-                parameters= "https://link.bilibili.com/p/center/index#/user-center/wearing-center/my-medal"
+            MessageCenter.NavigateToPage(this, new NavigationInfo()
+            {
+                icon = Windows.UI.Xaml.Controls.Symbol.World,
+                title = "佩戴中心",
+                page = typeof(Pages.WebPage),
+                parameters = "https://link.bilibili.com/p/center/index#/user-center/wearing-center/my-medal"
             });
         }
 
     }
-    public class SignInfoModel:IModules
+    public class SignInfoModel : IModules
     {
         private bool _is_signed;
 
@@ -138,7 +131,7 @@ namespace BiliLite.Modules.Live.LiveCenter
     }
     public class SignInfoAwardModel
     {
-       
+
         public int count { get; set; }
         public string award { get; set; }
         public string text { get; set; }

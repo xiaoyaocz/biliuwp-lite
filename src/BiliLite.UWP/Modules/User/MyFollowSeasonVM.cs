@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Models.Common;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
@@ -23,8 +24,8 @@ namespace BiliLite.Modules
             isAnime = _isAnime;
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
-            StatusCommand= new RelayCommand<object>(ChangeStatus);
-            CancelFollowCommand=new RelayCommand<object>(CancelFollow);
+            StatusCommand = new RelayCommand<object>(ChangeStatus);
+            CancelFollowCommand = new RelayCommand<object>(CancelFollow);
             SetWantWatchCommand = new RelayCommand<object>(SetWantWatch);
             SetWatchedCommand = new RelayCommand<object>(SetWatched);
             SetWatchingCommand = new RelayCommand<object>(SetWatching);
@@ -37,7 +38,7 @@ namespace BiliLite.Modules
         public ICommand SetWantWatchCommand { get; set; }
         public ICommand SetWatchedCommand { get; set; }
         public ICommand SetWatchingCommand { get; set; }
-        
+
 
         private bool _loading = false;
         public bool Loading
@@ -110,12 +111,12 @@ namespace BiliLite.Modules
                             }
                             else
                             {
-                                Utils.ShowMessageToast("全部加载完了...");
+                                Notify.ShowMessageToast("全部加载完了...");
                             }
                             return;
                         }
                         var ls = await data.result["follow_list"].ToString().DeserializeJson<ObservableCollection<FollowSeasonModel>>();
-                        if (ls != null&&ls.Count!=0)
+                        if (ls != null && ls.Count != 0)
                         {
                             foreach (var item in ls)
                             {
@@ -137,23 +138,23 @@ namespace BiliLite.Modules
                                 }
                             }
                             Page++;
-                            
+
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -186,8 +187,8 @@ namespace BiliLite.Modules
 
         public async void ChangeStatus(object value)
         {
-            var result= Convert.ToInt32(value);
-            if (result==Status)
+            var result = Convert.ToInt32(value);
+            if (result == Status)
             {
                 return;
             }
@@ -197,12 +198,12 @@ namespace BiliLite.Modules
         }
         public async void CancelFollow(object par)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
-            var item= par as FollowSeasonModel;
+            var item = par as FollowSeasonModel;
             try
             {
                 var api = followAPI.CancelFollowSeason(item.season_id.ToString());
@@ -219,36 +220,36 @@ namespace BiliLite.Modules
                         }
                         if (!string.IsNullOrEmpty(data.result["toast"]?.ToString()))
                         {
-                            Utils.ShowMessageToast(data.result["toast"].ToString());
+                            Notify.ShowMessageToast(data.result["toast"].ToString());
                         }
                         else
                         {
-                            Utils.ShowMessageToast("操作成功");
+                            Notify.ShowMessageToast("操作成功");
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 
         }
-   
+
         private async void SetWantWatch(object par)
         {
             var item = par as FollowSeasonModel;
-            await SetSeasonStatus(item,1);
+            await SetSeasonStatus(item, 1);
         }
         private async void SetWatched(object par)
         {
@@ -260,16 +261,16 @@ namespace BiliLite.Modules
             var item = par as FollowSeasonModel;
             await SetSeasonStatus(item, 2);
         }
-        private async Task SetSeasonStatus(FollowSeasonModel item,int status)
+        private async Task SetSeasonStatus(FollowSeasonModel item, int status)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
             {
-                var api = followAPI.SetSeasonStatus(item.season_id.ToString(),status);
+                var api = followAPI.SetSeasonStatus(item.season_id.ToString(), status);
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -281,25 +282,25 @@ namespace BiliLite.Modules
                         {
                             Nothing = true;
                         }
-                        Utils.ShowMessageToast("操作成功");
+                        Notify.ShowMessageToast("操作成功");
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
-    
+
     }
     public class FollowSeasonModel
     {
@@ -309,7 +310,7 @@ namespace BiliLite.Modules
         public ICommand SetWatchingCommand { get; set; }
 
         public int status { get; set; }
-       public bool show_watched
+        public bool show_watched
         {
             get
             {
@@ -327,7 +328,7 @@ namespace BiliLite.Modules
         {
             get
             {
-                return status !=1;
+                return status != 1;
             }
         }
         public bool show_badge

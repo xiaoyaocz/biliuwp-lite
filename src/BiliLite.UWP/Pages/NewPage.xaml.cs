@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Pages.Bangumi;
+﻿using BiliLite.Pages.Bangumi;
 using FFmpegInteropX;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -22,6 +21,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common;
 using BiliLite.Services;
+using BiliLite.Extensions;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -44,8 +44,8 @@ namespace BiliLite.Pages
         }
         private async void SetBackground()
         {
-            var background = SettingHelper.GetValue(SettingHelper.UI.BACKGROUND_IMAGE,Constants.App.BACKGROUND_IAMGE_URL);
-            if (background== Constants.App.BACKGROUND_IAMGE_URL)
+            var background = SettingService.GetValue(SettingConstants.UI.BACKGROUND_IMAGE, Constants.App.BACKGROUND_IAMGE_URL);
+            if (background == Constants.App.BACKGROUND_IAMGE_URL)
             {
                 backgroundImage.Source = new BitmapImage(new Uri(background));
             }
@@ -60,7 +60,7 @@ namespace BiliLite.Pages
         private void BtnOpenRank_Click(object sender, RoutedEventArgs e)
         {
             ((this.Parent as Frame).Parent as TabViewItem).Header = "排行榜";
-            ((this.Parent as Frame).Parent as TabViewItem).IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol= Symbol.FourBars };
+            ((this.Parent as Frame).Parent as TabViewItem).IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.FourBars };
             this.Frame.Navigate(typeof(RankPage));
             //MessageCenter.NavigateToPage(this,new NavigationInfo() { 
             //    icon= Symbol.FourBars,
@@ -85,9 +85,9 @@ namespace BiliLite.Pages
 
         private async void BtnOpenMyFollow_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             ((this.Parent as Frame).Parent as TabViewItem).Header = "我的收藏";
@@ -106,7 +106,7 @@ namespace BiliLite.Pages
         {
             if (string.IsNullOrEmpty(SearchBox.Text))
             {
-                Utils.ShowMessageToast("关键字不能为空");
+                Notify.ShowMessageToast("关键字不能为空");
                 return;
             }
             if (await MessageCenter.HandelUrl(SearchBox.Text))
@@ -134,22 +134,22 @@ namespace BiliLite.Pages
             StorageFile file = await fileOpenPicker.PickSingleFileAsync();
             if (file != null)
             {
-                SettingHelper.SetValue(SettingHelper.UI.BACKGROUND_IMAGE, file.Path);
+                SettingService.SetValue(SettingConstants.UI.BACKGROUND_IMAGE, file.Path);
                 SetBackground();
             }
         }
 
         private void btnSetDefaultBackground_Click(object sender, RoutedEventArgs e)
         {
-            SettingHelper.SetValue(SettingHelper.UI.BACKGROUND_IMAGE, Constants.App.BACKGROUND_IAMGE_URL);
+            SettingService.SetValue(SettingConstants.UI.BACKGROUND_IMAGE, Constants.App.BACKGROUND_IAMGE_URL);
             SetBackground();
         }
 
         private async void BtnOpenHistory_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             ((this.Parent as Frame).Parent as TabViewItem).Header = "历史记录";

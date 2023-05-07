@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -67,16 +66,16 @@ namespace BiliLite.Modules
         /// <param name="expires"></param>
         /// <param name="userid"></param>
         /// <returns></returns>
-        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid, List<string> sso,LoginCookieInfo cookie)
+        public async Task<bool> SaveLogin(string access_key, string refresh_token, int expires, long userid, List<string> sso, LoginCookieInfo cookie)
         {
             try
             {
                 //设置登录状态
 
-                SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY, access_key);
-                SettingHelper.SetValue(SettingHelper.Account.USER_ID, userid);
-                SettingHelper.SetValue(SettingHelper.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now.AddSeconds(expires));
-                SettingHelper.SetValue(SettingHelper.Account.REFRESH_KEY, refresh_token);
+                SettingService.SetValue(SettingConstants.Account.ACCESS_KEY, access_key);
+                SettingService.SetValue(SettingConstants.Account.USER_ID, userid);
+                SettingService.SetValue(SettingConstants.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now.AddSeconds(expires));
+                SettingService.SetValue(SettingConstants.Account.REFRESH_KEY, refresh_token);
                 var data = new LoginTokenInfo()
                 {
                     access_token = access_key,
@@ -97,19 +96,19 @@ namespace BiliLite.Modules
                 try
                 {
                     //设置Cookie
-                    if (cookie!=null)
+                    if (cookie != null)
                     {
                         HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
                         foreach (var item in cookie.domains)
                         {
                             foreach (var cookieItem in cookie.cookies)
                             {
-                                filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.name, item,"/")
+                                filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.name, item, "/")
                                 {
-                                    HttpOnly=cookieItem.http_only==1,
-                                    Secure=cookieItem.secure==1,
-                                    Expires=Utils.TimestampToDatetime(cookieItem.expires),
-                                    Value=cookieItem.value,
+                                    HttpOnly = cookieItem.http_only == 1,
+                                    Secure = cookieItem.secure == 1,
+                                    Expires = TimeExtensions.TimestampToDatetime(cookieItem.expires),
+                                    Value = cookieItem.value,
                                 });
                             }
                         }
@@ -144,7 +143,7 @@ namespace BiliLite.Modules
                 if (req.status && obj["code"].ToInt32() == 0)
                 {
                     var data = JsonConvert.DeserializeObject<MyProfileModel>(obj["data"].ToString());
-                    SettingHelper.SetValue(SettingHelper.Account.USER_PROFILE, data);
+                    SettingService.SetValue(SettingConstants.Account.USER_PROFILE, data);
                     return data;
                 }
                 else
@@ -175,7 +174,7 @@ namespace BiliLite.Modules
                 {
                     return null;
                 }
-                var space_api = accountApi.Space(SettingHelper.Account.UserID.ToString());
+                var space_api = accountApi.Space(SettingService.Account.UserID.ToString());
                 var space_result = await space_api.Request();
                 if (!space_result.status)
                 {
@@ -239,12 +238,12 @@ namespace BiliLite.Modules
 
         public async void LoginByCookie(List<HttpCookieItem> cookies, string refresh_token)
         {
-            Utils.SaveCookie(cookies);
+            cookies.SaveCookie();
             var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
             var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
             // var expires = result.cookies[0].Expires;
-            var userId = cookies.FirstOrDefault(x=>x.Name== "DedeUserID").Value;
-            await SaveLogin(accessKey, refresh_token, 3600*240, long.Parse(userId), null, null);
+            var userId = cookies.FirstOrDefault(x => x.Name == "DedeUserID").Value;
+            await SaveLogin(accessKey, refresh_token, 3600 * 240, long.Parse(userId), null, null);
         }
 
         /// <summary>
@@ -388,8 +387,8 @@ namespace BiliLite.Modules
                     var data = await result.GetData<LoginDataV3Model>();
                     if (data.success)
                     {
-                        
-                        await SaveLogin(data.data.token_info.access_token, data.data.token_info.refresh_token, data.data.token_info.expires_in, data.data.token_info.mid, data.data.sso,data.data.cookie_info);
+
+                        await SaveLogin(data.data.token_info.access_token, data.data.token_info.refresh_token, data.data.token_info.expires_in, data.data.token_info.mid, data.data.sso, data.data.cookie_info);
                         return new LoginCallbackModel()
                         {
                             status = LoginStatus.Success,
@@ -468,7 +467,7 @@ namespace BiliLite.Modules
                     if (obj["code"].ToInt32() == 0)
                     {
                         var data = JsonConvert.DeserializeObject<LoginTokenInfo>(obj["data"].ToString());
-                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid, null,null);
+                        await SaveLogin(data.access_token, data.refresh_token, data.expires_in, data.mid, null, null);
                         return true;
                     }
                     else

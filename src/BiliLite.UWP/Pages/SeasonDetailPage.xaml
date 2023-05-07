@@ -11,7 +11,7 @@
     xmlns:convert="using:BiliLite.Converters"
     xmlns:modules="using:BiliLite.Modules"
     xmlns:control="using:BiliLite.Controls" xmlns:season="using:BiliLite.Modules.Season"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="Transparent">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="datetime" ></convert:DatetimeConvert>
         <convert:ColorSelecteConvert x:Key="colorSelct" ></convert:ColorSelecteConvert>
@@ -140,7 +140,7 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-            <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged" Grid.Column="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged" Grid.Column="1" Background="Transparent">
                 <PivotItem Margin="0">
                     <PivotItem.Header>
                         <TextBlock  Text="选集" FontSize="18"></TextBlock>
@@ -418,7 +418,7 @@
                 </PivotItem>
             </Pivot>
         </Grid>
-        <Border Visibility="{x:Bind Path=seasonDetailVM.ShowError,Mode=OneWay}" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="48 24" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Border Visibility="{x:Bind Path=seasonDetailVM.ShowError,Mode=OneWay}" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="48 24" Background="Transparent">
             <StackPanel VerticalAlignment="Center">
                 <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
                 <TextBlock Text="{x:Bind Path=seasonDetailVM.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>

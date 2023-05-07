@@ -1,22 +1,12 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Modules;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using BiliLite.Extensions;
 using BiliLite.Models.Responses;
 
@@ -30,7 +20,7 @@ namespace BiliLite.Dialogs
         readonly bool isMove;
         readonly List<FavoriteInfoVideoItemModel> selectItems;
         readonly FavoriteApi favoriteApi;
-        public CopyOrMoveFavVideoDialog(string fid,string mid, bool isMove, List<FavoriteInfoVideoItemModel> items)
+        public CopyOrMoveFavVideoDialog(string fid, string mid, bool isMove, List<FavoriteInfoVideoItemModel> items)
         {
             this.InitializeComponent();
             favoriteApi = new FavoriteApi();
@@ -44,7 +34,7 @@ namespace BiliLite.Dialogs
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
 
-            if (listView.SelectedItem == null) { Utils.ShowMessageToast("请选择收藏夹"); return; }
+            if (listView.SelectedItem == null) { Notify.ShowMessageToast("请选择收藏夹"); return; }
             try
             {
                 IsPrimaryButtonEnabled = false;
@@ -61,37 +51,37 @@ namespace BiliLite.Dialogs
                 }
                 else
                 {
-                    results = await favoriteApi.Copy(fid, item.id, ids,mid).Request();
+                    results = await favoriteApi.Copy(fid, item.id, ids, mid).Request();
                 }
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<object>>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("操作完成");
+                        Notify.ShowMessageToast("操作完成");
                         this.Hide();
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
 
 
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {
                 IsPrimaryButtonEnabled = true;
             }
-           
+
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -119,18 +109,18 @@ namespace BiliLite.Dialogs
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
 
-                Utils.ShowMessageToast(ex.Message);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {

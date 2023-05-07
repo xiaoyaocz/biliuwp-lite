@@ -1,5 +1,4 @@
 ﻿using BiliLite.Controls.Dynamic;
-using BiliLite.Helpers;
 using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json;
@@ -43,7 +42,7 @@ namespace BiliLite.Modules.User
             get { return _IsRepost; }
             set { _IsRepost = value; DoPropertyChanged("IsRepost"); }
         }
-      
+
         public DynamicItemDisplayModel RepostInfo { get; set; }
 
         private string _Content = "";
@@ -68,7 +67,7 @@ namespace BiliLite.Modules.User
             set { _uploading = value; DoPropertyChanged("Uploading"); }
         }
 
-        private bool _showImage=false;
+        private bool _showImage = false;
 
         public bool ShowImage
         {
@@ -84,8 +83,8 @@ namespace BiliLite.Modules.User
 
                 Uploading = true;
                 var api = dynamicAPI.UploadImage();
-               
-              
+
+
                 IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.Read);
                 var bytes = new byte[fileStream.Size];
                 await fileStream.ReadAsync(bytes.AsBuffer(), (uint)fileStream.Size, Windows.Storage.Streams.InputStreamOptions.None);
@@ -106,19 +105,19 @@ namespace BiliLite.Modules.User
                 }
                 else
                 {
-                    Utils.ShowMessageToast(result.message);
+                    Notify.ShowMessageToast(result.message);
                 }
             }
             catch (Exception ex)
             {
                 logger.Log("图片上传失败", LogType.FATAL, ex);
-                Utils.ShowMessageToast("图片上传失败");
+                Notify.ShowMessageToast("图片上传失败");
             }
             finally
             {
                 Uploading = false;
                 ShowImage = Images.Count > 0;
-              
+
             }
         }
 
@@ -130,7 +129,7 @@ namespace BiliLite.Modules.User
             var ctrl = "[]";
             var at_uids = "";
             Atlist.Clear();
-        
+
             if (AtDisplaylist.Count != 0)
             {
 
@@ -161,35 +160,35 @@ namespace BiliLite.Modules.User
             try
             {
 
-                HttpResults httpResults = await dynamicAPI.RepostDynamic(RepostInfo.DynamicID,Content, at_uids, ctrl).Request();
+                HttpResults httpResults = await dynamicAPI.RepostDynamic(RepostInfo.DynamicID, Content, at_uids, ctrl).Request();
                 if (httpResults.status)
                 {
                     var data = await httpResults.GetData<JObject>();
                     if (data.code == 0)
                     {
-                      
-                        Utils.ShowMessageToast("转发成功");
+
+                        Notify.ShowMessageToast("转发成功");
                         AtDisplaylist.Clear();
                         return true;
                     }
                     else
                     {
-                    
-                        Utils.ShowMessageToast("发表动态失败:" + data.message);
+
+                        Notify.ShowMessageToast("发表动态失败:" + data.message);
                         return false;
                     }
                 }
                 else
                 {
-                    
-                    Utils.ShowMessageToast(httpResults.message);
+
+                    Notify.ShowMessageToast(httpResults.message);
                     return false;
                 }
 
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("转发动态失败"+ex.Message);
+                Notify.ShowMessageToast("转发动态失败" + ex.Message);
                 logger.Log("转发动态失败", LogType.ERROR, ex);
                 return false;
             }
@@ -199,7 +198,7 @@ namespace BiliLite.Modules.User
         {
             if (Content.Trim().Length == 0)
             {
-                Utils.ShowMessageToast("不能发送空白动态");
+                Notify.ShowMessageToast("不能发送空白动态");
                 return false;
             }
 
@@ -258,29 +257,29 @@ namespace BiliLite.Modules.User
                     var data = await httpResults.GetData<JObject>();
                     if (data.code == 0)
                     {
-                       
-                        Utils.ShowMessageToast("发表动态成功");
+
+                        Notify.ShowMessageToast("发表动态成功");
                         AtDisplaylist.Clear();
                         return true;
                     }
                     else
                     {
-                       
-                        Utils.ShowMessageToast("发表动态失败:" + data.message);
+
+                        Notify.ShowMessageToast("发表动态失败:" + data.message);
                         return false;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(httpResults.message);
+                    Notify.ShowMessageToast(httpResults.message);
                     return false;
                 }
 
             }
             catch (Exception ex)
             {
-               
-                Utils.ShowMessageToast("发表动态发生错误");
+
+                Notify.ShowMessageToast("发表动态发生错误");
                 logger.Log("发表动态失败", LogType.ERROR, ex);
                 return false;
             }

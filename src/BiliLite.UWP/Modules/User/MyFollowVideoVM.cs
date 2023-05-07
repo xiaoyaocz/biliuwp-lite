@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
@@ -64,36 +63,36 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        if (data.data["space_infos"][0]["mediaListResponse"]!=null)
+                        if (data.data["space_infos"][0]["mediaListResponse"] != null)
                         {
-                            MyFavorite =await data.data["space_infos"][0]["mediaListResponse"]["list"].ToString().DeserializeJson<ObservableCollection<FavoriteItemModel>>();
+                            MyFavorite = await data.data["space_infos"][0]["mediaListResponse"]["list"].ToString().DeserializeJson<ObservableCollection<FavoriteItemModel>>();
                             if (MyFavorite == null)
                             {
                                 MyFavorite = new ObservableCollection<FavoriteItemModel>();
                             }
-                            MyFavorite.Insert(0,await data.data["default_folder"]["folder_detail"].ToString().DeserializeJson<FavoriteItemModel>());
+                            MyFavorite.Insert(0, await data.data["default_folder"]["folder_detail"].ToString().DeserializeJson<FavoriteItemModel>());
                             HasMore = (bool)data.data["space_infos"][0]["mediaListResponse"]["has_more"];
-                            Page ++;
+                            Page++;
                         }
-                        if (data.data["space_infos"][1]["mediaListResponse"]!=null)
+                        if (data.data["space_infos"][1]["mediaListResponse"] != null)
                         {
                             CollectFavorite = await data.data["space_infos"][1]["mediaListResponse"]["list"].ToString().DeserializeJson<ObservableCollection<FavoriteItemModel>>();
                         }
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -102,9 +101,9 @@ namespace BiliLite.Modules
         }
         public async void LoadMore()
         {
-           await LoadCreateList();
+            await LoadCreateList();
         }
-        
+
         public async Task LoadCreateList()
         {
             try
@@ -116,7 +115,7 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        var ls  = await data.data["list"].ToString().DeserializeJson<List<FavoriteItemModel>>();
+                        var ls = await data.data["list"].ToString().DeserializeJson<List<FavoriteItemModel>>();
                         foreach (var item in ls)
                         {
                             MyFavorite.Add(item);
@@ -126,18 +125,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
 
@@ -156,18 +155,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             return false;
         }
@@ -192,14 +191,14 @@ namespace BiliLite.Modules
             get
             {
                 //attr单数为私密，双数为公开
-                return attr %2!=0;
+                return attr % 2 != 0;
             }
         }
         public string intro { get; set; }
         public string fid { get; set; }
         public string id { get; set; }
         public int like_state { get; set; }
-       
+
         public string mid { get; set; }
         public string title { get; set; }
         public int type { get; set; }
@@ -220,7 +219,8 @@ namespace BiliLite.Modules
             }
             set
             {
-                if (value) {
+                if (value)
+                {
                     fav_state = 1;
                 }
                 else

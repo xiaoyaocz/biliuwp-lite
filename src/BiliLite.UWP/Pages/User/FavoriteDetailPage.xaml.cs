@@ -1,6 +1,5 @@
 ﻿using BiliLite.Dialogs;
 using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
@@ -97,7 +96,7 @@ namespace BiliLite.Pages.User
         {
             if (listView.SelectedItems.Count > 0)
             {
-                if (!await Utils.ShowDialog("批量取消收藏", $"是否确定要取消收藏选中的{listView.SelectedItems.Count}个视频?"))
+                if (!await Notify.ShowDialog("批量取消收藏", $"是否确定要取消收藏选中的{listView.SelectedItems.Count}个视频?"))
                 {
                     return;
                 }
@@ -141,7 +140,7 @@ namespace BiliLite.Pages.User
 
         private async void btnClean_Click(object sender, RoutedEventArgs e)
         {
-            if (!await Utils.ShowDialog("清除失效", $"是否确定要清除已失效的视频?\r\n失效视频说不定哪天就恢复了哦~"))
+            if (!await Notify.ShowDialog("清除失效", $"是否确定要清除已失效的视频?\r\n失效视频说不定哪天就恢复了哦~"))
             {
                 return;
             }
@@ -160,7 +159,7 @@ namespace BiliLite.Pages.User
 
             if (favoriteDetailVM.ShowLoadMore)
             {
-                Utils.ShowMessageToast("正在读取全部视频，请稍后");
+                Notify.ShowMessageToast("正在读取全部视频，请稍后");
                 while (favoriteDetailVM.ShowLoadMore)
                 {
                     await favoriteDetailVM.LoadFavoriteInfo();

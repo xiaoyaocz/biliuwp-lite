@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Models;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
@@ -33,7 +33,7 @@ namespace BiliLite.Pages.Home
         {
             this.InitializeComponent();
             cinemaVM = new Modules.CinemaVM();
-            if (SettingHelper.GetValue<bool>(SettingHelper.UI.CACHE_HOME, true))
+            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
             {
                 this.NavigationCacheMode = NavigationCacheMode.Enabled;
             }
@@ -57,7 +57,7 @@ namespace BiliLite.Pages.Home
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.NavigationMode == NavigationMode.New&& cinemaVM.HomeData==null)
+            if (e.NavigationMode == NavigationMode.New && cinemaVM.HomeData == null)
             {
                 await LoadData();
             }
@@ -66,7 +66,7 @@ namespace BiliLite.Pages.Home
         private async Task LoadData()
         {
             await cinemaVM.GetCinemaHome();
-            if (SettingHelper.Account.Logined)
+            if (SettingService.Account.Logined)
             {
                 cinemaVM.ShowFollows = true;
                 await cinemaVM.GetFollows();
@@ -90,7 +90,7 @@ namespace BiliLite.Pages.Home
             var result = await MessageCenter.HandelUrl((e.ClickedItem as CinemaHomeFallItemModel).link);
             if (!result)
             {
-                Utils.ShowMessageToast("不支持打开的链接");
+                Notify.ShowMessageToast("不支持打开的链接");
             }
         }
         private async void RefreshContainer_RefreshRequested(Microsoft.UI.Xaml.Controls.RefreshContainer sender, Microsoft.UI.Xaml.Controls.RefreshRequestedEventArgs args)
@@ -103,7 +103,7 @@ namespace BiliLite.Pages.Home
             var result = await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as CinemaHomeBannerModel).url);
             if (!result)
             {
-                Utils.ShowMessageToast("不支持打开的链接");
+                Notify.ShowMessageToast("不支持打开的链接");
             }
         }
 
@@ -151,9 +151,9 @@ namespace BiliLite.Pages.Home
 
         private async void btnOpenMyFollow_Click(object sender, RoutedEventArgs e)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录");
+                Notify.ShowMessageToast("请先登录");
                 return;
             }
             MessageCenter.NavigateToPage(this, new NavigationInfo()

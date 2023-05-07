@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.Home;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Pages.Bangumi;
@@ -142,7 +141,7 @@ namespace BiliLite.Modules
         {
             var seasonId = e.ClickedItem.GetType().GetProperty("season_id").GetValue(e.ClickedItem, null);
             var title = e.ClickedItem.GetType().GetProperty("title").GetValue(e.ClickedItem, null) ?? "";
-            if (seasonId!=null&& seasonId.ToInt32()!=0)
+            if (seasonId != null && seasonId.ToInt32() != 0)
             {
                 MessageCenter.NavigateToPage(sender, new NavigationInfo()
                 {
@@ -154,9 +153,9 @@ namespace BiliLite.Modules
             }
             else
             {
-                var weblink = e.ClickedItem.GetType().GetProperty("link").GetValue(e.ClickedItem, null)??"";
-                var result= await MessageCenter.HandelUrl(weblink.ToString());
-                if (!result) Utils.ShowMessageToast("无法打开此链接");
+                var weblink = e.ClickedItem.GetType().GetProperty("link").GetValue(e.ClickedItem, null) ?? "";
+                var result = await MessageCenter.HandelUrl(weblink.ToString());
+                if (!result) Notify.ShowMessageToast("无法打开此链接");
             }
         }
         public void LinkItemClick(object sender, ItemClickEventArgs e)
@@ -189,19 +188,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -224,19 +223,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -262,13 +261,13 @@ namespace BiliLite.Modules
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<List<CinemaHomeFallItemModel>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

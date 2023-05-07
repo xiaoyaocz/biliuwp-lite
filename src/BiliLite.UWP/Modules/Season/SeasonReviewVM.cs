@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,16 +8,17 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Services;
 
 namespace BiliLite.Modules.Season
 {
     public class SeasonReviewVM : IModules
     {
         readonly SeasonApi seasonApi;
-       
+
         public SeasonReviewVM()
         {
-          
+
             Items = new ObservableCollection<SeasonShortReviewItemModel>();
             seasonApi = new SeasonApi();
             RefreshCommand = new RelayCommand(Refresh);
@@ -73,19 +73,19 @@ namespace BiliLite.Modules.Season
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -114,14 +114,14 @@ namespace BiliLite.Modules.Season
 
         public async void Like(SeasonShortReviewItemModel item)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
             {
-                var api = seasonApi.LikeReview(MediaID,item.review_id, ReviewType.Short);
+                var api = seasonApi.LikeReview(MediaID, item.review_id, ReviewType.Short);
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -129,7 +129,7 @@ namespace BiliLite.Modules.Season
                     if (data.success)
                     {
                         item.stat.liked = data.result["status"].ToInt32();
-                        if (item.stat.liked==1)
+                        if (item.stat.liked == 1)
                         {
                             item.stat.likes += 1;
                         }
@@ -140,32 +140,32 @@ namespace BiliLite.Modules.Season
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
         }
 
         public async void Dislike(SeasonShortReviewItemModel item)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
             {
-                var api = seasonApi.DislikeReview(MediaID,item.review_id, ReviewType.Short);
+                var api = seasonApi.DislikeReview(MediaID, item.review_id, ReviewType.Short);
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -176,27 +176,27 @@ namespace BiliLite.Modules.Season
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
         }
 
-        public async Task<bool> SendShortReview(string content,bool share,int score)
+        public async Task<bool> SendShortReview(string content, bool share, int score)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return false;
             }
             try
@@ -208,32 +208,32 @@ namespace BiliLite.Modules.Season
                     var data = await results.GetJson<ApiResultModel<JObject>>();
                     if (data.success)
                     {
-                        Utils.ShowMessageToast("发表成功");
+                        Notify.ShowMessageToast("发表成功");
                         return true;
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                         return false;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
                 return false;
             }
 
         }
     }
 
-   
+
     public class SeasonShortReviewItemModel
     {
         public long ctime { get; set; }

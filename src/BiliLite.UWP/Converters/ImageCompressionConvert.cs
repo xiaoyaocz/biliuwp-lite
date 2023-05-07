@@ -1,9 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
 namespace BiliLite.Converters
@@ -16,7 +12,7 @@ namespace BiliLite.Converters
             {
                 return "ms-appx:///Assets/Thumbnails/Placeholde.png";
             }
-            if (SettingHelper.UI.LoadOriginalImage)
+            if (SettingService.UI.LoadOriginalImage.Value)
             {
                 return value;
             }

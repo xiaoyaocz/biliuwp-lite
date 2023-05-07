@@ -1,4 +1,5 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
 
@@ -136,7 +137,7 @@ namespace BiliLite.Models.Requests.Api
                 method = RestSharp.Method.Get,
                 baseUrl = "https://passport.bilibili.com/captcha",
                 headers = ApiHelper.GetDefaultHeaders(),
-                parameter = $"ts={Utils.GetTimestampS()}"
+                parameter = $"ts={TimeExtensions.GetTimestampS()}"
             };
             return api;
         }
@@ -395,7 +396,7 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/info",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey) + "&access_token=" + SettingHelper.Account.AccessKey
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey) + "&access_token=" + SettingService.Account.AccessKey
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
@@ -411,7 +412,7 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/api/oauth2/refreshToken",
-                body = ApiHelper.MustParameter(ApiHelper.AndroidKey) + $"&access_token={SettingHelper.Account.AccessKey}&refresh_token={SettingHelper.GetValue(SettingHelper.Account.REFRESH_KEY, "")}"
+                body = ApiHelper.MustParameter(ApiHelper.AndroidKey) + $"&access_token={SettingService.Account.AccessKey}&refresh_token={SettingService.GetValue(SettingConstants.Account.REFRESH_KEY, "")}"
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;

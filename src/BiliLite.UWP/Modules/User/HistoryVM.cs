@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
@@ -21,7 +20,7 @@ namespace BiliLite.Modules.User
         }
         public int Page { get; set; } = 1;
         private bool _loading = false;
-       
+
         public bool Loading
         {
             get { return _loading; }
@@ -56,7 +55,7 @@ namespace BiliLite.Modules.User
                 ShowLoadMore = false;
                 Loading = true;
                 Nothing = false;
-                var results = await accountApi.History(Page,24).Request();
+                var results = await accountApi.History(Page, 24).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<ObservableCollection<HistoryItemModel>>>();
@@ -82,7 +81,7 @@ namespace BiliLite.Modules.User
                                 }
                             }
                         }
-                        if (data.data != null&& data.data.Count!=0)
+                        if (data.data != null && data.data.Count != 0)
                         {
                             ShowLoadMore = true;
                             Page++;
@@ -90,18 +89,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -134,8 +133,7 @@ namespace BiliLite.Modules.User
         {
             try
             {
-
-                var results = await accountApi.DelHistory(item.business+"_" +item.kid).Request();
+                var results = await accountApi.DelHistory(item.business + "_" + item.kid).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -145,18 +143,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
     }

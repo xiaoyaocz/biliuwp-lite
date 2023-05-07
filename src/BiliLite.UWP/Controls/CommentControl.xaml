@@ -177,11 +177,33 @@
                     <Run Text="{x:Bind Path=content.plat_str}"></Run>
                     <Run Text="{x:Bind Path=reply_control.location}"></Run>
                 </TextBlock>
-
                 <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=content.text}">
 
                 </ContentControl>
-                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3">
+                <toolkit:AdaptiveGridView
+                    Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                    x:Name="NotePicturesView"
+                    StretchContentForSingleRow="False"
+                    OneRowModeEnabled="True"
+                    ItemHeight="80"
+                    ItemsSource="{x:Bind Path=content.pictures}"
+                    SelectionMode="None"
+                    ItemClick="NotePicturesView_ItemClick"
+                    IsItemClickEnabled="True">
+                    <toolkit:AdaptiveGridView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Background="Transparent">
+                                <Image
+                                    Source="{Binding ImgSrc}"
+                                    Stretch="UniformToFill"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </toolkit:AdaptiveGridView.ItemTemplate>
+                </toolkit:AdaptiveGridView>
+                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
                         <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
@@ -214,7 +236,7 @@
                     </Border>
                 </Grid>
 
-                <StackPanel Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
+                <StackPanel Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
 
                     <StackPanel  Visibility="{x:Bind Path=showReplyBox,Mode=OneWay}" Margin="0 0 0 4">
                         <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>

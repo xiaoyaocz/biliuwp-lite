@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.Models;
-using BiliLite.Helpers;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using Windows.UI.Xaml.Controls;
 using BiliLite.Extensions;
-using Newtonsoft.Json.Linq;
 using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
@@ -36,7 +30,7 @@ namespace BiliLite.Modules
                 };
             SelectAnimeType = AnimeTypeItems.FirstOrDefault(x => x.AnimeType == type);
             animeType = type;
-            
+
         }
         private bool _loading = true;
         public bool Loading
@@ -97,19 +91,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

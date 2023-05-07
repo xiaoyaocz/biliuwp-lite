@@ -1,19 +1,18 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using BiliLite.Extensions;
+using BiliLite.Services;
 
 namespace BiliLite.Modules
 {
-    public class FavoriteDetailVM:IModules
+    public class FavoriteDetailVM : IModules
     {
         readonly FavoriteApi favoriteApi;
         public int Page { get; set; } = 1;
@@ -25,7 +24,7 @@ namespace BiliLite.Modules
             favoriteApi = new FavoriteApi();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
-            CollectCommand=new RelayCommand(DoCollect);
+            CollectCommand = new RelayCommand(DoCollect);
             CancelCollectCommand = new RelayCommand(DoCancelCollect);
             SelectCommand = new RelayCommand<object>(SetSelectMode);
         }
@@ -48,7 +47,7 @@ namespace BiliLite.Modules
             set { _videos = value; DoPropertyChanged("Videos"); }
         }
 
-        private ListViewSelectionMode _selectionMode= ListViewSelectionMode.None;
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
             get { return _selectionMode; }
@@ -106,7 +105,7 @@ namespace BiliLite.Modules
                 Loading = true;
                 Nothing = false;
                 var api = favoriteApi.FavoriteInfo(Id, Keyword, Page);
-                if (Type==21)
+                if (Type == 21)
                 {
                     api = favoriteApi.FavoriteSeasonInfo(Id, Keyword, Page);
                 }
@@ -119,20 +118,20 @@ namespace BiliLite.Modules
                         if (Page == 1)
                         {
                             FavoriteInfo = data.data.info;
-                            IsSelf = FavoriteInfo.mid == SettingHelper.Account.UserID.ToString();
+                            IsSelf = FavoriteInfo.mid == SettingService.Account.UserID.ToString();
                             if (!IsSelf)
                             {
                                 ShowCollect = FavoriteInfo.fav_state != 1;
                                 ShowCancelCollect = !ShowCollect;
                             }
-                           
-                            if (data.data.medias==null|| data.data.medias.Count==0)
+
+                            if (data.data.medias == null || data.data.medias.Count == 0)
                             {
                                 Nothing = true;
                                 return;
                             }
                             Videos = data.data.medias;
-                           
+
                         }
                         else
                         {
@@ -152,18 +151,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -174,12 +173,12 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+                if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
                 {
-                    Utils.ShowMessageToast("请先登录后再操作");
+                    Notify.ShowMessageToast("请先登录后再操作");
                     return;
                 }
-                var results = await favoriteApi.Delete(Id, items.Select(x=>x.id).ToList()).Request();
+                var results = await favoriteApi.Delete(Id, items.Select(x => x.id).ToList()).Request();
                 if (results.status)
                 {
                     var data = await results.GetData<object>();
@@ -192,28 +191,28 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
-           
+
         }
         public async Task Clean()
         {
             try
             {
-                if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+                if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
                 {
-                    Utils.ShowMessageToast("请先登录后再操作");
+                    Notify.ShowMessageToast("请先登录后再操作");
                     return;
                 }
                 var results = await favoriteApi.Clean(Id).Request();
@@ -226,18 +225,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
         }
@@ -291,9 +290,9 @@ namespace BiliLite.Modules
         }
         public async void DoCollect()
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
@@ -309,27 +308,27 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 
         }
         public async void DoCancelCollect()
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             try
@@ -345,18 +344,18 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 

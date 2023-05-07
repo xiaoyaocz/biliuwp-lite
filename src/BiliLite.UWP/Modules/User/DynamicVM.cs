@@ -1,6 +1,5 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Controls.Dynamic;
-using BiliLite.Helpers;
 using BiliLite.Models;
 using BiliLite.Models.Dynamic;
 using BiliLite.Pages;
@@ -148,7 +147,7 @@ namespace BiliLite.Modules.User
             var result = await MessageCenter.HandelUrl(url.ToString());
             if (!result)
             {
-                Utils.ShowMessageToast("无法打开Url");
+                Notify.ShowMessageToast("无法打开Url");
             }
         }
         public void OpenWeb(object url)
@@ -194,7 +193,7 @@ namespace BiliLite.Modules.User
             {
                 Width = 500,
                 Height = 500,
-                Source = new Uri($"https://t.bilibili.com/lottery/h5/index/#/result?business_id={ id.ToString()}&business_type=1&isWeb=1"),
+                Source = new Uri($"https://t.bilibili.com/lottery/h5/index/#/result?business_id={id.ToString()}&business_type=1&isWeb=1"),
             };
             await contentDialog.ShowAsync();
         }
@@ -205,7 +204,7 @@ namespace BiliLite.Modules.User
                 icon = Symbol.Document,
                 page = typeof(WebPage),
                 title = "投票",
-                parameters = $"https://t.bilibili.com/vote/h5/index/#/result?vote_id={ id.ToString()}"
+                parameters = $"https://t.bilibili.com/vote/h5/index/#/result?vote_id={id.ToString()}"
             });
             //ContentDialog contentDialog = new ContentDialog()
             //{
@@ -241,9 +240,9 @@ namespace BiliLite.Modules.User
         }
         public async void Delete(DynamicItemDisplayModel item)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
             MessageDialog messageDialog = new MessageDialog("确定要删除动态吗?", "删除动态");
@@ -263,26 +262,26 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
         }
         public async void DoLike(DynamicItemDisplayModel item)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
 
@@ -307,18 +306,18 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<object>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
 
 
@@ -327,9 +326,9 @@ namespace BiliLite.Modules.User
         }
         public async void OpenSendDynamicDialog(DynamicItemDisplayModel data)
         {
-            if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+            if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
-                Utils.ShowMessageToast("请先登录后再操作");
+                Notify.ShowMessageToast("请先登录后再操作");
                 return;
             }
 
@@ -396,19 +395,19 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -437,19 +436,19 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -467,12 +466,12 @@ namespace BiliLite.Modules.User
                 var data = new DynamicItemDisplayModel()
                 {
                     CommentCount = item.desc.comment,
-                    Datetime = Utils.TimestampToDatetime(item.desc.timestamp).ToString(),
+                    Datetime = TimeExtensions.TimestampToDatetime(item.desc.timestamp).ToString(),
                     DynamicID = item.desc.dynamic_id,
                     LikeCount = item.desc.like,
                     Mid = item.desc.uid,
                     ShareCount = item.desc.repost,
-                    Time = Utils.HandelTimestamp(item.desc.timestamp.ToString()),
+                    Time = item.desc.timestamp.ToString().HandelTimestamp(),
                     IntType = item.desc.type,
                     ReplyID = item.desc.rid_str,
                     ReplyType = item.desc.r_type,
@@ -483,7 +482,7 @@ namespace BiliLite.Modules.User
                     TagCommand = TagCommand,
                     LotteryCommand = LotteryCommand,
                     VoteCommand = VoteCommand,
-                    IsSelf = item.desc.uid == SettingHelper.Account.UserID,
+                    IsSelf = item.desc.uid == SettingService.Account.UserID,
                     ImageCommand = ImageCommand,
                     CommentCommand = CommentCommand,
                     LikeCommand = LikeCommand,
@@ -620,7 +619,7 @@ namespace BiliLite.Modules.User
                     data.Photo = item.desc.user_profile.info.face;
                     if (item.desc.user_profile.vip != null)
                     {
-                        data.IsYearVip = item.desc.user_profile.vip.vipStatus==1&& item.desc.user_profile.vip.vipType == 2;
+                        data.IsYearVip = item.desc.user_profile.vip.vipStatus == 1 && item.desc.user_profile.vip.vipType == 2;
                     }
                     switch (item.desc.user_profile.card?.official_verify?.type ?? 3)
                     {

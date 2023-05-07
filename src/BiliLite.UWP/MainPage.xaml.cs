@@ -7,7 +7,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using BiliLite.Helpers;
 using BiliLite.Controls;
 using BiliLite.Models.Common;
 using BiliLite.Extensions;
@@ -36,7 +35,7 @@ namespace BiliLite
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
-           // Window.Current.Content.PointerPressed += Content_PointerPressed;
+            // Window.Current.Content.PointerPressed += Content_PointerPressed;
         }
 
         private void MessageCenter_MiniWindowEvent(object sender, bool e)
@@ -52,21 +51,21 @@ namespace BiliLite
                 Window.Current.SetTitleBar(CustomDragRegion);
             }
         }
-        
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            if (e.NavigationMode == NavigationMode.New && e.Parameter != null&&!string.IsNullOrEmpty(e.Parameter.ToString()))
+            if (e.NavigationMode == NavigationMode.New && e.Parameter != null && !string.IsNullOrEmpty(e.Parameter.ToString()))
             {
                 var result = await MessageCenter.HandelUrl(e.Parameter.ToString());
                 if (!result)
                 {
-                    Utils.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
+                    Notify.ShowMessageToast("无法打开链接:" + e.Parameter.ToString());
                 }
             }
 #if !DEBUG
-             await Utils.CheckVersion();
+             await BiliExtensions.CheckVersion();
 #endif
         }
 
@@ -104,15 +103,15 @@ namespace BiliLite
             frame.PointerPressed += Content_PointerPressed;
             frame.Navigate(e.page, e.parameters);
             item.Content = frame;
-           
+
             tabView.TabItems.Add(item);
-            if(!e.dontGoTo)
-               tabView.SelectedItem = item;
+            if (!e.dontGoTo)
+                tabView.SelectedItem = item;
             item.UpdateLayout();
         }
         private void Content_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (SettingHelper.GetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back 
+            if (SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back
                 && e.IsUseMiddleButton(sender))
             {
                 //如果打开了图片浏览，则关闭图片浏览
@@ -171,7 +170,7 @@ namespace BiliLite
                 page = typeof(NewPage),
                 title = "新建页面"
             });
-           
+
         }
 
         private void TabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
@@ -182,10 +181,10 @@ namespace BiliLite
         {
             var frame = tabItem.Content as MyFrame;
             ((frame.Content as Page).Content as Grid).Children.Clear();
-           
+
             frame.Close();
             //frame.Navigate(typeof(BlankPage));
-           // frame.BackStack.Clear();
+            // frame.BackStack.Clear();
             tabItem.Content = null;
             tabView.TabItems.Remove(tabItem);
             //GC.Collect();
@@ -195,7 +194,7 @@ namespace BiliLite
             var frame = new MyFrame();
 
             frame.Navigate(typeof(HomePage));
-            
+
             (tabView.TabItems[0] as TabViewItem).Content = frame;
         }
         private async void MessageCenter_ViewImageEvent(object sender, ImageViewerParameter e)
@@ -228,7 +227,7 @@ namespace BiliLite
         {
             if (((TabViewItem)tabView.SelectedItem).IsClosable)
             {
-            
+
                 ClosePage((TabViewItem)tabView.SelectedItem);
             }
             args.Handled = true;
@@ -237,7 +236,7 @@ namespace BiliLite
 
         private void tabView_TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
         {
-            
+
         }
     }
 }

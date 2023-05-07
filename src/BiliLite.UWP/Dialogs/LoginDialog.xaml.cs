@@ -1,24 +1,12 @@
 ﻿using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 using BiliLite.Modules.User;
 using BiliLite.Services;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -35,13 +23,12 @@ namespace BiliLite.Dialogs
         {
             this.InitializeComponent();
             this.Loaded += SMSLoginDialog_Loaded;
-            loginVM=new LoginVM();
+            loginVM = new LoginVM();
             loginVM.OpenWebView += LoginVM_OpenWebView;
             loginVM.CloseDialog += LoginVM_CloseDialog;
             loginVM.SetWebViewVisibility += LoginVM_SetWebViewVisibility;
             _biliapp.CloseBrowserEvent += _biliapp_CloseBrowserEvent;
             _biliapp.ValidateLoginEvent += _biliapp_ValidateLoginEvent;
-           
         }
 
         private void LoginVM_CloseDialog(object sender, EventArgs e)
@@ -58,14 +45,14 @@ namespace BiliLite.Dialogs
         {
             this.Hide();
         }
-        private  void _biliapp_ValidateLoginEvent(object sender, string e)
+        private void _biliapp_ValidateLoginEvent(object sender, string e)
         {
             loginVM.ValidateLogin(JObject.Parse(e));
 
         }
         private void LoginVM_OpenWebView(object sender, Uri e)
         {
-            webView.Source=e;
+            webView.Source = e;
         }
 
         private void SMSLoginDialog_Loaded(object sender, RoutedEventArgs e)
@@ -81,15 +68,15 @@ namespace BiliLite.Dialogs
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if(webView.Visibility == Visibility.Visible)
+            if (webView.Visibility == Visibility.Visible)
             {
-                webView.Visibility=Visibility.Collapsed;
+                webView.Visibility = Visibility.Collapsed;
                 args.Cancel = true;
                 return;
             }
         }
 
-       
+
 
         private void txt_Password_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -107,7 +94,7 @@ namespace BiliLite.Dialogs
             {
                 var access = Regex.Match(args.Uri.AbsoluteUri, "access_key=(.*?)&").Groups[1].Value;
                 var mid = Regex.Match(args.Uri.AbsoluteUri, "mid=(.*?)&").Groups[1].Value;
-                await loginVM.account.SaveLogin(access, "", 0, long.Parse(mid),null,null);
+                await loginVM.account.SaveLogin(access, "", 0, long.Parse(mid), null, null);
                 this.Hide();
                 return;
             }
@@ -118,7 +105,7 @@ namespace BiliLite.Dialogs
                 {
                     //验证失败
                     webView.Visibility = Visibility.Collapsed;
-                    Utils.ShowMessageToast("验证失败");
+                    Notify.ShowMessageToast("验证失败");
                 }
                 else if (success == 1)
                 {
@@ -134,7 +121,7 @@ namespace BiliLite.Dialogs
                 {
                     //关闭验证码
                     IsPrimaryButtonEnabled = true;
-                   
+
                     webView.Visibility = Visibility.Collapsed;
                 }
                 return;
@@ -162,7 +149,7 @@ namespace BiliLite.Dialogs
                 }
                 else
                 {
-                    Utils.ShowMessageToast("登录失败，请重试");
+                    Notify.ShowMessageToast("登录失败，请重试");
                 }
                 return;
             }

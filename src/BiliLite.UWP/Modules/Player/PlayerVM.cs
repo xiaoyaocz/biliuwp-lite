@@ -1,20 +1,11 @@
 ﻿using BiliLite.Controls;
-using BiliLite.Helpers;
-using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Modules.Player.Playurl;
-using BiliLite.Player;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Services.Maps;
 using Windows.Storage;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
@@ -78,7 +69,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
         }
         public async Task<PlayerInfo> GetPlayInfo(string aid, string cid)
@@ -155,7 +146,7 @@ namespace BiliLite.Modules
                     }
                     danmuList.Add(new NSDanmaku.Model.DanmakuModel()
                     {
-                        color = Utils.ToColor(item.Color.ToString()),
+                        color = item.Color.ToString().StrToColor(),
                         fromSite = NSDanmaku.Model.DanmakuSite.Bilibili,
                         location = location,
                         pool = item.Pool.ToString(),
@@ -174,7 +165,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                Utils.ShowMessageToast("弹幕加载失败:" + ex.Message);
+                Notify.ShowMessageToast("弹幕加载失败:" + ex.Message);
                 logger.Log("grpc弹幕加载失败", LogType.FATAL, ex);
             }
             return danmuList;
@@ -184,14 +175,14 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!SettingHelper.Account.Logined && !await Utils.ShowLoginDialog())
+                if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
                 {
-                    Utils.ShowMessageToast("请先登录");
+                    Notify.ShowMessageToast("请先登录");
                     return false;
                 }
                 if (text == null || text.Trim().Length == 0)
                 {
-                    Utils.ShowMessageToast("弹幕文本不能为空");
+                    Notify.ShowMessageToast("弹幕文本不能为空");
                     return false;
                 }
                 var result = await PlayerAPI.SendDanmu(aid, cid, color, text, position, mode).Request();
@@ -200,25 +191,25 @@ namespace BiliLite.Modules
                     var obj = result.GetJObject();
                     if (obj["code"].ToInt32() == 0)
                     {
-                        Utils.ShowMessageToast("弹幕成功发射");
+                        Notify.ShowMessageToast("弹幕成功发射");
                         return true;
                     }
                     else
                     {
-                        Utils.ShowMessageToast("弹幕发送失败" + obj["message"].ToString());
+                        Notify.ShowMessageToast("弹幕发送失败" + obj["message"].ToString());
                         return false;
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast("弹幕发送失败" + result.message);
+                    Notify.ShowMessageToast("弹幕发送失败" + result.message);
                     return false;
                 }
             }
             catch (Exception ex)
             {
                 var result = HandelError<object>(ex);
-                Utils.ShowMessageToast(result.message);
+                Notify.ShowMessageToast(result.message);
                 return false;
             }
 
@@ -248,7 +239,7 @@ namespace BiliLite.Modules
         }
     }
 
-   
+
     public class PlayerInfo
     {
         /// <summary>
@@ -282,7 +273,7 @@ namespace BiliLite.Modules
         public int need_reload { get; set; }
     }
 
-   
+
 
 
     public class HasSubtitleModel

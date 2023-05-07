@@ -1,31 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Windows.UI.Popups;
 using System.Net;
 using System.Diagnostics;
-using System.Xml;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
-using Windows.UI;
-using BiliLite.Helpers;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
@@ -117,7 +104,6 @@ namespace BiliLite.Modules.Live
                 _StartState = false;
             }
 
-         
         }
 
         private async void Listen()
@@ -209,7 +195,7 @@ namespace BiliLite.Modules.Live
                         JArray json_array = JArray.Parse(json_str);
                         foreach (var obj in json_array)
                         {
-                            if (obj["cmd"]==null)
+                            if (obj["cmd"] == null)
                             {
                                 continue;
                             }
@@ -305,7 +291,7 @@ namespace BiliLite.Modules.Live
                                     {
                                         if (NewMessage != null)
                                         {
-                                            NewMessage(null,new LiveDanmuModel() { type = LiveDanmuTypes.SystemMsg, value = obj["msg"].ToString() });
+                                            NewMessage(null, new LiveDanmuModel() { type = LiveDanmuTypes.SystemMsg, value = obj["msg"].ToString() });
                                         }
                                     }
 
@@ -406,7 +392,7 @@ namespace BiliLite.Modules.Live
                 var chat = $"https://api.live.bilibili.com/room/v1/Danmu/getConf?room_id={_roomId}&platform=pc&player=web";
                 string results = await chat.GetString();
                 var obj = JObject.Parse(results);
-                if (obj["code"].ToInt32()==0)
+                if (obj["code"].ToInt32() == 0)
                 {
                     return (obj["data"]["token"].ToString(), obj["data"]["host"].ToString(), obj["data"]["port"].ToInt32());
                 }
@@ -509,7 +495,7 @@ namespace BiliLite.Modules.Live
         }
 
 
-       
+
 
 
         bool _StartState = false;
@@ -528,11 +514,10 @@ namespace BiliLite.Modules.Live
             }
         }
 
-     
 
 
     }
 
-    
+
 
 }

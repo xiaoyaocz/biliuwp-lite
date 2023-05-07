@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json.Linq;
 using System;
@@ -36,7 +35,7 @@ namespace BiliLite.Modules
             get { return _RegionItems; }
             set { _RegionItems = value; DoPropertyChanged("RegionItems"); }
         }
-        public  void LoadRankRegion(int rid = 0)
+        public void LoadRankRegion(int rid = 0)
         {
             try
             {
@@ -65,25 +64,25 @@ namespace BiliLite.Modules
                     new RankRegionModel(155,"时尚"),
                     new RankRegionModel(5,"娱乐"),
                     new RankRegionModel(181,"影视"),
-                   
+
                 };
                 Current = RegionItems.FirstOrDefault(x => x.rid == rid);
                 //    }
                 //    else
                 //    {
-                //        Utils.ShowMessageToast(data.message);
+                //        Notify.ShowMessageToast(data.message);
                 //    }
                 //}
                 //else
                 //{
-                //    Utils.ShowMessageToast(results.message);
+                //    Notify.ShowMessageToast(results.message);
 
                 //}
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -102,7 +101,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         region.ToolTip = data.data["note"].ToString();
-                        var result = await Utils.DeserializeJson<List<RankItemModel>>(data.data["list"].ToString());
+                        var result = await data.data["list"].ToString().DeserializeJson<List<RankItemModel>>();
                         int i = 1;
                         result = result.ToList();
                         foreach (var item in result)
@@ -114,19 +113,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<ApiDataModel<List<RankRegionModel>>>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -151,7 +150,7 @@ namespace BiliLite.Modules
     }
     public class RankRegionModel : IModules
     {
-        public RankRegionModel(int id, string rname, RankRegionType type= RankRegionType.all)
+        public RankRegionModel(int id, string rname, RankRegionType type = RankRegionType.all)
         {
             this.rid = id;
             this.name = rname;
@@ -159,8 +158,7 @@ namespace BiliLite.Modules
         }
         public string name { get; set; }
         public int rid { get; set; }
-        private string _tooltip="";
-
+        private string _tooltip = "";
         public string ToolTip
         {
             get { return _tooltip; }
@@ -192,12 +190,12 @@ namespace BiliLite.Modules
         public int state { get; set; }
         public int duration { get; set; }
         public int mission_id { get; set; }
-       
+
         public RankItemOwnerModel owner { get; set; }
         public RankItemStatModel stat { get; set; }
         public string dynamic { get; set; }
         public int cid { get; set; }
-       
+
         public string bvid { get; set; }
         public int score { get; set; }
     }

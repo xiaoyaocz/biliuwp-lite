@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Modules.User;
 using System;
@@ -73,14 +73,14 @@ namespace BiliLite.Pages.User
                     commentType = CommentApi.CommentType.Article;
                     break;
                 case Controls.Dynamic.DynamicDisplayType.MediaList:
-                    if(e.OneRowInfo.Tag!= "收藏夹")
-                    commentType = CommentApi.CommentType.Video;
+                    if (e.OneRowInfo.Tag != "收藏夹")
+                        commentType = CommentApi.CommentType.Video;
                     break;
                 default:
                     id = e.DynamicID;
                     break;
             }
-            Utils.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
+            Notify.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
             //comment.LoadComment(new Controls.LoadCommentInfo()
             //{
             //    CommentMode = (int)commentType,

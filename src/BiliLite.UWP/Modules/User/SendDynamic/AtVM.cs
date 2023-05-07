@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.User;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,7 +9,7 @@ using BiliLite.Extensions;
 
 namespace BiliLite.Modules.User
 {
-    public class AtVM:IModules
+    public class AtVM : IModules
     {
         readonly AtApi atApi;
         public AtVM()
@@ -48,7 +47,7 @@ namespace BiliLite.Modules.User
                 var api = atApi.RecommendAt(Page);
                 if (!string.IsNullOrEmpty(Keyword))
                 {
-                    api = atApi.SearchUser(Keyword,Page);
+                    api = atApi.SearchUser(Keyword, Page);
                 }
                 if (Page == 1)
                 {
@@ -74,7 +73,7 @@ namespace BiliLite.Modules.User
                                     });
                                 }
                             }
-                           
+
                         }
                         else
                         {
@@ -92,19 +91,19 @@ namespace BiliLite.Modules.User
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -118,12 +117,12 @@ namespace BiliLite.Modules.User
             {
                 return;
             }
-           
+
             await GetUser();
         }
         public async void Search(string keyword)
         {
-           
+
             if (Loading)
             {
                 return;

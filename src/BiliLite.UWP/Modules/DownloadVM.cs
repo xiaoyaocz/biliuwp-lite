@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,6 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using BiliLite.Models.Common;
 using BiliLite.Models.Download;
 using BiliLite.Services;
+using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
@@ -245,7 +245,7 @@ namespace BiliLite.Modules
             }
 
             // list = list.OrderByDescending(x => x.UpdateTime).ToList();
-            if (SettingHelper.GetValue(SettingHelper.Download.LOAD_OLD_DOWNLOAD, false))
+            if (SettingService.GetValue(SettingConstants.Download.LOAD_OLD_DOWNLOAD, false))
             {
                 await LoadDownloadedOld();
             }
@@ -277,7 +277,7 @@ namespace BiliLite.Modules
                     {
                         continue;
                     }
-                  
+
                     var info = JObject.Parse(await FileIO.ReadTextAsync(infoFile));
                     //新版下载无thumb字段
                     if (!info.ContainsKey("thumb"))
@@ -397,8 +397,8 @@ namespace BiliLite.Modules
         /// <returns></returns>
         private async static Task<StorageFolder> GetDownloadFolder()
         {
-            var path = SettingHelper.GetValue(SettingHelper.Download.DOWNLOAD_PATH, SettingHelper.Download.DEFAULT_PATH);
-            if (path == SettingHelper.Download.DEFAULT_PATH)
+            var path = SettingService.GetValue(SettingConstants.Download.DOWNLOAD_PATH, SettingConstants.Download.DEFAULT_PATH);
+            if (path == SettingConstants.Download.DEFAULT_PATH)
             {
                 var folder = KnownFolders.VideosLibrary;
                 return await folder.CreateFolderAsync("哔哩哔哩下载", CreationCollisionOption.OpenIfExists);
@@ -414,8 +414,8 @@ namespace BiliLite.Modules
         /// <returns></returns>
         private async static Task<StorageFolder> GetDownloadOldFolder()
         {
-            var path = SettingHelper.GetValue(SettingHelper.Download.OLD_DOWNLOAD_PATH, SettingHelper.Download.DEFAULT_OLD_PATH);
-            if (path == SettingHelper.Download.DEFAULT_OLD_PATH)
+            var path = SettingService.GetValue(SettingConstants.Download.OLD_DOWNLOAD_PATH, SettingConstants.Download.DEFAULT_OLD_PATH);
+            if (path == SettingConstants.Download.DEFAULT_OLD_PATH)
             {
                 var folder = KnownFolders.VideosLibrary;
                 return await folder.CreateFolderAsync("BiliBiliDownload", CreationCollisionOption.OpenIfExists);
@@ -450,7 +450,7 @@ namespace BiliLite.Modules
             {
                 CancellationTokenSource cancellationTokenSource = null;
 
-                var data = SettingHelper.GetValue<DownloadGUIDInfo>(item.Guid.ToString(), null);
+                var data = SettingService.GetValue<DownloadGUIDInfo>(item.Guid.ToString(), null);
                 if (data == null || data.CID == null) continue;
                 if (cts.ContainsKey(data.CID))
                 {
@@ -537,7 +537,7 @@ namespace BiliLite.Modules
                 }
                 var guid = downloadOperation.Guid.ToString();
                 var item = Downloadings.FirstOrDefault(x => x.Items.FirstOrDefault(y => y.GUID == guid) != null);
-                await Utils.ShowDialog("下载出现问题", $"失败视频:{item.Title ?? ""} {item.EpisodeTitle ?? ""}\r\n" + ex.Message);
+                await Notify.ShowDialog("下载出现问题", $"失败视频:{item.Title ?? ""} {item.EpisodeTitle ?? ""}\r\n" + ex.Message);
             }
             finally
             {
@@ -608,9 +608,9 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        if (success && SettingHelper.GetValue<bool>(SettingHelper.Download.SEND_TOAST, false))
+                        if (success && SettingService.GetValue<bool>(SettingConstants.Download.SEND_TOAST, false))
                         {
-                            Utils.ShowMessageToast("《" + item.Title + " " + item.EpisodeTitle + "》下载完成");
+                            Notify.ShowMessageToast("《" + item.Title + " " + item.EpisodeTitle + "》下载完成");
                         }
                         Downloadings.Remove(item);
 
@@ -662,7 +662,7 @@ namespace BiliLite.Modules
         {
             try
             {
-                if (!await Utils.ShowDialog("取消任务", "确定要取消任务吗?"))
+                if (!await Notify.ShowDialog("取消任务", "确定要取消任务吗?"))
                 {
                     return;
                 }
@@ -701,7 +701,7 @@ namespace BiliLite.Modules
         private async void DeleteAll()
         {
             if (Downloadings.Count == 0) return;
-            if (!await Utils.ShowDialog("取消任务", "确定要取消全部任务吗?"))
+            if (!await Notify.ShowDialog("取消任务", "确定要取消全部任务吗?"))
             {
                 return;
             }
@@ -722,8 +722,8 @@ namespace BiliLite.Modules
         public async void UpdateSetting()
         {
             var downList = await BackgroundDownloader.GetCurrentDownloadsForTransferGroupAsync(DownloadHelper.group);
-            var parallelDownload = SettingHelper.GetValue<bool>(SettingHelper.Download.PARALLEL_DOWNLOAD, true);
-            var allowCostNetwork = SettingHelper.GetValue<bool>(SettingHelper.Download.ALLOW_COST_NETWORK, false);
+            var parallelDownload = SettingService.GetValue<bool>(SettingConstants.Download.PARALLEL_DOWNLOAD, true);
+            var allowCostNetwork = SettingService.GetValue<bool>(SettingConstants.Download.ALLOW_COST_NETWORK, false);
             //设置下载模式
             foreach (var item in downList)
             {

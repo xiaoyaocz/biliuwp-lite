@@ -13,7 +13,7 @@
     <LangVersion>8.0</LangVersion>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -129,11 +129,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\ApiModelExtensions.cs" />
+    <Compile Include="Extensions\BiliExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\HttpCookieItemsExtensions.cs" />
     <Compile Include="Extensions\HttpResultsExtensions.cs" />
+    <Compile Include="Extensions\Notify.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtension.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
+    <Compile Include="Extensions\TimeExtensions.cs" />
+    <Compile Include="Models\Common\SettingConstants.cs" />
+    <Compile Include="Models\Responses\NewVersionResponse.cs" />
     <Compile Include="Models\Common\NavigationInfo.cs" />
+    <Compile Include="Models\Common\NotePicture.cs" />
     <Compile Include="Models\Responses\HttpResults.cs" />
     <Compile Include="Models\Events\AysncUnhandledExceptionEventArgs.cs" />
     <Compile Include="Models\Download\DownloadSaveEpisodeInfo.cs" />
@@ -142,7 +152,6 @@
     <Compile Include="Models\Download\DownloadUrlInfo.cs" />
     <Compile Include="Models\Download\DownloadGUIDInfo.cs" />
     <Compile Include="Models\Download\DownloadInfo.cs" />
-    <Compile Include="Models\Common\ChineseDictionary.cs" />
     <Compile Include="Models\Common\CustomizedErrorException.cs" />
     <Compile Include="Models\Common\Subtitle.cs" />
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
@@ -283,10 +292,9 @@
     <Compile Include="Services\ILogger.cs" />
     <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\MessageCenter.cs" />
-    <Compile Include="Helpers\SettingHelper.cs" />
-    <Compile Include="Helpers\SqlHelper.cs" />
-    <Compile Include="Helpers\Utils.cs" />
-    <Compile Include="Helpers\VideoPlayHistoryHelper.cs" />
+    <Compile Include="Services\SettingService.cs" />
+    <Compile Include="Services\SqlHelper.cs" />
+    <Compile Include="Services\VideoPlayHistoryHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -624,6 +632,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TabViewStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\CommentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -904,7 +916,7 @@
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.3.200213001</Version>
+      <Version>2.8.3</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.7.5</Version>
@@ -914,6 +926,9 @@
     </PackageReference>
     <PackageReference Include="NSDanmaku">
       <Version>2.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="OpenCCNET">
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>107.3.0</Version>

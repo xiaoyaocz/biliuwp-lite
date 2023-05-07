@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using BiliLite.Extensions;
-using BiliLite.Helpers;
 using BiliLite.Models.Common;
 
 namespace BiliLite.Services

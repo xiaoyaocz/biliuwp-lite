@@ -1,18 +1,15 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.Extensions;
 
 namespace BiliLite.Modules
 {
-    public class EmoteVM:IModules
+    public class EmoteVM : IModules
     {
         readonly EmoteApi emoteApi;
         public EmoteVM()
@@ -52,19 +49,19 @@ namespace BiliLite.Modules
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -80,7 +77,7 @@ namespace BiliLite.Modules
         public string text { get; set; }
         public string url { get; set; }
         public int type { get; set; }
-      
+
         public int attr { get; set; }
         public List<EmotePackageItemModel> emote { get; set; }
     }

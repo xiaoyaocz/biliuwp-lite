@@ -1,14 +1,11 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
@@ -16,12 +13,8 @@ using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
 namespace BiliLite.Controls
@@ -44,7 +37,7 @@ namespace BiliLite.Controls
         int index = 0;
         public void InitImage(ImageViewerParameter e)
         {
-            imgs=new List<ImageInfo>();
+            imgs = new List<ImageInfo>();
             foreach (var item in e.Images)
             {
                 imgs.Add(new ImageInfo()
@@ -59,7 +52,7 @@ namespace BiliLite.Controls
         {
             image.Source = null;
             imgs = null;
-            
+
         }
         private async void ChangedImage(int i)
         {
@@ -165,7 +158,7 @@ namespace BiliLite.Controls
                 CachedFileManager.DeferUpdates(file);
                 await FileIO.WriteBytesAsync(file, bytes);
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
-                Utils.ShowMessageToast("保存成功");
+                Notify.ShowMessageToast("保存成功");
             }
         }
 
@@ -184,7 +177,7 @@ namespace BiliLite.Controls
 
         private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            CloseEvent?.Invoke(sender,new EventArgs());
+            CloseEvent?.Invoke(sender, new EventArgs());
         }
 
         private async void btnCopy_Click(object sender, RoutedEventArgs e)
@@ -195,15 +188,15 @@ namespace BiliLite.Controls
             var data = new DataPackage();
             InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream();
             await randomAccessStream.WriteAsync(bytes.AsBuffer());
-            randomAccessStream.Seek(0); 
+            randomAccessStream.Seek(0);
 
-          
+
 
             data.SetBitmap(RandomAccessStreamReference.CreateFromStream(randomAccessStream));
-         
+
             data.RequestedOperation = DataPackageOperation.Copy;
-           var rsult=  Clipboard.SetContentWithOptions(data,null);
-            Utils.ShowMessageToast("已复制到剪切板");
+            var rsult = Clipboard.SetContentWithOptions(data, null);
+            Notify.ShowMessageToast("已复制到剪切板");
         }
     }
 

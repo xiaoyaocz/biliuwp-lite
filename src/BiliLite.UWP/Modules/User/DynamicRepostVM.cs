@@ -1,5 +1,4 @@
 ﻿using BiliLite.Controls.Dynamic;
-using BiliLite.Helpers;
 using BiliLite.Models.Dynamic;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Pages;
@@ -19,7 +18,7 @@ using BiliLite.Services;
 
 namespace BiliLite.Modules.User
 {
-    public class DynamicRepostVM:IModules
+    public class DynamicRepostVM : IModules
     {
         readonly DynamicAPI dynamicAPI;
         public DynamicRepostVM()
@@ -58,8 +57,8 @@ namespace BiliLite.Modules.User
             {
                 CanLoadMore = false;
                 Loading = true;
-                var api = dynamicAPI.DynamicRepost(ID,next);
-              
+                var api = dynamicAPI.DynamicRepost(ID, next);
+
                 var results = await api.Request();
                 if (results.status)
                 {
@@ -67,7 +66,7 @@ namespace BiliLite.Modules.User
                     if (data["code"].ToInt32() == 0)
                     {
                         var items = JsonConvert.DeserializeObject<List<DynamicCardModel>>(data["data"]?["items"]?.ToString() ?? "[]");
-                        
+
                         ObservableCollection<DynamicItemDisplayModel> _ls = new ObservableCollection<DynamicItemDisplayModel>();
                         foreach (var item in items)
                         {
@@ -85,24 +84,24 @@ namespace BiliLite.Modules.User
                                 Items.Add(item);
                             }
                         }
-                        CanLoadMore = (data["data"]?["has_more"]?.ToInt32()??0) == 1;
-                        next = data["data"]?["has_more"]?.ToString()??"";
+                        CanLoadMore = (data["data"]?["has_more"]?.ToInt32() ?? 0) == 1;
+                        next = data["data"]?["has_more"]?.ToString() ?? "";
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data["message"].ToString());
+                        Notify.ShowMessageToast(data["message"].ToString());
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -138,11 +137,11 @@ namespace BiliLite.Modules.User
             var card = JObject.Parse(item.card);
             var data = new DynamicItemDisplayModel()
             {
-                Datetime = Utils.TimestampToDatetime(item.desc.timestamp).ToString(),
+                Datetime = TimeExtensions.TimestampToDatetime(item.desc.timestamp).ToString(),
                 DynamicID = item.desc.dynamic_id,
                 Mid = item.desc.uid,
-                Time = Utils.HandelTimestamp(item.desc.timestamp.ToString()),
-                UserCommand=UserCommand
+                Time = item.desc.timestamp.ToString().HandelTimestamp(),
+                UserCommand = UserCommand
             };
             var content = "";
             //内容
@@ -158,7 +157,7 @@ namespace BiliLite.Modules.User
                 data.Photo = item.desc.user_profile.info.face;
                 if (item.desc.user_profile.vip != null)
                 {
-                    data.IsYearVip = item.desc.user_profile.vip.vipStatus==1&&item.desc.user_profile.vip.vipType == 2;
+                    data.IsYearVip = item.desc.user_profile.vip.vipStatus == 1 && item.desc.user_profile.vip.vipType == 2;
                 }
                 switch (item.desc.user_profile.card?.official_verify?.type ?? 3)
                 {

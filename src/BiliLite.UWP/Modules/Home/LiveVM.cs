@@ -1,5 +1,4 @@
-﻿using BiliLite.Helpers;
-using BiliLite.Models;
+﻿using BiliLite.Models;
 using BiliLite.Models.Requests.Api.Home;
 using BiliLite.Modules.Live.LiveCenter;
 using Newtonsoft.Json;
@@ -90,26 +89,26 @@ namespace BiliLite.Modules
                     {
                         if (data.data["banner"].Count() > 0)
                         {
-                            Banners = await Utils.DeserializeJson<ObservableCollection<LiveHomeBannerModel>>(data.data["banner"][0]["list"].ToString());
+                            Banners = await data.data["banner"][0]["list"].ToString().DeserializeJson<ObservableCollection<LiveHomeBannerModel>>();
                         }
-                        Areas = await Utils.DeserializeJson<ObservableCollection<LiveHomeAreaModel>>(data.data["area_entrance_v2"][0]["list"].ToString());
+                        Areas = await data.data["area_entrance_v2"][0]["list"].ToString().DeserializeJson<ObservableCollection<LiveHomeAreaModel>>();
                         await GetLiveHomeItems();
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {
@@ -128,25 +127,25 @@ namespace BiliLite.Modules
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        var items = await Utils.DeserializeJson<List<LiveHomeItemsModel>>(data.data["room_list"].ToString());
+                        var items = await data.data["room_list"].ToString().DeserializeJson<List<LiveHomeItemsModel>>();
 
                         Items = items.Where(x => x.list != null && x.list.Count > 0).ToList();
                     }
                     else
                     {
-                        Utils.ShowMessageToast(data.message);
+                        Notify.ShowMessageToast(data.message);
                     }
                 }
                 else
                 {
-                    Utils.ShowMessageToast(results.message);
+                    Notify.ShowMessageToast(results.message);
 
                 }
             }
             catch (Exception ex)
             {
                 var handel = HandelError<AnimeHomeModel>(ex);
-                Utils.ShowMessageToast(handel.message);
+                Notify.ShowMessageToast(handel.message);
             }
             finally
             {

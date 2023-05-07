@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Services;
 using BiliLite.Models.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
@@ -17,8 +17,8 @@ namespace BiliLite.Extensions
         public static bool IsMiddleButtonNewTap(this PointerRoutedEventArgs e, object sender)
         {
             return e.IsUseMiddleButton(sender) &&
-                   SettingHelper.GetValue(SettingHelper.UI.MOUSE_MIDDLE_ACTION, (int) MouseMiddleActions.Back) ==
-                   (int) MouseMiddleActions.NewTap;
+                   SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) ==
+                   (int)MouseMiddleActions.NewTap;
         }
     }
 }

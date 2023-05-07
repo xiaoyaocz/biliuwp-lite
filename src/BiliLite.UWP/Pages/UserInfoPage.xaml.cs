@@ -1,4 +1,4 @@
-﻿using BiliLite.Helpers;
+﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Modules.User;
@@ -113,7 +113,7 @@ namespace BiliLite.Pages
                     id = e.DynamicID;
                     break;
             }
-            Utils.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
+            Notify.ShowComment(id, (int)commentType, CommentApi.CommentSort.Hot);
             //comment.LoadComment(new Controls.LoadCommentInfo()
             //{
             //    CommentMode = (int)commentType,
@@ -121,7 +121,7 @@ namespace BiliLite.Pages
             //    Oid = id
             //});
         }
-        protected  override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             SetStaggered();
@@ -145,7 +145,7 @@ namespace BiliLite.Pages
                 userFavlistVM.mid = mid;
                 fansVM.mid = mid;
                 followVM.mid = mid;
-                if (userDetailVM.mid == SettingHelper.Account.UserID.ToString())
+                if (userDetailVM.mid == SettingService.Account.UserID.ToString())
                 {
                     isSelf = true;
                     appBar.Visibility = Visibility.Collapsed;
@@ -164,7 +164,7 @@ namespace BiliLite.Pages
                 {
                     pivot.SelectedIndex = tabIndex;
                 }
-               
+
             }
         }
 
@@ -199,7 +199,7 @@ namespace BiliLite.Pages
                 icon = Symbol.Message,
                 title = "消息中心",
                 page = typeof(WebPage),
-                parameters = $"https://message.bilibili.com/#whisper/mid{ userDetailVM.mid}"
+                parameters = $"https://message.bilibili.com/#whisper/mid{userDetailVM.mid}"
             });
         }
 
@@ -233,7 +233,7 @@ namespace BiliLite.Pages
 
         void SetStaggered()
         {
-            var staggered = SettingHelper.GetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0) == 1;
+            var staggered = SettingService.GetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0) == 1;
             if (staggered != IsStaggered)
             {
                 IsStaggered = staggered;
@@ -250,7 +250,7 @@ namespace BiliLite.Pages
 
         private void btnGrid_Click(object sender, RoutedEventArgs e)
         {
-            SettingHelper.SetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 1);
+            SettingService.SetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 1);
             IsStaggered = true;
             btnGrid.Visibility = Visibility.Collapsed;
             btnList.Visibility = Visibility.Visible;
@@ -265,7 +265,7 @@ namespace BiliLite.Pages
             btnGrid.Visibility = Visibility.Visible;
             btnList.Visibility = Visibility.Collapsed;
             //设置
-            SettingHelper.SetValue<int>(SettingHelper.UI.DYNAMIC_DISPLAY_MODE, 0);
+            SettingService.SetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0);
             //XAML
             list.ItemsPanel = (ItemsPanelTemplate)this.Resources["ListPanel"];
         }
@@ -299,7 +299,7 @@ namespace BiliLite.Pages
                 {
                     await followVM.GetTags();
                 }
-                
+
                 await followVM.Get();
             }
             if (pivot.SelectedIndex == 5 && fansVM.Items == null)
