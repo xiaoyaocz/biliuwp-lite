@@ -15,6 +15,7 @@
     Background="Transparent">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="time"/>
+        <convert:ProgressToTimeConverter x:Key="ProgressToTimeConverter"/>
         <DataTemplate x:Key="DynamicVideo" x:DataType="modules:DynamicItemModel">
             <Grid Background="#00FFFFFF">
                 <Grid.ContextFlyout>
@@ -33,7 +34,17 @@
                         <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
                             <TextBlock Foreground="White" FontSize="12">投稿视频</TextBlock>
                         </Border>
-
+                        <Grid VerticalAlignment="Bottom" Padding="5">
+                            <Grid.Background>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <GradientStop Color="#CC000005" Offset="0.993"/>
+                                    <GradientStop Color="#00000000" Offset="0"/>
+                                </LinearGradientBrush>
+                            </Grid.Background>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock FontSize="10" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{x:Bind video.duration, Mode=OneWay, Converter={StaticResource ProgressToTimeConverter}}"></TextBlock>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
