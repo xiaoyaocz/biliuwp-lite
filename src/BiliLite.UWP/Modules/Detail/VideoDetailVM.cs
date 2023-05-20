@@ -12,6 +12,8 @@ using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Services;
+using BiliLite.Models.Common.Video;
+using Newtonsoft.Json;
 
 namespace BiliLite.Modules
 {
@@ -686,6 +688,12 @@ namespace BiliLite.Modules
 
         public string share_subtitle { get; set; }
         public string short_link { get; set; }
+
+        [JsonProperty("ugc_season")]
+        public VideoUgcSeason UgcSeason { get; set; }
+
+        public bool ShowUgcSeason => UgcSeason != null && UgcSeason.Sections != null && UgcSeason.Sections.Count > 0;
+
         public string redirect_url { get; set; }
 
         public List<VideoDetailPagesModel> pages { get; set; }

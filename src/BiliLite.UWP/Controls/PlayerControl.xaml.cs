@@ -110,7 +110,7 @@ namespace BiliLite.Controls
         /// <summary>
         /// 时长（毫秒）
         /// </summary>
-        public int duration { get; set; }
+        public long duration { get; set; }
         public LocalPlayInfo LocalPlayInfo { get; set; }
         public object parameter { get; set; }
 
