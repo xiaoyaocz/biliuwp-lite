@@ -1,4 +1,5 @@
 ﻿using BiliLite.Models.Common;
+using BiliLite.Models.Common.Video;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace BiliLite.Services
         /// </summary>
         /// <param name="videoID"></param>
         /// <returns>null 如果没有找到</returns>
-        public static ABPlayHistoryEntry FindABPlayHistory(Controls.PlayInfo info)
+        public static ABPlayHistoryEntry FindABPlayHistory(PlayInfo info)
         {
             return ABPlayHistories.GetValueOrDefault(info.season_id != 0 ? "ep" + info.ep_id : info.cid, null);
         }
@@ -53,7 +54,7 @@ namespace BiliLite.Services
         /// </summary>
         /// <param name="info"></param>
         /// <param name="history">null移除AB播放历史</param>
-        public static async void SetABPlayHistory(Controls.PlayInfo info, ABPlayHistoryEntry history)
+        public static async void SetABPlayHistory(PlayInfo info, ABPlayHistoryEntry history)
         {
             if (history == null)
             {

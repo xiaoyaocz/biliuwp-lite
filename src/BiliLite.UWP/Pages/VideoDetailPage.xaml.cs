@@ -17,6 +17,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using Windows.UI.Xaml.Controls.Primitives;
+using BiliLite.Models.Common.Video;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 

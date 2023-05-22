@@ -389,6 +389,12 @@ namespace BiliLite.Models.Common
             /// 双击全屏
             /// </summary>
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
+
+            /// <summary>
+            /// 按住手势行为
+            /// </summary>
+            public const string HOLDING_GESTURE_ACTION = "HoldingGestureAction";
+
             /// <summary>
             /// 自动打开AI字幕
             /// </summary>

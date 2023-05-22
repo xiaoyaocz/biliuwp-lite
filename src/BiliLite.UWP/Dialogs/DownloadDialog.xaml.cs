@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using BiliLite.Models.Common;
 using BiliLite.Models.Download;
 using BiliLite.Extensions;
+using BiliLite.Models.Common.Video;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -51,12 +52,12 @@ namespace BiliLite.Dialogs
             {
                 episode = downloadItem.Episodes.OrderByDescending(x => x.Index).FirstOrDefault();
             }
-            var data = await playerVM.GetPlayUrls(new Controls.PlayInfo()
+            var data = await playerVM.GetPlayUrls(new PlayInfo()
             {
                 avid = episode.AVID,
                 cid = episode.CID,
                 ep_id = episode.EpisodeID,
-                play_mode = downloadItem.Type == DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
+                play_mode = downloadItem.Type == DownloadType.Season ? VideoPlayType.Season : VideoPlayType.Video,
                 season_id = downloadItem.SeasonID,
                 season_type = downloadItem.SeasonType,
                 area = downloadItem.Title.ParseArea(downloadItem.UpMid)
@@ -123,12 +124,12 @@ namespace BiliLite.Dialogs
                         }
                     }
                     //读取视频地址
-                    var playUrl = await playerVM.GetPlayUrls(new Controls.PlayInfo()
+                    var playUrl = await playerVM.GetPlayUrls(new PlayInfo()
                     {
                         avid = item.AVID,
                         cid = item.CID,
                         ep_id = item.EpisodeID,
-                        play_mode = downloadItem.Type == DownloadType.Season ? Controls.VideoPlayType.Season : Controls.VideoPlayType.Video,
+                        play_mode = downloadItem.Type == DownloadType.Season ? VideoPlayType.Season : VideoPlayType.Video,
                         season_id = downloadItem.SeasonID,
                         season_type = downloadItem.SeasonType,
                         area = downloadItem.Title.ParseArea(downloadItem.UpMid)

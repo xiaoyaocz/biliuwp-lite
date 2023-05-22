@@ -1,4 +1,4 @@
-﻿using BiliLite.Controls;
+﻿using BiliLite.Models.Common.Video;
 using System.Threading.Tasks;
 
 namespace BiliLite.Modules.Player.Playurl

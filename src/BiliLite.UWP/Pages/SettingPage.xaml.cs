@@ -346,6 +346,15 @@ namespace BiliLite.Pages
                 });
             });
 
+            cbPlayerHoldingGestureAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, (int)PlayerHoldingAction.None);
+            cbPlayerHoldingGestureAction.Loaded += (sender, e) =>
+            {
+                cbPlayerHoldingGestureAction.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, cbPlayerHoldingGestureAction.SelectedIndex);
+                };
+            };
+
             //自动打开AI字幕
             swPlayerSettingAutoOpenAISubtitle.IsOn = SettingService.GetValue<bool>(SettingConstants.Player.AUTO_OPEN_AI_SUBTITLE, false);
             swPlayerSettingAutoOpenAISubtitle.Loaded += new RoutedEventHandler((sender, e) =>

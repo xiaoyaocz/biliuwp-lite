@@ -273,6 +273,15 @@
                         <ToggleSwitch x:Name="swPlayerSettingAutoFullWindows" ></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">双击播放器全屏(默认双击暂停)</TextBlock>
                         <ToggleSwitch x:Name="swPlayerSettingDoubleClickFullScreen" ></ToggleSwitch>
+
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">播放器按住手势行为</TextBlock>
+                        <ComboBox x:Name="cbPlayerHoldingGestureAction" SelectedIndex="0" MinWidth="200">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="无" ></ComboBoxItem>
+                                <ComboBoxItem Content="倍速播放" ></ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                        
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动打开AI字幕</TextBlock>
                         <ToggleSwitch  x:Name="swPlayerSettingAutoOpenAISubtitle"></ToggleSwitch>
                         <TextBlock>部分自动生成的AI字幕会与视频自带字幕冲突</TextBlock>

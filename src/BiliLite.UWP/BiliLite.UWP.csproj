@@ -128,6 +128,10 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\Common\Danmaku\CompareDanmakuModel.cs" />
+    <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayInfo.cs" />
+    <Compile Include="Models\Common\Video\VideoPlayType.cs" />
     <Compile Include="Extensions\ApiModelExtensions.cs" />
     <Compile Include="Extensions\BiliExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
