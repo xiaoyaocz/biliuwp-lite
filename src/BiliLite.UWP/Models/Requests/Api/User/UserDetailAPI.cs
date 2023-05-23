@@ -1,4 +1,5 @@
 ﻿using BiliLite.Services;
+using System.Threading.Tasks;
 
 namespace BiliLite.Models.Requests.Api.User
 {
@@ -9,7 +10,7 @@ namespace BiliLite.Models.Requests.Api.User
         /// </summary>
         /// <param name="mid"></param>
         /// <returns></returns>
-        public ApiModel UserInfo(string mid)
+        public async Task<ApiModel> UserInfo(string mid)
         {
             ApiModel api = new ApiModel()
             {
@@ -17,6 +18,7 @@ namespace BiliLite.Models.Requests.Api.User
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/wbi/acc/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, needAccesskey: true) + $"&mid={mid}",
             };
+            api.parameter += await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
         /// <summary>
@@ -59,7 +61,7 @@ namespace BiliLite.Models.Requests.Api.User
         /// <param name="page">页数</param>
         /// <param name="pagesize">每页数量</param>
         /// <returns></returns>
-        public ApiModel SubmitVideos(string mid, int page = 1, int pagesize = 30, string keyword = "", int tid = 0, SubmitVideoOrder order = SubmitVideoOrder.pubdate)
+        public async Task<ApiModel> SubmitVideos(string mid, int page = 1, int pagesize = 30, string keyword = "", int tid = 0, SubmitVideoOrder order = SubmitVideoOrder.pubdate)
         {
             ApiModel api = new ApiModel()
             {
@@ -68,6 +70,7 @@ namespace BiliLite.Models.Requests.Api.User
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
                 need_cookie = true,
             };
+            api.parameter += await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
         /// <summary>

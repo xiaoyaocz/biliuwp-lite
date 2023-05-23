@@ -44,7 +44,8 @@ namespace BiliLite.Modules.User
         {
             try
             {
-                var result = await userDetailAPI.UserInfo(mid).Request();
+                var api = await userDetailAPI.UserInfo(mid);
+                var result = await api.Request();
 
                 if (result.status)
                 {

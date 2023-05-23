@@ -92,4 +92,17 @@
         /// </summary>
         Cheese = 3
     }
+
+    public enum PlayerHoldingAction
+    {
+        /// <summary>
+        /// 无
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 倍速播放
+        /// </summary>
+        AcceleratePlay
+    }
 }

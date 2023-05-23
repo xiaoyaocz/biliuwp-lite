@@ -17,6 +17,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using Windows.UI.Xaml.Controls.Primitives;
+using BiliLite.Models.Common.Video;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -160,63 +161,110 @@ namespace BiliLite.Pages
                 SettingService.SetValue("一键三连提示", false);
                 Notify.ShowMessageToast("右键或长按点赞按钮可以一键三连哦~", 5);
             }
-            if (videoDetailVM.VideoInfo != null)
+            if (videoDetailVM.VideoInfo == null)
             {
-                avid = videoDetailVM.VideoInfo.aid;
-                var desc = videoDetailVM.VideoInfo.desc.ToRichTextBlock(null);
-
-                contentDesc.Content = desc;
-                ChangeTitle(videoDetailVM.VideoInfo.title);
-                CreateQR();
-                if (!string.IsNullOrEmpty(videoDetailVM.VideoInfo.redirect_url))
-                {
-                    var result = await MessageCenter.HandelSeasonID(videoDetailVM.VideoInfo.redirect_url);
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        this.Frame.Navigate(typeof(SeasonDetailPage), result);
-                        //从栈中移除当前页面的历史
-                        this.Frame.BackStack.Remove(this.Frame.BackStack.FirstOrDefault(x => x.SourcePageType == this.GetType()));
-                        return;
-                    }
-                }
-                List<PlayInfo> playInfos = new List<PlayInfo>();
-                int i = 0;
-                foreach (var item in videoDetailVM.VideoInfo.pages)
-                {
-                    playInfos.Add(new PlayInfo()
-                    {
-                        avid = videoDetailVM.VideoInfo.aid,
-                        cid = item.cid,
-                        duration = item.duration,
-                        is_interaction = videoDetailVM.VideoInfo.interaction != null,
-                        order = i,
-                        play_mode = VideoPlayType.Video,
-                        title = "P" + item.page + " " + item.part,
-                        area = videoDetailVM.VideoInfo.title.ParseArea(videoDetailVM.VideoInfo.owner.mid)
-                    });
-                    i++;
-                }
-                var index = 0;
-                if (videoDetailVM.VideoInfo.history != null)
-                {
-                    var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
-                    if (history != null)
-                    {
-                        SettingService.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
-                        index = videoDetailVM.VideoInfo.pages.IndexOf(history);
-                        //player.InitializePlayInfo(playInfos, );
-                    }
-                }
-                player.InitializePlayInfo(playInfos, index);
-                comment.LoadComment(new LoadCommentInfo()
-                {
-                    CommentMode = (int)CommentApi.CommentType.Video,
-                    CommentSort = CommentApi.CommentSort.Hot,
-                    Oid = videoDetailVM.VideoInfo.aid
-                });
+                flag = false;
+                return;
             }
+
+            avid = videoDetailVM.VideoInfo.aid;
+            var desc = videoDetailVM.VideoInfo.desc.ToRichTextBlock(null);
+
+            contentDesc.Content = desc;
+            ChangeTitle(videoDetailVM.VideoInfo.title);
+            CreateQR();
+            if (!string.IsNullOrEmpty(videoDetailVM.VideoInfo.redirect_url))
+            {
+                var result = await MessageCenter.HandelSeasonID(videoDetailVM.VideoInfo.redirect_url);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    this.Frame.Navigate(typeof(SeasonDetailPage), result);
+                    //从栈中移除当前页面的历史
+                    this.Frame.BackStack.Remove(this.Frame.BackStack.FirstOrDefault(x => x.SourcePageType == this.GetType()));
+                    return;
+                }
+            }
+            InitPlayInfo();
+            
+            comment.LoadComment(new LoadCommentInfo()
+            {
+                CommentMode = (int)CommentApi.CommentType.Video,
+                CommentSort = CommentApi.CommentSort.Hot,
+                Oid = videoDetailVM.VideoInfo.aid
+            });
+
+            if (playlist != null || !videoDetailVM.VideoInfo.ShowUgcSeason)
+            {
+                flag = false;
+                return;
+            }
+            InitUgcSeason(id);
+
             flag = false;
         }
+
+        private void InitPlayInfo()
+        {
+            List<PlayInfo> playInfos = new List<PlayInfo>();
+            int i = 0;
+            foreach (var item in videoDetailVM.VideoInfo.pages)
+            {
+                playInfos.Add(new PlayInfo()
+                {
+                    avid = videoDetailVM.VideoInfo.aid,
+                    cid = item.cid,
+                    duration = item.duration,
+                    is_interaction = videoDetailVM.VideoInfo.interaction != null,
+                    order = i,
+                    play_mode = VideoPlayType.Video,
+                    title = "P" + item.page + " " + item.part,
+                    area = videoDetailVM.VideoInfo.title.ParseArea(videoDetailVM.VideoInfo.owner.mid)
+                });
+                i++;
+            }
+            var index = 0;
+            if (videoDetailVM.VideoInfo.history != null)
+            {
+                var history = videoDetailVM.VideoInfo.pages.FirstOrDefault(x => x.cid.Equals(videoDetailVM.VideoInfo.history.cid));
+                if (history != null)
+                {
+                    SettingService.SetValue<double>(history.cid, Convert.ToDouble(videoDetailVM.VideoInfo.history.progress));
+                    index = videoDetailVM.VideoInfo.pages.IndexOf(history);
+                    //player.InitializePlayInfo(playInfos, );
+                }
+            }
+            player.InitializePlayInfo(playInfos, index);
+        }
+
+        private void InitUgcSeason(string id)
+        {
+            playlist = new VideoPlaylist()
+            {
+                Playlist = new List<VideoPlaylistItem>()
+            };
+            foreach (var section in videoDetailVM.VideoInfo.UgcSeason.Sections)
+            {
+                foreach (var item in section.Episodes)
+                {
+                    playlist.Playlist.Add(new VideoPlaylistItem()
+                    {
+                        ID = item.Aid,
+                        Title = item.Title,
+                        Author = item.Author.Name,
+                        Cover = item.Cover
+                    });
+                }
+            }
+            var episodeIndex = playlist.Playlist.FindIndex(x => x.ID == id);
+            var element = PlayListTpl.GetElement(new Windows.UI.Xaml.ElementFactoryGetArgs()) as PivotItem;
+
+            element.DataContext = playlist;
+            var listView = element.Content as ListView;
+            listView.SelectedIndex = episodeIndex;
+            pivot.Items.Insert(0, element);
+            pivot.SelectedIndex = 0;
+        }
+
         private void CreateQR()
         {
             try
@@ -408,7 +456,6 @@ namespace BiliLite.Pages
         bool changedFlag = false;
         private void PlayerControl_ChangeEpisodeEvent(object sender, int e)
         {
-
             changedFlag = true;
             listEpisode.SelectedIndex = e;
             changedFlag = false;

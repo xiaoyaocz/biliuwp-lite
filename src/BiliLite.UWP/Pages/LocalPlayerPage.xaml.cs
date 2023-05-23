@@ -1,5 +1,6 @@
 ﻿using BiliLite.Controls;
 using BiliLite.Models.Common;
+using BiliLite.Models.Common.Video;
 using BiliLite.Services;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,4 @@
-﻿using BiliLite.Controls;
-using BiliLite.Models.Requests.Api;
+﻿using BiliLite.Models.Requests.Api;
 using BiliLite.Modules.Player.Playurl;
 using Newtonsoft.Json;
 using System;
@@ -10,6 +9,7 @@ using Windows.Storage;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
+using BiliLite.Models.Common.Video;
 
 namespace BiliLite.Modules
 {

@@ -1,8 +1,13 @@
 ﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Common.Account;
+using BiliLite.Models.Requests.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace BiliLite.Services
 {
@@ -30,6 +35,58 @@ namespace BiliLite.Services
         private const string _mobi_app = "android";
         private const string _platform = "android";
         public static string deviceId = "";
+        private static int[] mixinKeyEncTab = new int[] {
+            46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
+            33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13, 37, 48, 7, 16, 24, 55, 40,
+            61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11,
+            36, 20, 34, 44, 52
+        };
+
+        private static async Task<(string, string)> GetWbiKeys()
+        {
+            // 获取最新的 img_key 和 sub_key
+            var response = await new AccountApi().Nav().Request();
+            var result = await response.GetData<WebInterfaceNav>();
+            var imgUrl = result.data.WbiImg.ImgUrl;
+            var subUrl = result.data.WbiImg.SubUrl;
+            var imgKey = imgUrl.Substring(imgUrl.LastIndexOf('/') + 1).Split('.')[0];
+            var subKey = subUrl.Substring(subUrl.LastIndexOf('/') + 1).Split('.')[0];
+            return (imgKey, subKey);
+        }
+
+        private static string GetMixinKey(string origin)
+        {
+            // 对 imgKey 和 subKey 进行字符顺序打乱编码
+            return mixinKeyEncTab.Aggregate("", (s, i) => s + origin[i]).Substring(0, 32);
+        }
+
+        public static async Task<string> GetWbiSign(string url)
+        {
+            var (imgKey,subKey) = await GetWbiKeys();
+
+            // 为请求参数进行 wbi 签名
+            string mixinKey = GetMixinKey(imgKey + subKey);
+            long currentTime = (long)Math.Round(DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+
+            var queryString = HttpUtility.ParseQueryString(url);
+
+            var queryParams = queryString.Cast<string>().ToDictionary(k => k, v => queryString[v]);
+            queryParams["wts"] = currentTime + ""; // 添加 wts 字段
+            queryParams = queryParams.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value); // 按照 key 重排参数
+                                                                                                  // 过滤 value 中的 "!'()*" 字符
+            queryParams = queryParams.ToDictionary(x => x.Key, x => string.Join("", x.Value.ToString().Where(c => "!'()*".Contains(c) == false)));
+            queryString = HttpUtility.ParseQueryString(String.Empty);
+            foreach (var key in queryParams.Keys)
+            {
+                queryString.Add(key, queryParams[key]);
+            }
+            var query = queryString.ToString();
+
+            var wbi_sign = $"{query}{mixinKey}".ToMD5();
+
+            return $"&wts={currentTime}&w_rid={wbi_sign}";
+        }
+
         public static string GetSign(string url, ApiKeyInfo apiKeyInfo, string par = "&sign=")
         {
             string result;

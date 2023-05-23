@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<UserControl    
     x:Class="BiliLite.Controls.PlayerControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -500,6 +500,8 @@
                                         <Button x:Name="PlayerSettingABPlaySetPointA" Click="PlayerSettingABPlaySetPointA_Click" Grid.Column="1" Foreground="White" Margin="0 0 8 0" Visibility="Collapsed">设置A点</Button>
                                         <Button x:Name="PlayerSettingABPlaySetPointB" Click="PlayerSettingABPlaySetPointB_Click" Grid.Column="1" Foreground="White" Visibility="Collapsed">设置B点</Button>
                                     </StackPanel>
+
+                                    <TextBlock TextWrapping="Wrap" x:Name="txtInfo" />
                                 </StackPanel>
                             </ScrollViewer>
                         </PivotItem>
@@ -557,19 +559,11 @@
                 </Grid>
             </SplitView.Pane>
             <Grid  PointerMoved="Grid_PointerMoved"   
-                   DoubleTapped="Grid_DoubleTapped" 
                    PointerEntered="Grid_PointerEntered" 
                    PointerExited="Grid_PointerExited"
-                   
-                   ManipulationMode="TranslateX,TranslateRailsX,TranslateY,TranslateRailsY"
-                   ManipulationCompleted="Grid_ManipulationCompleted"
-                   ManipulationDelta="Grid_ManipulationDelta"
-                   ManipulationStarted="Grid_ManipulationStarted">
-                <Grid.ContextFlyout>
-                    <Flyout>
-                        <TextBlock TextWrapping="Wrap" x:Name="txtInfo" ></TextBlock>
-                    </Flyout>
-                </Grid.ContextFlyout>
+                   PointerPressed="Grid_PointerPressed"
+                   PointerReleased="Grid_PointerReleased"
+                   DoubleTapped="Grid_DoubleTapped">
                 <!--播放器-->
                 <local:Player x:Name="Player"  PlayStateChanged="Player_PlayStateChanged" PlayMediaEnded="Player_PlayMediaEnded" PlayMediaError="Player_PlayMediaError" ChangeEngine="Player_ChangeEngine" PlayMediaOpened="Player_PlayMediaOpened"/>
                

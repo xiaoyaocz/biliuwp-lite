@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Navigation;
 using BiliLite.Extensions;
 using BiliLite.Services;
 using BiliLite.Models.Common;
+using BiliLite.Models.Common.Video;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -68,7 +69,7 @@ namespace BiliLite.Pages
         {
             LocalPlayInfo localPlayInfo = new LocalPlayInfo();
             localPlayInfo.Index = index;
-            localPlayInfo.PlayInfos = new List<Controls.PlayInfo>();
+            localPlayInfo.PlayInfos = new List<PlayInfo>();
             foreach (var item in data.Epsidoes)
             {
                 IDictionary<string, string> subtitles = new Dictionary<string, string>();
@@ -115,17 +116,17 @@ namespace BiliLite.Pages
                         });
                     }
                 }
-                localPlayInfo.PlayInfos.Add(new Controls.PlayInfo()
+                localPlayInfo.PlayInfos.Add(new PlayInfo()
                 {
                     avid = item.AVID,
                     cid = item.CID,
                     ep_id = item.EpisodeID,
-                    play_mode = Controls.VideoPlayType.Download,
+                    play_mode = VideoPlayType.Download,
                     season_id = data.IsSeason ? data.ID.ToInt32() : 0,
                     order = item.Index,
                     title = item.Title,
                     season_type = 0,
-                    LocalPlayInfo = new Controls.LocalPlayInfo()
+                    LocalPlayInfo = new Models.Common.Video.LocalPlayInfo()
                     {
                         DanmakuPath = item.DanmakuPath,
                         Quality = item.QualityName,

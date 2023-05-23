@@ -63,7 +63,7 @@
                     <toolkit:ImageEx IsCacheEnabled="True"  
                                      PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   
                                      Stretch="UniformToFill" 
-                                     Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200h'}"></toolkit:ImageEx>
+                                     Source="{x:Bind Path=cover,Converter={StaticResource imageConvert}, ConverterParameter='200h'}"></toolkit:ImageEx>
                     <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind showCoverText}">
                         <Grid.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

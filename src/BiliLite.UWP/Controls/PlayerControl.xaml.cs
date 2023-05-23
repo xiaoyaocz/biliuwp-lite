@@ -35,98 +35,18 @@ using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using BiliLite.Models.Common;
 using BiliLite.Extensions;
+using BiliLite.Models.Common.Video;
+using Windows.UI.Input;
+using BiliLite.Models.Common.Danmaku;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
 namespace BiliLite.Controls
 {
-
-    public enum VideoPlayType
-    {
-        /// <summary>
-        /// 视频
-        /// </summary>
-        Video,
-        /// <summary>
-        /// 番剧、影视
-        /// </summary>
-        Season,
-        /// <summary>
-        /// 下载的视频视频
-        /// </summary>
-        Download,
-        /// <summary>
-        /// 本地视频
-        /// </summary>
-        LoaclFile
-    }
-
-    public class PlayInfo
-    {
-        /// <summary>
-        /// 播放模式
-        /// </summary>
-        public VideoPlayType play_mode { get; set; }
-        /// <summary>
-        /// 排序
-        /// </summary>
-        public int order { get; set; }
-        /// <summary>
-        /// 专题ID
-        /// </summary>
-        public int season_id { get; set; }
-        /// <summary>
-        /// 专题类型
-        /// </summary>
-        public int season_type { get; set; }
-        /// <summary>
-        /// 专题分集ID
-        /// </summary>
-        public string ep_id { get; set; }
-        /// <summary>
-        /// 视频ID
-        /// </summary>
-        public string avid { get; set; }
-        /// <summary>
-        /// 必须，视频分集ID
-        /// </summary>
-        public string cid { get; set; }
-        /// <summary>
-        /// 标题
-        /// </summary>
-        public string title { get; set; }
-        /// <summary>
-        /// 是否VIP
-        /// </summary>
-        public bool is_vip { get; set; }
-        /// <summary>
-        /// 是否互动视频
-        /// </summary>
-        public bool is_interaction { get; set; } = false;
-        /// <summary>
-        /// 互动视频分支ID
-        /// </summary>
-        public int node_id { get; set; } = 0;
-        /// <summary>
-        /// 时长（毫秒）
-        /// </summary>
-        public int duration { get; set; }
-        public LocalPlayInfo LocalPlayInfo { get; set; }
-        public object parameter { get; set; }
-
-        public string area { get; set; } = "";
-    }
-    public class LocalPlayInfo
-    {
-        public BiliPlayUrlInfo Info { get; set; }
-        public IDictionary<string, string> Subtitles { get; set; }
-        public string DanmakuPath { get; set; }
-        public string Quality { get; set; }
-    }
-
     public sealed partial class PlayerControl : UserControl, IDisposable
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private GestureRecognizer gestureRecognizer;
         private void DoPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -207,6 +127,9 @@ namespace BiliLite.Controls
             danmuTimer.Tick += DanmuTimer_Tick;
             this.Loaded += PlayerControl_Loaded;
             this.Unloaded += PlayerControl_Unloaded;
+
+            gestureRecognizer = new GestureRecognizer();
+            InitializeGesture();
         }
 
         private void Timer_focus_Tick(object sender, object e)
@@ -1745,6 +1668,167 @@ namespace BiliLite.Controls
         }
         #region 播放器手势
         int showControlsFlag = 0;
+        bool HandlingGesture = false;
+        bool HandlingHolding = false;
+        bool DirectionX = false;
+        bool DirectionY = false;
+
+        bool tapFlag;
+        double ssValue = 0;
+        bool ManipulatingBrightness = false;
+        double _brightness = 0;
+        PlayerHoldingAction m_playerHoldingAction;
+        double Brightness
+        {
+            get => _brightness;
+            set
+            {
+                _brightness = value;
+                BrightnessShield.Opacity = value;
+                //SettingHelper.SetValue<double>(SettingHelper.Player.PLAYER_BRIGHTNESS, _brightness);
+                //}
+            }
+        }
+        private void InitializeGesture()
+        {
+            m_playerHoldingAction = (PlayerHoldingAction)SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, (int)PlayerHoldingAction.None);
+            gestureRecognizer.GestureSettings = GestureSettings.Hold | GestureSettings.HoldWithMouse | GestureSettings.ManipulationTranslateX | GestureSettings.ManipulationTranslateY;
+
+            gestureRecognizer.Holding += OnHolding;
+            gestureRecognizer.ManipulationStarted += OnManipulationStarted;
+            gestureRecognizer.ManipulationUpdated += OnManipulationUpdated;
+            gestureRecognizer.ManipulationCompleted += OnManipulationCompleted;
+        }
+
+        private void OnHolding(GestureRecognizer sender, HoldingEventArgs args)
+        {
+            if (Player.PlayState != PlayState.Playing || m_playerHoldingAction == PlayerHoldingAction.None)
+                return;
+
+            switch (args.HoldingState)
+            {
+                case HoldingState.Started:
+                    {
+                        HandlingHolding = true;
+                        TxtToolTip.Text = "倍速播放中";
+                        ToolTip.Visibility = Visibility.Visible;
+                        Player.SetRate(2.0d);
+                        break;
+                    }
+                case HoldingState.Completed:
+                    {
+                        HandlingHolding = false;
+                        ToolTip.Visibility = Visibility.Collapsed;
+                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        break;
+                    }
+                case HoldingState.Canceled:
+                    {
+                        HandlingHolding = false;
+                        ToolTip.Visibility = Visibility.Collapsed;
+                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        break;
+                    }
+            }
+        }
+
+        private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
+        {
+            ssValue = 0;
+            //TxtToolTip.Text = "";
+            ToolTip.Visibility = Visibility.Visible;
+
+            if (e.Position.X < this.ActualWidth / 2)
+                ManipulatingBrightness = true;
+            else
+                ManipulatingBrightness = false;
+
+        }
+
+        private void OnManipulationUpdated(object sender, ManipulationUpdatedEventArgs e)
+        {
+            var x = e.Delta.Translation.X;
+            var y = e.Delta.Translation.Y;
+
+            if (HandlingHolding)
+                return;
+            if (HandlingGesture == false)
+            {
+                if (Math.Abs(x) > Math.Abs(y))
+                {
+                    HandlingGesture = true;
+                    DirectionX = true;
+
+                    HandleSlideProgressDelta(e.Delta.Translation.X);
+                }
+                else
+                {
+                    HandlingGesture = true;
+                    DirectionY = true;
+
+                    if (ManipulatingBrightness)
+                        HandleSlideBrightnessDelta(e.Delta.Translation.Y);
+                    else
+                        HandleSlideVolumeDelta(e.Delta.Translation.Y);
+                }
+            }
+            else
+            {
+                if (DirectionX)
+                {
+                    HandleSlideProgressDelta(x);
+                }
+                if (DirectionY)
+                {
+                    if (ManipulatingBrightness)
+                        HandleSlideBrightnessDelta(y);
+                    else
+                        HandleSlideVolumeDelta(y);
+                }
+            }
+
+        }
+
+        private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        {
+            HandlingGesture = false;
+            DirectionX = false;
+            DirectionY = false;
+            if (ssValue != 0)
+            {
+                Player.Position = Player.Position + ssValue;
+            }
+            ToolTip.Visibility = Visibility.Collapsed;
+        }
+
+        private void Grid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            try
+            {
+                var ps = e.GetIntermediatePoints(null);
+                if (ps != null && ps.Count > 0 && HandlingGesture != true)
+                {
+                    gestureRecognizer.ProcessDownEvent(ps[0]);
+                    e.Handled = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                // 重复获取鼠标指针导致异常
+            }
+        }
+
+        private void Grid_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            var ps = e.GetIntermediatePoints(null);
+            if (ps != null && ps.Count > 0)
+            {
+                gestureRecognizer.ProcessUpEvent(ps[0]);
+                e.Handled = true;
+                gestureRecognizer.CompleteGesture();
+            }
+        }
+
         private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             //ShowControl(true);
@@ -1770,9 +1854,9 @@ namespace BiliLite.Controls
             {
                 Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             }
-
+            gestureRecognizer.ProcessMoveEvents(e.GetIntermediatePoints(null));
+            e.Handled = true;
         }
-        bool tapFlag;
         private async void Grid_Tapped(object sender, TappedRoutedEventArgs e)
         {
             tapFlag = true;
@@ -1813,39 +1897,6 @@ namespace BiliLite.Controls
             else
             {
                 IsFullScreen = !IsFullScreen;
-            }
-        }
-        double ssValue = 0;
-        bool ManipulatingBrightness = false;
-        private void Grid_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            e.Handled = true;
-            //progress.Visibility = Visibility.Visible;
-            if (e.Delta.Translation.Y == 0)
-            {
-                //if (MTC.Video360)
-                //{
-                //    mediaPlayer.PlaybackSession.SphericalVideoProjection.ViewOrientation *= Quaternion.CreateFromYawPitchRoll(e.Delta.Translation.X > 0 ? -.01f : .01f, 0, 0);
-                //}
-                //else
-                //{
-                HandleSlideProgressDelta(e.Delta.Translation.X);
-                //}
-
-            }
-            else
-            {
-                //if (MTC.Video360)
-                //{
-                //    mediaPlayer.PlaybackSession.SphericalVideoProjection.ViewOrientation *= Quaternion.CreateFromYawPitchRoll(0, 0, e.Delta.Translation.Y > 0 ? -.01f : .01f);
-                //}
-                //else
-                //{
-                if (ManipulatingBrightness)
-                    HandleSlideBrightnessDelta(e.Delta.Translation.Y);
-                else
-                    HandleSlideVolumeDelta(e.Delta.Translation.Y);
-                //}
             }
         }
         private void HandleSlideProgressDelta(double delta)
@@ -1913,43 +1964,6 @@ namespace BiliLite.Controls
                 Brightness = Math.Max(Brightness - dd, 0);
             }
             TxtToolTip.Text = "亮度:" + Math.Abs(Brightness - 1).ToString("P");
-        }
-        private void Grid_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            e.Handled = true;
-            ssValue = 0;
-            TxtToolTip.Text = "";
-            ToolTip.Visibility = Visibility.Visible;
-
-            if (e.Position.X < this.ActualWidth / 2)
-                ManipulatingBrightness = true;
-            else
-                ManipulatingBrightness = false;
-
-        }
-
-        double _brightness = 0;
-        double Brightness
-        {
-            get => _brightness;
-            set
-            {
-                _brightness = value;
-                BrightnessShield.Opacity = value;
-                //SettingService.SetValue<double>(SettingConstants.Player.PLAYER_BRIGHTNESS, _brightness);
-                //}
-            }
-        }
-
-        private void Grid_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            e.Handled = true;
-
-            if (ssValue != 0)
-            {
-                Player.Position = Player.Position + ssValue;
-            }
-            ToolTip.Visibility = Visibility.Collapsed;
         }
         #endregion
         private void BottomBtnList_Click(object sender, RoutedEventArgs e)
@@ -2028,12 +2042,37 @@ namespace BiliLite.Controls
             EpisodeList.SelectedIndex = EpisodeList.SelectedIndex + 1;
         }
 
+        private void KeepScreenOn(bool value = true)
+        {
+            try
+            {
+                if (dispRequest != null)
+                {
+                    if (value)
+                    {
+                        dispRequest.RequestActive();
+                    }
+                    else
+                    {
+                        dispRequest.RequestRelease();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Debug.WriteLine(ex.Message);
+                //throws an error but it works;
+                //A method was called at an unexpected time
+            }
+        }
+
         private void Player_PlayStateChanged(object sender, PlayState e)
         {
             BottomImageBtnPlay.Visibility = Visibility.Collapsed;
             switch (e)
             {
                 case PlayState.Loading:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
@@ -2043,6 +2082,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Playing:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
@@ -2053,6 +2093,7 @@ namespace BiliLite.Controls
                     DanmuControl.ResumeDanmaku();
                     break;
                 case PlayState.Pause:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
@@ -2064,6 +2105,7 @@ namespace BiliLite.Controls
                     DanmuControl.PauseDanmaku();
                     break;
                 case PlayState.End:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
@@ -2073,6 +2115,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Error:
+                    KeepScreenOn(false);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
@@ -2519,17 +2562,6 @@ namespace BiliLite.Controls
             var rectangle = new RectangleGeometry();
             rectangle.Rect = new Rect(0, 0, SplitView.ActualWidth, SplitView.ActualHeight);
             DanmuControl.Clip = rectangle;
-        }
-    }
-    public class CompareDanmakuModel : IEqualityComparer<DanmakuModel>
-    {
-        public bool Equals(DanmakuModel x, DanmakuModel y)
-        {
-            return x.text == y.text;
-        }
-        public int GetHashCode(DanmakuModel obj)
-        {
-            return obj.text.GetHashCode();
         }
     }
 }

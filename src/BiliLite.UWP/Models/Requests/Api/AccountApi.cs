@@ -417,5 +417,15 @@ namespace BiliLite.Models.Requests.Api
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
+
+        public ApiModel Nav()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://api.bilibili.com/x/web-interface/nav"
+            };
+            return api;
+        }
     }
 }

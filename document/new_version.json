@@ -1,7 +1,7 @@
 {
-    "version": "4.6.0",
-    "version_num": 40600,
-    "version_desc": "更新内容:\r\n\r\n* 视频评论区支持查看图片\r\n\r\n* 更新WinUI版本至2.8.3\r\n\r\n* 优化简繁体转换实现方式\r\n\r\n* 修复评论区无IP属地显示\r\n\r\n* 修复查询用户资料及投稿509错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.1",
+    "version_num": 40601,
+    "version_desc": "更新内容:\r\n\r\n* 视频详情页添加合集视频到播放列表Tab中\r\n\r\n* 视频动态页右下角显示视频时长\r\n\r\n* 支持设置按住倍速播放手势\r\n\r\n* 修复查询用户资料及投稿无权限错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
