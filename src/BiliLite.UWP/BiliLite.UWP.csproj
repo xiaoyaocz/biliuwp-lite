@@ -128,6 +128,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\Common\Account\WebInterfaceNav.cs" />
     <Compile Include="Models\Common\Danmaku\CompareDanmakuModel.cs" />
     <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayInfo.cs" />
