@@ -32,6 +32,7 @@ namespace BiliLite.Services
         public static event EventHandler<string> ChangeTitleEvent;
         public static event EventHandler<object> LoginedEvent;
         public static event EventHandler<ImageViewerParameter> ViewImageEvent;
+        public static event EventHandler GoBackEvent;
         public static event EventHandler LogoutedEvent;
         public static void NavigateToPage(object sender, NavigationInfo navigationInfo)
         {
@@ -45,6 +46,12 @@ namespace BiliLite.Services
         {
             ChangeTitleEvent?.Invoke(page, title);
         }
+
+        public static void GoBack(object sender)
+        {
+            GoBackEvent?.Invoke(sender, EventArgs.Empty);
+        }
+
         /// <summary>
         /// 发送登录完成事件
         /// </summary>
