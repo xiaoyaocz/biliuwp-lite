@@ -35,7 +35,13 @@ namespace BiliLite
             MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
+            MessageCenter.GoBackEvent += MessageCenter_GoBackEvent;
             // Window.Current.Content.PointerPressed += Content_PointerPressed;
+        }
+
+        private void MessageCenter_GoBackEvent(object sender, EventArgs e)
+        {
+            GoBack();
         }
 
         private void MessageCenter_MiniWindowEvent(object sender, bool e)
@@ -114,32 +120,36 @@ namespace BiliLite
             if (SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back
                 && e.IsUseMiddleButton(sender))
             {
-                //如果打开了图片浏览，则关闭图片浏览
-                if (gridViewer.Visibility == Visibility.Visible)
-                {
-                    imgViewer_CloseEvent(this, null);
-                    e.Handled = true;
-                    return;
-                }
+                GoBack();
+                e.Handled = true;
 
-                //处理多标签
-                if (tabView.SelectedItem != tabView.TabItems[0])
-                {
-                    var frame = (tabView.SelectedItem as TabViewItem).Content as MyFrame;
-                    if (frame.CanGoBack)
-                    {
-                        frame.Close();
-                        frame.GoBack();
-                    }
-                    else
-                    {
-                        ClosePage(tabView.SelectedItem as TabViewItem);
-                        //frame.Close();
-                        //tabView.TabItems.Remove(tabView.SelectedItem);
-                    }
-                    e.Handled = true;
-                }
+            }
+        }
 
+        private void GoBack()
+        {
+            //如果打开了图片浏览，则关闭图片浏览
+            if (gridViewer.Visibility == Visibility.Visible)
+            {
+                imgViewer_CloseEvent(this, null);
+                return;
+            }
+
+            //处理多标签
+            if (tabView.SelectedItem != tabView.TabItems[0])
+            {
+                var frame = (tabView.SelectedItem as TabViewItem).Content as MyFrame;
+                if (frame.CanGoBack)
+                {
+                    frame.Close();
+                    frame.GoBack();
+                }
+                else
+                {
+                    ClosePage(tabView.SelectedItem as TabViewItem);
+                    //frame.Close();
+                    //tabView.TabItems.Remove(tabView.SelectedItem);
+                }
             }
         }
 

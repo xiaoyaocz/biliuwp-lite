@@ -1805,6 +1805,13 @@ namespace BiliLite.Controls
         {
             try
             {
+                var par = e.GetCurrentPoint(sender as Frame).Properties.PointerUpdateKind;
+                if (SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back) == (int)MouseMiddleActions.Back
+                && par == Windows.UI.Input.PointerUpdateKind.XButton1Pressed || par == Windows.UI.Input.PointerUpdateKind.MiddleButtonPressed)
+                {
+                    MessageCenter.GoBack(this);
+                    return;
+                }
                 var ps = e.GetIntermediatePoints(null);
                 if (ps != null && ps.Count > 0 && HandlingGesture != true)
                 {
@@ -2082,7 +2089,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Playing:
-                    KeepScreenOn(false);
+                    KeepScreenOn(true);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;

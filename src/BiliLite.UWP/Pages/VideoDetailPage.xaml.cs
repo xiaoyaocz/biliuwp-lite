@@ -43,6 +43,8 @@ namespace BiliLite.Pages
         string avid = "";
         string bvid = "";
         bool is_bvid = false;
+        private bool isFirstUgcSeasonVideo = false;
+
         public VideoDetailPage()
         {
             this.InitializeComponent();
@@ -238,6 +240,7 @@ namespace BiliLite.Pages
 
         private void InitUgcSeason(string id)
         {
+            isFirstUgcSeasonVideo = true;
             playlist = new VideoPlaylist()
             {
                 Playlist = new List<VideoPlaylistItem>()
@@ -250,7 +253,7 @@ namespace BiliLite.Pages
                     {
                         ID = item.Aid,
                         Title = item.Title,
-                        Author = item.Author.Name,
+                        Author = item?.Author?.Name,
                         Cover = item.Cover
                     });
                 }
@@ -262,7 +265,6 @@ namespace BiliLite.Pages
             var listView = element.Content as ListView;
             listView.SelectedIndex = episodeIndex;
             pivot.Items.Insert(0, element);
-            pivot.SelectedIndex = 0;
         }
 
         private void CreateQR()
@@ -553,7 +555,11 @@ namespace BiliLite.Pages
 
         private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (isFirstUgcSeasonVideo)
+            {
+                isFirstUgcSeasonVideo = false;
+                return;
+            }
             var liveView = sender as ListView;
             if (liveView.SelectedItem == null) return;
             var item = liveView.SelectedItem as VideoPlaylistItem;

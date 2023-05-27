@@ -17,7 +17,7 @@ namespace BiliLite.Models.Common.Video
         [JsonProperty("cover_right_text")]
         public string CovverRightText { get; set; }
 
-        public int Page { get; set; }
+        //public int Page { get; set; }
 
         public string Part { get; set; }
 
