@@ -2089,7 +2089,7 @@ namespace BiliLite.Controls
                     BottomBtnPause.Visibility = Visibility.Collapsed;
                     break;
                 case PlayState.Playing:
-                    KeepScreenOn(false);
+                    KeepScreenOn(true);
                     if (_systemMediaTransportControls != null)
                     {
                         _systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
