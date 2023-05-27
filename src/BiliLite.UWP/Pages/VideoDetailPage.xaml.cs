@@ -253,7 +253,7 @@ namespace BiliLite.Pages
                     {
                         ID = item.Aid,
                         Title = item.Title,
-                        Author = item.Author.Name,
+                        Author = item?.Author?.Name,
                         Cover = item.Cover
                     });
                 }
