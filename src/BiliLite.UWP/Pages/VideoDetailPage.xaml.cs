@@ -654,5 +654,15 @@ namespace BiliLite.Pages
         {
             videoDetailVM.VideoInfo.owner.name.SetClipboard();
         }
+
+        private void listEpisode_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void listEpisode_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

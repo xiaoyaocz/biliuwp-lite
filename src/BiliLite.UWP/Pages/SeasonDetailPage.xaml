@@ -177,6 +177,8 @@
                                                       DesiredWidth="120" ItemHeight="36" 
                                                       Visibility="{x:Bind Path=seasonDetailVM.ShowEpisodes,Mode=OneWay}"
                                                       SelectionChanged="listEpisode_SelectionChanged" 
+                                                      PreviewKeyDown="listEpisode_PreviewKeyDown"
+                                                      PreviewKeyUp="listEpisode_PreviewKeyUp"
                                                       Margin="0 8 0 0"  ItemsSource="{x:Bind Path=seasonDetailVM.Episodes,Mode=OneWay}">
                                 <GridView.Header>
                                     <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">正片</TextBlock>

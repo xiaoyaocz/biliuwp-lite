@@ -557,5 +557,15 @@ namespace BiliLite.Pages
         {
             qrFlyout.ShowAt(btnMore);
         }
+
+        private void listEpisode_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void listEpisode_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
     }
 }

@@ -168,7 +168,6 @@
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
     <Compile Include="Models\Responses\SearchSuggestResponse.cs" />
     <Compile Include="Models\Responses\UserAttentionResponse.cs" />
-    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApiHelper.cs" />
     <Compile Include="Models\Requests\Api\CommentApi.cs" />
     <Compile Include="Models\Requests\Api\EmoteApi.cs" />
