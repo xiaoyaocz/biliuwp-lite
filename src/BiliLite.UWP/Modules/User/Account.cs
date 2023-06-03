@@ -23,7 +23,7 @@ namespace BiliLite.Modules
 {
     public class Account
     {
-        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         private SettingVM settingVM;
         public AccountApi accountApi;
@@ -120,7 +120,7 @@ namespace BiliLite.Modules
                 }
                 catch (Exception ex)
                 {
-                    logger.Log($"SSO失败", LogType.ERROR, ex);
+                    _logger.Log($"SSO失败", LogType.ERROR, ex);
                 }
 
                 //读取个人资料
@@ -131,7 +131,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
+                _logger.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
                 return false;
             }
         }
@@ -155,7 +155,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                _logger.Log("读取个人资料失败", LogType.ERROR, ex);
                 return null;
             }
         }
@@ -504,11 +504,19 @@ namespace BiliLite.Modules
             {
                 return;
             }
-            var correspondPath = await GetCorrespondPath(checkResult.Timestamp);
-            var newCsrf = await GetCsrfRefresh(correspondPath);
-            var refreshToken = SettingService.GetValue(SettingConstants.Account.REFRESH_KEY, "");
-            await RefreshCookies(newCsrf, refreshToken);
-            await ConfirmRefreshCookies(refreshToken);
+            try
+            {
+                var correspondPath = await GetCorrespondPath(checkResult.Timestamp);
+                var newCsrf = await GetCsrfRefresh(correspondPath);
+                var refreshToken = SettingService.GetValue(SettingConstants.Account.REFRESH_KEY, "");
+                await RefreshCookies(newCsrf, refreshToken);
+                await ConfirmRefreshCookies(refreshToken);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error("刷新Cookie失败", ex);
+                Notify.ShowMessageToast("刷新Cookie失败，建议手动重新登录");
+            }
         }
 
         private async Task<CheckCookieResult> CheckCookies()
