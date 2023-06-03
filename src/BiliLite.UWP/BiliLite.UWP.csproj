@@ -128,7 +128,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\Common\Account\CheckCookieResult.cs" />
     <Compile Include="Models\Common\Account\WebInterfaceNav.cs" />
+    <Compile Include="Models\Common\ApiConstants.cs" />
     <Compile Include="Models\Common\Danmaku\CompareDanmakuModel.cs" />
     <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayInfo.cs" />
@@ -166,6 +168,7 @@
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
     <Compile Include="Models\Responses\SearchSuggestResponse.cs" />
     <Compile Include="Models\Responses\UserAttentionResponse.cs" />
+    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApiHelper.cs" />
     <Compile Include="Models\Requests\Api\CommentApi.cs" />
     <Compile Include="Models\Requests\Api\EmoteApi.cs" />
@@ -906,6 +909,9 @@
     </PackageReference>
     <PackageReference Include="Google.Protobuf">
       <Version>3.19.4</Version>
+    </PackageReference>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.46</Version>
     </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.15</Version>

@@ -418,6 +418,72 @@ namespace BiliLite.Models.Requests.Api
             return api;
         }
 
+        /// <summary>
+        /// 检查Cookie是否需要刷新
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel CheckCookies()
+        {
+            var csrf = BiliExtensions.GetCSRFToken();
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://passport.bilibili.com/x/passport-login/web/cookie/info",
+                parameter = $"csrf={csrf}",
+                need_cookie = true,
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 刷新CSRF
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel RefreshCsrf(string correspondPath)
+        {
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://www.bilibili.com/correspond/1/{correspondPath}",
+                need_cookie = true,
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 刷新Cookie
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel RefreshCookie(string refreshCsrf,string refreshToken)
+        {
+            var csrf = BiliExtensions.GetCSRFToken();
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = $"https://passport.bilibili.com/x/passport-login/web/cookie/refresh",
+                body = $"csrf={csrf}&refresh_csrf={refreshCsrf}&source=main_web&refresh_token={refreshToken}",
+                need_cookie = true,
+            };
+            return api;
+        }
+
+        /// <summary>
+        /// 确认更新Cookie
+        /// </summary>
+        /// <returns></returns>
+        public ApiModel ConfirmRefreshCookie(string refreshToken)
+        {
+            var csrf = BiliExtensions.GetCSRFToken();
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Post,
+                baseUrl = $"https://passport.bilibili.com/x/passport-login/web/confirm/refresh",
+                body = $"csrf={csrf}&refresh_token={refreshToken}",
+                need_cookie = true,
+            };
+            return api;
+        }
+
         public ApiModel Nav()
         {
             ApiModel api = new ApiModel()

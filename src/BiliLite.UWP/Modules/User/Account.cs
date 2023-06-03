@@ -16,6 +16,8 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using BiliLite.Models.Common.Account;
+using HtmlAgilityPack;
 
 namespace BiliLite.Modules
 {
@@ -243,6 +245,7 @@ namespace BiliLite.Modules
             var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
             // var expires = result.cookies[0].Expires;
             var userId = cookies.FirstOrDefault(x => x.Name == "DedeUserID").Value;
+            SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, true);
             await SaveLogin(accessKey, refresh_token, 3600 * 240, long.Parse(userId), null, null);
         }
 
@@ -387,7 +390,7 @@ namespace BiliLite.Modules
                     var data = await result.GetData<LoginDataV3Model>();
                     if (data.success)
                     {
-
+                        SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, false);
                         await SaveLogin(data.data.token_info.access_token, data.data.token_info.refresh_token, data.data.token_info.expires_in, data.data.token_info.mid, data.data.sso, data.data.cookie_info);
                         return new LoginCallbackModel()
                         {
@@ -487,6 +490,96 @@ namespace BiliLite.Modules
                 //LogHelper.Log("读取access_key信息失败", LogType.ERROR, ex);
                 //return false;
             }
+        }
+
+        /// <summary>
+        /// 检查与更新Cookies
+        /// </summary>
+        /// <returns></returns>
+        public async Task CheckUpdateCookies()
+        {
+            if (!SettingService.GetValue(SettingConstants.Account.IS_WEB_LOGIN, false)) return;
+            var checkResult = await CheckCookies();
+            if (!checkResult.Refresh)
+            {
+                return;
+            }
+            var correspondPath = await GetCorrespondPath(checkResult.Timestamp);
+            var newCsrf = await GetCsrfRefresh(correspondPath);
+            var refreshToken = SettingService.GetValue(SettingConstants.Account.REFRESH_KEY, "");
+            await RefreshCookies(newCsrf, refreshToken);
+            await ConfirmRefreshCookies(refreshToken);
+        }
+
+        private async Task<CheckCookieResult> CheckCookies()
+        {
+            var api = new AccountApi().CheckCookies();
+            var result = await api.Request();
+            var checkCookieResult = await result.GetData<CheckCookieResult>();
+            return checkCookieResult.data;
+        }
+
+        private async Task<string> GetCorrespondPath(long timestamp)
+        {
+            var result = await $"{ApiConstants.Utils.GetCorrespondPath}?timestamp={timestamp}".GetString();
+            return result;
+        }
+
+        private async Task RefreshCookies(string csrf, string refreshToken)
+        {
+            var api = new AccountApi().RefreshCookie(csrf, refreshToken);
+            var result = await api.Request();
+            var data = await result.GetData<LoginDataWebModel>();
+            LoginByCookie(result.cookies, data.data.refresh_token);
+        }
+
+        private async Task ConfirmRefreshCookies(string refreshToken)
+        {
+            var api = new AccountApi().ConfirmRefreshCookie(refreshToken);
+            var result = await api.Request();
+        }
+
+        ///// <summary>
+        ///// 构造CorrespondPath，.net standard2.1以上可用，以后更新WinUI再启用
+        ///// </summary>
+        ///// <param name="timestamp"></param>
+        ///// <returns></returns>
+        //private string BuildCorrespondPath(long timestamp)
+        //{
+        //    // 定义公钥
+        //    string publicKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDLgd2OAkcGVtoE3ThUREbio0Eg\nUc/prcajMKXvkCKFCWhJYJcLkcM2DKKcSeFpD/j6Boy538YXnR6VhcuUJOhH2x71\nnzPjfdTcqMz7djHum0qSZA0AyCBDABUqCrfNgCiJ00Ra7GmRj+YCK1NJEuewlb40\nJNrRuoEUXpabUzGB8QIDAQAB\n-----END PUBLIC KEY-----";
+        //    // 定义字符串payload
+        //    string payload = $"refresh_{timestamp}";
+
+        //    // 将字符串payload转换为字节数组
+        //    byte[] data = Encoding.UTF8.GetBytes(payload);
+
+        //    RSAEncryptionPadding oaepsha256 = RSAEncryptionPadding.OaepSHA256;
+        //    using RSA rsaImpl = new RSACng();
+
+        //    rsaImpl.ImportFromPem(publicKey);
+        //    var ciphertext = rsaImpl.Encrypt(data, oaepsha256);
+
+        //    // 将字节数组转换为十六进制字符串
+        //    var hex = BitConverter.ToString(ciphertext);
+
+        //    // 去掉分隔符
+        //    hex = hex.Replace("-", "");
+        //    return hex.ToLower();
+        //}
+
+        private async Task<string> GetCsrfRefresh(string correspondPath)
+        {
+            var result = await new AccountApi().RefreshCsrf(correspondPath).Request();
+            var html = result.results;
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            // 使用XPath查询找到id为1-name的标签
+            var node = doc.DocumentNode.SelectSingleNode("//div[@id='1-name']");
+            // 获取标签中的文本内容
+            var text = node.InnerText;
+            return text;
         }
     }
 
