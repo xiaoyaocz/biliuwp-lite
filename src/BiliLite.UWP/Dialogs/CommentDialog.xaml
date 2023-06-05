@@ -14,7 +14,11 @@
 
             <controls:CommentControl x:Name="comment" HorizontalAlignment="Stretch"></controls:CommentControl>
 
-            <AppBarButton x:Name="btnClose" Click="btnClose_Click" Width="40" Height="40" Icon="Cancel" HorizontalAlignment="Right"></AppBarButton>
+            <AppBarButton x:Name="btnClose" Click="btnClose_Click" Width="40" Height="40" HorizontalAlignment="Right">
+                <AppBarButton.Icon>
+                    <SymbolIcon Margin="0 -4 0 4" Symbol="Cancel"></SymbolIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
 
         </Grid>
 

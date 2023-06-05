@@ -18,20 +18,38 @@
             <StackPanel  Orientation="Horizontal" Margin="12" VerticalAlignment="Bottom" HorizontalAlignment="Center">
                 <Border CornerRadius="8"  Background="#7F000000" >
                     <StackPanel Orientation="Horizontal">
-                        <AppBarButton x:Name="btnSave" Click="btnSave_Click" ToolTipService.ToolTip="保存" Width="40" Height="40" Icon="Save" Foreground="White"></AppBarButton>
-                        <AppBarButton x:Name="btnCopy" Click="btnCopy_Click" ToolTipService.ToolTip="复制" Width="40" Height="40" Icon="Copy" Foreground="White"></AppBarButton>
+                        <AppBarButton x:Name="btnSave" Click="btnSave_Click" ToolTipService.ToolTip="保存" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Save"></SymbolIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                        <AppBarButton x:Name="btnCopy" Click="btnCopy_Click" ToolTipService.ToolTip="复制" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Copy"></SymbolIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
                     </StackPanel>
                 </Border>
                 <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
                     <StackPanel Orientation="Horizontal">
-                        <AppBarButton ToolTipService.ToolTip="原始大小" x:Name="btnOrigin"  Click="btnOrigin_Click"  Width="40" Height="40" Icon="Pictures" Foreground="White"></AppBarButton>
-                        <AppBarButton ToolTipService.ToolTip="放大" x:Name="btnZoomIn" Click="btnZoomIn_Click" Width="40" Height="40" Icon="ZoomIn" Foreground="White">
+                        <AppBarButton ToolTipService.ToolTip="原始大小" x:Name="btnOrigin" Click="btnOrigin_Click" Margin="0 0 0 0" Width="40" Height="40"  Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Pictures"></SymbolIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                        <AppBarButton ToolTipService.ToolTip="放大" x:Name="btnZoomIn" Click="btnZoomIn_Click" Width="40" Height="40" Foreground="White">
                             <AppBarButton.KeyboardAccelerators>
                                 <KeyboardAccelerator  Modifiers="None"  Key="Up" />
                             </AppBarButton.KeyboardAccelerators>
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="ZoomIn"></SymbolIcon>
+                            </AppBarButton.Icon>
                         </AppBarButton>
                         <TextBlock VerticalAlignment="Center" FontSize="16" Margin="8 0" Foreground="White" Text="{Binding ElementName=scrollViewer,Path=ZoomFactor,Mode=OneWay,Converter={StaticResource numberToStringConvert},ConverterParameter='p00'}"></TextBlock>
-                        <AppBarButton ToolTipService.ToolTip="缩小" x:Name="btnZoomOut" Click="btnZoomOut_Click" Width="40" Height="40" Icon="ZoomOut" Foreground="White">
+                        <AppBarButton ToolTipService.ToolTip="缩小" x:Name="btnZoomOut" Click="btnZoomOut_Click" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="ZoomOut"></SymbolIcon>
+                            </AppBarButton.Icon>
                             <AppBarButton.KeyboardAccelerators>
                                 <KeyboardAccelerator  Modifiers="None"  Key="Down" />
                             </AppBarButton.KeyboardAccelerators>
@@ -41,17 +59,20 @@
                 </Border>
                 <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
                     <StackPanel Orientation="Horizontal">
-
-
-
-                        <AppBarButton ToolTipService.ToolTip="上一张" x:Name="btnPrevious" Click="btnPrevious_Click" Width="40" Height="40"  Icon="Previous" Foreground="White">
+                        <AppBarButton ToolTipService.ToolTip="上一张" x:Name="btnPrevious" Click="btnPrevious_Click" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Previous"></SymbolIcon>
+                            </AppBarButton.Icon>
                             <AppBarButton.KeyboardAccelerators>
                                 <KeyboardAccelerator  Modifiers="None"  Key="Left" />
                                 <KeyboardAccelerator  Modifiers="None"  Key="PageUp" />
                             </AppBarButton.KeyboardAccelerators>
                         </AppBarButton>
                         <TextBlock x:Name="txtIndex" VerticalAlignment="Center" Margin="8 0" FontSize="16" Foreground="White">1 / 1</TextBlock>
-                        <AppBarButton ToolTipService.ToolTip="下一张" x:Name="btnNext" Click="btnNext_Click" Width="40" Height="40"  Icon="Next" Foreground="White">
+                        <AppBarButton ToolTipService.ToolTip="下一张" x:Name="btnNext" Click="btnNext_Click" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Next"></SymbolIcon>
+                            </AppBarButton.Icon>
                             <AppBarButton.KeyboardAccelerators>
                                 <KeyboardAccelerator  Modifiers="None"  Key="Right" />
                                 <KeyboardAccelerator  Modifiers="None"  Key="PageDown" />
@@ -61,7 +82,11 @@
                 </Border>
                 <Border Margin="12 0 0 0" CornerRadius="8"  Background="#7F000000" >
                     <StackPanel Orientation="Horizontal">
-                        <AppBarButton x:Name="btnHelp" Click="btnHelp_Click" ToolTipService.ToolTip="帮助" Width="40" Height="40" Icon="Help" Foreground="White"></AppBarButton>
+                        <AppBarButton x:Name="btnHelp" Click="btnHelp_Click" ToolTipService.ToolTip="帮助" Width="40" Height="40" Foreground="White">
+                            <AppBarButton.Icon>
+                                <SymbolIcon Margin="0 -4 0 4" Symbol="Help"></SymbolIcon>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
                     </StackPanel>
                 </Border>
             </StackPanel>

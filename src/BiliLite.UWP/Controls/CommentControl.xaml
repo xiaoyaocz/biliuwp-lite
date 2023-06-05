@@ -381,7 +381,11 @@
                     <TextBlock>按热门排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <AppBarButton x:Name="btn_Refresh" Click="btn_Refresh_Click" Margin="0 0 40 0" Width="40" Height="40" Icon="Refresh" HorizontalAlignment="Right"></AppBarButton>
+            <AppBarButton x:Name="btn_Refresh" Click="btn_Refresh_Click" Margin="0 0 40 0" Width="40" Height="40" HorizontalAlignment="Right">
+                <AppBarButton.Icon>
+                    <SymbolIcon Margin="0 -4 0 8" Symbol="Refresh"></SymbolIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
         </Grid>
         <ListView x:Name="ls_new"
                   Padding="0 0 12 0"
