@@ -537,6 +537,10 @@
                         <controls:NumberBox x:Name="numAutoClearLogDay" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">保护日志中敏感信息</TextBlock>
                         <ToggleSwitch x:Name="swProtectLogInfo"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">BiliLite-WebApi（用于处理UWP无法完成的事项）</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

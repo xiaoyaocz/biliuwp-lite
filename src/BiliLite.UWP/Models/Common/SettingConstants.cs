@@ -512,6 +512,11 @@ namespace BiliLite.Models.Common
             /// 忽略版本
             /// </summary>
             public const string IGNORE_VERSION = "ignoreVersion";
+
+            /// <summary>
+            /// WebApi地址
+            /// </summary>
+            public const string BILI_LITE_WEB_API_BASE_URL = "BiliLiteWebApiBaseUrl";
         }
     }
 }

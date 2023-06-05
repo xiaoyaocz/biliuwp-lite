@@ -529,7 +529,9 @@ namespace BiliLite.Modules
 
         private async Task<string> GetCorrespondPath(long timestamp)
         {
-            var result = await $"{ApiConstants.Utils.GetCorrespondPath}?timestamp={timestamp}".GetString();
+            var baseUrl = SettingService.GetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, ApiConstants.BILI_LITE_WEB_API_DEFAULT_BASE_URL);
+            var apiUrl = $"{baseUrl}{ApiConstants.Utils.GET_CORRESPOND_PATH}";
+            var result = await $"{apiUrl}?timestamp={timestamp}".GetString();
             return result;
         }
 

@@ -680,6 +680,30 @@ namespace BiliLite.Pages
             {
                 SettingService.SetValue(SettingConstants.Other.PROTECT_LOG_INFO, swProtectLogInfo.IsOn);
             });
+            // BiliLiteWebApi
+            BiliLiteWebApiTextBox.Text = SettingService.GetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, ApiConstants.BILI_LITE_WEB_API_DEFAULT_BASE_URL);
+            BiliLiteWebApiTextBox.Loaded += (sender, e) =>
+            {
+                BiliLiteWebApiTextBox.QuerySubmitted += (sender2, args) =>
+                {
+                    var text = sender2.Text;
+                    if (string.IsNullOrEmpty(text))
+                    {
+                        Notify.ShowMessageToast("已取消自定义BiliLiteWebApi服务器");
+                        SettingService.SetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, "");
+                        return;
+                    }
+                    if (!text.EndsWith("/")) text += "/";
+                    if(!Uri.IsWellFormedUriString(text, UriKind.Absolute))
+                    {
+                        Notify.ShowMessageToast("地址格式错误");
+                        return;
+                    }
+                    SettingService.SetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, text);
+                    sender2.Text = text;
+                    Notify.ShowMessageToast("保存成功");
+                };
+            };
         }
 
         private void ExceptHomeNavItems()
