@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version: 
+        description: '°æ±¾ºÅ'
+        required: true
+        default: '0.0.0.0'
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    env:
+      SigningCertificate: BiliLite.UWP_TemporaryKey.pfx
+      SigningCertificatePasswd: ${{ secrets.SIGNING_CERTIFICATE_PASSWD }}
+      Solution_Path: .\BiliLite.sln
+      AppName: BiliLite.Packages
+      UWP_Project_Directory: src\BiliLite.Packages
+      GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      Webdav_addr: ${{ secrets.WEBDAV_ADDR }}
+      Webdav_auth: ${{ secrets.WEBDAV_AUTH }}
+
+    steps:
+    
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.2
+      with:
+        minimum-size: 32GB
+        maximum-size: 32GB
+        disk-root: "C:"
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Download SigningCertificate
+      run: curl --location $env:Webdav_addr --header "$env:Webdav_auth" -o "$env:UWP_Project_Directory/$env:SigningCertificate" --insecure
+
+    - uses: release-drafter/release-drafter@v5
+      name: Create release draft
+      id: release-drafter
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.3
+
+    - name: Update manifest version
+      run: |
+        [xml]$manifest = get-content ".\$env:UWP_Project_Directory\Package.appxmanifest"
+        $manifest.Package.Identity.Version = "${{github.event.inputs.version}}"
+        $manifest.save(".\$env:UWP_Project_Directory\Package.appxmanifest")
+        
+    - name: Build x64
+      run: msbuild $env:UWP_Project_Directory /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+      env:
+        BuildMode: SideloadOnly
+        Configuration: Release
+
+    #- name: Build x86
+    #  run: msbuild $env:UWP_Project_Directory /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+    #  env:
+    #    BuildMode: SideloadOnly
+    #    Configuration: Release
+
+    #- name: Build ARM64
+    #  run: msbuild $env:UWP_Project_Directory /p:Platform=ARM64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+    #  env:
+    #    BuildMode: SideloadOnly
+    #    Configuration: Release
+      
+    - name: Create x64 archive
+      run: Compress-Archive -Path {{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+    
+    #- name: Create x86 archive
+    #  run: Compress-Archive -Path {{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x86.zip
+
+    #- name: Create ARM64 archive
+    #  run: Compress-Archive -Path {{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_ARM64.zip
+
+    - name: Update x64 release asset
+      id: upload-release-asset-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      with:
+        upload_url: ${{ steps.release-drafter.outputs.upload_url }}
+        asset_path: C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+        asset_name: ${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+        asset_content_type: application/zip
