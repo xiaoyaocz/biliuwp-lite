@@ -1,0 +1,125 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version: 
+        description: '版本号'
+        required: true
+        default: '0.0.0.0'
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    env:
+      SigningCertificate: BiliLite.UWP_TemporaryKey.pfx
+      SigningCertificatePasswd: ${{ secrets.SIGNING_CERTIFICATE_PASSWD }}
+      Solution_Path: .\BiliLite.sln
+      AppName: BiliLite.Packages
+      UWP_Project_Directory: src\BiliLite.Packages
+      Win32_Project_Path: src\BiliLite.Win32Tools\BiliLite.Win32Tools.csproj
+      GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      Webdav_addr: ${{ secrets.WEBDAV_ADDR }}
+      Webdav_auth: ${{ secrets.WEBDAV_AUTH }}
+      nuget_package_addr: ${{ secrets.NUGET_PACKAGE_ADDR }}
+      nuget_package: biliuwp-lite-nuget-packages.zip
+
+    steps:
+    
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.2
+      with:
+        minimum-size: 32GB
+        maximum-size: 32GB
+        disk-root: "C:"
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Download SigningCertificate
+      run: curl --location $env:Webdav_addr --header "$env:Webdav_auth" -o "$env:UWP_Project_Directory/$env:SigningCertificate" --insecure
+
+    - name: Download nuget package
+      run: curl --location $env:nuget_package_addr --header "$env:Webdav_auth" -o "$env:nuget_package" --insecure
+      
+    - name: Decompress nuget package
+      run: Expand-Archive -path $env:nuget_package -DestinationPath ./
+
+    - uses: release-drafter/release-drafter@v5
+      name: Create release draft
+      id: release-drafter
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.3
+
+    - name: Update manifest version
+      run: |
+        [xml]$manifest = get-content ".\$env:UWP_Project_Directory\Package.appxmanifest"
+        $manifest.Package.Identity.Version = "${{github.event.inputs.version}}"
+        $manifest.save(".\$env:UWP_Project_Directory\Package.appxmanifest")
+        
+    - name: Build x64
+      run: msbuild $env:UWP_Project_Directory /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+      env:
+        BuildMode: SideloadOnly
+        Configuration: Release
+
+    - name: Build x86
+      run: msbuild $env:UWP_Project_Directory /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+      env:
+        BuildMode: SideloadOnly
+        Configuration: Release
+
+    - name: Build ARM64
+      run: msbuild $env:UWP_Project_Directory /p:Platform=ARM64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=$env:SigningCertificatePasswd  /restore
+      env:
+        BuildMode: SideloadOnly
+        Configuration: Release
+      
+    - name: Create Package Directory
+      run: New-Item -ItemType Directory -Path C:\Package
+      
+    - name: Create x64 archive
+      run: Compress-Archive -Path ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+    
+    - name: Create x86 archive
+      run: Compress-Archive -Path ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x86.zip
+
+    - name: Create ARM64 archive
+      run: Compress-Archive -Path ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test -DestinationPath C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_ARM64.zip
+
+    - name: Update x64 release asset
+      id: upload-release-asset-x64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      with:
+        upload_url: ${{ steps.release-drafter.outputs.upload_url }}
+        asset_path: C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+        asset_name: ${{env.AppName}}_${{github.event.inputs.version}}_x64.zip
+        asset_content_type: application/zip
+        
+    - name: Update x86 release asset
+      id: upload-release-asset-x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      with:
+        upload_url: ${{ steps.release-drafter.outputs.upload_url }}
+        asset_path: C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_x86.zip
+        asset_name: ${{env.AppName}}_${{github.event.inputs.version}}_x86.zip
+        asset_content_type: application/zip
+
+    - name: Update ARM64 release asset
+      id: upload-release-asset-ARM64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN  }}
+      with:
+        upload_url: ${{ steps.release-drafter.outputs.upload_url }}
+        asset_path: C:\Package\${{env.AppName}}_${{github.event.inputs.version}}_ARM64.zip
+        asset_name: ${{env.AppName}}_${{github.event.inputs.version}}_ARM64.zip
+        asset_content_type: application/zip

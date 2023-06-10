@@ -308,13 +308,14 @@
                                   Margin="0 8 0 8" HorizontalAlignment="Left" >
                             <ComboBox.ItemTemplate>
                                 <DataTemplate >
-                                    <StackPanel>
-                                        <TextBlock Margin="0 0 0 4" TextTrimming="CharacterEllipsis">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock TextTrimming="CharacterEllipsis">
                                            【<Run Text="{Binding Path=Remark}"></Run>】
                                             <Run Text="{Binding Path=Server}"></Run>
                                         </TextBlock>
-                                        <TextBlock FontSize="12" Foreground="Red" Visibility="{Binding Path=ShowTimeOut,Mode=OneWay}">超时</TextBlock>
-                                        <TextBlock FontSize="12" Foreground="Green" Visibility="{Binding Path=ShowDelay,Mode=OneWay}"><Run Text="{Binding Path=Delay,Mode=OneWay}"/> ms</TextBlock>
+                                        <TextBlock Width="10"></TextBlock>
+                                        <TextBlock FontSize="12" Foreground="Red" Margin="0 2 0 0" Visibility="{Binding Path=ShowTimeOut,Mode=OneWay}">超时</TextBlock>
+                                        <TextBlock FontSize="12" Foreground="Green" Margin="0 2 0 0" Visibility="{Binding Path=ShowDelay,Mode=OneWay}"><Run Text="{Binding Path=Delay,Mode=OneWay}"/> ms</TextBlock>
                                     </StackPanel>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
@@ -537,6 +538,10 @@
                         <controls:NumberBox x:Name="numAutoClearLogDay" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">保护日志中敏感信息</TextBlock>
                         <ToggleSwitch x:Name="swProtectLogInfo"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">BiliLite-WebApi（用于处理UWP无法完成的事项）</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <AutoSuggestBox x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

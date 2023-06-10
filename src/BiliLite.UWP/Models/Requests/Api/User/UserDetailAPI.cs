@@ -18,7 +18,7 @@ namespace BiliLite.Models.Requests.Api.User
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/space/wbi/acc/info",
                 parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, needAccesskey: true) + $"&mid={mid}",
             };
-            api.parameter += await ApiHelper.GetWbiSign(api.parameter);
+            api.parameter = await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
         /// <summary>
@@ -70,7 +70,7 @@ namespace BiliLite.Models.Requests.Api.User
                 parameter = $"mid={mid}&ps={pagesize}&tid={tid}&pn={page}&keyword={keyword}&order={order.ToString()}",
                 need_cookie = true,
             };
-            api.parameter += await ApiHelper.GetWbiSign(api.parameter);
+            api.parameter = await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
         /// <summary>

@@ -65,8 +65,8 @@ namespace BiliLite.Services
             var (imgKey,subKey) = await GetWbiKeys();
 
             // 为请求参数进行 wbi 签名
-            string mixinKey = GetMixinKey(imgKey + subKey);
-            long currentTime = (long)Math.Round(DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+            var mixinKey = GetMixinKey(imgKey + subKey);
+            var currentTime = (long)Math.Round(DateTime.Now.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
             var queryString = HttpUtility.ParseQueryString(url);
 
@@ -75,16 +75,12 @@ namespace BiliLite.Services
             queryParams = queryParams.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value); // 按照 key 重排参数
                                                                                                   // 过滤 value 中的 "!'()*" 字符
             queryParams = queryParams.ToDictionary(x => x.Key, x => string.Join("", x.Value.ToString().Where(c => "!'()*".Contains(c) == false)));
-            queryString = HttpUtility.ParseQueryString(String.Empty);
-            foreach (var key in queryParams.Keys)
-            {
-                queryString.Add(key, queryParams[key]);
-            }
-            var query = queryString.ToString();
+
+            var query = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
 
             var wbi_sign = $"{query}{mixinKey}".ToMD5();
 
-            return $"&wts={currentTime}&w_rid={wbi_sign}";
+            return $"{query}&w_rid={wbi_sign}";
         }
 
         public static string GetSign(string url, ApiKeyInfo apiKeyInfo, string par = "&sign=")

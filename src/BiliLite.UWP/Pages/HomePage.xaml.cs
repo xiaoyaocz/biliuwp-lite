@@ -22,6 +22,7 @@ namespace BiliLite.Pages
         DownloadVM downloadVM;
         readonly HomeVM homeVM;
         readonly Account account;
+
         public HomePage()
         {
             this.InitializeComponent();
@@ -63,6 +64,7 @@ namespace BiliLite.Pages
                 {
                     if (await account.CheckLoginState())
                     {
+                        await account.CheckUpdateCookies();
                         await homeVM.LoginUserCard();
                     }
                     else

@@ -29,7 +29,7 @@
                 <PivotItem.Header>
                     <TextBlock Text="播放列表" FontSize="18"></TextBlock>
                 </PivotItem.Header>
-                <ListView  ItemsSource="{Binding Path=Playlist}" SelectionChanged="ListView_SelectionChanged" SelectedIndex="{Binding Index}" SelectionMode="Single" >
+                <ListView  ItemsSource="{Binding Path=Playlist}" SelectionChanged="ListView_SelectionChanged" SelectedIndex="{Binding Index}" SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -363,7 +363,16 @@
                                            Text="{x:Bind Path=videoDetailVM.VideoInfo.desc,Mode=OneWay}"></TextBlock>
                                     <ContentControl x:Name="contentDesc"  Foreground="Gray"  ></ContentControl>
                                 </StackPanel>
-                                <toolkit:AdaptiveGridView Visibility="{x:Bind Path=videoDetailVM.VideoInfo.showPages,Mode=OneWay}" DesiredWidth="180" ItemHeight="36"  Margin="0 8 0 0" x:Name="listEpisode"  SelectionChanged="listEpisode_SelectionChanged" ItemsSource="{x:Bind Path=videoDetailVM.VideoInfo.pages,Mode=OneWay}">
+                                <toolkit:AdaptiveGridView 
+                                    Visibility="{x:Bind Path=videoDetailVM.VideoInfo.showPages,Mode=OneWay}" 
+                                    DesiredWidth="180" 
+                                    ItemHeight="36"  
+                                    Margin="0 8 0 0" 
+                                    x:Name="listEpisode"  
+                                    SelectionChanged="listEpisode_SelectionChanged" 
+                                    ItemsSource="{x:Bind Path=videoDetailVM.VideoInfo.pages,Mode=OneWay}"
+                                    PreviewKeyDown="listEpisode_PreviewKeyDown"
+                                    PreviewKeyUp="listEpisode_PreviewKeyUp">
                                     <GridView.Header>
                                         <TextBlock Margin="0 8" FontSize="16">分集(共<Run Text="{x:Bind Path=videoDetailVM.VideoInfo.pages.Count,Mode=OneWay}"/>P)</TextBlock>
                                     </GridView.Header>

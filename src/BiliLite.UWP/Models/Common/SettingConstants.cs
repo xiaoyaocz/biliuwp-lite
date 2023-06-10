@@ -116,6 +116,10 @@ namespace BiliLite.Models.Common
             /// </summary>
             public const string USER_PROFILE = "userProfile";
 
+            /// <summary>
+            /// 是否web登录
+            /// </summary>
+            public const string IS_WEB_LOGIN = "isWebLogin";
         }
 
         public class VideoDanmaku
@@ -508,6 +512,11 @@ namespace BiliLite.Models.Common
             /// 忽略版本
             /// </summary>
             public const string IGNORE_VERSION = "ignoreVersion";
+
+            /// <summary>
+            /// WebApi地址
+            /// </summary>
+            public const string BILI_LITE_WEB_API_BASE_URL = "BiliLiteWebApiBaseUrl";
         }
     }
 }

@@ -1,0 +1,4 @@
+﻿template: |
+  ## 草稿
+name-template: '$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
