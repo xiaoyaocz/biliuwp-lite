@@ -1,7 +1,7 @@
 {
-    "version": "4.6.2",
-    "version_num": 40602,
-    "version_desc": "更新内容:\r\n\r\n* 进入有合集的视频中不自动切换到播放列表中\r\n\r\n* 修复播放视频时不会保持屏幕常亮\r\n\r\n* 修复部分合集视频无法打开问题\r\n\r\n* 修复播放器中点击鼠标中键/侧键不执行操作问题\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.3",
+    "version_num": 40603,
+    "version_desc": "更新内容:\r\n\r\n* 启动应用时检查与刷新Cookie\r\n\r\n* 禁止方向键控制分集分p\r\n\r\n* 修复部分按钮图标位置没居中\r\n\r\n* 调整CDN选择框布局，修复测速后展开显示不全\r\n\r\n* 修复用户主页搜索视频403错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
