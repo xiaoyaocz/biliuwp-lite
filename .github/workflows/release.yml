@@ -48,6 +48,9 @@ jobs:
     - name: Decompress nuget package
       run: Expand-Archive -path $env:nuget_package -DestinationPath ./
 
+    - name: Copy nuget package
+      run: cp -r ./packages ./src/
+
     - uses: release-drafter/release-drafter@v5
       name: Create release draft
       id: release-drafter
