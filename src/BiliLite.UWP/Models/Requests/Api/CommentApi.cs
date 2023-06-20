@@ -32,11 +32,12 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel Comment(string oid, CommentSort sort, int pn, int type, int ps = 30)
         {
+            var csrf = BiliExtensions.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply",
-                parameter = $"oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
+                parameter = $"oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}&csrf={csrf}",
                 need_cookie = true,
             };
             //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
