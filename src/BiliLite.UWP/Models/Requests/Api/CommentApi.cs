@@ -32,12 +32,35 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel Comment(string oid, CommentSort sort, int pn, int type, int ps = 30)
         {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply",
+                parameter = $"oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}",
+                need_cookie = true,
+            };
+            //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
+
+        /// <summary>
+        /// 读取评论V2接口
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <param name="sort"></param>
+        /// <param name="pn"></param>
+        /// <param name="type"></param>
+        /// <param name="ps"></param>
+        /// <returns></returns>
+        public ApiModel CommentV2(string oid, CommentSort sort, int pn, int type, int ps = 30)
+        {
             var csrf = BiliExtensions.GetCSRFToken();
+            var mode = sort == CommentSort.Hot ? 3 : 2;
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
-                parameter = $"oid={oid}&plat=2&pn={pn}&ps={ps}&sort={(int)sort}&type={type}&csrf={csrf}",
+                parameter = $"oid={oid}&next={pn}&ps={ps}&mode={mode}&type={type}&csrf={csrf}",
                 need_cookie = true,
             };
             //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
