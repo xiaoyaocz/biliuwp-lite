@@ -14,6 +14,7 @@ using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using BiliLite.Models.Common;
 using BiliLite.Models.Common.Video;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 namespace BiliLite.Modules.Player.Playurl
 {
@@ -113,146 +114,146 @@ namespace BiliLite.Modules.Player.Playurl
             }
         }
 
+        private void ParseBiliPlayUrlInfoSupportFormats(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult, string userAgent, string referer)
+        {
+            var timeLength = playUrlInfoResult["timelength"].ToInt32();
+            foreach (var item in playUrlInfoResult["support_formats"])
+            {
+                info.Qualites.Add(new BiliPlayUrlInfo()
+                {
+                    UserAgent = userAgent,
+                    Referer = referer,
+                    QualityID = item["quality"].ToInt32(),
+                    QualityName = item["new_description"].ToString(),
+                    Timelength = timeLength,
+                    HasPlayUrl = false,
+                });
+            }
+        }
+
+        private async Task<BiliPlayUrlQualitesInfo> ParseBiliPlayUrlInfoDash(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
+            int quality, List<int> qualites, string userAgent, string referer, bool isProxy)
+        {
+            List<DashItemModel> videos = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["video"].ToString());
+            List<DashItemModel> audios = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["audio"].ToString());
+            var h264Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AVC);
+            var h265Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.HEVC);
+            var av01Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AV1);
+
+            var duration = playUrlInfoResult["dash"]["duration"].ToInt32();
+            var minBufferTime = playUrlInfoResult["dash"]["minBufferTime"].ToString();
+
+            var qn = quality;
+            if (qn > qualites.Max())
+            {
+                qn = qualites.Max();
+            }
+            if (!qualites.Contains(qn))
+            {
+                qn = qualites.Max();
+            }
+            foreach (var item in info.Qualites)
+            {
+                item.PlayUrlType = BiliPlayUrlType.DASH;
+                var video = h264Videos.FirstOrDefault(x => x.id == item.QualityID);
+                var h265_video = h265Videos.FirstOrDefault(x => x.id == item.QualityID);
+                var av1_video = av01Videos.FirstOrDefault(x => x.id == item.QualityID);
+                //h265处理
+                switch (CodecMode)
+                {
+                    case PlayUrlCodecMode.DASH_H265 when h265_video != null:
+                        video = h265_video;
+                        break;
+                    case PlayUrlCodecMode.DASH_AV1:
+                        //部分清晰度可能没有av1编码，切换至hevc
+                        video = av1_video ?? h265_video ?? video;
+                        break;
+                }
+                //没有视频，跳过此清晰度
+                if (video == null)
+                {
+                    //info.Qualites.Remove(item);
+                    continue;
+                }
+                DashItemModel audio = null;
+                //部分视频没有音频文件
+                if (audios != null && audios.Count > 0)
+                {
+                    audio = qn > 64 ? audios.LastOrDefault() : audios.FirstOrDefault();
+                }
+                //替换链接
+                video.baseUrl = await HandleUrl(video.baseUrl, video.backupUrl, userAgent, referer, isProxy); 
+                if (audio != null)
+                {
+                    audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
+                }
+
+                item.Codec = (BiliPlayUrlVideoCodec)video.codecid;
+                item.HasPlayUrl = true;
+
+                item.DashInfo = new BiliDashPlayUrlInfo()
+                {
+                    Audio = audio?.ToBiliDashItem(),
+                    Video = video.ToBiliDashItem(),
+                };
+            }
+            //移除没有链接的视频
+            info.Qualites = info.Qualites.Where(x => x.HasPlayUrl).ToList();
+            if (!IsVIP)
+            {
+                //非大会员，去除大会员专享清晰度
+                info.Qualites = info.Qualites.Where(x => x.QualityID != 74 && x.QualityID <= 80).ToList();
+            }
+
+            var current = info.Qualites.FirstOrDefault(x => x.QualityID == qn);
+            if (current == null)
+            {
+                current = info.Qualites.OrderByDescending(x => x.QualityID).FirstOrDefault(x => x.HasPlayUrl);
+            }
+            info.CurrentQuality = current;
+            return info;
+        }
+
+        private async Task<BiliPlayUrlQualitesInfo> ParseBiliPlayUrlDurl(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
+            int quality, List<int> qualites, string userAgent, string referer, bool isProxy)
+        {
+            var durl = JsonConvert.DeserializeObject<List<FlvDurlModel>>(playUrlInfoResult["durl"].ToString());
+            var index = qualites.IndexOf(quality);
+            if (index == -1)
+            {
+                index = 0;
+            }
+            //替换链接
+            foreach (var item in durl)
+            {
+                item.url = await HandleUrl(item.url, item.backup_url, userAgent, referer, isProxy);
+            }
+            info.Qualites[index].Codec = BiliPlayUrlVideoCodec.AVC;
+            info.Qualites[index].PlayUrlType = durl.Count == 1 ? BiliPlayUrlType.SingleFLV : BiliPlayUrlType.MultiFLV;
+            info.Qualites[index].FlvInfo = durl.Select(x => x.ToBiliFlvItem()).ToList();
+            info.Qualites[index].HasPlayUrl = true;
+
+
+            info.CurrentQuality = info.Qualites[index];
+            return info;
+        }
+
         protected async Task<BiliPlayUrlQualitesInfo> ParseJson(int quality, JObject obj, string userAgent, string referer, bool isProxy)
         {
             try
             {
-                BiliPlayUrlQualitesInfo info = new BiliPlayUrlQualitesInfo();
+                var info = new BiliPlayUrlQualitesInfo();
                 info.Qualites = new List<BiliPlayUrlInfo>();
 
-                var timeLength = obj["timelength"].ToInt32();
-
-                foreach (var item in obj["support_formats"])
-                {
-                    info.Qualites.Add(new BiliPlayUrlInfo()
-                    {
-                        UserAgent = userAgent,
-                        Referer = referer,
-                        QualityID = item["quality"].ToInt32(),
-                        QualityName = item["new_description"].ToString(),
-                        Timelength = timeLength,
-                        HasPlayUrl = false,
-                    });
-                }
+                ParseBiliPlayUrlInfoSupportFormats(info, obj, userAgent, referer);
                 var qualites = info.Qualites.Select(x => x.QualityID).ToList();
                 if (obj.ContainsKey("dash") && obj["dash"]["video"] != null)
                 {
-                    List<DashItemModel> videos = JsonConvert.DeserializeObject<List<DashItemModel>>(obj["dash"]["video"].ToString());
-                    List<DashItemModel> audios = JsonConvert.DeserializeObject<List<DashItemModel>>(obj["dash"]["audio"].ToString());
-                    var h264Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AVC);
-                    var h265Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.HEVC);
-                    var av01Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AV1);
-
-                    var duration = obj["dash"]["duration"].ToInt32();
-                    var minBufferTime = obj["dash"]["minBufferTime"].ToString();
-
-                    var qn = quality;
-                    if (qn > qualites.Max())
-                    {
-                        qn = qualites.Max();
-                    }
-                    if (!qualites.Contains(qn))
-                    {
-                        qn = qualites.Max();
-                    }
-                    for (int i = 0; i < info.Qualites.Count; i++)
-                    {
-                        var item = info.Qualites[i];
-                        item.PlayUrlType = BiliPlayUrlType.DASH;
-                        var video = h264Videos.FirstOrDefault(x => x.id == item.QualityID);
-                        var h265_video = h265Videos.FirstOrDefault(x => x.id == item.QualityID);
-                        var av1_video = av01Videos.FirstOrDefault(x => x.id == item.QualityID);
-                        //h265处理
-                        if (CodecMode == PlayUrlCodecMode.DASH_H265 && h265_video != null)
-                        {
-                            video = h265_video;
-                        }
-                        //av1处理
-                        if (CodecMode == PlayUrlCodecMode.DASH_AV1)
-                        {
-                            //部分清晰度可能没有av1编码，切换至hevc
-                            if (av1_video != null)
-                            {
-
-                                video = av1_video;
-                            }
-                            else if (h265_video != null)
-                            {
-                                video = h265_video;
-                            }
-                        }
-                        //没有视频，跳过此清晰度
-                        if (video == null)
-                        {
-                            //info.Qualites.Remove(item);
-                            continue;
-                        }
-                        DashItemModel audio = null;
-                        //部分视频没有音频文件
-                        if (audios != null && audios.Count > 0)
-                        {
-                            if (qn > 64)
-                            {
-                                audio = audios.LastOrDefault();
-                            }
-                            else
-                            {
-                                audio = audios.FirstOrDefault();
-                            }
-                        }
-                        //替换链接
-                        video.baseUrl = await HandleUrl(video.baseUrl, video.backupUrl, userAgent, referer, isProxy);
-                        if (audio != null)
-                        {
-                            audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
-                        }
-
-                        item.Codec = (BiliPlayUrlVideoCodec)video.codecid;
-                        item.HasPlayUrl = true;
-
-                        item.DashInfo = new BiliDashPlayUrlInfo()
-                        {
-                            Audio = audio?.ToBiliDashItem(),
-                            Video = video.ToBiliDashItem(),
-                        };
-                    }
-                    //移除没有链接的视频
-                    info.Qualites = info.Qualites.Where(x => x.HasPlayUrl).ToList();
-                    if (!IsVIP)
-                    {
-                        //非大会员，去除大会员专享清晰度
-                        info.Qualites = info.Qualites.Where(x => x.QualityID != 74 && x.QualityID <= 80).ToList();
-                    }
-
-                    var current = info.Qualites.FirstOrDefault(x => x.QualityID == qn);
-                    if (current == null)
-                    {
-                        current = info.Qualites.OrderByDescending(x => x.QualityID).FirstOrDefault(x => x.HasPlayUrl);
-                    }
-                    info.CurrentQuality = current;
-                    return info;
+                    return await ParseBiliPlayUrlInfoDash(info, obj, quality, qualites, userAgent, referer, isProxy);
                 }
                 else if (obj.ContainsKey("durl"))
                 {
-                    var durl = JsonConvert.DeserializeObject<List<FlvDurlModel>>(obj["durl"].ToString());
-                    var index = qualites.IndexOf(quality);
-                    if (index == -1)
-                    {
-                        index = 0;
-                    }
-                    //替换链接
-                    foreach (var item in durl)
-                    {
-                        item.url = await HandleUrl(item.url, item.backup_url, userAgent, referer, isProxy);
-                    }
-                    info.Qualites[index].Codec = BiliPlayUrlVideoCodec.AVC;
-                    info.Qualites[index].PlayUrlType = durl.Count == 1 ? BiliPlayUrlType.SingleFLV : BiliPlayUrlType.MultiFLV;
-                    info.Qualites[index].FlvInfo = durl.Select(x => x.ToBiliFlvItem()).ToList();
-                    info.Qualites[index].HasPlayUrl = true;
-
-
-                    info.CurrentQuality = info.Qualites[index];
-                    return info;
+                    return await ParseBiliPlayUrlDurl(info, obj, quality, qualites, userAgent, referer, isProxy);
                 }
                 else
                 {
@@ -265,6 +266,7 @@ namespace BiliLite.Modules.Player.Playurl
             }
 
         }
+
         protected async Task<BiliPlayUrlQualitesInfo> ParseGrpc(int quality, PlayViewReply obj, string userAgent, string referer)
         {
             try

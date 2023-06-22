@@ -10,6 +10,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Models.Common.Video;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 namespace BiliLite.Modules
 {

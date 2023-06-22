@@ -1,5 +1,4 @@
 ﻿using BiliLite.Modules;
-using BiliLite.Modules.Player.Playurl;
 using BiliLite.Services;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Download;
 using BiliLite.Extensions;
 using BiliLite.Models.Common.Video;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“内容对话框”项模板
 
@@ -144,7 +144,7 @@ namespace BiliLite.Dialogs
                     downloadInfo.QualityID = playUrl.CurrentQuality.QualityID;
                     downloadInfo.QualityName = playUrl.CurrentQuality.QualityName;
                     downloadInfo.Urls = new List<DownloadUrlInfo>();
-                    if (playUrl.CurrentQuality.PlayUrlType == Modules.Player.Playurl.BiliPlayUrlType.DASH)
+                    if (playUrl.CurrentQuality.PlayUrlType == BiliPlayUrlType.DASH)
                     {
                         var quality = playUrl.CurrentQuality;
                         var audio = playUrl.CurrentQuality.DashInfo.Audio;
@@ -177,7 +177,7 @@ namespace BiliLite.Dialogs
                         }
 
                     }
-                    if (playUrl.CurrentQuality.PlayUrlType == Modules.Player.Playurl.BiliPlayUrlType.MultiFLV)
+                    if (playUrl.CurrentQuality.PlayUrlType == BiliPlayUrlType.MultiFLV)
                     {
                         int i = 0;
                         foreach (var videoItem in playUrl.CurrentQuality.FlvInfo)
@@ -190,7 +190,7 @@ namespace BiliLite.Dialogs
                             });
                         }
                     }
-                    if (playUrl.CurrentQuality.PlayUrlType == Modules.Player.Playurl.BiliPlayUrlType.SingleFLV)
+                    if (playUrl.CurrentQuality.PlayUrlType == BiliPlayUrlType.SingleFLV)
                     {
                         downloadInfo.Urls.Add(new DownloadUrlInfo()
                         {

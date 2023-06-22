@@ -1,6 +1,6 @@
 ﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
-using BiliLite.Modules.Player.Playurl;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 using BiliLite.Services;
 using FFmpegInteropX;
 using System;

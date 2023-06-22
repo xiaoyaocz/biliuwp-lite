@@ -30,7 +30,6 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.UI;
 using Windows.Storage.Streams;
 using Windows.UI.Text;
-using BiliLite.Modules.Player.Playurl;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using BiliLite.Models.Common;
@@ -38,6 +37,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common.Video;
 using Windows.UI.Input;
 using BiliLite.Models.Common.Danmaku;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -884,7 +884,13 @@ namespace BiliLite.Controls
             }
             await playerHelper.ReportHistory(CurrentPlayItem, 0);
             await SetDanmaku();
-            await SetQuality();
+
+            if(!await CheckDownloaded())
+            {
+                await SetSoundQuality();
+                await SetQuality();
+            }
+
             await GetPlayerInfo();
 
             Player.ABPlay = VideoPlayHistoryHelper.FindABPlayHistory(CurrentPlayItem);
@@ -1144,7 +1150,11 @@ namespace BiliLite.Controls
             DanmuControl.ClearAll();
             await SetDanmaku();
 
-            await SetQuality();
+            if (!await CheckDownloaded())
+            {
+                await SetSoundQuality();
+                await SetQuality();
+            }
         }
 
 
@@ -1236,20 +1246,29 @@ namespace BiliLite.Controls
 
         }
 
+        private async Task<bool> CheckDownloaded()
+        {
+            if (CurrentPlayItem.play_mode != VideoPlayType.Download)
+            {
+                return false;
+            }
+            BottomCBQuality.Visibility = Visibility.Collapsed;
+
+            await PlayLocalFile();
+            return true;
+        }
+
+        private async Task SetSoundQuality()
+        {
+
+        }
+
         private async Task SetQuality()
         {
             VideoLoading.Visibility = Visibility.Visible;
             if (playUrlInfo != null && playUrlInfo.CurrentQuality != null)
             {
                 playUrlInfo.CurrentQuality = null;
-            }
-
-            if (CurrentPlayItem.play_mode == VideoPlayType.Download)
-            {
-                BottomCBQuality.Visibility = Visibility.Collapsed;
-
-                await PlayLocalFile();
-                return;
             }
 
             var qn = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, 80);

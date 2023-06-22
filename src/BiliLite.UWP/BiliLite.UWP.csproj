@@ -134,6 +134,8 @@
     <Compile Include="Models\Common\Danmaku\CompareDanmakuModel.cs" />
     <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlQualitesInfo.cs" />
     <Compile Include="Models\Common\Video\VideoPlayType.cs" />
     <Compile Include="Extensions\ApiModelExtensions.cs" />
     <Compile Include="Extensions\BiliExtensions.cs" />
@@ -168,6 +170,8 @@
     <Compile Include="Models\Requests\Api\AccountApi.cs" />
     <Compile Include="Models\Responses\SearchSuggestResponse.cs" />
     <Compile Include="Models\Responses\UserAttentionResponse.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliDashPlayUrlInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliDashItem.cs" />
     <Compile Include="Services\ApiHelper.cs" />
     <Compile Include="Models\Requests\Api\CommentApi.cs" />
     <Compile Include="Models\Requests\Api\EmoteApi.cs" />
@@ -339,7 +343,7 @@
     <Compile Include="Modules\Player\InteractionVideoVM.cs" />
     <Compile Include="Modules\Player\Playurl\BiliPayUrlRequest.cs" />
     <Compile Include="Modules\Player\Playurl\BiliPlayUrl.cs" />
-    <Compile Include="Modules\Player\Playurl\BiliPlayUrlInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliFlvPlayUrlInfo.cs" />
     <Compile Include="Modules\RegionDetailVM.cs" />
     <Compile Include="Modules\SearchVM.cs" />
     <Compile Include="Modules\Season\SeasonRankVM.cs" />
