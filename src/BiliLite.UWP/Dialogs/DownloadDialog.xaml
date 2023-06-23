@@ -54,6 +54,8 @@
                       Margin="0 4 0 0" 
                       DisplayMemberPath="QualityName" 
                       SelectedItem="{x:Bind m_viewModel.SelectedQuality,Mode=OneWay}"
+                      SelectedIndex="{x:Bind m_viewModel.SelectedQualityIndex,Mode=TwoWay}"
+                      ItemsSource="{x:Bind m_viewModel.Qualities,Mode=OneWay}"
                       HorizontalAlignment="Stretch" >
             </ComboBox>
         </StackPanel>
@@ -64,7 +66,8 @@
             <ComboBox x:Name="cbSoundQuality" 
                       Margin="0 4 0 0" 
                       DisplayMemberPath="QualityName" 
-                      SelectedItem="{x:Bind m_viewModel.SelectedAudioQuality,Mode=OneWay}"
+                      ItemsSource="{x:Bind m_viewModel.AudioQualities,Mode=OneWay}"
+                      SelectedItem="{x:Bind m_viewModel.SelectedAudioQuality,Mode=TwoWay}"
                       HorizontalAlignment="Stretch" >
             </ComboBox>
         </StackPanel>

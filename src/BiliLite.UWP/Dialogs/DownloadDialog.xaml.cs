@@ -83,8 +83,11 @@ namespace BiliLite.Dialogs
             {
                 return;
             }
-            cbQuality.ItemsSource = data.Qualites;
-            cbQuality.SelectedIndex = 0;
+            m_viewModel.Qualities = data.Qualites;
+            m_viewModel.SelectedQualityIndex = 0;
+
+            m_viewModel.AudioQualities = data.AudioQualites;
+            m_viewModel.SelectedAudioQuality = data.AudioQualites.FirstOrDefault();
         }
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -145,7 +148,7 @@ namespace BiliLite.Dialogs
                         season_id = downloadItem.SeasonID,
                         season_type = downloadItem.SeasonType,
                         area = downloadItem.Title.ParseArea(downloadItem.UpMid)
-                    }, qn: (cbQuality.SelectedItem as BiliPlayUrlInfo).QualityID);
+                    }, qn: (cbQuality.SelectedItem as BiliPlayUrlInfo).QualityID, m_viewModel.SelectedAudioQuality.QualityID);
                     if (!playUrl.Success)
                     {
                         item.State = 99;
@@ -159,7 +162,7 @@ namespace BiliLite.Dialogs
                     if (playUrl.CurrentQuality.PlayUrlType == BiliPlayUrlType.DASH)
                     {
                         var quality = playUrl.CurrentQuality;
-                        var audio = playUrl.CurrentQuality.DashInfo.Audio;
+                        var audio = playUrl.CurrentAudioQuality.Audio;
                         var video = playUrl.CurrentQuality.DashInfo.Video;
 
                         if (audio != null)
