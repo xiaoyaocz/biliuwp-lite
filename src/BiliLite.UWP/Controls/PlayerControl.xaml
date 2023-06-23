@@ -777,7 +777,16 @@
                                         </Button.Flyout>
                                     </Button>
 
-                                    <ComboBox x:Name="BottomSoundQuality"   DisplayMemberPath="QualityName" ToolTipService.ToolTip="音质" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
+                                    <ComboBox 
+                                        x:Name="BottomSoundQuality"   
+                                        DisplayMemberPath="QualityName" 
+                                        ToolTipService.ToolTip="音质" 
+                                        HorizontalContentAlignment="Center" 
+                                        Padding="0"
+                                        MinWidth="10"
+                                        Style="{StaticResource PlayerComboBoxStyle}" 
+                                        Foreground="White" BorderThickness="0" 
+                                        FontSize="18" VerticalAlignment="Center" Background="Transparent">
 
                                     </ComboBox>
 

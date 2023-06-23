@@ -4,6 +4,7 @@ using BiliLite.Models.Events;
 using BiliLite.Modules;
 using BiliLite.Services;
 using FFmpegInteropX;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Runtime.InteropServices;
@@ -26,6 +27,9 @@ namespace BiliLite
     sealed partial class App : Application, ILogProvider
     {
         private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+        private static IHost _host;
+
+        public static IServiceProvider ServiceProvider { get => _host.Services; }
 
         /// <summary>
         /// 初始化单一实例应用程序对象。这是执行的创作代码的第一行，
@@ -33,7 +37,6 @@ namespace BiliLite
         /// </summary>
         public App()
         {
-
             this.InitializeComponent();
 
             App.Current.UnhandledException += App_UnhandledException;
@@ -41,6 +44,7 @@ namespace BiliLite
             FFmpegInteropLogging.SetLogProvider(this);
             SqlHelper.InitDB();
             LogService.Init();
+            RegisterService();
             OpenCCNET.ZhConverter.Initialize();
             this.Suspending += OnSuspending;
         }
@@ -241,5 +245,13 @@ namespace BiliLite
 
         }
 
+        private void RegisterService()
+        {
+            var startup = new Startup();
+
+            var hostBuilder = new HostBuilder()
+                .ConfigureServices(startup.ConfigureServices);
+            _host = hostBuilder.Build();
+        }
     }
 }

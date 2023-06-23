@@ -10,7 +10,7 @@ namespace BiliLite.Models.Common.Video
             {30232,"132K" },
             {30280,"192K" },
             {30250,"杜比全景声" },
-            {30251,"Hi-Res无损" }
+            {30251,"无损" }
         };
 
         public static Dictionary<int, string> Dictionary

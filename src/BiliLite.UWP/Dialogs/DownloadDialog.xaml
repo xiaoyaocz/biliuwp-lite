@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:BiliLite.Dialogs"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:download="using:BiliLite.ViewModels.Download"
     mc:Ignorable="d"
     Title="下载视频"
     PrimaryButtonText="开始"
@@ -16,12 +17,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
           
         </Grid.RowDefinitions>
         <StackPanel>
             <TextBlock>优先下载格式</TextBlock>
-            <ComboBox x:Name="cbVideoType"  Margin="0 4 0 0" HorizontalAlignment="Stretch">
+            <ComboBox x:Name="cbVideoType"  
+                      Margin="0 4 0 0" 
+                      SelectedIndex="{x:Bind m_viewModel.VideoTypeSelectedIndex, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch">
                 <ComboBox.Items>
                     <ComboBoxItem>
                         <StackPanel Orientation="Horizontal">
@@ -45,13 +50,26 @@
         </StackPanel>
         <StackPanel  Grid.Row="1" Margin="0 8 0 0">
             <TextBlock>优先清晰度</TextBlock>
-            <ComboBox x:Name="cbQuality" Margin="0 4 0 0" DisplayMemberPath="QualityName" HorizontalAlignment="Stretch" >
-              
+            <ComboBox x:Name="cbQuality" 
+                      Margin="0 4 0 0" 
+                      DisplayMemberPath="QualityName" 
+                      SelectedItem="{x:Bind m_viewModel.SelectedQuality,Mode=OneWay}"
+                      HorizontalAlignment="Stretch" >
             </ComboBox>
-
         </StackPanel>
-       
-        <StackPanel Grid.Row="2" Margin="0 8 0 0">
+
+        <StackPanel  Grid.Row="2" Margin="0 8 0 0" 
+                     Visibility="{x:Bind m_viewModel.ShowAudioQualityComboBox,Mode=OneWay}">
+            <TextBlock>优先音质</TextBlock>
+            <ComboBox x:Name="cbSoundQuality" 
+                      Margin="0 4 0 0" 
+                      DisplayMemberPath="QualityName" 
+                      SelectedItem="{x:Bind m_viewModel.SelectedAudioQuality,Mode=OneWay}"
+                      HorizontalAlignment="Stretch" >
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Margin="0 8 0 0">
             <TextBlock>选集</TextBlock>
             <Border BorderBrush="{ThemeResource ComboBoxBorderBrush}" 
                     CornerRadius="2"
@@ -59,7 +77,7 @@
                     BorderThickness="{ThemeResource ComboBoxBorderThemeThickness}">
                 <ListView x:Name="listView" ItemsSource="{x:Bind Path=downloadItem.Episodes,Mode=OneWay}"  SelectionMode="Multiple" Height="200">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local:DownloadEpisodeItem">
+                        <DataTemplate x:DataType="download:DownloadEpisodeItemViewModel">
                             <Grid >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>

@@ -18,6 +18,8 @@ using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using Windows.UI.Xaml.Controls.Primitives;
 using BiliLite.Models.Common.Video;
+using BiliLite.ViewModels.Download;
+using BiliLite.Models.Download;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
