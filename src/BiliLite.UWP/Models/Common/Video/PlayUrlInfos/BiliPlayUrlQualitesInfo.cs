@@ -21,9 +21,20 @@ namespace BiliLite.Models.Common.Video.PlayUrlInfos
         /// 清晰度列表
         /// </summary>
         public List<BiliPlayUrlInfo> Qualites { get; set; }
+
+        /// <summary>
+        /// 音频清晰度列表
+        /// </summary>
+        public List<BiliDashAudioPlayUrlInfo> AudioQualites { get; set; }
+
         /// <summary>
         /// 当前清晰度
         /// </summary>
         public BiliPlayUrlInfo CurrentQuality { get; set; }
+
+        /// <summary>
+        /// 当前音质
+        /// </summary>
+        public BiliDashAudioPlayUrlInfo CurrentAudioQuality { get; set; }
     }
 }

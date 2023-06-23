@@ -13,7 +13,7 @@ namespace BiliLite.Modules.Player.Playurl
             IsDownload = isDownload;
         }
 
-        public async Task<BiliPlayUrlQualitesInfo> GetPlayUrl(PlayInfo playInfo, int qualityID)
+        public async Task<BiliPlayUrlQualitesInfo> GetPlayUrl(PlayInfo playInfo, int qualityID, int soundQualityId = 0)
         {
             BiliPlayUrlRequest request;
             if (playInfo.play_mode == VideoPlayType.Season)
@@ -24,7 +24,7 @@ namespace BiliLite.Modules.Player.Playurl
             {
                 request = new BiliVideoPlayUrlRequest(IsDownload);
             }
-            return await request.GetPlayUrlInfo(playInfo, qualityID);
+            return await request.GetPlayUrlInfo(playInfo, qualityID, soundQualityId);
         }
 
     }

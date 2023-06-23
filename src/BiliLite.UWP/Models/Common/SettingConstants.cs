@@ -312,6 +312,11 @@ namespace BiliLite.Models.Common
             public const string DEFAULT_QUALITY = "PlayerDefaultQuality";
 
             /// <summary>
+            /// 默认音质 int
+            /// </summary>
+            public const string DEFAULT_SOUND_QUALITY = "PlayerDefaultSoundQuality";
+
+            /// <summary>
             /// 比例 int
             /// </summary>
             public const string RATIO = "PlayerDefaultRatio";

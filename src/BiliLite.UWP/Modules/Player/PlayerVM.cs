@@ -53,9 +53,9 @@ namespace BiliLite.Modules
         private readonly bool IsDownload;
         public List<string> DefaultDanmakuColors { get; set; }
 
-        public async Task<BiliPlayUrlQualitesInfo> GetPlayUrls(PlayInfo playInfo, int qn)
+        public async Task<BiliPlayUrlQualitesInfo> GetPlayUrls(PlayInfo playInfo, int qn, int soundQualityId = 0)
         {
-            var result = await biliPlayUrl.GetPlayUrl(playInfo, qn);
+            var result = await biliPlayUrl.GetPlayUrl(playInfo, qn, soundQualityId);
             return result;
         }
 

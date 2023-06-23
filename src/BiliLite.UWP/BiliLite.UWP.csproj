@@ -134,8 +134,11 @@
     <Compile Include="Models\Common\Danmaku\CompareDanmakuModel.cs" />
     <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliDashAudioPlayUrlInfo.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliFlacItem.cs" />
     <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlInfo.cs" />
     <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlQualitesInfo.cs" />
+    <Compile Include="Models\Common\Video\SoundQualityDictionary.cs" />
     <Compile Include="Models\Common\Video\VideoPlayType.cs" />
     <Compile Include="Extensions\ApiModelExtensions.cs" />
     <Compile Include="Extensions\BiliExtensions.cs" />

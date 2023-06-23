@@ -132,10 +132,62 @@ namespace BiliLite.Modules.Player.Playurl
         }
 
         private async Task<BiliPlayUrlQualitesInfo> ParseBiliPlayUrlInfoDash(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
-            int quality, List<int> qualites, string userAgent, string referer, bool isProxy)
+            int quality, List<int> qualites, string userAgent, string referer, bool isProxy, int soundQualityId = 0)
         {
             List<DashItemModel> videos = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["video"].ToString());
             List<DashItemModel> audios = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["audio"].ToString());
+            var flacAudio = JsonConvert.DeserializeObject<BiliFlacItem>(playUrlInfoResult["dash"]["flac"].ToString());
+            var qn = quality;
+
+            var timeLength = playUrlInfoResult["timelength"].ToInt32();
+
+            info.AudioQualites = new List<BiliDashAudioPlayUrlInfo>();
+            // 处理普通音质列表
+            foreach (var audio in audios)
+            {
+                audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
+                info.AudioQualites.Add(new BiliDashAudioPlayUrlInfo()
+                {
+                    HasPlayUrl = true,
+                    QualityID = audio.id,
+                    QualityName = SoundQualityConstants.Dictionary[audio.id],
+                    Referer = referer,
+                    UserAgent = userAgent,
+                    Timelength = timeLength,
+                    Audio = audio.ToBiliDashItem(),
+                });
+            }
+            // 处理无损音质
+            if (flacAudio != null && flacAudio.Display)
+            {
+                var audio = flacAudio.Audio;
+                audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
+                info.AudioQualites.Add(new BiliDashAudioPlayUrlInfo()
+                {
+                    HasPlayUrl = true,
+                    QualityID = audio.id,
+                    QualityName = SoundQualityConstants.Dictionary[audio.id],
+                    Referer = referer,
+                    UserAgent = userAgent,
+                    Timelength = timeLength,
+                    Audio = audio.ToBiliDashItem(),
+                });
+            }
+
+            // 处理杜比音效
+            //TODO: 杜比音效暂不支持
+
+            BiliDashItem currentAudio = null;
+
+            //部分视频没有音频文件
+            if (audios != null && audios.Count > 0)
+            {
+                var audioQuality = info.AudioQualites.FirstOrDefault(x => x.QualityID == soundQualityId); 
+                var defaultAudio = qn > 64 ? audios.LastOrDefault() : audios.FirstOrDefault();
+                info.CurrentAudioQuality = audioQuality ?? info.AudioQualites.FirstOrDefault(x => x.QualityID == defaultAudio.id);
+                currentAudio = info.CurrentAudioQuality.Audio;
+            }
+
             var h264Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AVC);
             var h265Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.HEVC);
             var av01Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AV1);
@@ -143,7 +195,6 @@ namespace BiliLite.Modules.Player.Playurl
             var duration = playUrlInfoResult["dash"]["duration"].ToInt32();
             var minBufferTime = playUrlInfoResult["dash"]["minBufferTime"].ToString();
 
-            var qn = quality;
             if (qn > qualites.Max())
             {
                 qn = qualites.Max();
@@ -175,25 +226,15 @@ namespace BiliLite.Modules.Player.Playurl
                     //info.Qualites.Remove(item);
                     continue;
                 }
-                DashItemModel audio = null;
-                //部分视频没有音频文件
-                if (audios != null && audios.Count > 0)
-                {
-                    audio = qn > 64 ? audios.LastOrDefault() : audios.FirstOrDefault();
-                }
                 //替换链接
-                video.baseUrl = await HandleUrl(video.baseUrl, video.backupUrl, userAgent, referer, isProxy); 
-                if (audio != null)
-                {
-                    audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
-                }
+                video.baseUrl = await HandleUrl(video.baseUrl, video.backupUrl, userAgent, referer, isProxy);
 
                 item.Codec = (BiliPlayUrlVideoCodec)video.codecid;
                 item.HasPlayUrl = true;
 
                 item.DashInfo = new BiliDashPlayUrlInfo()
                 {
-                    Audio = audio?.ToBiliDashItem(),
+                    Audio = currentAudio,
                     Video = video.ToBiliDashItem(),
                 };
             }
@@ -238,7 +279,7 @@ namespace BiliLite.Modules.Player.Playurl
             return info;
         }
 
-        protected async Task<BiliPlayUrlQualitesInfo> ParseJson(int quality, JObject obj, string userAgent, string referer, bool isProxy)
+        protected async Task<BiliPlayUrlQualitesInfo> ParseJson(int quality, JObject obj, string userAgent, string referer, bool isProxy, int soundQualityId = 0)
         {
             try
             {
@@ -249,7 +290,7 @@ namespace BiliLite.Modules.Player.Playurl
                 var qualites = info.Qualites.Select(x => x.QualityID).ToList();
                 if (obj.ContainsKey("dash") && obj["dash"]["video"] != null)
                 {
-                    return await ParseBiliPlayUrlInfoDash(info, obj, quality, qualites, userAgent, referer, isProxy);
+                    return await ParseBiliPlayUrlInfoDash(info, obj, quality, qualites, userAgent, referer, isProxy, soundQualityId);
                 }
                 else if (obj.ContainsKey("durl"))
                 {
@@ -497,7 +538,7 @@ namespace BiliLite.Modules.Player.Playurl
             }
 
         }
-        public virtual Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID)
+        public virtual Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID, int soundQualityId = 0)
         {
             throw new NotImplementedException();
         }
@@ -555,10 +596,10 @@ namespace BiliLite.Modules.Player.Playurl
         {
         }
 
-        public override async Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID)
+        public override async Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID, int soundQualityId = 0)
         {
             //尝试WEB API读取播放地址
-            var webResult = await GetPlayUrlUseWebApi(playInfo, qualityID);
+            var webResult = await GetPlayUrlUseWebApi(playInfo, qualityID, soundQualityId);
             if (webResult.Success)
             {
                 return webResult;
@@ -574,7 +615,7 @@ namespace BiliLite.Modules.Player.Playurl
             return BiliPlayUrlQualitesInfo.Failure(Message);
         }
 
-        private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID)
+        private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID, int soundQualityId = 0)
         {
             try
             {
@@ -588,7 +629,7 @@ namespace BiliLite.Modules.Player.Playurl
                 {
                     return BiliPlayUrlQualitesInfo.Failure(data.message);
                 }
-                var jsonResult = await ParseJson(qualityID, data.data, WebUserAgent, WebReferer, false);
+                var jsonResult = await ParseJson(qualityID, data.data, WebUserAgent, WebReferer, false, soundQualityId);
                 return jsonResult;
             }
             catch (Exception ex)
@@ -621,7 +662,7 @@ namespace BiliLite.Modules.Player.Playurl
         {
         }
 
-        public override async Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID)
+        public override async Task<BiliPlayUrlQualitesInfo> GetPlayUrlInfo(PlayInfo playInfo, int qualityID, int soundQualityId = 0)
         {
             //尝试WEB API读取播放地址
             // 按此顺序，访问代理
@@ -636,7 +677,7 @@ namespace BiliLite.Modules.Player.Playurl
             }
             foreach (var item in proxyAreas)
             {
-                var webResult = await GetPlayUrlUseWebApi(playInfo, qualityID, area: item);
+                var webResult = await GetPlayUrlUseWebApi(playInfo, qualityID, area: item, soundQualityId: soundQualityId);
                 if (webResult.Success)
                 {
                     return webResult;
@@ -671,7 +712,7 @@ namespace BiliLite.Modules.Player.Playurl
 
         }
 
-        private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID, string area = "")
+        private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlUseWebApi(PlayInfo playInfo, int qualityID, string area = "", int soundQualityId = 0)
         {
             try
             {
@@ -685,7 +726,7 @@ namespace BiliLite.Modules.Player.Playurl
                 {
                     return BiliPlayUrlQualitesInfo.Failure(data.message);
                 }
-                var jsonResult = await ParseJson(qualityID, data.result, WebUserAgent, WebReferer, area != "");
+                var jsonResult = await ParseJson(qualityID, data.result, WebUserAgent, WebReferer, area != "", soundQualityId);
                 return jsonResult;
             }
             catch (Exception ex)
