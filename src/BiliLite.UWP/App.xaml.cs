@@ -247,11 +247,18 @@ namespace BiliLite
 
         private void RegisterService()
         {
-            var startup = new Startup();
+            try
+            {
+                var startup = new Startup();
 
-            var hostBuilder = new HostBuilder()
-                .ConfigureServices(startup.ConfigureServices);
-            _host = hostBuilder.Build();
+                var hostBuilder = new HostBuilder()
+                    .ConfigureServices(startup.ConfigureServices);
+                _host = hostBuilder.Build();
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Start Host Error",ex);
+            }
         }
     }
 }
