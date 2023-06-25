@@ -81,6 +81,15 @@ jobs:
       env:
         BuildMode: SideloadOnly
         Configuration: Release
+
+    - name: Copy install-readme
+      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test\安装教程.txt
+      
+    - name: Copy install-readme
+      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test\安装教程.txt
+      
+    - name: Copy install-readme
+      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test\安装教程.txt
       
     - name: Create Package Directory
       run: New-Item -ItemType Directory -Path C:\Package
