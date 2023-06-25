@@ -105,4 +105,29 @@
         /// </summary>
         AcceleratePlay
     }
+
+    public enum BiliPlayUrlType
+    {
+        /// <summary>
+        /// 单段FLV
+        /// </summary>
+        SingleFLV,
+
+        /// <summary>
+        /// 多段FLV
+        /// </summary>
+        MultiFLV,
+
+        /// <summary>
+        /// 音视频分离DASH流
+        /// </summary>
+        DASH
+    }
+
+    public enum BiliPlayUrlVideoCodec
+    {
+        AVC = 7,
+        HEVC = 12,
+        AV1 = 13,
+    }
 }

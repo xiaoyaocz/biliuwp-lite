@@ -1,5 +1,4 @@
 ﻿using BiliLite.Modules;
-using BiliLite.Modules.Player.Playurl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +19,7 @@ using BiliLite.Extensions;
 using BiliLite.Services;
 using BiliLite.Models.Common;
 using BiliLite.Models.Common.Video;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 

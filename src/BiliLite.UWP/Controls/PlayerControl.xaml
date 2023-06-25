@@ -223,16 +223,15 @@
                             BorderBrush="{ThemeResource ComboBoxBackgroundBorderBrushUnfocused}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Opacity="0" />
-                            <ContentPresenter x:Name="ContentPresenter"
-                            Grid.Row="1"
-                          
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                <TextBlock x:Name="PlaceholderTextBlock"
-                                Text="{TemplateBinding PlaceholderText}"
-                                Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxPlaceHolderForeground}}" />
-                            </ContentPresenter>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Grid.Row="1"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                        <TextBlock x:Name="PlaceholderTextBlock"
+                                            Text="{TemplateBinding PlaceholderText}"
+                                            Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource ComboBoxPlaceHolderForeground}}" />
+                                </ContentPresenter>
                             <FontIcon x:Name="DropDownGlyph"
                             Grid.Row="1"
                             Grid.Column="1"
@@ -777,6 +776,19 @@
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
+
+                                    <ComboBox 
+                                        x:Name="BottomSoundQuality"   
+                                        DisplayMemberPath="QualityName" 
+                                        ToolTipService.ToolTip="音质" 
+                                        HorizontalContentAlignment="Center" 
+                                        Padding="0"
+                                        MinWidth="10"
+                                        Style="{StaticResource PlayerComboBoxStyle}" 
+                                        Foreground="White" BorderThickness="0" 
+                                        FontSize="18" VerticalAlignment="Center" Background="Transparent">
+
+                                    </ComboBox>
 
                                     <ComboBox x:Name="BottomCBQuality"   DisplayMemberPath="QualityName" ToolTipService.ToolTip="清晰度" HorizontalContentAlignment="Center" Style="{StaticResource PlayerComboBoxStyle}" Foreground="White" BorderThickness="0" FontSize="18" VerticalAlignment="Center" Background="Transparent">
 

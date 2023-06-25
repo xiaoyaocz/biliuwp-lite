@@ -30,7 +30,6 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.UI;
 using Windows.Storage.Streams;
 using Windows.UI.Text;
-using BiliLite.Modules.Player.Playurl;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using BiliLite.Models.Common;
@@ -38,6 +37,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common.Video;
 using Windows.UI.Input;
 using BiliLite.Models.Common.Danmaku;
+using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -884,7 +884,22 @@ namespace BiliLite.Controls
             }
             await playerHelper.ReportHistory(CurrentPlayItem, 0);
             await SetDanmaku();
-            await SetQuality();
+
+            if (!await CheckDownloaded())
+            {
+                var info = await GetPlayUrlQualitesInfo();
+                if (!info.Success)
+                {
+                    ShowDialog($"请求信息:\r\n{info.Message}", "读取视频播放地址失败");
+                }
+                else
+                {
+                    playUrlInfo = info;
+                    SetSoundQuality();
+                    SetQuality();
+                }
+            }
+
             await GetPlayerInfo();
 
             Player.ABPlay = VideoPlayHistoryHelper.FindABPlayHistory(CurrentPlayItem);
@@ -1144,7 +1159,21 @@ namespace BiliLite.Controls
             DanmuControl.ClearAll();
             await SetDanmaku();
 
-            await SetQuality();
+
+            if (!await CheckDownloaded())
+            {
+                var info = await GetPlayUrlQualitesInfo();
+                if (!info.Success)
+                {
+                    ShowDialog($"请求信息:\r\n{info.Message}", "读取视频播放地址失败");
+                }
+                else
+                {
+                    playUrlInfo = info;
+                    SetSoundQuality();
+                    SetQuality();
+                }
+            }
         }
 
 
@@ -1236,7 +1265,19 @@ namespace BiliLite.Controls
 
         }
 
-        private async Task SetQuality()
+        private async Task<bool> CheckDownloaded()
+        {
+            if (CurrentPlayItem.play_mode != VideoPlayType.Download)
+            {
+                return false;
+            }
+            BottomCBQuality.Visibility = Visibility.Collapsed;
+
+            await PlayLocalFile();
+            return true;
+        }
+
+        private async Task<BiliPlayUrlQualitesInfo> GetPlayUrlQualitesInfo()
         {
             VideoLoading.Visibility = Visibility.Visible;
             if (playUrlInfo != null && playUrlInfo.CurrentQuality != null)
@@ -1244,32 +1285,29 @@ namespace BiliLite.Controls
                 playUrlInfo.CurrentQuality = null;
             }
 
-            if (CurrentPlayItem.play_mode == VideoPlayType.Download)
-            {
-                BottomCBQuality.Visibility = Visibility.Collapsed;
-
-                await PlayLocalFile();
-                return;
-            }
-
             var qn = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, 80);
-            var info = await playerHelper.GetPlayUrls(CurrentPlayItem, qn);
+            var soundQualityId = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_SOUND_QUALITY, 0);
+            var info = await playerHelper.GetPlayUrls(CurrentPlayItem, qn, soundQualityId);
+            return info;
+        }
 
-            if (info.Success)
-            {
-                playUrlInfo = info;
-                BottomCBQuality.ItemsSource = playUrlInfo.Qualites;
-                BottomCBQuality.SelectionChanged -= BottomCBQuality_SelectionChanged;
-                BottomCBQuality.SelectedItem = info.CurrentQuality;
-                //SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, info.data.current.quality);
-                BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
-                ChangeQuality(info.CurrentQuality).RunWithoutAwait();
-            }
-            else
-            {
-                ShowDialog($"请求信息:\r\n{info.Message}", "读取视频播放地址失败");
-            }
+        private void SetSoundQuality()
+        {
+            BottomSoundQuality.ItemsSource = playUrlInfo.AudioQualites;
+            BottomSoundQuality.SelectionChanged -= BottomSoundQuality_SelectionChanged;
+            BottomSoundQuality.SelectedItem = playUrlInfo.CurrentAudioQuality;
+            BottomSoundQuality.SelectionChanged += BottomSoundQuality_SelectionChanged;
+            ChangeQuality(current_quality_info, playUrlInfo.CurrentAudioQuality).RunWithoutAwait();
+        }
 
+        private void SetQuality()
+        {
+            BottomCBQuality.ItemsSource = playUrlInfo.Qualites;
+            BottomCBQuality.SelectionChanged -= BottomCBQuality_SelectionChanged;
+            BottomCBQuality.SelectedItem = playUrlInfo.CurrentQuality;
+            //SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, info.data.current.quality);
+            BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
+            ChangeQuality(playUrlInfo.CurrentQuality, playUrlInfo.CurrentAudioQuality).RunWithoutAwait();
         }
 
         private async Task PlayLocalFile()
@@ -1408,36 +1446,43 @@ namespace BiliLite.Controls
         }
 
         BiliPlayUrlInfo current_quality_info = null;
-        private async Task ChangeQuality(BiliPlayUrlInfo quality)
+        BiliDashAudioPlayUrlInfo current_audio_quality_info = null;
+
+        private async Task<bool> ChangeQualityGetPlayUrls(BiliPlayUrlInfo quality, BiliDashAudioPlayUrlInfo soundQuality = null)
         {
-            VideoLoading.Visibility = Visibility.Visible;
-            if (quality == null)
+            if (quality.HasPlayUrl)
             {
-                return;
+                return true;
             }
-            current_quality_info = quality;
-            if (!quality.HasPlayUrl)
+            var soundQualityId = soundQuality?.QualityID;
+            if (soundQualityId == null)
             {
-                var info = await playerHelper.GetPlayUrls(CurrentPlayItem, quality.QualityID);
-                if (!info.Success)
-                {
-                    ShowDialog(info.Message, "切换清晰度失败");
-                    return;
-                }
-                if (!info.CurrentQuality.HasPlayUrl)
-                {
-                    ShowDialog("无法读取到播放地址，试试换个清晰度?", "播放失败");
-                    return;
-                }
-                quality = info.CurrentQuality;
+                soundQualityId = 0;
             }
+            var info = await playerHelper.GetPlayUrls(CurrentPlayItem, quality.QualityID, soundQualityId.Value);
+            if (!info.Success)
+            {
+                ShowDialog(info.Message, "切换清晰度失败");
+                return false;
+            }
+            if (!info.CurrentQuality.HasPlayUrl)
+            {
+                ShowDialog("无法读取到播放地址，试试换个清晰度?", "播放失败");
+                return false;
+            }
+            quality = info.CurrentQuality;
+            return true;
+        }
+
+        private async Task<PlayerOpenResult> ChangeQualityPlayVideo(BiliPlayUrlInfo quality, BiliDashAudioPlayUrlInfo audioQuality)
+        {
             PlayerOpenResult result = new PlayerOpenResult()
             {
                 result = false
             };
             if (quality.PlayUrlType == BiliPlayUrlType.DASH)
             {
-                var audio = quality.DashInfo.Audio;
+                var audio = audioQuality == null ? quality.DashInfo.Audio : audioQuality.Audio;
                 var video = quality.DashInfo.Video;
 
                 result = await Player.PlayerDashUseNative(quality.DashInfo, quality.UserAgent, quality.Referer, positon: _postion);
@@ -1461,11 +1506,6 @@ namespace BiliLite.Controls
                         VideoUrl = video.Url,
                     });
                     result = await Player.PlayDashUrlUseFFmpegInterop(mpd_url, quality.UserAgent, quality.Referer, positon: _postion);
-                    //result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_vid eo_url, quality.playUrlInfo.dash_audio_url, quality.HttpHeader, positon: _postion);
-                    //if (!result.result)
-                    //{
-                    //    result = await Player.PlayDashUseFFmpegInterop(quality.playUrlInfo.dash_video_url, quality.playUrlInfo.dash_audio_url, positon: _postion);
-                    //}
                 }
             }
             else if (quality.PlayUrlType == BiliPlayUrlType.SingleFLV)
@@ -1476,25 +1516,31 @@ namespace BiliLite.Controls
                     result = await Player.PlaySingleFlvUseFFmpegInterop(quality.FlvInfo.First().Url, quality.UserAgent, quality.Referer, positon: _postion);
                 }
             }
-            //else if (quality.PlayUrlType == VideoPlayMode.SingleMp4)
-            //{
-            //    result = await Player.PlayerSingleMp4UseNativeAsync(quality.playUrlInfo.url, positon: _postion);
-            //    if (!result.result)
-            //    {
-            //        result = await Player.PlaySingleFlvUseSYEngine(quality.playUrlInfo.url, quality.HttpHeader, positon: _postion);
-            //    }
-            //}
             else if (quality.PlayUrlType == BiliPlayUrlType.MultiFLV)
             {
                 result = await Player.PlayVideoUseSYEngine(quality.FlvInfo, quality.UserAgent, quality.Referer, positon: _postion, epId: CurrentPlayItem.ep_id);
             }
+            return result;
+        }
+
+        private async Task ChangeQuality(BiliPlayUrlInfo quality, BiliDashAudioPlayUrlInfo soundQuality = null)
+        {
+            VideoLoading.Visibility = Visibility.Visible;
+            if (quality == null)
+            {
+                return;
+            }
+            quality.DashInfo.Audio = soundQuality.Audio;
+            current_quality_info = quality;
+            current_audio_quality_info = soundQuality;
+            if (!await ChangeQualityGetPlayUrls(quality, soundQuality))
+            {
+                return;
+            }
+            var result = await ChangeQualityPlayVideo(quality, soundQuality);
             if (result.result)
             {
-
-                //var text = $"AID:{CurrentPlayItem.avid}\r\nCID:{CurrentPlayItem.cid}\r\nSeasonID:{CurrentPlayItem.season_id}\r\n";
-                //txtInfo.Text = Player.MediaInfo;
                 VideoLoading.Visibility = Visibility.Collapsed;
-
             }
             else
             {
@@ -1819,7 +1865,7 @@ namespace BiliLite.Controls
                     e.Handled = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // 重复获取鼠标指针导致异常
             }
@@ -2003,7 +2049,19 @@ namespace BiliLite.Controls
             SplitView.IsPaneOpen = true;
         }
 
+        private async void BottomSoundQuality_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (BottomSoundQuality.SelectedItem == null)
+            {
+                return;
+            }
 
+            _postion = Player.Position;
+            var data = BottomSoundQuality.SelectedItem as BiliDashAudioPlayUrlInfo;
+            SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_SOUND_QUALITY, data.QualityID);
+            _autoPlay = Player.PlayState == PlayState.Playing;
+            await ChangeQuality(current_quality_info, data);
+        }
 
         private async void BottomCBQuality_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -2016,8 +2074,7 @@ namespace BiliLite.Controls
             var data = BottomCBQuality.SelectedItem as BiliPlayUrlInfo;
             SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, data.QualityID);
             _autoPlay = Player.PlayState == PlayState.Playing;
-            await ChangeQuality(data);
-
+            await ChangeQuality(data, current_audio_quality_info);
         }
 
         private void BottomBtnPause_Click(object sender, RoutedEventArgs e)

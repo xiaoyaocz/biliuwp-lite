@@ -29,6 +29,7 @@ namespace BiliLite.Controls
         readonly CommentApi commentApi;
         EmoteVM emoteVM;
         bool m_disableShowPicture = false;
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         public CommentControl()
         {
@@ -164,80 +165,92 @@ namespace BiliLite.Controls
 
 
                 var re = await commentApi.Comment(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
-                if (re.status)
+                if (!re.status)
                 {
-                    dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
-                    if (m.code == 0)
-                    {
+                    re = await commentApi.CommentV2(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
+                }
+                if (!re.status)
+                {
+                    throw new CustomizedErrorException("加载评论失败");
+                }
+                dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
+                if (m.code == 0)
+                {
 
-                        if (m.data.replies != null && m.data.replies.Count != 0)
-                        {
-
-                            if (_page == 1)
-                            {
-                                if (m.data.upper.top != null)
-                                {
-                                    m.data.upper.top.showTop = Visibility.Visible;
-                                    m.data.replies.Insert(0, m.data.upper.top);
-                                }
-                                //ls_hot.ItemsSource = m.data.hots;
-                                ls_new.ItemsSource = m.data.replies;
-                            }
-                            else
-                            {
-                                foreach (var item in m.data.replies)
-                                {
-                                    (ls_new.ItemsSource as ObservableCollection<CommentModel>).Add(item);
-                                }
-                            }
-                            _page++;
-
-                            if (m.data.replies.Count >= 20)
-                            {
-                                btn_LoadMore.Visibility = Visibility.Visible;
-                            }
-                        }
-                        else
-                        {
-                            if (_page == 1)
-                            {
-                                noRepost.Visibility = Visibility.Visible;
-                                btn_LoadMore.Visibility = Visibility.Collapsed;
-                            }
-                            else
-                            {
-                                Notify.ShowMessageToast("全部加载完了...");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (m.code == 12002)
-                        {
-                            closeRepost.Visibility = Visibility.Visible;
-                            btn_LoadMore.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            Notify.ShowMessageToast(m.message);
-                        }
-                    }
+                    HandleCommentsNormal(m);
                 }
                 else
                 {
-                    Notify.ShowMessageToast("加载评论失败");
+                    HandleCommentsAbnormalSituation(m);
                 }
-
             }
             catch (Exception ex)
             {
-                Notify.ShowMessageToast("加载评论失败");
+                _logger.Error(ex.Message, ex);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {
                 _loading = false;
                 pr_load.Visibility = Visibility.Collapsed;
+            }
+        }
 
+        // 处理评论列表正常情况
+        private void HandleCommentsNormal(dataCommentModel model)
+        {
+            if (model.data.replies != null && model.data.replies.Count != 0)
+            {
+
+                if (_page == 1)
+                {
+                    if (model.data.upper.top != null)
+                    {
+                        model.data.upper.top.showTop = Visibility.Visible;
+                        model.data.replies.Insert(0, model.data.upper.top);
+                    }
+                    //ls_hot.ItemsSource = m.data.hots;
+                    ls_new.ItemsSource = model.data.replies;
+                }
+                else
+                {
+                    foreach (var item in model.data.replies)
+                    {
+                        (ls_new.ItemsSource as ObservableCollection<CommentModel>).Add(item);
+                    }
+                }
+                _page++;
+
+                if (model.data.replies.Count >= 20)
+                {
+                    btn_LoadMore.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                if (_page == 1)
+                {
+                    noRepost.Visibility = Visibility.Visible;
+                    btn_LoadMore.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    Notify.ShowMessageToast("全部加载完了...");
+                }
+            }
+        }
+
+        // 处理评论列表异常情况
+        private void HandleCommentsAbnormalSituation(dataCommentModel model)
+        {
+            if (model.code == 12002)
+            {
+                closeRepost.Visibility = Visibility.Visible;
+                btn_LoadMore.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                throw new CustomizedErrorException($"加载评论失败:{model.message}");
             }
         }
 
