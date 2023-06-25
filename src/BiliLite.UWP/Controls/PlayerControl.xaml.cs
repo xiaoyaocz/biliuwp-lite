@@ -1307,7 +1307,7 @@ namespace BiliLite.Controls
             BottomCBQuality.SelectedItem = playUrlInfo.CurrentQuality;
             //SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, info.data.current.quality);
             BottomCBQuality.SelectionChanged += BottomCBQuality_SelectionChanged;
-            ChangeQuality(playUrlInfo.CurrentQuality).RunWithoutAwait();
+            ChangeQuality(playUrlInfo.CurrentQuality, playUrlInfo.CurrentAudioQuality).RunWithoutAwait();
         }
 
         private async Task PlayLocalFile()
@@ -1446,6 +1446,7 @@ namespace BiliLite.Controls
         }
 
         BiliPlayUrlInfo current_quality_info = null;
+        BiliDashAudioPlayUrlInfo current_audio_quality_info = null;
 
         private async Task<bool> ChangeQualityGetPlayUrls(BiliPlayUrlInfo quality, BiliDashAudioPlayUrlInfo soundQuality = null)
         {
@@ -1454,7 +1455,7 @@ namespace BiliLite.Controls
                 return true;
             }
             var soundQualityId = soundQuality?.QualityID;
-            if(soundQualityId == null)
+            if (soundQualityId == null)
             {
                 soundQualityId = 0;
             }
@@ -1473,7 +1474,7 @@ namespace BiliLite.Controls
             return true;
         }
 
-        private async Task<PlayerOpenResult> ChangeQualityPlayVideo(BiliPlayUrlInfo quality)
+        private async Task<PlayerOpenResult> ChangeQualityPlayVideo(BiliPlayUrlInfo quality, BiliDashAudioPlayUrlInfo audioQuality)
         {
             PlayerOpenResult result = new PlayerOpenResult()
             {
@@ -1481,7 +1482,7 @@ namespace BiliLite.Controls
             };
             if (quality.PlayUrlType == BiliPlayUrlType.DASH)
             {
-                var audio = quality.DashInfo.Audio;
+                var audio = audioQuality == null ? quality.DashInfo.Audio : audioQuality.Audio;
                 var video = quality.DashInfo.Video;
 
                 result = await Player.PlayerDashUseNative(quality.DashInfo, quality.UserAgent, quality.Referer, positon: _postion);
@@ -1529,12 +1530,14 @@ namespace BiliLite.Controls
             {
                 return;
             }
+            quality.DashInfo.Audio = soundQuality.Audio;
             current_quality_info = quality;
+            current_audio_quality_info = soundQuality;
             if (!await ChangeQualityGetPlayUrls(quality, soundQuality))
             {
                 return;
             }
-            var result = await ChangeQualityPlayVideo(quality);
+            var result = await ChangeQualityPlayVideo(quality, soundQuality);
             if (result.result)
             {
                 VideoLoading.Visibility = Visibility.Collapsed;
@@ -2071,7 +2074,7 @@ namespace BiliLite.Controls
             var data = BottomCBQuality.SelectedItem as BiliPlayUrlInfo;
             SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_QUALITY, data.QualityID);
             _autoPlay = Player.PlayState == PlayState.Playing;
-            await ChangeQuality(data);
+            await ChangeQuality(data, current_audio_quality_info);
         }
 
         private void BottomBtnPause_Click(object sender, RoutedEventArgs e)
