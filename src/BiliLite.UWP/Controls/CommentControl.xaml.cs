@@ -165,7 +165,8 @@ namespace BiliLite.Controls
 
 
                 var re = await commentApi.Comment(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
-                if (!re.status)
+                var errorCheck = await re.GetResult<object>();
+                if (!re.status || errorCheck.code < 0)
                 {
                     re = await commentApi.CommentV2(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
                 }
