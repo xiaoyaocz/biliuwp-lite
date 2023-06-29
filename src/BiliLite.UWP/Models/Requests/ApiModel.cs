@@ -34,6 +34,11 @@ namespace BiliLite.Models.Requests
         public bool need_redirect { get; set; } = false;
 
         /// <summary>
+        /// 额外的Cookies
+        /// </summary>
+        public IDictionary<string, string> ExtraCookies { get; set; }
+
+        /// <summary>
         /// 请求地址
         /// </summary>
         public string url

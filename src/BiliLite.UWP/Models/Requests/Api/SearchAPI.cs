@@ -1,6 +1,7 @@
 ﻿using BiliLite.Extensions;
 using BiliLite.Services;
 using System;
+using System.Collections.Generic;
 
 namespace BiliLite.Models.Requests.Api
 {
@@ -41,8 +42,6 @@ namespace BiliLite.Models.Requests.Api
             return api;
         }
 
-
-
         public ApiModel WebSearchVideo(string keyword, int pn = 1, string order = "", string duration = "", string region = "0", string area = "")
         {
             var baseUrl = ApiHelper.API_BASE_URL;
@@ -60,6 +59,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -80,6 +80,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -100,6 +101,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -120,6 +122,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -140,6 +143,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -160,6 +164,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }
@@ -180,6 +185,7 @@ namespace BiliLite.Models.Requests.Api
             if (!string.IsNullOrEmpty(area))
             {
                 api.parameter += $"&area={area}";
+                api.ExtraCookies = new Dictionary<string, string>() { { "buvid3", "temp" } };
             }
             return api;
         }

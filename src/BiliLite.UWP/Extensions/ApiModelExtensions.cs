@@ -22,7 +22,7 @@ namespace BiliLite.Extensions
 
                 if (api.need_cookie)
                 {
-                    return await api.url.GetHttpResultsWithWebCookie(api.headers);
+                    return await api.url.GetHttpResultsWithWebCookie(api.headers, api.ExtraCookies);
                 }
 
                 return await api.url.GetHttpResultsAsync(api.headers);

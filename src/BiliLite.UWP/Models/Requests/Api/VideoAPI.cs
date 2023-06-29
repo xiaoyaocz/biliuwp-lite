@@ -35,7 +35,7 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://app.bilibili.com/x/v2/view",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&{(isbvid ? "bvid=" : "aid=")}{id}&plat=0"
+                parameter = ApiHelper.GetAccessParameter(ApiHelper.AndroidKey) + $"&{(isbvid ? "bvid=" : "aid=")}{id}&plat=0"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             var apiUrl = Uri.EscapeDataString(api.url);
