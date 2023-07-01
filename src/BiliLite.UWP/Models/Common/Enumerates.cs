@@ -130,4 +130,29 @@
         HEVC = 12,
         AV1 = 13,
     }
+
+    public enum PlayState
+    {
+        Loading,
+        Playing,
+        Pause,
+        End,
+        Error
+    }
+
+    public enum PlayEngine
+    {
+        Native = 1,
+        FFmpegInteropMSS = 2,
+        SYEngine = 3,
+        FFmpegInteropMSSH265 = 4,
+        VLC = 5
+    }
+
+    public enum PlayMediaType
+    {
+        Single,
+        MultiFlv,
+        Dash
+    }
 }
