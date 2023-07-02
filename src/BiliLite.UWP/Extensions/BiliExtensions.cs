@@ -21,6 +21,8 @@ namespace BiliLite.Extensions
 {
     public static class BiliExtensions
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+
         /// <summary>
         /// 根据Epid取番剧ID
         /// </summary>
@@ -103,11 +105,12 @@ namespace BiliLite.Extensions
         {
             try
             {
+                var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
+                _logger.Info($"BiliLite.UWP version: {num}");
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersionResponse>(result.results);
                 var ignoreVersion = SettingService.GetValue(SettingConstants.Other.IGNORE_VERSION, "");
                 if (ignoreVersion.Equals(ver.Version)) return;
-                var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
                 // 获取临时版本号
                 var revision = SystemInformation.ApplicationVersion.Revision;
                 var v = int.Parse(num);
