@@ -37,6 +37,7 @@ using BiliLite.Extensions;
 using BiliLite.Models.Common.Video;
 using Windows.UI.Input;
 using BiliLite.Models.Common.Danmaku;
+using BiliLite.Models.Common.Player;
 using BiliLite.Models.Common.Video.PlayUrlInfos;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
@@ -1691,7 +1692,7 @@ namespace BiliLite.Controls
         public bool Buffering
         {
             get { return _buffering; }
-            set { _buffering = value; DoPropertyChanged("Buffering"); }
+            set { _buffering = value; DoPropertyChanged("_Buffering"); }
         }
         private double _BufferingProgress;
         public double BufferingProgress

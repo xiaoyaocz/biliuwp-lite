@@ -131,16 +131,20 @@ namespace BiliLite.Modules.Player.Playurl
             }
         }
 
-        private async Task<BiliPlayUrlQualitesInfo> ParseBiliPlayUrlInfoDash(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
+        private async Task<BiliDashItem> ParseBiliPlayUrlInfoAudioDash(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
             int quality, List<int> qualites, string userAgent, string referer, bool isProxy, int soundQualityId = 0)
         {
-            List<DashItemModel> videos = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["video"].ToString());
-            List<DashItemModel> audios = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["audio"].ToString());
-            var flacAudio = JsonConvert.DeserializeObject<BiliFlacItem>(playUrlInfoResult["dash"]["flac"].ToString());
+            var audios = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["audio"].ToString());
+
+            BiliFlacItem flacAudio;
+
+            var flacJToken = playUrlInfoResult["dash"]["flac"];
+            if (flacJToken == null) flacAudio = null;
+            else flacAudio= JsonConvert.DeserializeObject<BiliFlacItem>(flacJToken.ToString());
+
             var qn = quality;
 
             var timeLength = playUrlInfoResult["timelength"].ToInt32();
-
             info.AudioQualites = new List<BiliDashAudioPlayUrlInfo>();
             // 处理普通音质列表
             foreach (var audio in audios)
@@ -182,12 +186,20 @@ namespace BiliLite.Modules.Player.Playurl
             //部分视频没有音频文件
             if (audios != null && audios.Count > 0)
             {
-                var audioQuality = info.AudioQualites.FirstOrDefault(x => x.QualityID == soundQualityId); 
+                var audioQuality = info.AudioQualites.FirstOrDefault(x => x.QualityID == soundQualityId);
                 var defaultAudio = qn > 64 ? audios.LastOrDefault() : audios.FirstOrDefault();
                 info.CurrentAudioQuality = audioQuality ?? info.AudioQualites.FirstOrDefault(x => x.QualityID == defaultAudio.id);
                 currentAudio = info.CurrentAudioQuality.Audio;
             }
+            return currentAudio;
+        }
 
+        private async Task<BiliPlayUrlQualitesInfo> ParseBiliPlayUrlInfoDash(BiliPlayUrlQualitesInfo info, JObject playUrlInfoResult,
+            int quality, List<int> qualites, string userAgent, string referer, bool isProxy, int soundQualityId = 0)
+        {
+            var videos = JsonConvert.DeserializeObject<List<DashItemModel>>(playUrlInfoResult["dash"]["video"].ToString());
+            var currentAudio = await ParseBiliPlayUrlInfoAudioDash(info, playUrlInfoResult, quality, qualites, userAgent, referer, isProxy, soundQualityId);
+            var qn = quality;
             var h264Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AVC);
             var h265Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.HEVC);
             var av01Videos = videos.Where(x => x.codecid == (int)BiliPlayUrlVideoCodec.AV1);

@@ -13,7 +13,7 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="IsTabStop" Value="True" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" /> 
         <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
         <Setter Property="Template">
             <Setter.Value>
@@ -96,10 +96,10 @@
                         </Grid>
 
                         <ContentPresenter x:Name="TabContentPresenter"
-                            Grid.Row="1"
-                            Background="{ThemeResource TabViewItemHeaderBackgroundSelected}"
-                            BorderBrush="Transparent"
-                            BorderThickness="0" />
+                                          Grid.Row="1"
+                                          Background="{ThemeResource TabViewItemHeaderBackgroundSelected}"
+                                          BorderBrush="Transparent"
+                                          BorderThickness="0" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -112,8 +112,8 @@
         <Setter Property="Height" Value="48" />
         <Setter Property="MinWidth" Value="192" />
         <Setter Property="MaxWidth" Value="240" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0.1,0,0.1,0" />
+        <Setter Property="BorderBrush" Value="Gray" />
         <Setter Property="Padding" Value="4,4,0,4" />
         <Setter Property="Template">
             <Setter.Value>
@@ -133,7 +133,8 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal" >
+                                </VisualState>
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -157,7 +158,7 @@
 
                                 <VisualState x:Name="Selected">
                                     <VisualState.Setters>
-                                        <Setter Target="TabContainer.Background" Value="{ThemeResource TabViewItemHeaderBackground}" />
+                                        <Setter Target="TabContainer.Background" Value="{ThemeResource TabViewItemHeaderBackgroundSelected}" />
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TabViewItemHeaderForegroundSelected}" />
                                         <Setter Target="IconControl.Foreground" Value="{ThemeResource TabViewItemIconForegroundSelected}" />
                                         <Setter Target="CloseButton.Background" Value="{ThemeResource TabViewItemHeaderSelectedCloseButtonBackground}" />

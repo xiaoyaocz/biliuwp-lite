@@ -62,7 +62,7 @@ namespace BiliLite.Services
 
         public static async Task<string> GetWbiSign(string url)
         {
-            var (imgKey,subKey) = await GetWbiKeys();
+            var (imgKey, subKey) = await GetWbiKeys();
 
             // 为请求参数进行 wbi 签名
             var mixinKey = GetMixinKey(imgKey + subKey);
@@ -127,8 +127,21 @@ namespace BiliLite.Services
             {
                 url = $"access_key={SettingService.Account.AccessKey}&";
             }
+            
             return url + $"appkey={apikey.Appkey}&build={build}&mobi_app={_mobi_app}&platform={_platform}&ts={TimeExtensions.GetTimestampS()}";
         }
+
+        /// <summary>
+        /// 获取访问令牌参数
+        /// </summary>
+        /// <param name="apikey"></param>
+        /// <returns></returns>
+        public static string GetAccessParameter(ApiKeyInfo apikey)
+        {
+            var url = $"access_key={SettingService.Account.AccessKey}&appkey={apikey.Appkey}";
+            return url;
+        }
+
         /// <summary>
         /// 默认一些请求头
         /// </summary>

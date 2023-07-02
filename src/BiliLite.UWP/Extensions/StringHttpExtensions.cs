@@ -92,11 +92,20 @@ namespace BiliLite.Extensions
         /// <param name="headers"></param>
         /// <param name="cookies"></param>
         /// <returns></returns>
-        public static async Task<HttpResults> GetHttpResultsWithWebCookie(this string url, IDictionary<string, string> headers = null)
+        public static async Task<HttpResults> GetHttpResultsWithWebCookie(this string url, IDictionary<string, string> headers = null, IDictionary<string,string> extraCookies = null)
         {
             try
             {
                 var cookies = await GetCookies();
+
+                if (extraCookies != null)
+                {
+                    foreach(var kvp in extraCookies.ToList())
+                    {
+                        cookies.Add(kvp.Key, kvp.Value);
+                    }
+                }
+
                 return await url.GetHttpResultsAsync(headers, cookies);
             }
             catch (Exception ex)
