@@ -1,7 +1,7 @@
 {
-    "version": "4.6.4",
-    "version_num": 40604,
-    "version_desc": "更新内容:\r\n\r\n* 添加评论请求错误备用方案\r\n\r\n* 支持视频播放和视频下载选择音质\r\n\r\n* 修复导出视频失败\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.5",
+    "version_num": 40605,
+    "version_desc": "更新内容:\r\n\r\n* 标签页添加左右边框\r\n\r\n* 修复自动切换下一P错误\r\n\r\n* 修复漫游代理播放视频和搜索\r\n\r\n*修复评论备选方案未生效\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
