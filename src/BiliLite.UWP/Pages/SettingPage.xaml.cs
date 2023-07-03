@@ -59,6 +59,10 @@ namespace BiliLite.Pages
                         case 2:
                             rootFrame.RequestedTheme = ElementTheme.Dark;
                             break;
+                        //case 3:
+                        //    // TODO: 切换自定义主题
+                        //    rootFrame.Resources = Application.Current.Resources.ThemeDictionaries["Pink"] as ResourceDictionary;
+                        //    break;
                         default:
                             rootFrame.RequestedTheme = ElementTheme.Default;
                             break;
