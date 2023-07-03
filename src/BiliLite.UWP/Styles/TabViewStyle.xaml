@@ -565,12 +565,12 @@
                                     <RepeatButton
                                         x:Name="ScrollDecreaseButton"
                                         AutomationProperties.AccessibilityView="Raw"
-                                        Content="&#xE76B;"
                                         Delay="50"
                                         HighContrastAdjustment="None"
                                         Interval="100"
-                                        Style="{ThemeResource TabViewScrollButtonStyle}" />
-                                    <!--  Content="&#xEDD9;"  -->
+                                        Style="{ThemeResource TabViewScrollButtonStyle}" >
+                                        <FontIcon FontFamily="{StaticResource BiliIconFont}" FontSize="10" Glyph="&#xe692;"></FontIcon>
+                                    </RepeatButton>
 
                                 </Border>
                                 <Border
@@ -582,12 +582,12 @@
                                     <RepeatButton
                                         x:Name="ScrollIncreaseButton"
                                         AutomationProperties.AccessibilityView="Raw"
-                                        Content="&#xE76C;"
                                         Delay="50"
                                         HighContrastAdjustment="None"
                                         Interval="100"
-                                        Style="{ThemeResource TabViewScrollButtonStyle}" />
-                                    <!--  Content="&#xEDDA;"  -->
+                                        Style="{ThemeResource TabViewScrollButtonStyle}" >
+                                        <FontIcon FontFamily="{StaticResource BiliIconFont}" FontSize="10" Glyph="&#xe693;"></FontIcon>
+                                    </RepeatButton>
 
                                 </Border>
                             </Grid>
