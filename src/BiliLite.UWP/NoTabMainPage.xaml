@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid Background="#66AEAEAE">
+    <Grid Background="{ThemeResource NoTapGridBackground}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>

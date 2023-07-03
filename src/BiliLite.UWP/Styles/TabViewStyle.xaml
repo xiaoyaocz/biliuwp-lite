@@ -9,11 +9,12 @@
     <SolidColorBrush x:Key="TabViewBorderBrush" Color="Transparent"/>
 
     <Style BasedOn="{StaticResource DefaultTabViewStyle}" TargetType="muxc:TabView" />
+
     <Style x:Key="DefaultTabViewStyle" TargetType="muxc:TabView">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="IsTabStop" Value="True" />
-        <Setter Property="Background" Value="Transparent" /> 
+        <Setter Property="Background" Value="{ThemeResource TabViewBackground}" />
         <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
         <Setter Property="Template">
             <Setter.Value>
@@ -37,7 +38,7 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid x:Name="TabContainerGrid"
-                                Background="{TemplateBinding Background}"
+                                Background="{ThemeResource TabViewTabContainerGridColor}"
                                 XYFocusKeyboardNavigation="Enabled">
 
                             <Grid.ColumnDefinitions>
@@ -89,6 +90,7 @@
                             <ContentPresenter
                                 Grid.Column="3"
                                 x:Name="RightContentPresenter"
+                                Background="{ThemeResource TabViewRightContentPresenterColor}"
                                 HorizontalAlignment="Stretch"
                                 Content="{TemplateBinding TabStripFooter}"
                                 ContentTemplate="{TemplateBinding TabStripFooterTemplate}"/>
@@ -105,6 +107,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style TargetType="muxc:TabViewItem">
         <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -119,6 +122,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="muxc:TabViewItem">
                     <Grid x:Name="LayoutRoot"
+                            Background="{ThemeResource TabViewLayoutRootBackground}"
                             Padding="{TemplateBinding Padding}"
                             UseLayoutRounding="False">
                         <Grid.ColumnDefinitions>
@@ -134,6 +138,9 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" >
+                                    <VisualState.Setters>
+                                        <Setter Target="TabContainer.Background" Value="{ThemeResource TabViewItemHeaderBackgroundNormal}" />
+                                    </VisualState.Setters>
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOver">
@@ -398,8 +405,9 @@
 
                         <Grid x:Name="TabContainer"
                             Grid.Column="1"
-                            Background="{TemplateBinding Background}"
+                            Background="{ThemeResource TabViewRightContentPresenterColor}"
                             BorderBrush="{TemplateBinding BorderBrush}"
+                            Margin="0,-4,0,-6"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Control.IsTemplateFocusTarget="True"
                             Padding="{ThemeResource TabViewItemHeaderPadding}"
@@ -454,6 +462,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style TargetType="primitives:TabViewListView">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="IsTabStop" Value="False" />
@@ -556,7 +565,7 @@
                                     <RepeatButton
                                         x:Name="ScrollDecreaseButton"
                                         AutomationProperties.AccessibilityView="Raw"
-                                        Content="&#xE09A;"
+                                        Content="&#xE76B;"
                                         Delay="50"
                                         HighContrastAdjustment="None"
                                         Interval="100"
@@ -573,7 +582,7 @@
                                     <RepeatButton
                                         x:Name="ScrollIncreaseButton"
                                         AutomationProperties.AccessibilityView="Raw"
-                                        Content="&#xE09B;"
+                                        Content="&#xE76C;"
                                         Delay="50"
                                         HighContrastAdjustment="None"
                                         Interval="100"
@@ -681,7 +690,6 @@
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         contract7NotPresent:CornerRadius="{ThemeResource ControlCornerRadius}"
                         BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         AutomationProperties.AccessibilityView="Raw"
                         Background="{TemplateBinding Background}"
                         Content="{TemplateBinding Content}"

@@ -1,0 +1,26 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+    x:Key="Light">
+    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="Transparent" />
+    <Color x:Key="TopPaneBackground">#00000000</Color>
+    <Color x:Key="HighLightColor">#ec407a</Color>
+    <Color x:Key="TextColor">#CC000000</Color>
+    <Color x:Key="CardColor">#0F000000</Color>
+    <Color x:Key="HighLightTextColor">#FFFFFFFF</Color>
+    <Color x:Key="DefaultTextColor">#CC000000</Color>
+    <Color x:Key="SystemColorHighLightColor">#ec407a</Color>
+
+    <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource TopPaneBackground}" />
+    <Color x:Key="NoTapGridBackground">White</Color>
+
+    <Color x:Key="TabViewBackground">Transparent</Color>
+    <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource TopPaneBackground}"/>
+    <SolidColorBrush x:Key="TabViewItemHeaderBackgroundNormal" Color="Transparent"/>
+    <Color x:Key="TabViewRightContentPresenterColor">#1ACFCFCF</Color>
+    <Color x:Key="TabViewTabContainerGridColor">#1ACFCFCF</Color>
+    <Color x:Key="TabViewLayoutRootBackground">#1ACFCFCF</Color>
+    
+</ResourceDictionary>
