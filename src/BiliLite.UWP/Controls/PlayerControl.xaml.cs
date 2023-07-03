@@ -85,6 +85,7 @@ namespace BiliLite.Controls
         readonly PlayerVM playerHelper;
         readonly NSDanmaku.Helper.DanmakuParse danmakuParse;
         private BiliPlayUrlQualitesInfo _playUrlInfo;
+        private PlayerKeyRightAction m_playerKeyRightAction;
         /// <summary>
         /// 播放地址信息
         /// </summary>
@@ -128,6 +129,7 @@ namespace BiliLite.Controls
             danmuTimer.Tick += DanmuTimer_Tick;
             this.Loaded += PlayerControl_Loaded;
             this.Unloaded += PlayerControl_Unloaded;
+            m_playerKeyRightAction = (PlayerKeyRightAction)SettingService.GetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, (int)PlayerKeyRightAction.ControlProgress);
 
             gestureRecognizer = new GestureRecognizer();
             InitializeGesture();
@@ -173,6 +175,7 @@ namespace BiliLite.Controls
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             Window.Current.CoreWindow.KeyDown -= PlayerControl_KeyDown;
+            Window.Current.CoreWindow.KeyUp -= PlayerControl_KeyUp;
             if (_systemMediaTransportControls != null)
             {
                 _systemMediaTransportControls.DisplayUpdater.ClearAll();
@@ -185,6 +188,7 @@ namespace BiliLite.Controls
         {
             DanmuControl.ClearAll();
             Window.Current.CoreWindow.KeyDown += PlayerControl_KeyDown;
+            Window.Current.CoreWindow.KeyUp += PlayerControl_KeyUp;
             BtnFoucs.Focus(FocusState.Programmatic);
             _systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
             _systemMediaTransportControls.IsPlayEnabled = true;
@@ -226,6 +230,22 @@ namespace BiliLite.Controls
                     break;
             }
         }
+
+        private void PlayerControl_KeyUp(CoreWindow sender, KeyEventArgs args)
+        {
+            switch (args.VirtualKey)
+            {
+                case Windows.System.VirtualKey.Right:
+                    {
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.AcceleratePlay)
+                        {
+                            StopHighRateSpeedPlay();
+                        }
+                    }
+                    break;
+            }
+        }
+
         private async void PlayerControl_KeyDown(CoreWindow sender, KeyEventArgs args)
         {
             var elent = FocusManager.GetFocusedElement();
@@ -267,7 +287,11 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.Right:
                     {
-                        if (Player.PlayState == PlayState.Playing || Player.PlayState == PlayState.Pause)
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.AcceleratePlay)
+                        {
+                            StartHighRateSpeedPlay();
+                        }
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.ControlProgress && (Player.PlayState == PlayState.Playing || Player.PlayState == PlayState.Pause))
                         {
                             var _position = Player.Position + 3;
                             if (_position > Player.Duration)
@@ -1783,7 +1807,7 @@ namespace BiliLite.Controls
         private void StopHolding()
         {
             HandlingHolding = false;
-            StopHightRateSpeedPlay();
+            StopHighRateSpeedPlay();
         }
 
         private void StartHighRateSpeedPlay()
@@ -1794,7 +1818,7 @@ namespace BiliLite.Controls
             Player.SetRate(highRatePlaySpeed);
         }
 
-        private void StopHightRateSpeedPlay()
+        private void StopHighRateSpeedPlay()
         {
             ToolTip.Visibility = Visibility.Collapsed;
             Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));

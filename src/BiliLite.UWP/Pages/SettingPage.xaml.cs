@@ -350,6 +350,16 @@ namespace BiliLite.Pages
                 });
             });
 
+            // 方向键右键行为
+            cbPlayerKeyRightAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, (int)PlayerKeyRightAction.ControlProgress);
+            cbPlayerKeyRightAction.Loaded += (sender, e) =>
+            {
+                cbPlayerKeyRightAction.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, cbPlayerKeyRightAction.SelectedIndex);
+                };
+            };
+
             // 按住手势行为
             cbPlayerHoldingGestureAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, (int)PlayerHoldingAction.None);
             cbPlayerHoldingGestureAction.Loaded += (sender, e) =>

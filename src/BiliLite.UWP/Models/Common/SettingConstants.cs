@@ -400,6 +400,11 @@ namespace BiliLite.Models.Common
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
 
             /// <summary>
+            /// 方向键右键行为
+            /// </summary>
+            public const string PLAYER_KEY_RIGHT_ACTION = "PlayerKeyRightAction";
+
+            /// <summary>
             /// 按住手势行为
             /// </summary>
             public const string HOLDING_GESTURE_ACTION = "HoldingGestureAction";
