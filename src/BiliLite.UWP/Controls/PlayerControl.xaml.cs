@@ -1756,27 +1756,48 @@ namespace BiliLite.Controls
             {
                 case HoldingState.Started:
                     {
-                        HandlingHolding = true;
-                        TxtToolTip.Text = "倍速播放中";
-                        ToolTip.Visibility = Visibility.Visible;
-                        Player.SetRate(2.0d);
+                        StartHolding();
                         break;
                     }
                 case HoldingState.Completed:
                     {
-                        HandlingHolding = false;
-                        ToolTip.Visibility = Visibility.Collapsed;
-                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        StopHolding();
                         break;
                     }
                 case HoldingState.Canceled:
                     {
-                        HandlingHolding = false;
-                        ToolTip.Visibility = Visibility.Collapsed;
-                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        var canCancel = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, true);
+                        if (!canCancel) break;
+                        StopHolding();
                         break;
                     }
             }
+        }
+
+        private void StartHolding()
+        {
+            HandlingHolding = true;
+            StartHighRateSpeedPlay();
+        }
+
+        private void StopHolding()
+        {
+            HandlingHolding = false;
+            StopHightRateSpeedPlay();
+        }
+
+        private void StartHighRateSpeedPlay()
+        {
+            TxtToolTip.Text = "倍速播放中";
+            ToolTip.Visibility = Visibility.Visible;
+            var highRatePlaySpeed = SettingService.GetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, 2.0d);
+            Player.SetRate(highRatePlaySpeed);
+        }
+
+        private void StopHightRateSpeedPlay()
+        {
+            ToolTip.Visibility = Visibility.Collapsed;
+            Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
         }
 
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
@@ -1838,6 +1859,10 @@ namespace BiliLite.Controls
 
         private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
+            if (HandlingHolding)
+            {
+                StopHolding();
+            }
             HandlingGesture = false;
             DirectionX = false;
             DirectionY = false;

@@ -350,12 +350,33 @@ namespace BiliLite.Pages
                 });
             });
 
+            // 按住手势行为
             cbPlayerHoldingGestureAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, (int)PlayerHoldingAction.None);
             cbPlayerHoldingGestureAction.Loaded += (sender, e) =>
             {
                 cbPlayerHoldingGestureAction.SelectionChanged += (obj, args) =>
                 {
                     SettingService.SetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, cbPlayerHoldingGestureAction.SelectedIndex);
+                };
+            };
+
+            // 按住手势可被其他手势取消
+            swPlayerHoldingGestureCanCancel.IsOn = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, true);
+            swPlayerHoldingGestureCanCancel.Loaded += (sender, e) =>
+            {
+                swPlayerHoldingGestureCanCancel.Toggled += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, swPlayerHoldingGestureCanCancel.IsOn);
+                };
+            };
+
+            // 倍速播放速度
+            cbRatePlaySpeed.SelectedIndex = SettingConstants.Player.HIGH_RATE_PLAY_SPEED_LIST.IndexOf(SettingService.GetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, 2.0d));
+            cbRatePlaySpeed.Loaded += (sender, e) =>
+            {
+                cbRatePlaySpeed.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, SettingConstants.Player.HIGH_RATE_PLAY_SPEED_LIST[cbRatePlaySpeed.SelectedIndex]);
                 };
             };
 

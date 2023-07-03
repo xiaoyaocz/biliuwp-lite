@@ -281,7 +281,16 @@
                                 <ComboBoxItem Content="倍速播放" ></ComboBoxItem>
                             </ComboBox.Items>
                         </ComboBox>
-                        
+                        <TextBlock  Margin="0 16 0 8" FontSize="16">播放器按住手势可被其他手势取消</TextBlock>
+                        <ToggleSwitch x:Name="swPlayerHoldingGestureCanCancel" ></ToggleSwitch>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">倍速播放速度</TextBlock>
+                        <ComboBox x:Name="cbRatePlaySpeed" SelectedIndex="0" MinWidth="200">
+                            <ComboBox.Items>
+                                <ComboBoxItem Content="3.0x" ></ComboBoxItem>
+                                <ComboBoxItem Content="2.0x" ></ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+
                         <TextBlock  Margin="0 16 0 8" FontSize="16">自动打开AI字幕</TextBlock>
                         <ToggleSwitch  x:Name="swPlayerSettingAutoOpenAISubtitle"></ToggleSwitch>
                         <TextBlock>部分自动生成的AI字幕会与视频自带字幕冲突</TextBlock>
