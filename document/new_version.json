@@ -1,7 +1,7 @@
 {
-    "version": "4.6.5",
-    "version_num": 40605,
-    "version_desc": "更新内容:\r\n\r\n* 标签页添加左右边框\r\n\r\n* 修复自动切换下一P错误\r\n\r\n* 修复漫游代理播放视频和搜索\r\n\r\n*修复评论备选方案未生效\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.6",
+    "version_num": 40606,
+    "version_desc": "更新内容:\r\n\r\n* 调整标签栏样式\r\n\r\n* 调整非标签页模式背景色\r\n\r\n* 支持设置方向键右键行为为倍速播放\r\n\r\n* 支持设置按住手势是否可被其他手势取消\r\n\r\n* 支持设置倍速播放速度2倍速和3倍速\r\n\r\n* 修复标签页前后按钮乱码\r\n\r\n* 修复查询评论错误\r\n\r\n* 修复铺满窗口后退出全屏状态错误\r\n\r\n* 修复快捷键控制分p错误\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
