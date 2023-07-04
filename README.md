@@ -36,9 +36,9 @@ https://github.com/ywmoyue/biliuwp-lite/discussions
 
 ## 截图
 
-![](./document/_img/readme-img-01.drawio.png)
+![](./document/_img/readme-img-01.jpg)
 
-![](./document/_img/readme-img-02.drawio.png)
+![](./document/_img/readme-img-02.jpg)
 
 ## 构建
 
