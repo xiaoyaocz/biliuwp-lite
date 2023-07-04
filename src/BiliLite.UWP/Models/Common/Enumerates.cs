@@ -93,6 +93,19 @@
         Cheese = 3
     }
 
+    public enum PlayerKeyRightAction
+    {
+        /// <summary>
+        /// 操作进度条
+        /// </summary>
+        ControlProgress,
+
+        /// <summary>
+        /// 倍速播放
+        /// </summary>
+        AcceleratePlay
+    }
+
     public enum PlayerHoldingAction
     {
         /// <summary>

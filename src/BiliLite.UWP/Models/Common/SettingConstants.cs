@@ -400,9 +400,25 @@ namespace BiliLite.Models.Common
             public const string DOUBLE_CLICK_FULL_SCREEN = "PlayerDoubleClickFullScreen";
 
             /// <summary>
+            /// 方向键右键行为
+            /// </summary>
+            public const string PLAYER_KEY_RIGHT_ACTION = "PlayerKeyRightAction";
+
+            /// <summary>
             /// 按住手势行为
             /// </summary>
             public const string HOLDING_GESTURE_ACTION = "HoldingGestureAction";
+
+            /// <summary>
+            /// 按住手势可被其他手势取消
+            /// </summary>
+            public const string HOLDING_GESTURE_CAN_CANCEL = "HoldingGestureCanCancel";
+
+            /// <summary>
+            /// 倍速播放速度
+            /// </summary>
+            public const string HIGH_RATE_PLAY_SPEED = "HighRatePlaySpeed";
+            public static List<double> HIGH_RATE_PLAY_SPEED_LIST = new List<double>() { 3.0d, 2.0d };
 
             /// <summary>
             /// 自动打开AI字幕

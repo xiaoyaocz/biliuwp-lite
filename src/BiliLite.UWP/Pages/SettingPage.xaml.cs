@@ -59,6 +59,10 @@ namespace BiliLite.Pages
                         case 2:
                             rootFrame.RequestedTheme = ElementTheme.Dark;
                             break;
+                        //case 3:
+                        //    // TODO: 切换自定义主题
+                        //    rootFrame.Resources = Application.Current.Resources.ThemeDictionaries["Pink"] as ResourceDictionary;
+                        //    break;
                         default:
                             rootFrame.RequestedTheme = ElementTheme.Default;
                             break;
@@ -346,12 +350,43 @@ namespace BiliLite.Pages
                 });
             });
 
+            // 方向键右键行为
+            cbPlayerKeyRightAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, (int)PlayerKeyRightAction.ControlProgress);
+            cbPlayerKeyRightAction.Loaded += (sender, e) =>
+            {
+                cbPlayerKeyRightAction.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, cbPlayerKeyRightAction.SelectedIndex);
+                };
+            };
+
+            // 按住手势行为
             cbPlayerHoldingGestureAction.SelectedIndex = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, (int)PlayerHoldingAction.None);
             cbPlayerHoldingGestureAction.Loaded += (sender, e) =>
             {
                 cbPlayerHoldingGestureAction.SelectionChanged += (obj, args) =>
                 {
                     SettingService.SetValue(SettingConstants.Player.HOLDING_GESTURE_ACTION, cbPlayerHoldingGestureAction.SelectedIndex);
+                };
+            };
+
+            // 按住手势可被其他手势取消
+            swPlayerHoldingGestureCanCancel.IsOn = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, true);
+            swPlayerHoldingGestureCanCancel.Loaded += (sender, e) =>
+            {
+                swPlayerHoldingGestureCanCancel.Toggled += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, swPlayerHoldingGestureCanCancel.IsOn);
+                };
+            };
+
+            // 倍速播放速度
+            cbRatePlaySpeed.SelectedIndex = SettingConstants.Player.HIGH_RATE_PLAY_SPEED_LIST.IndexOf(SettingService.GetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, 2.0d));
+            cbRatePlaySpeed.Loaded += (sender, e) =>
+            {
+                cbRatePlaySpeed.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, SettingConstants.Player.HIGH_RATE_PLAY_SPEED_LIST[cbRatePlaySpeed.SelectedIndex]);
                 };
             };
 

@@ -576,8 +576,18 @@
                 </Grid>
                 <!--亮度-->
                 <Grid x:Name="BrightnessShield" Tapped="Grid_Tapped" Background="#99000000" Opacity="0"></Grid>
-                <Border x:Name="ToolTip" Visibility="Collapsed" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="8" Padding="16" Background="#CCFFFFFF">
-                    <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="20" Text=""></TextBlock>
+                <Border 
+                    x:Name="ToolTip" 
+                    Visibility="Collapsed" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center" 
+                    CornerRadius="8" 
+                    Padding="16" 
+                    Background="#CCFFFFFF">
+                    <Border.RenderTransform>
+                        <TranslateTransform Y="200"></TranslateTransform>
+                    </Border.RenderTransform>
+                    <TextBlock x:Name="TxtToolTip" Foreground="Black" FontSize="14" Text=""></TextBlock>
                 </Border>
                 <Grid>
                     <StackPanel VerticalAlignment="Center" Visibility="{Binding ElementName=Player,Path=Buffering,Mode=OneWay}" x:Name="GridBuffering">

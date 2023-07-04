@@ -30,6 +30,7 @@ namespace BiliLite.Controls
         EmoteVM emoteVM;
         bool m_disableShowPicture = false;
         private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+        private CommentCursor m_nextCursor;
 
         public CommentControl()
         {
@@ -168,7 +169,8 @@ namespace BiliLite.Controls
                 var errorCheck = await re.GetResult<object>();
                 if (!re.status || errorCheck.code < 0)
                 {
-                    re = await commentApi.CommentV2(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
+                    re = await commentApi.CommentV2(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page,
+                        _loadCommentInfo.CommentMode, offsetStr: m_nextCursor?.PaginationReply?.NextOffset).Request();
                 }
                 if (!re.status)
                 {
@@ -226,6 +228,8 @@ namespace BiliLite.Controls
                 {
                     btn_LoadMore.Visibility = Visibility.Visible;
                 }
+
+                m_nextCursor = model.data.Cursor;
             }
             else
             {
@@ -428,12 +432,14 @@ namespace BiliLite.Controls
 
         private void btn_HotSort_Click(object sender, RoutedEventArgs e)
         {
+            m_nextCursor = null;
             _loadCommentInfo.CommentSort = CommentSort.Hot;
             LoadComment(_loadCommentInfo);
         }
 
         private void btn_NewSort_Click(object sender, RoutedEventArgs e)
         {
+            m_nextCursor = null;
             _loadCommentInfo.CommentSort = CommentSort.New;
             LoadComment(_loadCommentInfo);
         }
@@ -695,6 +701,8 @@ namespace BiliLite.Controls
         public int num { get; set; }
         public int size { get; set; }
 
+        public CommentCursor Cursor { get; set; }
+
         public ObservableCollection<CommentModel> hots { get; set; }
         public ObservableCollection<CommentModel> replies { get; set; }
 
@@ -702,6 +710,19 @@ namespace BiliLite.Controls
         public CommentModel top { get; set; }
 
     }
+
+    public class CommentCursor
+    {
+        [JsonProperty("pagination_reply")]
+        public CommentPagination PaginationReply { get; set; }
+    }
+
+    public class CommentPagination
+    {
+        [JsonProperty("next_offset")]
+        public string NextOffset { get; set; }
+    }
+
     public class CommentModel : INotifyPropertyChanged
     {
 

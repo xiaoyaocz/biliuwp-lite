@@ -1,6 +1,7 @@
 ﻿using System;
 using BiliLite.Extensions;
 using BiliLite.Services;
+using Newtonsoft.Json;
 
 namespace BiliLite.Models.Requests.Api
 {
@@ -52,15 +53,21 @@ namespace BiliLite.Models.Requests.Api
         /// <param name="type"></param>
         /// <param name="ps"></param>
         /// <returns></returns>
-        public ApiModel CommentV2(string oid, CommentSort sort, int pn, int type, int ps = 30)
+        public ApiModel CommentV2(string oid, CommentSort sort, int pn, int type, int ps = 30, string offsetStr = null)
         {
             var csrf = BiliExtensions.GetCSRFToken();
             var mode = sort == CommentSort.Hot ? 3 : 2;
+            var pagination = new
+            {
+                offset = offsetStr
+            };
+            var paginationStr = JsonConvert.SerializeObject(pagination);
+
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/v2/reply/main",
-                parameter = $"oid={oid}&next={pn}&ps={ps}&mode={mode}&type={type}&csrf={csrf}",
+                parameter = $"oid={oid}&ps={ps}&mode={mode}&type={type}&csrf={csrf}&pagination_str={paginationStr}",
                 need_cookie = true,
             };
             //api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);

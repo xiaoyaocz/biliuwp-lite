@@ -46,6 +46,7 @@ namespace BiliLite.Controls
 {
     public sealed partial class PlayerControl : UserControl, IDisposable
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
         public event PropertyChangedEventHandler PropertyChanged;
         private GestureRecognizer gestureRecognizer;
         private void DoPropertyChanged(string name)
@@ -85,6 +86,7 @@ namespace BiliLite.Controls
         readonly PlayerVM playerHelper;
         readonly NSDanmaku.Helper.DanmakuParse danmakuParse;
         private BiliPlayUrlQualitesInfo _playUrlInfo;
+        private PlayerKeyRightAction m_playerKeyRightAction;
         /// <summary>
         /// 播放地址信息
         /// </summary>
@@ -128,6 +130,7 @@ namespace BiliLite.Controls
             danmuTimer.Tick += DanmuTimer_Tick;
             this.Loaded += PlayerControl_Loaded;
             this.Unloaded += PlayerControl_Unloaded;
+            m_playerKeyRightAction = (PlayerKeyRightAction)SettingService.GetValue(SettingConstants.Player.PLAYER_KEY_RIGHT_ACTION, (int)PlayerKeyRightAction.ControlProgress);
 
             gestureRecognizer = new GestureRecognizer();
             InitializeGesture();
@@ -173,6 +176,7 @@ namespace BiliLite.Controls
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             Window.Current.CoreWindow.KeyDown -= PlayerControl_KeyDown;
+            Window.Current.CoreWindow.KeyUp -= PlayerControl_KeyUp;
             if (_systemMediaTransportControls != null)
             {
                 _systemMediaTransportControls.DisplayUpdater.ClearAll();
@@ -185,6 +189,7 @@ namespace BiliLite.Controls
         {
             DanmuControl.ClearAll();
             Window.Current.CoreWindow.KeyDown += PlayerControl_KeyDown;
+            Window.Current.CoreWindow.KeyUp += PlayerControl_KeyUp;
             BtnFoucs.Focus(FocusState.Programmatic);
             _systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
             _systemMediaTransportControls.IsPlayEnabled = true;
@@ -226,6 +231,22 @@ namespace BiliLite.Controls
                     break;
             }
         }
+
+        private void PlayerControl_KeyUp(CoreWindow sender, KeyEventArgs args)
+        {
+            switch (args.VirtualKey)
+            {
+                case Windows.System.VirtualKey.Right:
+                    {
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.AcceleratePlay)
+                        {
+                            StopHighRateSpeedPlay();
+                        }
+                    }
+                    break;
+            }
+        }
+
         private async void PlayerControl_KeyDown(CoreWindow sender, KeyEventArgs args)
         {
             var elent = FocusManager.GetFocusedElement();
@@ -267,7 +288,11 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.Right:
                     {
-                        if (Player.PlayState == PlayState.Playing || Player.PlayState == PlayState.Pause)
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.AcceleratePlay)
+                        {
+                            StartHighRateSpeedPlay();
+                        }
+                        if (m_playerKeyRightAction == PlayerKeyRightAction.ControlProgress && (Player.PlayState == PlayState.Playing || Player.PlayState == PlayState.Pause))
                         {
                             var _position = Player.Position + 3;
                             if (_position > Player.Duration)
@@ -362,7 +387,7 @@ namespace BiliLite.Controls
                     }
                     else
                     {
-                        await SetPlayItem(EpisodeList.SelectedIndex - 1);
+                        EpisodeList.SelectedIndex = EpisodeList.SelectedIndex - 1;
                     }
                     break;
                 case Windows.System.VirtualKey.X:
@@ -374,7 +399,7 @@ namespace BiliLite.Controls
                     }
                     else
                     {
-                        await SetPlayItem(EpisodeList.SelectedIndex + 1);
+                        EpisodeList.SelectedIndex = EpisodeList.SelectedIndex + 1;
                     }
                     break;
                 case Windows.System.VirtualKey.F1:
@@ -840,6 +865,7 @@ namespace BiliLite.Controls
             {
                 index = PlayInfos.Count - 1;
             }
+
             CurrentPlayIndex = index;
             CurrentPlayItem = PlayInfos[index];
             if (CurrentPlayItem.is_interaction)
@@ -1591,6 +1617,7 @@ namespace BiliLite.Controls
                 BottomBtnFull.Visibility = Visibility.Visible;
                 if (IsFullWindow)
                 {
+                    FullWidnow(true);
                     BottomBtnFullWindows.Visibility = Visibility.Collapsed;
                     BottomBtnExitFullWindows.Visibility = Visibility.Visible;
                 }
@@ -1756,27 +1783,48 @@ namespace BiliLite.Controls
             {
                 case HoldingState.Started:
                     {
-                        HandlingHolding = true;
-                        TxtToolTip.Text = "倍速播放中";
-                        ToolTip.Visibility = Visibility.Visible;
-                        Player.SetRate(2.0d);
+                        StartHolding();
                         break;
                     }
                 case HoldingState.Completed:
                     {
-                        HandlingHolding = false;
-                        ToolTip.Visibility = Visibility.Collapsed;
-                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        StopHolding();
                         break;
                     }
                 case HoldingState.Canceled:
                     {
-                        HandlingHolding = false;
-                        ToolTip.Visibility = Visibility.Collapsed;
-                        Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
+                        var canCancel = SettingService.GetValue(SettingConstants.Player.HOLDING_GESTURE_CAN_CANCEL, true);
+                        if (!canCancel) break;
+                        StopHolding();
                         break;
                     }
             }
+        }
+
+        private void StartHolding()
+        {
+            HandlingHolding = true;
+            StartHighRateSpeedPlay();
+        }
+
+        private void StopHolding()
+        {
+            HandlingHolding = false;
+            StopHighRateSpeedPlay();
+        }
+
+        private void StartHighRateSpeedPlay()
+        {
+            TxtToolTip.Text = "倍速播放中";
+            ToolTip.Visibility = Visibility.Visible;
+            var highRatePlaySpeed = SettingService.GetValue(SettingConstants.Player.HIGH_RATE_PLAY_SPEED, 2.0d);
+            Player.SetRate(highRatePlaySpeed);
+        }
+
+        private void StopHighRateSpeedPlay()
+        {
+            ToolTip.Visibility = Visibility.Collapsed;
+            Player.SetRate(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
         }
 
         private void OnManipulationStarted(object sender, ManipulationStartedEventArgs e)
@@ -1838,6 +1886,10 @@ namespace BiliLite.Controls
 
         private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
+            if (HandlingHolding)
+            {
+                StopHolding();
+            }
             HandlingGesture = false;
             DirectionX = false;
             DirectionY = false;
@@ -2302,6 +2354,7 @@ namespace BiliLite.Controls
         }
         private void Player_PlayMediaError(object sender, string e)
         {
+            _logger.Error($"播放失败:{e}");
             ShowDialog(e, "播放失败");
         }
 
@@ -2369,6 +2422,7 @@ namespace BiliLite.Controls
             }
             if (!result.result)
             {
+                _logger.Error($"播放失败:{result.message}");
                 ShowDialog(result.message, "播放失败");
                 return;
             }
