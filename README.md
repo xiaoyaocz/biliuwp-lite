@@ -26,9 +26,19 @@ https://github.com/xiaoyaocz/biliuwp-lite
 
 https://github.com/ywmoyue/biliuwp-lite/releases
 
+## 安装
+
+https://github.com/ywmoyue/biliuwp-lite/blob/master/document/install-readme.md
+
 ## 讨论
 
 https://github.com/ywmoyue/biliuwp-lite/discussions
+
+## 截图
+
+![](./document/_img/readme-img-01.drawio.png)
+
+![](./document/_img/readme-img-02.drawio.png)
 
 ## 构建
 
