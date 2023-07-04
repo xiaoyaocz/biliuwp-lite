@@ -46,6 +46,7 @@ namespace BiliLite.Controls
 {
     public sealed partial class PlayerControl : UserControl, IDisposable
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
         public event PropertyChangedEventHandler PropertyChanged;
         private GestureRecognizer gestureRecognizer;
         private void DoPropertyChanged(string name)
@@ -386,7 +387,7 @@ namespace BiliLite.Controls
                     }
                     else
                     {
-                        await SetPlayItem(EpisodeList.SelectedIndex - 1);
+                        EpisodeList.SelectedIndex = EpisodeList.SelectedIndex - 1;
                     }
                     break;
                 case Windows.System.VirtualKey.X:
@@ -398,7 +399,7 @@ namespace BiliLite.Controls
                     }
                     else
                     {
-                        await SetPlayItem(EpisodeList.SelectedIndex + 1);
+                        EpisodeList.SelectedIndex = EpisodeList.SelectedIndex + 1;
                     }
                     break;
                 case Windows.System.VirtualKey.F1:
@@ -864,6 +865,7 @@ namespace BiliLite.Controls
             {
                 index = PlayInfos.Count - 1;
             }
+
             CurrentPlayIndex = index;
             CurrentPlayItem = PlayInfos[index];
             if (CurrentPlayItem.is_interaction)
@@ -1615,6 +1617,7 @@ namespace BiliLite.Controls
                 BottomBtnFull.Visibility = Visibility.Visible;
                 if (IsFullWindow)
                 {
+                    FullWidnow(true);
                     BottomBtnFullWindows.Visibility = Visibility.Collapsed;
                     BottomBtnExitFullWindows.Visibility = Visibility.Visible;
                 }
@@ -2351,6 +2354,7 @@ namespace BiliLite.Controls
         }
         private void Player_PlayMediaError(object sender, string e)
         {
+            _logger.Error($"播放失败:{e}");
             ShowDialog(e, "播放失败");
         }
 
@@ -2418,6 +2422,7 @@ namespace BiliLite.Controls
             }
             if (!result.result)
             {
+                _logger.Error($"播放失败:{result.message}");
                 ShowDialog(result.message, "播放失败");
                 return;
             }
