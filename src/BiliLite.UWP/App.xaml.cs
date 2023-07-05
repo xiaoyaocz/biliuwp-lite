@@ -37,8 +37,6 @@ namespace BiliLite
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-
             App.Current.UnhandledException += App_UnhandledException;
             FFmpegInteropLogging.SetLogLevel(LogLevel.Info);
             FFmpegInteropLogging.SetLogProvider(this);
@@ -47,6 +45,7 @@ namespace BiliLite
             RegisterService();
             OpenCCNET.ZhConverter.Initialize();
             this.Suspending += OnSuspending;
+            this.InitializeComponent();
         }
         private void RegisterExceptionHandlingSynchronizationContext()
         {
@@ -89,11 +88,11 @@ namespace BiliLite
         /// 将在启动应用程序以打开特定文件等情况下使用。
         /// </summary>
         /// <param name="e">有关启动请求和过程的详细信息。</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 
             Navigation(e.Arguments, e.PrelaunchActivated);
-
+            await LogService.DeleteExpiredLogFile();
         }
 
 

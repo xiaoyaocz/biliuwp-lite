@@ -24,7 +24,7 @@ namespace BiliLite.Services
         public static void Init()
         {
             config = new LoggingConfiguration();
-            Windows.Storage.StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            var storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             var logfile = new NLog.Targets.FileTarget()
             {
                 Name = "logfile",
@@ -37,19 +37,21 @@ namespace BiliLite.Services
             config.AddRule(LogLevel.Error, LogLevel.Error, logfile);
             config.AddRule(LogLevel.Fatal, LogLevel.Fatal, logfile);
             LogManager.Configuration = config;
-            // todo: add version log
-            //logger.Info("");
+        }
+
+        public static async Task DeleteExpiredLogFile()
+        {
+            var storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
             if (IsAutoClearLogFile)
             {
-                // todo: add await
-                DeleteFile(storageFolder.Path + @"\log\").RunWithoutAwait();
+                await DeleteFile(storageFolder.Path + @"\log\");
             }
         }
 
-        public static async Task DeleteFile(string path)
+        private static async Task DeleteFile(string path)
         {
-            string pattern = "yyyyMMdd";
-            int days = AutoClearLogFileDay;
+            var pattern = "yyyyMMdd";
+            var days = AutoClearLogFileDay;
             var folder = await StorageFolder.GetFolderFromPathAsync(path);
 
             var files = await folder.GetFilesAsync();
