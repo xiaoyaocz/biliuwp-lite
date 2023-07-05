@@ -17,6 +17,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using Windows.UI.Xaml.Controls.Primitives;
+using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Common.Video;
 using BiliLite.ViewModels.Download;
 using BiliLite.Models.Download;

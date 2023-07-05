@@ -9,12 +9,12 @@
      xmlns:fa="using:FontAwesome5"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:convert="using:BiliLite.Converters" xmlns:modules="using:BiliLite.Modules"
+    xmlns:comment="using:BiliLite.ViewModels.Comment"
     d:DesignHeight="300"
-    x:Name="comment"
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <convert:DatetimeConvert x:Name="datetime"></convert:DatetimeConvert>
+        <convert:DatetimeConvert x:Name="Datetime"></convert:DatetimeConvert>
         <Style TargetType="ListViewItem" x:Key="commentStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
             <Setter Property="BorderThickness" Value="0 0 0 1"></Setter>
@@ -31,7 +31,7 @@
         <convert:ColorConvert x:Key="colorConvert" ></convert:ColorConvert>
         <Flyout  x:Key="FaceFlyout" x:Name="FaceFlyout">
             <Grid Width="320">
-                <Pivot x:Name="pivot_face" ItemsSource="{x:Bind Path=emoteVM.Packages,Mode=OneWay}">
+                <Pivot x:Name="PivotFace" ItemsSource="{x:Bind Path=emoteVM.Packages,Mode=OneWay}">
                     <Pivot.HeaderTemplate>
                         <DataTemplate x:DataType="modules:EmotePackageModel">
                             <TextBlock FontSize="18" Text="{x:Bind text}"></TextBlock>
@@ -66,10 +66,10 @@
         </Flyout>
 
         <MenuFlyout x:Key="menu">
-            <MenuFlyoutItem  Click="btn_DeleteComment_Click" Visibility="{Binding showDelete}">删除</MenuFlyoutItem>
+            <MenuFlyoutItem  Click="BtnDeleteComment_Click" Visibility="{Binding showDelete}">删除</MenuFlyoutItem>
             <MenuFlyoutItem>举报</MenuFlyoutItem>
         </MenuFlyout>
-        <DataTemplate x:Key="commentTemplate" x:DataType="local:CommentModel">
+        <DataTemplate x:Key="commentTemplate" x:DataType="comment:CommentViewModel">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -84,24 +84,24 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <HyperlinkButton HorizontalAlignment="Center" Click="btn_User_Click" Tag="{x:Bind mid}" VerticalAlignment="Top" Padding="0" Margin="0" Grid.RowSpan="2">
+                <HyperlinkButton HorizontalAlignment="Center" Click="BtnUser_Click" Tag="{x:Bind Mid}" VerticalAlignment="Top" Padding="0" Margin="0" Grid.RowSpan="2">
                     <Grid>
                         <Ellipse Width="36" Height="36" Margin="12">
                             <Ellipse.Fill>
-                                <ImageBrush Stretch="UniformToFill" ImageSource="{x:Bind Path=member.avatar}"/>
+                                <ImageBrush Stretch="UniformToFill" ImageSource="{x:Bind Path=Member.Avatar}"/>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <Image Width="56"  Height="56" Source="{x:Bind Path=member.pendant_str}"></Image>
-                        <Image Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="8" Height="16" Source="{x:Bind Path=member.Verify}"></Image>
+                        <Image Width="56"  Height="56" Source="{x:Bind Path=Member.PendantStr}"></Image>
+                        <Image Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="8" Height="16" Source="{x:Bind Path=Member.Verify}"></Image>
                     </Grid>
                 </HyperlinkButton>
                 <!--粉丝牌-->
                 <Grid x:Name="FansNarrow" Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay,Converter={StaticResource display}}" Margin="8 0"  Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <Border  Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                    <Border  Visibility="{x:Bind Path=Member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}" >
                         <Border.Background>
                             <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                                <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
-                                <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color_end,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
+                                <GradientStop Color="{x:Bind Path=Member.FansDetail.MedalColor,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
+                                <GradientStop Color="{x:Bind Path=Member.FansDetail.MedalColorEnd,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
                             </LinearGradientBrush>
                         </Border.Background>
 
@@ -111,27 +111,27 @@
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color_name,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
-                            <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
+                            <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=Member.FansDetail.MedalColorName,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=Member.FansDetail.MedalName,Mode=OneWay}"></TextBlock>
+                            <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
                             <Grid Background="White" Grid.Column="2">
-                                <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=member.fans_detail.medal_color_level,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                                <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=Member.FansDetail.MedalColorLevel,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=Member.FansDetail.Level,Mode=OneWay}"></TextBlock>
                             </Grid>
                         </Grid>
                     </Border>
                 </Grid>
                 
                 <StackPanel Orientation="Horizontal" Margin="4 0" Grid.Column="1" >
-                    <TextBlock VerticalAlignment="Center" Visibility="{x:Bind showTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
-                    <TextBlock  Text="{x:Bind Path=member.uname}" 
-                                Foreground="{x:Bind Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
-                    <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=member.LV}"></Image>
+                    <TextBlock VerticalAlignment="Center" Visibility="{x:Bind ShowTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
+                    <TextBlock  Text="{x:Bind Path=Member.Uname}" 
+                                Foreground="{x:Bind Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
+                    <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=Member.LV}"></Image>
                     <!--粉丝牌-->
                     <Grid Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay}" Margin="0 4 0 0" VerticalAlignment="Center">
-                        <Border  Visibility="{x:Bind Path=member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                        <Border  Visibility="{x:Bind Path=Member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}" >
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
-                                    <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
-                                    <GradientStop Color="{x:Bind Path=member.fans_detail.medal_color_end,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
+                                    <GradientStop Color="{x:Bind Path=Member.FansDetail.MedalColor,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
+                                    <GradientStop Color="{x:Bind Path=Member.FansDetail.MedalColorEnd,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}" Offset="1"/>
                                 </LinearGradientBrush>
                             </Border.Background>
 
@@ -141,10 +141,10 @@
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=member.fans_detail.medal_color_name,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.medal_name,Mode=OneWay}"></TextBlock>
-                                <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=member.fans_detail.medal_color_border,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
+                                <TextBlock Margin="4 0" FontSize="10" Foreground="{x:Bind Path=Member.FansDetail.MedalColorName,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=Member.FansDetail.MedalName,Mode=OneWay}"></TextBlock>
+                                <Grid Grid.Column="1"  Width="1" VerticalAlignment="Stretch" Background="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}"></Grid>
                                 <Grid Background="White" Grid.Column="2">
-                                    <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=member.fans_detail.medal_color_level,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=member.fans_detail.level,Mode=OneWay}"></TextBlock>
+                                    <TextBlock Margin="4 0" FontSize="10"  Foreground="{x:Bind Path=Member.FansDetail.MedalColorLevel,Converter={StaticResource colorConvert},Mode=OneWay}" Text="{x:Bind Path=Member.FansDetail.Level,Mode=OneWay}"></TextBlock>
                                 </Grid>
                             </Grid>
                         </Border>
@@ -153,31 +153,31 @@
                
                 </StackPanel>
                 <StackPanel Grid.Column="2" VerticalAlignment="Top"  Grid.RowSpan="2" Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind Path=member.ShowCardBg,Mode=OneWay}"  VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind Path=Member.ShowCardBg,Mode=OneWay}"  VerticalAlignment="Center">
                         <Grid Height="48" Width="40">
-                            <Image  Height="48" Width="288" Margin="-200 0 0 0" Stretch="UniformToFill"  Source="{x:Bind Path=member.user_sailing.cardbg.image,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}" ></Image>
+                            <Image  Height="48" Width="288" Margin="-200 0 0 0" Stretch="UniformToFill"  Source="{x:Bind Path=Member.UserSailing.Cardbg.Image,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='64h.png'}" ></Image>
                         </Grid>
-                        <StackPanel  Margin="8 0 0 0"  VerticalAlignment="Center" Visibility="{x:Bind Path=member.user_sailing.cardbg.show,Mode=OneWay}">
+                        <StackPanel  Margin="8 0 0 0"  VerticalAlignment="Center" Visibility="{x:Bind Path=Member.UserSailing.Cardbg.Show,Mode=OneWay}">
                             <TextBlock FontSize="10" 
                                    FontFamily="{StaticResource FansNum}" 
-                                   Foreground="{x:Bind Path=member.user_sailing.cardbg.fan.color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
+                                   Foreground="{x:Bind Path=Member.UserSailing.Cardbg.Fan.Color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
                                    Text="NO."></TextBlock>
                             <TextBlock FontSize="10" 
                                    FontFamily="{StaticResource FansNum}"  
-                                   Foreground="{x:Bind Path=member.user_sailing.cardbg.fan.color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
-                                   Text="{x:Bind Path=member.user_sailing.cardbg.fan.num_desc,Mode=OneWay}"></TextBlock>
+                                   Foreground="{x:Bind Path=Member.UserSailing.Cardbg.Fan.Color,Mode=OneWay,Converter={StaticResource colorConvert}}"  
+                                   Text="{x:Bind Path=Member.UserSailing.Cardbg.Fan.NumDesc,Mode=OneWay}"></TextBlock>
                         </StackPanel>
                     </StackPanel>
                     <AppBarButton Visibility="Collapsed" Style="{StaticResource AppBarButtonNoChevronStyle}" Flyout="{StaticResource ResourceKey=menu}" HorizontalAlignment="Right" Icon="More"  Width="48" ></AppBarButton>
                 </StackPanel>
 
-                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=ctime,Converter={StaticResource datetime}}">
+                <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" FontSize="12" Foreground="Gray" Margin="4 0" VerticalAlignment="Top" ToolTipService.ToolTip="{x:Bind Path=Ctime,Converter={StaticResource Datetime}}">
                     <!--#<Run Text="{Binding Path=floor}"></Run>-->
-                    <Run Text="{x:Bind Path=time}"></Run> 
-                    <Run Text="{x:Bind Path=content.plat_str}"></Run>
-                    <Run Text="{x:Bind Path=reply_control.location}"></Run>
+                    <Run Text="{x:Bind Path=Time}"></Run> 
+                    <Run Text="{x:Bind Path=Content.PlatStr}"></Run>
+                    <Run Text="{x:Bind Path=ReplyControl.Location}"></Run>
                 </TextBlock>
-                <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=content.text}">
+                <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=Content.Text}">
 
                 </ContentControl>
                 <toolkit:AdaptiveGridView
@@ -186,7 +186,7 @@
                     StretchContentForSingleRow="False"
                     OneRowModeEnabled="True"
                     ItemHeight="80"
-                    ItemsSource="{x:Bind Path=content.pictures}"
+                    ItemsSource="{x:Bind Path=Content.Pictures}"
                     SelectionMode="None"
                     ItemClick="NotePicturesView_ItemClick"
                     IsItemClickEnabled="True">
@@ -206,24 +206,24 @@
                 <Grid Margin="0 8 0 0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                        <HyperlinkButton  Click="btn_Like_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
+                        <HyperlinkButton  Click="BtnLike_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
-                                <TextBlock  Margin="4 0" Text="{x:Bind like_str,Mode=OneWay}"></TextBlock>
+                                <TextBlock  Margin="4 0" Text="{x:Bind LikeStr,Mode=OneWay}"></TextBlock>
                             </StackPanel>
                         </HyperlinkButton>
-                        <HyperlinkButton  Click="btn_ShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
+                        <HyperlinkButton  Click="BtnShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <fa:FontAwesome Icon="Regular_Comment" FontSize="14"></fa:FontAwesome>
-                                <TextBlock Margin="4 0" Text="{x:Bind rcount_str,Mode=OneWay}"></TextBlock>
+                                <TextBlock Margin="4 0" Text="{x:Bind RcountStr,Mode=OneWay}"></TextBlock>
                             </StackPanel>
                         </HyperlinkButton>
-                        <HyperlinkButton Visibility="{x:Bind showReplyBtn,Mode=OneWay}" Click="btn_ShowReplyBtn_Click" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                        <HyperlinkButton Visibility="{x:Bind ShowReplyBtn,Mode=OneWay}" Click="BtnShowReplyBtn_Click" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Margin="4 0">回复</TextBlock>
                             </StackPanel>
                         </HyperlinkButton>
-                        <HyperlinkButton Click="btn_DonotLike_Click" Visibility="Collapsed" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
+                        <HyperlinkButton Click="BtnDoNotLike_Click" Visibility="Collapsed" Foreground="Gray" Margin="8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <FontIcon VerticalAlignment="Center" FontSize="14" FontFamily="Segoe MDL2 Assets" Glyph="&#xE19E;" />
                                 <TextBlock ></TextBlock>
@@ -231,15 +231,15 @@
                         </HyperlinkButton>
                     </StackPanel>
 
-                    <Border Visibility="{x:Bind Path=up_action.like,Mode=OneWay}" Background="#3C808080" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="2">
+                    <Border Visibility="{x:Bind Path=UpAction.Like,Mode=OneWay}" Background="#3C808080" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="2">
                         <TextBlock FontSize="12" Margin="8 4" Foreground="Gray">UP主觉得很赞</TextBlock>
                     </Border>
                 </Grid>
 
-                <StackPanel Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=showReplies,Mode=OneWay}">
+                <StackPanel Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=ShowReplies,Mode=OneWay}">
 
-                    <StackPanel  Visibility="{x:Bind Path=showReplyBox,Mode=OneWay}" Margin="0 0 0 4">
-                        <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
+                    <StackPanel  Visibility="{x:Bind Path=ShowReplyBox,Mode=OneWay}" Margin="0 0 0 4">
+                        <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=ReplyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
                         <Grid Margin="0 4 0 0">
                             <StackPanel Orientation="Horizontal">
                                 <Button FontSize="12" Padding="4" Visibility="Collapsed" Foreground="White" Background="{ThemeResource HighLightColor}">
@@ -248,7 +248,7 @@
                                         <TextBlock Margin="4 0 0 0">颜文字</TextBlock>
                                     </StackPanel>
                                 </Button>
-                                <Button x:Name="btnFace" Click="btnFace_Click" FontSize="12" Padding="4" Margin="4 0" Foreground="White" Background="{ThemeResource HighLightColor}">
+                                <Button x:Name="BtnFace" Click="BtnFace_Click" FontSize="12" Padding="4" Margin="4 0" Foreground="White" Background="{ThemeResource HighLightColor}">
                                     <StackPanel Orientation="Horizontal">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" FontSize="12" Glyph="&#xE170;" />
                                         <TextBlock Margin="4 0 0 0">表情</TextBlock>
@@ -257,42 +257,42 @@
                                 </Button>
                             </StackPanel>
 
-                            <Button x:Name="btn_SendReply" Click="btn_SendReply_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
+                            <Button x:Name="BtnSendReply" Click="BtnSendReply_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
                         </Grid>
                     </StackPanel>
 
 
-                    <ListView  ItemsSource="{x:Bind Path=replies,Mode=OneWay}" ItemContainerStyle="{StaticResource replyStyle}"  SelectionMode="None" IsItemClickEnabled="False" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <ListView  ItemsSource="{x:Bind Path=Replies,Mode=OneWay}" ItemContainerStyle="{StaticResource replyStyle}"  SelectionMode="None" IsItemClickEnabled="False" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
                                     
-                                    <HyperlinkButton Foreground="{Binding Path=member.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="btn_User_Click">
+                                    <HyperlinkButton Foreground="{Binding Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="BtnUser_Click">
                                         <StackPanel Orientation="Horizontal"  >
-                                            <TextBlock  Text="{Binding Path=member.uname}"  VerticalAlignment="Center"></TextBlock>
-                                            <Image Height="12" Margin="8 0" Source="{Binding Path=member.LV}"></Image>
+                                            <TextBlock  Text="{Binding Path=Member.Uname}"  VerticalAlignment="Center"></TextBlock>
+                                            <Image Height="12" Margin="8 0" Source="{Binding Path=Member.LV}"></Image>
                                         </StackPanel>
                                     </HyperlinkButton>
-                                    <TextBlock FontSize="12"  IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center"  ToolTipService.ToolTip="{Binding Path=ctime,Converter={StaticResource datetime}}">
-                                                <Run Text="{Binding Path=time}"></Run>
-                                                <Run Text="{Binding Path=reply_control.location}"></Run>
+                                    <TextBlock FontSize="12"  IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center"  ToolTipService.ToolTip="{Binding Path=ctime,Converter={StaticResource Datetime}}">
+                                                <Run Text="{Binding Path=Time}"></Run>
+                                                <Run Text="{Binding Path=reply_control.Location}"></Run>
                                     </TextBlock>
                                     <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
-                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=content.text}">
+                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=Content.Text}">
 
                                     </ContentControl>
 
                                     <Grid>
                                         <StackPanel Margin="0 4" Orientation="Horizontal">
                                            
-                                            <HyperlinkButton  Click="btn_Like_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
+                                            <HyperlinkButton  Click="BtnLike_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
                                                 <StackPanel Orientation="Horizontal">
                                                     <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
                                                     <TextBlock  Margin="4 0" Text="{Binding Path=like_str}"></TextBlock>
                                                 </StackPanel>
                                             </HyperlinkButton>
 
-                                            <HyperlinkButton Click="btn_ShowReplyBtn_Click" Margin="8 0" Foreground="Gray">
+                                            <HyperlinkButton Click="BtnShowReplyBtn_Click" Margin="8 0" Foreground="Gray">
                                                 <StackPanel Orientation="Horizontal">
 
                                                     <TextBlock  Margin="4 0">回复</TextBlock>
@@ -300,7 +300,7 @@
                                             </HyperlinkButton>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0 4" HorizontalAlignment="Right">
-                                            <HyperlinkButton Visibility="{Binding showDelete}" Click="btn_DeleteComment_Click" Foreground="Gray" >
+                                            <HyperlinkButton Visibility="{Binding ShowDelete}" Click="BtnDeleteComment_Click" Foreground="Gray" >
                                                 <StackPanel Orientation="Horizontal">
 
                                                     <TextBlock  Margin="4 0">删除</TextBlock>
@@ -319,8 +319,8 @@
 
                                     </Grid>
 
-                                    <StackPanel Background="#19AAAAAA" Padding="4 8" Visibility="{Binding showReplyBox}">
-                                        <TextBox TextWrapping="Wrap" MaxLength="233" BorderThickness="0" AcceptsReturn="True" Text="{Binding Path=replyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="{Binding replyAt}">
+                                    <StackPanel Background="#19AAAAAA" Padding="4 8" Visibility="{Binding ShowReplyBox}">
+                                        <TextBox TextWrapping="Wrap" MaxLength="233" BorderThickness="0" AcceptsReturn="True" Text="{Binding Path=ReplyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="{Binding ReplyAt}">
 
                                         </TextBox>
                                         <Grid Margin="0 4 0 0">
@@ -338,7 +338,7 @@
                                                     </StackPanel>
                                                 </Button>
                                             </StackPanel>
-                                            <Button x:Name="btn_ReplyAt" Click="btn_ReplyAt_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
+                                            <Button x:Name="BtnReplyAt" Click="BtnReplyAt_Click" FontSize="12" Padding="4" Width="64" Foreground="White" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">回复</Button>
                                         </Grid>
                                     </StackPanel>
                                 </StackPanel>
@@ -347,13 +347,13 @@
                         </ListView.ItemTemplate>
 
                     </ListView>
-                    <ProgressBar   Visibility="{x:Bind Path=showLoading,Mode=OneWay}" IsIndeterminate="True" ></ProgressBar>
+                    <ProgressBar   Visibility="{x:Bind Path=ShowLoading,Mode=OneWay}" IsIndeterminate="True" ></ProgressBar>
                     <StackPanel HorizontalAlignment="Center" >
 
-                        <HyperlinkButton HorizontalAlignment="Center"  FontSize="14" Click="btn_LoadMoreReply_Click" Visibility="{Binding showReplyMore}" >
+                        <HyperlinkButton HorizontalAlignment="Center"  FontSize="14" Click="BtnLoadMoreReply_Click" Visibility="{Binding ShowReplyMore}" >
                             <TextBlock>查看更多回复</TextBlock>
                         </HyperlinkButton>
-                        <HyperlinkButton HorizontalAlignment="Center" FontSize="14" Click="btn_ShowComment_Click"  >
+                        <HyperlinkButton HorizontalAlignment="Center" FontSize="14" Click="BtnShowComment_Click"  >
                             <TextBlock>收起回复</TextBlock>
                         </HyperlinkButton>
                     </StackPanel>
@@ -371,23 +371,23 @@
         <Grid  BorderThickness="0 0 0 1" BorderBrush="#33808080">
             <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="hot" >
                 <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" >热门评论</TextBlock>
-                <HyperlinkButton x:Name="btn_NewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="btn_NewSort_Click"  HorizontalAlignment="Right">
+                <HyperlinkButton x:Name="BtnNewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="BtnNewSort_Click"  HorizontalAlignment="Right">
                     <TextBlock>按最新排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
             <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="_new">
                 <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" >最新评论</TextBlock>
-                <HyperlinkButton x:Name="btn_HotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="btn_HotSort_Click" >
+                <HyperlinkButton x:Name="BtnHotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="BtnHotSort_Click" >
                     <TextBlock>按热门排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <AppBarButton x:Name="btn_Refresh" Click="btn_Refresh_Click" Margin="0 0 40 0" Width="40" Height="40" HorizontalAlignment="Right">
+            <AppBarButton x:Name="BtnRefresh" Click="BtnRefresh_Click" Margin="0 0 40 0" Width="40" Height="40" HorizontalAlignment="Right">
                 <AppBarButton.Icon>
                     <SymbolIcon Margin="0 -4 0 8" Symbol="Refresh"></SymbolIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
         </Grid>
-        <ListView x:Name="ls_new"
+        <ListView x:Name="ListViewComments"
                   Padding="0 0 12 0"
                   Grid.Row="1"
                           ItemTemplate="{StaticResource commentTemplate}" 
@@ -397,16 +397,16 @@
 
             <ListView.Footer>
                 <StackPanel>
-                    <ProgressBar    x:Name="pr_load" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
-                    <HyperlinkButton x:Name="btn_LoadMore" Click="btn_LoadMore_Click" HorizontalAlignment="Center">
+                    <ProgressBar    x:Name="PrLoad" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
+                    <HyperlinkButton x:Name="BtnLoadMore" Click="BtnLoadMore_Click" HorizontalAlignment="Center">
                         <TextBlock>加载更多</TextBlock>
                     </HyperlinkButton>
-                    <TextBlock x:Name="noRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
-                    <TextBlock x:Name="closeRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
+                    <TextBlock x:Name="NoRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
+                    <TextBlock x:Name="CloseRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
                 </StackPanel>
             </ListView.Footer>
         </ListView>
-        <local:RoundButton x:Name="btnOpenSendComment" Grid.Row="1" Click="btnOpenSendComment_Click" VerticalAlignment="Bottom" Background="{ThemeResource HighLightColor}" Padding="12" Margin="16" HorizontalAlignment="Right">
+        <local:RoundButton x:Name="BtnOpenSendComment" Grid.Row="1" Click="BtnOpenSendComment_Click" VerticalAlignment="Bottom" Background="{ThemeResource HighLightColor}" Padding="12" Margin="16" HorizontalAlignment="Right">
             <fa:FontAwesome Icon="Regular_CommentAlt" Foreground="White"></fa:FontAwesome>
         </local:RoundButton>
     </Grid>

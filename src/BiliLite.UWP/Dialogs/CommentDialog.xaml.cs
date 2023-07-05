@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common.Comment;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -40,7 +41,7 @@ namespace BiliLite.Dialogs
         public void Show(string oid,int commentMode, CommentApi.CommentSort commentSort)
         {
             this.popup.IsOpen = true;
-            comment.LoadComment(new Controls.LoadCommentInfo()
+            comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = commentMode,
                 CommentSort = commentSort,

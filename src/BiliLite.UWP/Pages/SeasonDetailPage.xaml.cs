@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Extensions;
+using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Common.Video;
 using BiliLite.ViewModels.Download;
 using BiliLite.Models.Download;

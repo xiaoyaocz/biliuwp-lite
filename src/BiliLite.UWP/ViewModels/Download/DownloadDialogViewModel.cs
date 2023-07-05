@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace BiliLite.ViewModels.Download
 {
-    public class DownloadDialogViewModel:BaseViewModel
+    public class DownloadDialogViewModel : BaseViewModel
     {
         public int VideoTypeSelectedIndex { get; set; }
 

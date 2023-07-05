@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Download;
+using BiliLite.ViewModels.Comment;
 using BiliLite.ViewModels.Download;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +17,10 @@ namespace BiliLite.Extensions
                 expression.CreateMap<DownloadItemViewModel, DownloadItem>();
                 expression.CreateMap<DownloadEpisodeItem, DownloadEpisodeItemViewModel>();
                 expression.CreateMap<DownloadEpisodeItemViewModel, DownloadEpisodeItem>();
+                expression.CreateMap<CommentItem, CommentViewModel>();
+                expression.CreateMap<CommentViewModel, CommentItem>();
+                expression.CreateMap<DataCommentModel, DataCommentViewModel>();
+                expression.CreateMap<DataCommentViewModel, DataCommentModel>();
             }));
             services.AddSingleton<IMapper>(mapper);
             return services;

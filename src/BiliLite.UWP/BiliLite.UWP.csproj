@@ -128,12 +128,29 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\Common\Comment\CommentItem.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberFansDetailModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberUserSailingCardbgFanModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberUserSailingCardbgModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberUserSailingModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberUserSailingPendantModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentContentModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentMemberModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentUPActionModel.cs" />
+    <Compile Include="Models\Common\Comment\CommentCursor.cs" />
+    <Compile Include="Models\Common\Comment\CommentPagination.cs" />
+    <Compile Include="Models\Common\Comment\CommentReplyControlModel.cs" />
+    <Compile Include="Models\Common\Comment\DataCommentModel.cs" />
+    <Compile Include="Models\Common\Comment\LoadCommentInfo.cs" />
     <Compile Include="Models\Common\Player\ChangePlayerEngine.cs" />
     <Compile Include="Models\Common\Player\PlayerOpenResult.cs" />
     <Compile Include="Extensions\MapperExtensions.cs" />
     <Compile Include="Extensions\ViewModelExtensions.cs" />
     <Compile Include="Models\Download\DownloadEpisodeItem.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\Comment\CommentControlViewModel.cs" />
+    <Compile Include="ViewModels\Comment\CommentViewModel.cs" />
+    <Compile Include="ViewModels\Comment\DataCommentViewModel.cs" />
     <Compile Include="ViewModels\Download\DownloadEpisodeItemViewModel.cs" />
     <Compile Include="Models\Download\DownloadItem.cs" />
     <Compile Include="ViewModels\Download\DownloadItemViewModel.cs" />

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,9 +15,13 @@ using BiliLite.Modules;
 using BiliLite.Dialogs;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
+using BiliLite.ViewModels.Comment;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using IMapper = AutoMapper.IMapper;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -26,165 +29,109 @@ namespace BiliLite.Controls
 {
     public sealed partial class CommentControl : UserControl
     {
-        readonly CommentApi commentApi;
+        #region Fields
+
+        private readonly CommentApi m_commentApi;
         EmoteVM emoteVM;
-        bool m_disableShowPicture = false;
+        private bool m_disableShowPicture = false;
         private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
         private CommentCursor m_nextCursor;
+        private readonly IMapper m_mapper;
+        private readonly CommentControlViewModel m_viewModel;
+
+        private int m_page = 1;
+        private bool m_loading = false;
+        private LoadCommentInfo m_loadCommentInfo;
+
+        CommentViewModel m_selectComment;
+
+        #endregion
+
+        #region Constructors
 
         public CommentControl()
         {
+            m_mapper = App.ServiceProvider.GetService<IMapper>();
+            m_viewModel = App.ServiceProvider.GetService<CommentControlViewModel>();
             this.InitializeComponent();
-            commentApi = new CommentApi();
+            m_commentApi = new CommentApi();
             emoteVM = new EmoteVM();
             this.SizeChanged += CommentControl_SizeChanged;
         }
 
+        #endregion
 
+        #region Properties
 
         public bool IsWide
         {
-            get { return (bool)GetValue(IsWideProperty); }
-            set { SetValue(IsWideProperty, value); }
+            get => (bool)GetValue(IsWideProperty);
+            set => SetValue(IsWideProperty, value);
         }
+
         public static readonly DependencyProperty IsWideProperty =
-            DependencyProperty.Register("IsWide", typeof(bool), typeof(CommentControl), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsWide), typeof(bool), typeof(CommentControl), new PropertyMetadata(false));
 
+        public int CommentCount => ListViewComments.Items.Count;
 
+        public bool HasMore => BtnLoadMore.Visibility == Visibility.Visible;
+
+        #endregion
+
+        #region Private Methods
 
         private void CommentControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             IsWide = e.NewSize.Width >= 500;
         }
 
-        private void btn_User_Click(object sender, RoutedEventArgs e)
+        private void BtnUser_Click(object sender, RoutedEventArgs e)
         {
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Account,
                 title = "用户信息",
                 page = typeof(UserInfoPage),
-                parameters = (sender as HyperlinkButton).Tag.ToString()
+                parameters = (sender as HyperlinkButton)?.Tag.ToString()
             });
-        }
-
-        public void ClearComment()
-        {
-            //ls_hot.ItemsSource = null;
-            ls_new.ItemsSource = null;
-            _page = 1;
-            hot.Visibility = Visibility.Collapsed;
-        }
-        public int CommentCount
-        {
-            get
-            {
-                return ls_new.Items.Count;
-            }
-        }
-
-        public bool HasMore
-        {
-            get
-            {
-                if (btn_LoadMore.Visibility == Visibility.Visible)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public async void LoadMore()
-        {
-            if (!_loading)
-            {
-                await GetComment();
-            }
-        }
-
-        public void RefreshComment()
-        {
-            LoadComment(_loadCommentInfo);
-        }
-
-
-        int _page = 1;
-        public bool _loading = false;
-        LoadCommentInfo _loadCommentInfo;
-
-        /// <summary>
-        /// 初始化并加载评论
-        /// </summary>
-        /// <param name="loadCommentInfo"></param>
-        public async void LoadComment(LoadCommentInfo loadCommentInfo, bool disableShowPicture = false)
-        {
-            m_disableShowPicture = disableShowPicture;
-            if (loadCommentInfo.CommentSort == CommentSort.Hot)
-            {
-                hot.Visibility = Visibility.Visible;
-                _new.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                hot.Visibility = Visibility.Collapsed;
-                _new.Visibility = Visibility.Visible;
-            }
-            if (loadCommentInfo.IsDialog)
-            {
-                btn_Refresh.Margin = new Thickness(0, 0, 40, 0);
-            }
-            else
-            {
-                btn_Refresh.Margin = new Thickness(0);
-            }
-            _loadCommentInfo = loadCommentInfo;
-            _page = 1;
-            await GetComment();
-            await emoteVM.GetEmote(EmoteBusiness.reply);
         }
 
         private async Task GetComment()
         {
-            if (_page == 1)
+            if (m_page == 1)
             {
-                noRepost.Visibility = Visibility.Collapsed;
-                closeRepost.Visibility = Visibility.Collapsed;
+                NoRepost.Visibility = Visibility.Collapsed;
+                CloseRepost.Visibility = Visibility.Collapsed;
                 //ls_hot.ItemsSource = null;
-                ls_new.ItemsSource = null;
+                ListViewComments.ItemsSource = null;
             }
             try
             {
 
-                btn_LoadMore.Visibility = Visibility.Collapsed;
-                _loading = true;
-                pr_load.Visibility = Visibility.Visible;
-                ObservableCollection<CommentModel> ls = new ObservableCollection<CommentModel>();
+                BtnLoadMore.Visibility = Visibility.Collapsed;
+                m_loading = true;
+                PrLoad.Visibility = Visibility.Visible;
 
-
-                var re = await commentApi.Comment(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page, _loadCommentInfo.CommentMode).Request();
-                var errorCheck = await re.GetResult<object>();
-                if (!re.status || errorCheck.code < 0)
+                var result = await m_commentApi.Comment(m_loadCommentInfo.Oid, m_loadCommentInfo.CommentSort, m_page, m_loadCommentInfo.CommentMode).Request();
+                var errorCheck = await result.GetResult<object>();
+                if (!result.status || errorCheck.code < 0)
                 {
-                    re = await commentApi.CommentV2(_loadCommentInfo.Oid, _loadCommentInfo.CommentSort, _page,
-                        _loadCommentInfo.CommentMode, offsetStr: m_nextCursor?.PaginationReply?.NextOffset).Request();
+                    result = await m_commentApi.CommentV2(m_loadCommentInfo.Oid, m_loadCommentInfo.CommentSort, m_page,
+                        m_loadCommentInfo.CommentMode, offsetStr: m_nextCursor?.PaginationReply?.NextOffset).Request();
                 }
-                if (!re.status)
+                if (!result.status)
                 {
                     throw new CustomizedErrorException("加载评论失败");
                 }
-                dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
-                if (m.code == 0)
+                var dataCommentModel = JsonConvert.DeserializeObject<DataCommentModel>(result.results);
+                if (dataCommentModel.Code == 0)
                 {
 
-                    HandleCommentsNormal(m);
+                    HandleCommentsNormal(dataCommentModel);
                 }
                 else
                 {
-                    HandleCommentsAbnormalSituation(m);
+                    HandleCommentsAbnormalSituation(dataCommentModel);
                 }
             }
             catch (Exception ex)
@@ -194,127 +141,134 @@ namespace BiliLite.Controls
             }
             finally
             {
-                _loading = false;
-                pr_load.Visibility = Visibility.Collapsed;
+                m_loading = false;
+                PrLoad.Visibility = Visibility.Collapsed;
             }
         }
 
         // 处理评论列表正常情况
-        private void HandleCommentsNormal(dataCommentModel model)
+        private void HandleCommentsNormal(DataCommentModel model)
         {
-            if (model.data.replies != null && model.data.replies.Count != 0)
+            if (model.Data.Replies != null && model.Data.Replies.Count != 0)
             {
-
-                if (_page == 1)
-                {
-                    if (model.data.upper.top != null)
-                    {
-                        model.data.upper.top.showTop = Visibility.Visible;
-                        model.data.replies.Insert(0, model.data.upper.top);
-                    }
-                    //ls_hot.ItemsSource = m.data.hots;
-                    ls_new.ItemsSource = model.data.replies;
-                }
-                else
-                {
-                    foreach (var item in model.data.replies)
-                    {
-                        (ls_new.ItemsSource as ObservableCollection<CommentModel>).Add(item);
-                    }
-                }
-                _page++;
-
-                if (model.data.replies.Count >= 20)
-                {
-                    btn_LoadMore.Visibility = Visibility.Visible;
-                }
-
-                m_nextCursor = model.data.Cursor;
+                HandleCommentsNormalHasReply(model);
             }
             else
             {
-                if (_page == 1)
+                HandleCommentsNormalNoReply();
+            }
+        }
+
+        // 处理评论列表正常有评论情况
+        private void HandleCommentsNormalHasReply(DataCommentModel model)
+        {
+            var dataCommentViewModel = m_mapper.Map<DataCommentViewModel>(model);
+            if (m_page == 1)
+            {
+                if (dataCommentViewModel.Data.Upper.Top != null)
                 {
-                    noRepost.Visibility = Visibility.Visible;
-                    btn_LoadMore.Visibility = Visibility.Collapsed;
+                    dataCommentViewModel.Data.Upper.Top.ShowTop = Visibility.Visible;
+                    dataCommentViewModel.Data.Replies.Insert(0, dataCommentViewModel.Data.Upper.Top);
                 }
-                else
+                ListViewComments.ItemsSource = dataCommentViewModel.Data.Replies;
+            }
+            else
+            {
+                foreach (var item in dataCommentViewModel.Data.Replies)
                 {
-                    Notify.ShowMessageToast("全部加载完了...");
+                    (ListViewComments.ItemsSource as ObservableCollection<CommentViewModel>)?.Add(item);
                 }
+            }
+            m_page++;
+
+            if (model.Data.Replies.Count >= 20)
+            {
+                BtnLoadMore.Visibility = Visibility.Visible;
+            }
+
+            m_nextCursor = model.Data.Cursor;
+        }
+
+        // 处理评论列表正常没有评论情况
+        private void HandleCommentsNormalNoReply()
+        {
+            if (m_page == 1)
+            {
+                NoRepost.Visibility = Visibility.Visible;
+                BtnLoadMore.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Notify.ShowMessageToast("全部加载完了...");
             }
         }
 
         // 处理评论列表异常情况
-        private void HandleCommentsAbnormalSituation(dataCommentModel model)
+        private void HandleCommentsAbnormalSituation(DataCommentModel model)
         {
-            if (model.code == 12002)
+            if (model.Code == 12002)
             {
-                closeRepost.Visibility = Visibility.Visible;
-                btn_LoadMore.Visibility = Visibility.Collapsed;
+                CloseRepost.Visibility = Visibility.Visible;
+                BtnLoadMore.Visibility = Visibility.Collapsed;
             }
             else
             {
-                throw new CustomizedErrorException($"加载评论失败:{model.message}");
+                throw new CustomizedErrorException($"加载评论失败:{model.Message}");
             }
         }
 
-        private async Task GetReply(CommentModel data)
+        private async Task GetReply(CommentViewModel data)
         {
             try
             {
-                if (data.replies == null)
+                data.Replies ??= new ObservableCollection<CommentViewModel>();
+                data.ShowReplyMore = Visibility.Collapsed;
+                data.ShowLoading = Visibility.Visible;
+                var result = await m_commentApi.Reply(m_loadCommentInfo.Oid, data.RpId.ToString(), data.LoadPage,
+                    m_loadCommentInfo.CommentMode).Request();
+                if (!result.status)
                 {
-                    data.replies = new ObservableCollection<CommentModel>();
+                    throw new CustomizedErrorException($"{result.message}");
                 }
-                data.showReplyMore = Visibility.Collapsed;
-                data.showLoading = Visibility.Visible;
-                ObservableCollection<CommentModel> ls = new ObservableCollection<CommentModel>();
-                var re = await commentApi.Reply(_loadCommentInfo.Oid, data.rpid.ToString(), data.loadpage, _loadCommentInfo.CommentMode).Request();
-                if (re.status)
+
+                var dataCommentModel = JsonConvert.DeserializeObject<DataCommentModel>(result.results);
+                var dataCommentViewModel = m_mapper.Map<DataCommentViewModel>(dataCommentModel);
+
+                if (dataCommentViewModel.Code != 0)
                 {
-                    dataCommentModel m = JsonConvert.DeserializeObject<dataCommentModel>(re.results);
-                    if (m.code == 0)
+                    throw new CustomizedErrorException($"{dataCommentModel.Message}");
+                }
+                if (dataCommentViewModel.Data.Replies != null && dataCommentViewModel.Data.Replies.Count != 0)
+                {
+                    if (dataCommentViewModel.Data.Replies.Count >= 10)
                     {
-                        if (m.data.replies != null && m.data.replies.Count != 0)
-                        {
-                            if (m.data.replies.Count >= 10)
-                            {
-                                data.showReplyMore = Visibility.Visible;
-                            }
-                            foreach (var item in m.data.replies)
-                            {
-                                data.replies.Add(item);
-                            }
-                            data.loadpage++;
-                        }
-                        else
-                        {
-                            data.showReplyMore = Visibility.Collapsed;
-                        }
+                        data.ShowReplyMore = Visibility.Visible;
                     }
-                    else
+
+                    foreach (var item in dataCommentViewModel.Data.Replies)
                     {
-                        Notify.ShowMessageToast(m.message);
+                        data.Replies.Add(item);
                     }
+
+                    data.LoadPage++;
                 }
                 else
                 {
-                    Notify.ShowMessageToast(re.message);
+                    data.ShowReplyMore = Visibility.Collapsed;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Notify.ShowMessageToast("加载评论失败");
-                //throw;
+                _logger.Error(ex.Message, ex);
+                Notify.ShowMessageToast(ex.Message);
             }
             finally
             {
-                data.showLoading = Visibility.Collapsed;
+                data.ShowLoading = Visibility.Collapsed;
             }
         }
 
-        private async void doLike(CommentModel data)
+        private async void DoLike(CommentViewModel data)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
@@ -324,173 +278,148 @@ namespace BiliLite.Controls
             try
             {
                 var action = 0;
-                if (data.action == 0)
+                if (data.Action == 0)
                 {
                     action = 1;
                 }
-                var re = await commentApi.Like(_loadCommentInfo.Oid, data.rpid.ToString(), action, _loadCommentInfo.CommentMode).Request();
-                if (re.status)
+                var result = await m_commentApi.Like(m_loadCommentInfo.Oid, data.RpId.ToString(), action, m_loadCommentInfo.CommentMode).Request();
+                if (!result.status)
                 {
-                    JObject obj = JObject.Parse(re.results);
-                    if (obj["code"].ToInt32() == 0)
-                    {
-                        if (data.action == 0)
-                        {
-                            data.action = 1;
-                            data.like += 1;
-                        }
-                        else
-                        {
-                            data.action = 0;
-                            data.like -= 1;
-                        }
-                    }
-                    else
-                    {
-                        Notify.ShowMessageToast(obj["message"].ToString());
-                    }
+                    throw new CustomizedErrorException($"{result.message}");
+                }
+
+                var obj = JObject.Parse(result.results);
+
+                if (obj["code"].ToInt32() != 0)
+                {
+                    throw new CustomizedErrorException($"{obj["message"]?.ToString()}");
+                }
+                if (data.Action == 0)
+                {
+                    data.Action = 1;
+                    data.Like += 1;
                 }
                 else
                 {
-                    Notify.ShowMessageToast(re.message);
+                    data.Action = 0;
+                    data.Like -= 1;
                 }
-
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Notify.ShowMessageToast("操作失败");
-                // throw;
+                _logger.Error(ex.Message, ex);
+                Notify.ShowMessageToast($"操作失败:{ex.Message}");
             }
-
-
-
         }
 
-        private void btn_Like_Click(object sender, RoutedEventArgs e)
+        private void BtnLike_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentModel;
-            doLike(m);
+            var m = (sender as HyperlinkButton)?.DataContext as CommentViewModel;
+            DoLike(m);
         }
 
-        private async void btn_ShowComment_Click(object sender, RoutedEventArgs e)
+        private async void BtnShowComment_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentModel;
-            if (m.showReplies == Visibility.Collapsed)
+            var m = (sender as HyperlinkButton).DataContext as CommentViewModel;
+            if (m.ShowReplies == Visibility.Collapsed)
             {
-                ls_new.ScrollIntoView(m);
-                m.showReplies = Visibility.Visible;
-                m.showReplyBtn = Visibility.Collapsed;
-                m.showReplyBox = Visibility.Visible;
-                m.replies = null;
-                m.loadpage = 1;
-                if (m.replies == null || m.replies.Count == 0)
+                ListViewComments.ScrollIntoView(m);
+                m.ShowReplies = Visibility.Visible;
+                m.ShowReplyBtn = Visibility.Collapsed;
+                m.ShowReplyBox = Visibility.Visible;
+                m.Replies = null;
+                m.LoadPage = 1;
+                if (m.Replies == null || m.Replies.Count == 0)
                 {
                     await GetReply(m);
                 }
             }
             else
             {
-                m.showReplyBtn = Visibility.Collapsed;
-                m.showReplies = Visibility.Collapsed;
-                ls_new.ScrollIntoView(m);
+                m.ShowReplyBtn = Visibility.Collapsed;
+                m.ShowReplies = Visibility.Collapsed;
+                ListViewComments.ScrollIntoView(m);
             }
         }
 
-        private void btn_ShowReplyBtn_Click(object sender, RoutedEventArgs e)
+        private void BtnShowReplyBtn_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentModel;
-            if (m.showReplyBox == Visibility.Visible)
+            var m = (sender as HyperlinkButton).DataContext as CommentViewModel;
+            if (m.ShowReplyBox == Visibility.Visible)
             {
-                m.showReplyBox = Visibility.Collapsed;
+                m.ShowReplyBox = Visibility.Collapsed;
             }
             else
             {
-                m.showReplyBox = Visibility.Visible;
+                m.ShowReplyBox = Visibility.Visible;
             }
 
         }
 
-        private void btn_DonotLike_Click(object sender, RoutedEventArgs e)
+        private void BtnDoNotLike_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private async void btn_LoadMoreReply_Click(object sender, RoutedEventArgs e)
+        private async void BtnLoadMoreReply_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentModel;
+            var m = (sender as HyperlinkButton).DataContext as CommentViewModel;
             await GetReply(m);
         }
 
-        private async void btn_LoadMore_Click(object sender, RoutedEventArgs e)
+        private async void BtnLoadMore_Click(object sender, RoutedEventArgs e)
         {
-            if (!_loading)
+            if (!m_loading)
             {
                 await GetComment();
             }
 
         }
 
-        private void btn_HotSort_Click(object sender, RoutedEventArgs e)
+        private void BtnHotSort_Click(object sender, RoutedEventArgs e)
         {
             m_nextCursor = null;
-            _loadCommentInfo.CommentSort = CommentSort.Hot;
-            LoadComment(_loadCommentInfo);
+            m_loadCommentInfo.CommentSort = CommentSort.Hot;
+            LoadComment(m_loadCommentInfo);
         }
 
-        private void btn_NewSort_Click(object sender, RoutedEventArgs e)
+        private void BtnNewSort_Click(object sender, RoutedEventArgs e)
         {
             m_nextCursor = null;
-            _loadCommentInfo.CommentSort = CommentSort.New;
-            LoadComment(_loadCommentInfo);
+            m_loadCommentInfo.CommentSort = CommentSort.New;
+            LoadComment(m_loadCommentInfo);
         }
 
-
-
-
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void BtnSendReply_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as Button).DataContext as CommentModel;
-
-            if (m != null)
-            {
-                m.replyText += (sender as Button).Content.ToString();
-            }
-        }
-
-
-
-
-        private void btn_SendReply_Click(object sender, RoutedEventArgs e)
-        {
-            var m = (sender as Button).DataContext as CommentModel;
+            var m = (sender as Button).DataContext as CommentViewModel;
             ReplyComment(m);
         }
 
-        private async void ReplyComment(CommentModel m)
+        private async void ReplyComment(CommentViewModel m)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
                 Notify.ShowMessageToast("请登录后再执行操作");
                 return;
             }
-            if (m.replyText.Trim().Length == 0)
+            if (m.ReplyText.Trim().Length == 0)
             {
                 Notify.ShowMessageToast("不能发送空白信息");
                 return;
             }
             try
             {
-                var re = await commentApi.ReplyComment(_loadCommentInfo.Oid, m.rpid.ToString(), m.rpid.ToString(), Uri.EscapeDataString(m.replyText), _loadCommentInfo.CommentMode).Request();
+                var re = await m_commentApi.ReplyComment(m_loadCommentInfo.Oid, m.RpId.ToString(), m.RpId.ToString(), Uri.EscapeDataString(m.ReplyText), m_loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
                     if (obj["code"].ToInt32() == 0)
                     {
                         Notify.ShowMessageToast("回复评论成功");
-                        m.loadpage = 1;
-                        m.replies.Clear();
-                        m.replyText = "";
+                        m.LoadPage = 1;
+                        m.Replies.Clear();
+                        m.ReplyText = "";
                         GetReply(m).RunWithoutAwait();
                     }
                     else
@@ -511,19 +440,21 @@ namespace BiliLite.Controls
             }
 
         }
-        private void btn_ReplyAt_Click(object sender, RoutedEventArgs e)
+
+        private void BtnReplyAt_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as Button).DataContext as CommentModel;
+            var m = (sender as Button).DataContext as CommentViewModel;
             ReplyAt(m);
         }
-        private async void ReplyAt(CommentModel m)
+
+        private async void ReplyAt(CommentViewModel m)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
                 Notify.ShowMessageToast("请登录后再执行操作");
                 return;
             }
-            if (m.replyText.Trim().Length == 0)
+            if (m.ReplyText.Trim().Length == 0)
             {
                 Notify.ShowMessageToast("不能发送空白信息");
                 return;
@@ -532,22 +463,22 @@ namespace BiliLite.Controls
             {
                 //string url = $"{ApiHelper.API_BASE_URL}/x/v2/reply/add";
 
-                var txt = "回复 @" + m.member.uname + ":" + m.replyText;
+                var txt = "回复 @" + m.Member.Uname + ":" + m.ReplyText;
                 //string content =
                 //    string.Format("access_key={0}&appkey={1}&platform=android&type={2}&oid={3}&ts={4}&message={5}&root={6}&parent={7}",
                 //    ApiHelper.access_key, ApiHelper.AndroidKey.Appkey, _type, _loadCommentInfo.oid, ApiHelper.GetTimeSpan_2, Uri.EscapeDataString(txt), m.root, m.rpid);
                 //content += "&sign=" + ApiHelper.GetSign(content);
 
-                var re = await commentApi.ReplyComment(_loadCommentInfo.Oid, m.root.ToString(), m.rpid.ToString(), Uri.EscapeDataString(txt), _loadCommentInfo.CommentMode).Request();
+                var re = await m_commentApi.ReplyComment(m_loadCommentInfo.Oid, m.Root.ToString(), m.RpId.ToString(), Uri.EscapeDataString(txt), m_loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
                     if (obj["code"].ToInt32() == 0)
                     {
                         Notify.ShowMessageToast("回复评论成功");
-                        m.loadpage = 1;
-                        m.replies.Clear();
-                        m.replyText = "";
+                        m.LoadPage = 1;
+                        m.Replies.Clear();
+                        m.ReplyText = "";
                         await GetReply(m);
                     }
                     else
@@ -559,36 +490,29 @@ namespace BiliLite.Controls
                 {
                     Notify.ShowMessageToast(re.message);
                 }
-
             }
             catch (Exception)
             {
                 Notify.ShowMessageToast("发送评论失败");
                 // throw;
             }
-
-
-
-
-
-
         }
 
-        private void btn_DeleteComment_Click(object sender, RoutedEventArgs e)
+        private void BtnDeleteComment_Click(object sender, RoutedEventArgs e)
         {
-            CommentModel m = null;
+            CommentViewModel m = null;
             if (sender is HyperlinkButton)
             {
-                m = (sender as HyperlinkButton).DataContext as CommentModel;
+                m = (sender as HyperlinkButton).DataContext as CommentViewModel;
             }
             if (sender is MenuFlyoutItem)
             {
-                m = (sender as MenuFlyoutItem).DataContext as CommentModel;
+                m = (sender as MenuFlyoutItem).DataContext as CommentViewModel;
             }
             DeletComment(m);
         }
 
-        private async void DeletComment(CommentModel m)
+        private async void DeletComment(CommentViewModel m)
         {
             if (m == null)
             {
@@ -610,7 +534,7 @@ namespace BiliLite.Controls
                 //content += "&sign=" + ApiHelper.GetSign(content);
 
                 //var re = await WebClientClass.PostResults(new Uri(url), content);
-                var re = await commentApi.DeleteComment(_loadCommentInfo.Oid, m.rpid.ToString(), _loadCommentInfo.CommentMode).Request();
+                var re = await m_commentApi.DeleteComment(m_loadCommentInfo.Oid, m.RpId.ToString(), m_loadCommentInfo.CommentMode).Request();
                 if (re.status)
                 {
                     JObject obj = JObject.Parse(re.results);
@@ -637,27 +561,27 @@ namespace BiliLite.Controls
 
 
         }
-        CommentModel selectComment;
-        private void btnFace_Click(object sender, RoutedEventArgs e)
+
+        private void BtnFace_Click(object sender, RoutedEventArgs e)
         {
-            selectComment = (sender as Button).DataContext as CommentModel;
+            m_selectComment = (sender as Button).DataContext as CommentViewModel;
             FaceFlyout.ShowAt(sender as Button);
         }
 
         private void GridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            selectComment.replyText += (e.ClickedItem as EmotePackageItemModel).text.ToString();
+            m_selectComment.ReplyText += (e.ClickedItem as EmotePackageItemModel).text.ToString();
         }
 
-        private async void btnOpenSendComment_Click(object sender, RoutedEventArgs e)
+        private async void BtnOpenSendComment_Click(object sender, RoutedEventArgs e)
         {
-            SendCommentDialog sendCommentDialog = new SendCommentDialog(_loadCommentInfo.Oid, (CommentType)_loadCommentInfo.CommentMode);
+            SendCommentDialog sendCommentDialog = new SendCommentDialog(m_loadCommentInfo.Oid, (CommentType)m_loadCommentInfo.CommentMode);
             await sendCommentDialog.ShowAsync();
         }
 
-        private void btn_Refresh_Click(object sender, RoutedEventArgs e)
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadComment(_loadCommentInfo);
+            LoadComment(m_loadCommentInfo);
         }
 
         private void NotePicturesView_ItemClick(object sender, ItemClickEventArgs e)
@@ -670,545 +594,71 @@ namespace BiliLite.Controls
             var notePicture = e.ClickedItem as NotePicture;
             var notePicturesView = sender as AdaptiveGridView;
             if (notePicture == null || notePicturesView == null) return;
-            var comment = notePicturesView.DataContext as CommentModel;
+            var comment = notePicturesView.DataContext as CommentViewModel;
             if (comment == null) return;
-            var notePictures = comment.content.pictures;
+            var notePictures = comment.Content.Pictures;
             var index = notePictures.IndexOf(notePicture);
             var pictures = notePictures.Select(x => x.ImgSrc).ToList();
             MessageCenter.OpenImageViewer(pictures, index);
         }
-    }
 
-    public class LoadCommentInfo
-    {
-        public int CommentMode { get; set; }
-        public CommentSort CommentSort { get; set; }
-        public string Oid { get; set; }
-        public bool IsDialog { get; set; } = false;
-    }
+        #endregion
 
-    public class dataCommentModel
-    {
+        #region Public Methods
 
-        public int code { get; set; }
-        public string message { get; set; }
-
-        public dataCommentModel data { get; set; }
-
-        public dataCommentModel page { get; set; }
-        public int acount { get; set; }
-        public int count { get; set; }
-        public int num { get; set; }
-        public int size { get; set; }
-
-        public CommentCursor Cursor { get; set; }
-
-        public ObservableCollection<CommentModel> hots { get; set; }
-        public ObservableCollection<CommentModel> replies { get; set; }
-
-        public dataCommentModel upper { get; set; }
-        public CommentModel top { get; set; }
-
-    }
-
-    public class CommentCursor
-    {
-        [JsonProperty("pagination_reply")]
-        public CommentPagination PaginationReply { get; set; }
-    }
-
-    public class CommentPagination
-    {
-        [JsonProperty("next_offset")]
-        public string NextOffset { get; set; }
-    }
-
-    public class CommentModel : INotifyPropertyChanged
-    {
-
-        public CommentModel()
+        public void ClearComment()
         {
-            LaunchUrlCommand = new RelayCommand<object>(ButtonClick);
+            //ls_hot.ItemsSource = null;
+            ListViewComments.ItemsSource = null;
+            m_page = 1;
+            hot.Visibility = Visibility.Collapsed;
         }
 
-        private int _action;//0未点赞,1已经点赞
-        public int action
+        public async void LoadMore()
         {
-            get { return _action; }
-            set { _action = value; thisPropertyChanged("action"); thisPropertyChanged("LikeColor"); }
-        }
-
-        public SolidColorBrush LikeColor
-        {
-            get
+            if (!m_loading)
             {
-                if (action == 0)
-                {
-                    return new SolidColorBrush(Colors.Gray);
-                }
-                else
-                {
-                    return new SolidColorBrush((Color)Application.Current.Resources["HighLightColor"]);
-                }
+                await GetComment();
             }
         }
 
-
-        public long rpid { get; set; }
-        public long oid { get; set; }
-        public int type { get; set; }
-        public long mid { get; set; }
-        public long root { get; set; }
-        public long parent { get; set; }
-
-        public int count { get; set; }
-        private int _rcount;
-        public int rcount
+        public void RefreshComment()
         {
-            get { return _rcount; }
-            set { _rcount = value; thisPropertyChanged("rcount"); }
-        }
-        public int _like { get; set; }
-        public int like
-        {
-            get { return _like; }
-            set { _like = value; thisPropertyChanged("like"); thisPropertyChanged("like_str"); }
+            LoadComment(m_loadCommentInfo);
         }
 
-
-        public string rcount_str
+        /// <summary>
+        /// 初始化并加载评论
+        /// </summary>
+        /// <param name="loadCommentInfo"></param>
+        public async void LoadComment(LoadCommentInfo loadCommentInfo, bool disableShowPicture = false)
         {
-            get
+            m_disableShowPicture = disableShowPicture;
+            if (loadCommentInfo.CommentSort == CommentSort.Hot)
             {
-                if (rcount > 10000)
-                {
-                    return ((double)rcount / 10000).ToString("0.0") + "万";
-                }
-                else
-                {
-                    return rcount.ToString();
-                }
+                hot.Visibility = Visibility.Visible;
+                _new.Visibility = Visibility.Collapsed;
             }
-
-        }
-        public string like_str
-        {
-            get
+            else
             {
-                if (like > 10000)
-                {
-                    return ((double)like / 10000).ToString("0.0") + "万";
-                }
-                else
-                {
-                    return like.ToString();
-                }
+                hot.Visibility = Visibility.Collapsed;
+                _new.Visibility = Visibility.Visible;
             }
-
-        }
-
-
-        public int floor { get; set; }
-        public int state { get; set; }
-        public long ctime { get; set; }
-        public string time
-        {
-            get
+            if (loadCommentInfo.IsDialog)
             {
-                //DateTime dtStart = new DateTime(1970, 1, 1);
-                //long lTime = long.Parse(ctime + "0000000");
-                ////long lTime = long.Parse(textBox1.Text);
-                //TimeSpan toNow = new TimeSpan(lTime);
-                //return dtStart.Add(toNow).ToLocalTime().ToString();
-
-                DateTime dtStart = new DateTime(1970, 1, 1);
-                long lTime = long.Parse(ctime + "0000000");
-                //long lTime = long.Parse(textBox1.Text);
-                TimeSpan toNow = TimeSpan.FromSeconds(ctime);
-                DateTime dt = dtStart.Add(toNow).ToLocalTime();
-                TimeSpan span = DateTime.Now - dt;
-                if (span.TotalDays > 7)
-                {
-                    return dt.ToString("yyyy-MM-dd");
-                }
-                else
-                if (span.TotalDays > 1)
-                {
-                    return string.Format("{0}天前", (int)Math.Floor(span.TotalDays));
-                }
-                else
-                if (span.TotalHours > 1)
-                {
-                    return string.Format("{0}小时前", (int)Math.Floor(span.TotalHours));
-                }
-                else
-                if (span.TotalMinutes > 1)
-                {
-                    return string.Format("{0}分钟前", (int)Math.Floor(span.TotalMinutes));
-                }
-                else
-                if (span.TotalSeconds >= 1)
-                {
-                    return string.Format("{0}秒前", (int)Math.Floor(span.TotalSeconds));
-                }
-                else
-                {
-                    return "1秒前";
-                }
-
-
+                BtnRefresh.Margin = new Thickness(0, 0, 40, 0);
             }
-        }
-
-        public string rpid_str { get; set; }
-
-        public CommentMemberModel member { get; set; }
-        public CommentContentModel content { get; set; }
-        public CommentUPActionModel up_action { get; set; }
-        public CommentReplyControlModel reply_control { get; set; }
-
-        private ObservableCollection<CommentModel> _replies = new ObservableCollection<CommentModel>();
-        public ObservableCollection<CommentModel> replies
-        {
-            get { return _replies; }
-            set { _replies = value; thisPropertyChanged("replies"); }
-        }
-        //public ObservableCollection<CommentModel> replies { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void thisPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
+            else
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
+                BtnRefresh.Margin = new Thickness(0);
             }
+            m_loadCommentInfo = loadCommentInfo;
+            m_page = 1;
+            await GetComment();
+            await emoteVM.GetEmote(EmoteBusiness.reply);
         }
 
+        #endregion
 
-        private Visibility _showReplies = Visibility.Collapsed;
-        public Visibility showReplies
-        {
-            get { return _showReplies; }
-            set { _showReplies = value; thisPropertyChanged("showReplies"); }
-        }
-
-        private Visibility _showReplyBtn = Visibility.Collapsed;
-        public Visibility showReplyBtn
-        {
-            get { return _showReplyBtn; }
-            set { _showReplyBtn = value; thisPropertyChanged("showReplyBtn"); }
-        }
-
-        private Visibility _showReplyBox = Visibility.Collapsed;
-        public Visibility showReplyBox
-        {
-            get { return _showReplyBox; }
-            set { _showReplyBox = value; thisPropertyChanged("showReplyBox"); }
-        }
-
-
-        private Visibility _showReplyMore = Visibility.Collapsed;
-        public Visibility showReplyMore
-        {
-            get { return _showReplyMore; }
-            set { _showReplyMore = value; thisPropertyChanged("showReplyMore"); }
-        }
-
-        private Visibility _showLoading = Visibility.Collapsed;
-        public Visibility showLoading
-        {
-            get { return _showLoading; }
-            set { _showLoading = value; thisPropertyChanged("showLoading"); }
-        }
-
-
-        public Visibility showDelete
-        {
-            get
-            {
-                if (SettingService.Account.Logined && mid.ToString() == SettingService.Account.UserID.ToString())
-                {
-                    return Visibility.Visible;
-                }
-                else
-                {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-
-
-
-        private int _loadpage = 1;
-        public int loadpage
-        {
-            get { return _loadpage; }
-            set { _loadpage = value; thisPropertyChanged("loadpage"); }
-        }
-
-
-
-        public string replyAt
-        {
-            get
-            {
-                return "回复 @" + member.uname;
-            }
-        }
-
-
-        private string _replyText;
-        public string replyText
-        {
-            get { return _replyText; }
-            set { _replyText = value; thisPropertyChanged("replyText"); }
-        }
-
-
-        private Visibility _showTop = Visibility.Collapsed;
-        public Visibility showTop
-        {
-            get { return _showTop; }
-            set { _showTop = value; thisPropertyChanged("showTop"); }
-        }
-
-
-
-        public RelayCommand<object> LaunchUrlCommand { get; private set; }
-
-        private async void ButtonClick(object paramenter)
-        {
-
-            await MessageCenter.HandelUrl(paramenter.ToString());
-            return;
-
-
-        }
-
-
-    }
-    public class CommentReplyControlModel
-    {
-        public string time_desc { get; set; }
-        public string location { get; set; }
-    }
-    public class CommentContentModel
-    {
-        public List<NotePicture> pictures { get; set; }
-        public string message { get; set; }
-        public int plat { get; set; }
-        public string plat_str
-        {
-            get
-            {
-                switch (plat)
-                {
-                    case 2:
-                        return "来自 Android";
-                    case 3:
-                        return "来自 IOS";
-                    case 4:
-                        return "来自 WindowsPhone";
-                    case 6:
-                        return "来自 Windows";
-                    default:
-                        return "";
-                }
-            }
-        }
-        public string device { get; set; }
-        public RichTextBlock text
-        {
-            get
-            {
-                //var tx = new RichTextBlock();
-                //Paragraph paragraph = new Paragraph();
-                //Run run = new Run() { Text = message };
-                //paragraph.Inlines.Add(run);
-                //tx.Blocks.Add(paragraph);
-                //return tx;
-
-                return message.ToRichTextBlock(emote);
-            }
-
-        }
-
-        public JObject emote { get; set; }
-    }
-
-    public class CommentUPActionModel
-    {
-        public bool like { get; set; } = false;
-        public bool reply { get; set; }
-    }
-    public class CommentMemberModel
-    {
-        public string mid { get; set; }
-        public string uname { get; set; }
-        public string sex { get; set; }
-        public string sign { get; set; }
-
-
-        //public string avatar { get; set; }
-        private string _avatar;
-        public string avatar { get { return _avatar; } set { _avatar = value + "@64w_64h.jpg"; } }
-
-
-        public CommentMemberModel level_info { get; set; }
-        public CommentMemberFansDetailModel fans_detail { get; set; }
-        public CommentMemberUserSailingModel user_sailing { get; set; }
-        public bool ShowFansDetail
-        {
-            get
-            {
-                return fans_detail != null;
-            }
-        }
-
-        public bool ShowCardBg
-        {
-            get
-            {
-                return user_sailing != null && user_sailing.cardbg != null && user_sailing.cardbg.fan != null;
-            }
-        }
-
-        public int current_level { get; set; }
-        public string LV
-        {
-            get
-            {
-                switch (level_info.current_level)
-                {
-                    case 0:
-                        return "ms-appx:///Assets/Icon/lv0.png";
-                    case 1:
-                        return "ms-appx:///Assets/Icon/lv1.png";
-                    case 2:
-                        return "ms-appx:///Assets/Icon/lv2.png";
-                    case 3:
-                        return "ms-appx:///Assets/Icon/lv3.png";
-                    case 4:
-                        return "ms-appx:///Assets/Icon/lv4.png";
-                    case 5:
-                        return "ms-appx:///Assets/Icon/lv5.png";
-                    case 6:
-                        return "ms-appx:///Assets/Icon/lv6.png";
-                    default:
-                        return Constants.App.TRANSPARENT_IMAGE;
-                }
-            }
-        }
-
-
-        public string pendant_str
-        {
-            get
-            {
-                if (pendant != null)
-                {
-                    if (pendant.image == "")
-                    {
-                        return Constants.App.TRANSPARENT_IMAGE;
-                    }
-                    return pendant.image;
-                }
-                else
-                {
-                    return Constants.App.TRANSPARENT_IMAGE;
-                }
-            }
-        }
-        public CommentMemberModel pendant { get; set; }
-        public int pid { get; set; }
-        public string name { get; set; }
-        public string image { get; set; }
-
-        public CommentMemberModel official_verify { get; set; }
-        public int type { get; set; }
-        public string desc { get; set; }
-
-        public string Verify
-        {
-            get
-            {
-                if (official_verify == null)
-                {
-                    return "";
-                }
-                switch (official_verify.type)
-                {
-                    case 0:
-                        return Constants.App.VERIFY_PERSONAL_IMAGE;
-                    case 1:
-                        return Constants.App.VERIFY_OGANIZATION_IMAGE;
-                    default:
-                        return Constants.App.TRANSPARENT_IMAGE;
-                }
-            }
-        }
-
-        public CommentMemberModel vip { get; set; }
-        public int vipType { get; set; }
-        public SolidColorBrush vip_co
-        {
-            get
-            {
-                if (vip.vipType == 2)
-                {
-                    return new SolidColorBrush(Colors.DeepPink);
-                }
-                else
-                {
-                    return new SolidColorBrush((Color)Application.Current.Resources["TextColor"]);
-                }
-            }
-        }
-
-
-
-    }
-    public class CommentMemberFansDetailModel
-    {
-        public long uid { get; set; }
-        public int medal_id { get; set; }
-        public string medal_name { get; set; }
-        public int level { get; set; }
-        public long medal_color { get; set; }
-        public long medal_color_end { get; set; }
-        public long medal_color_border { get; set; }
-        public long medal_color_name { get; set; }
-        public long medal_color_level { get; set; }
-    }
-    public class CommentMemberUserSailingModel
-    {
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public CommentMemberUserSailingPendantModel pendant { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public CommentMemberUserSailingCardbgModel cardbg { get; set; }
-    }
-    public class CommentMemberUserSailingPendantModel
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string image { get; set; }
-    }
-    public class CommentMemberUserSailingCardbgModel
-    {
-        public string name { get; set; }
-        public string image { get; set; }
-        public string jump_url { get; set; }
-        public bool show { get { return fan != null && fan.num_desc != null && fan.num_desc != ""; } }
-        public CommentMemberUserSailingCardbgFanModel fan { get; set; }
-    }
-    public class CommentMemberUserSailingCardbgFanModel
-    {
-        public int is_fan { get; set; }
-        public int number { get; set; }
-        public string color { get; set; }
-        public string name { get; set; }
-        public string num_desc { get; set; }
     }
 }

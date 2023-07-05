@@ -1,4 +1,5 @@
-﻿using BiliLite.ViewModels.Download;
+﻿using BiliLite.ViewModels.Comment;
+using BiliLite.ViewModels.Download;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Extensions
@@ -8,6 +9,7 @@ namespace BiliLite.Extensions
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             services.AddScoped<DownloadDialogViewModel>();
+            services.AddScoped<CommentControlViewModel>();
             return services;
         }
     }
