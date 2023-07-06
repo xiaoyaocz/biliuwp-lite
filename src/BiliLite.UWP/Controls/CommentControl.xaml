@@ -10,6 +10,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:convert="using:BiliLite.Converters" xmlns:modules="using:BiliLite.Modules"
     xmlns:comment="using:BiliLite.ViewModels.Comment"
+    xmlns:common="using:BiliLite.Models.Common"
     d:DesignHeight="300"
     d:DesignWidth="400">
 
@@ -119,7 +120,7 @@
                         </Grid>
                     </Border>
                 </Grid>
-                
+
                 <StackPanel Orientation="Horizontal" Margin="4 0" Grid.Column="1" >
                     <TextBlock VerticalAlignment="Center" Visibility="{x:Bind ShowTop}" FontSize="14" Margin="0 0 8 0" Foreground="DeepPink">[置顶]</TextBlock>
                     <TextBlock  Text="{x:Bind Path=Member.Uname}" 
@@ -149,8 +150,8 @@
                             </Grid>
                         </Border>
                     </Grid>
-                   
-               
+
+
                 </StackPanel>
                 <StackPanel Grid.Column="2" VerticalAlignment="Top"  Grid.RowSpan="2" Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Visibility="{x:Bind Path=Member.ShowCardBg,Mode=OneWay}"  VerticalAlignment="Center">
@@ -191,14 +192,14 @@
                     ItemClick="NotePicturesView_ItemClick"
                     IsItemClickEnabled="True">
                     <toolkit:AdaptiveGridView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="common:NotePicture">
                             <Grid
                                 Background="Transparent">
-                                <Image
-                                    Source="{Binding ImgSrc}"
-                                    Stretch="UniformToFill"
+                                <toolkit:ImageEx
+                                    Source="{x:Bind ImgSrc}"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"></toolkit:ImageEx>
                             </Grid>
                         </DataTemplate>
                     </toolkit:AdaptiveGridView.ItemTemplate>
@@ -266,7 +267,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    
+
                                     <HyperlinkButton Foreground="{Binding Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="BtnUser_Click">
                                         <StackPanel Orientation="Horizontal"  >
                                             <TextBlock  Text="{Binding Path=Member.Uname}"  VerticalAlignment="Center"></TextBlock>
@@ -284,7 +285,7 @@
 
                                     <Grid>
                                         <StackPanel Margin="0 4" Orientation="Horizontal">
-                                           
+
                                             <HyperlinkButton  Click="BtnLike_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
                                                 <StackPanel Orientation="Horizontal">
                                                     <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
@@ -369,19 +370,19 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid  BorderThickness="0 0 0 1" BorderBrush="#33808080">
-            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="hot" >
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="HotComments" Visibility="{x:Bind m_viewModel.HotCommentsVisibility}">
                 <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" >热门评论</TextBlock>
                 <HyperlinkButton x:Name="BtnNewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="BtnNewSort_Click"  HorizontalAlignment="Right">
                     <TextBlock>按最新排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="_new">
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="NewComment" Visibility="{x:Bind m_viewModel.NewCommentVisibility}">
                 <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" >最新评论</TextBlock>
                 <HyperlinkButton x:Name="BtnHotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="BtnHotSort_Click" >
                     <TextBlock>按热门排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <AppBarButton x:Name="BtnRefresh" Click="BtnRefresh_Click" Margin="0 0 40 0" Width="40" Height="40" HorizontalAlignment="Right">
+            <AppBarButton x:Name="BtnRefresh" Click="BtnRefresh_Click" Margin="{x:Bind m_viewModel.BtnRefreshMargin}" Width="40" Height="40" HorizontalAlignment="Right">
                 <AppBarButton.Icon>
                     <SymbolIcon Margin="0 -4 0 8" Symbol="Refresh"></SymbolIcon>
                 </AppBarButton.Icon>
@@ -390,19 +391,20 @@
         <ListView x:Name="ListViewComments"
                   Padding="0 0 12 0"
                   Grid.Row="1"
-                          ItemTemplate="{StaticResource commentTemplate}" 
-                          ItemContainerStyle="{StaticResource commentStyle}"  
-                          SelectionMode="None" IsItemClickEnabled="False" 
-                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  ItemsSource="{x:Bind m_viewModel.Comments}"
+                  ItemTemplate="{StaticResource commentTemplate}" 
+                  ItemContainerStyle="{StaticResource commentStyle}"  
+                  SelectionMode="None" IsItemClickEnabled="False" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
 
             <ListView.Footer>
                 <StackPanel>
-                    <ProgressBar    x:Name="PrLoad" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
-                    <HyperlinkButton x:Name="BtnLoadMore" Click="BtnLoadMore_Click" HorizontalAlignment="Center">
+                    <ProgressBar x:Name="PrLoad" Visibility="{x:Bind m_viewModel.PrLoadVisibility, Mode=OneWay}" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
+                    <HyperlinkButton x:Name="BtnLoadMore" Click="BtnLoadMore_Click" Visibility="{x:Bind m_viewModel.BtnLoadMoreVisibility}" HorizontalAlignment="Center">
                         <TextBlock>加载更多</TextBlock>
                     </HyperlinkButton>
-                    <TextBlock x:Name="NoRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
-                    <TextBlock x:Name="CloseRepost" Visibility="Collapsed" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
+                    <TextBlock x:Name="NoRepost" Visibility="{x:Bind m_viewModel.NoRepostVisibility}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
+                    <TextBlock x:Name="CloseRepost" Visibility="{x:Bind m_viewModel.CloseRepostVisibility}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
                 </StackPanel>
             </ListView.Footer>
         </ListView>

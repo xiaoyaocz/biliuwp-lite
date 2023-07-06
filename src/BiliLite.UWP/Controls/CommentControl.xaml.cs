@@ -2,12 +2,9 @@
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
-using Windows.UI;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using BiliLite.Pages;
 using static BiliLite.Models.Requests.Api.CommentApi;
@@ -40,10 +37,9 @@ namespace BiliLite.Controls
         private readonly CommentControlViewModel m_viewModel;
 
         private int m_page = 1;
-        private bool m_loading = false;
         private LoadCommentInfo m_loadCommentInfo;
 
-        CommentViewModel m_selectComment;
+        private CommentViewModel m_selectComment;
 
         #endregion
 
@@ -74,8 +70,6 @@ namespace BiliLite.Controls
 
         public int CommentCount => ListViewComments.Items.Count;
 
-        public bool HasMore => BtnLoadMore.Visibility == Visibility.Visible;
-
         #endregion
 
         #region Private Methods
@@ -100,17 +94,15 @@ namespace BiliLite.Controls
         {
             if (m_page == 1)
             {
-                NoRepost.Visibility = Visibility.Collapsed;
-                CloseRepost.Visibility = Visibility.Collapsed;
-                //ls_hot.ItemsSource = null;
-                ListViewComments.ItemsSource = null;
+                m_viewModel.NoRepostVisibility = false;
+                m_viewModel.CloseRepostVisibility = false;
+                m_viewModel.Comments.Clear();
+                m_nextCursor = null;
             }
             try
             {
-
-                BtnLoadMore.Visibility = Visibility.Collapsed;
-                m_loading = true;
-                PrLoad.Visibility = Visibility.Visible;
+                m_viewModel.BtnLoadMoreVisibility = false;
+                m_viewModel.Loading = true;
 
                 var result = await m_commentApi.Comment(m_loadCommentInfo.Oid, m_loadCommentInfo.CommentSort, m_page, m_loadCommentInfo.CommentMode).Request();
                 var errorCheck = await result.GetResult<object>();
@@ -141,8 +133,7 @@ namespace BiliLite.Controls
             }
             finally
             {
-                m_loading = false;
-                PrLoad.Visibility = Visibility.Collapsed;
+                m_viewModel.Loading = false;
             }
         }
 
@@ -167,23 +158,24 @@ namespace BiliLite.Controls
             {
                 if (dataCommentViewModel.Data.Upper.Top != null)
                 {
-                    dataCommentViewModel.Data.Upper.Top.ShowTop = Visibility.Visible;
+                    dataCommentViewModel.Data.Upper.Top.ShowTop = true;
                     dataCommentViewModel.Data.Replies.Insert(0, dataCommentViewModel.Data.Upper.Top);
                 }
-                ListViewComments.ItemsSource = dataCommentViewModel.Data.Replies;
+
+                m_viewModel.Comments.AddRange(dataCommentViewModel.Data.Replies);
             }
             else
             {
                 foreach (var item in dataCommentViewModel.Data.Replies)
                 {
-                    (ListViewComments.ItemsSource as ObservableCollection<CommentViewModel>)?.Add(item);
+                    m_viewModel.Comments?.Add(item);
                 }
             }
             m_page++;
 
             if (model.Data.Replies.Count >= 20)
             {
-                BtnLoadMore.Visibility = Visibility.Visible;
+                m_viewModel.BtnLoadMoreVisibility = true;
             }
 
             m_nextCursor = model.Data.Cursor;
@@ -194,8 +186,8 @@ namespace BiliLite.Controls
         {
             if (m_page == 1)
             {
-                NoRepost.Visibility = Visibility.Visible;
-                BtnLoadMore.Visibility = Visibility.Collapsed;
+                m_viewModel.NoRepostVisibility = true;
+                m_viewModel.BtnLoadMoreVisibility = false;
             }
             else
             {
@@ -208,8 +200,8 @@ namespace BiliLite.Controls
         {
             if (model.Code == 12002)
             {
-                CloseRepost.Visibility = Visibility.Visible;
-                BtnLoadMore.Visibility = Visibility.Collapsed;
+                m_viewModel.CloseRepostVisibility = true;
+                m_viewModel.BtnLoadMoreVisibility = false;
             }
             else
             {
@@ -222,8 +214,8 @@ namespace BiliLite.Controls
             try
             {
                 data.Replies ??= new ObservableCollection<CommentViewModel>();
-                data.ShowReplyMore = Visibility.Collapsed;
-                data.ShowLoading = Visibility.Visible;
+                data.ShowReplyMore = false;
+                data.ShowLoading = true;
                 var result = await m_commentApi.Reply(m_loadCommentInfo.Oid, data.RpId.ToString(), data.LoadPage,
                     m_loadCommentInfo.CommentMode).Request();
                 if (!result.status)
@@ -242,7 +234,7 @@ namespace BiliLite.Controls
                 {
                     if (dataCommentViewModel.Data.Replies.Count >= 10)
                     {
-                        data.ShowReplyMore = Visibility.Visible;
+                        data.ShowReplyMore = true;
                     }
 
                     foreach (var item in dataCommentViewModel.Data.Replies)
@@ -254,7 +246,7 @@ namespace BiliLite.Controls
                 }
                 else
                 {
-                    data.ShowReplyMore = Visibility.Collapsed;
+                    data.ShowReplyMore = false;
                 }
             }
             catch (Exception ex)
@@ -264,7 +256,7 @@ namespace BiliLite.Controls
             }
             finally
             {
-                data.ShowLoading = Visibility.Collapsed;
+                data.ShowLoading = false;
             }
         }
 
@@ -320,13 +312,13 @@ namespace BiliLite.Controls
 
         private async void BtnShowComment_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentViewModel;
-            if (m.ShowReplies == Visibility.Collapsed)
+            var m = (sender as HyperlinkButton)?.DataContext as CommentViewModel;
+            if (m.ShowReplies == false)
             {
                 ListViewComments.ScrollIntoView(m);
-                m.ShowReplies = Visibility.Visible;
-                m.ShowReplyBtn = Visibility.Collapsed;
-                m.ShowReplyBox = Visibility.Visible;
+                m.ShowReplies = true;
+                m.ShowReplyBtn = false;
+                m.ShowReplyBox = true;
                 m.Replies = null;
                 m.LoadPage = 1;
                 if (m.Replies == null || m.Replies.Count == 0)
@@ -336,24 +328,16 @@ namespace BiliLite.Controls
             }
             else
             {
-                m.ShowReplyBtn = Visibility.Collapsed;
-                m.ShowReplies = Visibility.Collapsed;
+                m.ShowReplyBtn = false;
+                m.ShowReplies = false;
                 ListViewComments.ScrollIntoView(m);
             }
         }
 
         private void BtnShowReplyBtn_Click(object sender, RoutedEventArgs e)
         {
-            var m = (sender as HyperlinkButton).DataContext as CommentViewModel;
-            if (m.ShowReplyBox == Visibility.Visible)
-            {
-                m.ShowReplyBox = Visibility.Collapsed;
-            }
-            else
-            {
-                m.ShowReplyBox = Visibility.Visible;
-            }
-
+            var m = (sender as HyperlinkButton)?.DataContext as CommentViewModel;
+            m.ShowReplyBox = !m.ShowReplyBox;
         }
 
         private void BtnDoNotLike_Click(object sender, RoutedEventArgs e)
@@ -369,7 +353,7 @@ namespace BiliLite.Controls
 
         private async void BtnLoadMore_Click(object sender, RoutedEventArgs e)
         {
-            if (!m_loading)
+            if (!m_viewModel.Loading)
             {
                 await GetComment();
             }
@@ -509,10 +493,10 @@ namespace BiliLite.Controls
             {
                 m = (sender as MenuFlyoutItem).DataContext as CommentViewModel;
             }
-            DeletComment(m);
+            DeleteComment(m);
         }
 
-        private async void DeletComment(CommentViewModel m)
+        private async void DeleteComment(CommentViewModel m)
         {
             if (m == null)
             {
@@ -608,15 +592,14 @@ namespace BiliLite.Controls
 
         public void ClearComment()
         {
-            //ls_hot.ItemsSource = null;
-            ListViewComments.ItemsSource = null;
+            m_viewModel.Comments.Clear();
             m_page = 1;
-            hot.Visibility = Visibility.Collapsed;
+            m_viewModel.HotCommentsVisibility = false;
         }
 
         public async void LoadMore()
         {
-            if (!m_loading)
+            if (!m_viewModel.Loading)
             {
                 await GetComment();
             }
@@ -636,22 +619,16 @@ namespace BiliLite.Controls
             m_disableShowPicture = disableShowPicture;
             if (loadCommentInfo.CommentSort == CommentSort.Hot)
             {
-                hot.Visibility = Visibility.Visible;
-                _new.Visibility = Visibility.Collapsed;
+                m_viewModel.HotCommentsVisibility = true;
+                m_viewModel.NewCommentVisibility = false;
             }
             else
             {
-                hot.Visibility = Visibility.Collapsed;
-                _new.Visibility = Visibility.Visible;
+                m_viewModel.HotCommentsVisibility = false;
+                m_viewModel.NewCommentVisibility = true;
             }
-            if (loadCommentInfo.IsDialog)
-            {
-                BtnRefresh.Margin = new Thickness(0, 0, 40, 0);
-            }
-            else
-            {
-                BtnRefresh.Margin = new Thickness(0);
-            }
+
+            m_viewModel.IsCommentDialog = loadCommentInfo.IsDialog;
             m_loadCommentInfo = loadCommentInfo;
             m_page = 1;
             await GetComment();

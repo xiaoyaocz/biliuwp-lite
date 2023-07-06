@@ -133,27 +133,27 @@ namespace BiliLite.ViewModels.Comment
 
         //public ObservableCollection<CommentModel> replies { get; set; }
 
-        public Visibility ShowReplies { get; set; } = Visibility.Collapsed;
+        public bool ShowReplies { get; set; } = false;
 
-        public Visibility ShowReplyBtn { get; set; } = Visibility.Collapsed;
+        public bool ShowReplyBtn { get; set; } = false;
 
-        public Visibility ShowReplyBox { get; set; } = Visibility.Collapsed;
+        public bool ShowReplyBox { get; set; } = false;
 
-        public Visibility ShowReplyMore { get; set; } = Visibility.Collapsed;
+        public bool ShowReplyMore { get; set; } = false;
 
-        public Visibility ShowLoading { get; set; } = Visibility.Collapsed;
+        public bool ShowLoading { get; set; } = false;
 
-        public Visibility ShowDelete
+        public bool ShowDelete
         {
             get
             {
                 if (SettingService.Account.Logined && Mid.ToString() == SettingService.Account.UserID.ToString())
                 {
-                    return Visibility.Visible;
+                    return true;
                 }
                 else
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
             }
         }
@@ -163,10 +163,8 @@ namespace BiliLite.ViewModels.Comment
         public string ReplyAt => "回复 @" + Member.Uname;
         
         public string ReplyText { get; set; }
-
-        private Visibility _showTop = Visibility.Collapsed;
-
-        public Visibility ShowTop { get; set; } = Visibility.Collapsed;
+        
+        public bool ShowTop { get; set; } = false;
 
         public RelayCommand<object> LaunchUrlCommand { get; private set; }
 
