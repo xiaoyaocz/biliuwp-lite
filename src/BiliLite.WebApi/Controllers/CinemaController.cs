@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.WebApi.Models;
 using HtmlAgilityPack;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,23 +18,26 @@ namespace BiliLite.WebApi.Controllers
     public class CinemaController : ControllerBase
     {
         readonly IDistributedCache distributedCache;
+        private readonly IMemoryCache m_memoryCache;
         readonly IHttpClientFactory client;
-        public CinemaController(IHttpClientFactory httpContext, IDistributedCache cache)
+        public CinemaController(IHttpClientFactory httpContext,  IMemoryCache memoryCache)
         {
             client = httpContext;
-            distributedCache = cache;
+            m_memoryCache = memoryCache;
         }
         [Route("Home")]
         public async Task<JsonResult> Cinema()
         {
-            var value = distributedCache.GetString("CinemaHome");
-            if (value != null)
+            var cacheKey = "CinemaHome";
+            var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+            if (getCacheSuccess && value != null)
             {
+                var cacheResult = value as CinemaHomeModel;
                 return new JsonResult(new ApiModel<CinemaHomeModel>()
                 {
                     code = 0,
                     message = "",
-                    data = JsonConvert.DeserializeObject<CinemaHomeModel>(value)
+                    data = cacheResult
                 });
             }
 
@@ -56,10 +58,7 @@ namespace BiliLite.WebApi.Controllers
                 tv = await GetHot(5),
                 variety= await GetHot(7)
             };
-            distributedCache.SetString("CinemaHome", JsonConvert.SerializeObject(datas), new DistributedCacheEntryOptions()
-            {
-                AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-            });
+            m_memoryCache.Set(cacheKey, datas, TimeSpan.FromHours(2));
             return new JsonResult(new ApiModel<CinemaHomeModel>()
             {
                 code = 0,
@@ -109,12 +108,14 @@ namespace BiliLite.WebApi.Controllers
 
             try
             {
-                var key = "Falls" + wid + "Cursor" + cursor;
-                var value = distributedCache.GetString(key);
-                if (value != null)
+                var cacheKey = "Falls" + wid + "Cursor" + cursor;
+                var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+                if (getCacheSuccess && value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<FallItemModel>>(value);
+                    var cacheResult = value as List<FallItemModel>;
+                    return cacheResult;
                 }
+
                 var http = client.CreateClient("http");
                 var results = await http.GetStringAsync($"https://bangumi.bilibili.com/api/fall?appkey=1d8b6e7d45233436&build=5442100&cursor={ cursor}&mobi_app=android&pagesize=4&platform=android&ts={ Utils.GetTimestampS()}&wid={wid}");
                 var obj = JObject.Parse(results);
@@ -133,10 +134,7 @@ namespace BiliLite.WebApi.Controllers
                 }
                 if (list.Count != 0)
                 {
-                    distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
-                    {
-                        AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddHours(2))
-                    });
+                    m_memoryCache.Set(cacheKey, list, TimeSpan.FromHours(1));
                 }
 
                 return list;
@@ -157,12 +155,14 @@ namespace BiliLite.WebApi.Controllers
 
             try
             {
-                var key = "CinemaHot" + oid;
-                var value = distributedCache.GetString(key);
-                if (value != null)
+                var cacheKey = "CinemaHot" + oid;
+                var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+                if (getCacheSuccess && value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(value);
+                    var cacheResult = value as List<CinemaSeasonItem>;
+                    return cacheResult;
                 }
+
                 var http = client.CreateClient("http");
                 var results = await http.GetStringAsync( $"https://api.bilibili.com/pgc/season/rank/web/list?day=3&season_type={oid}");
                 var obj = JObject.Parse(results);
@@ -183,10 +183,7 @@ namespace BiliLite.WebApi.Controllers
                 if (list != null && list.Count != 0)
                 {
                     list = list.Take(36).ToList();
-                    distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
-                    {
-                        AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-                    });
+                    m_memoryCache.Set(cacheKey, list, TimeSpan.FromHours(2));
                 }
 
                 return list;
@@ -208,12 +205,14 @@ namespace BiliLite.WebApi.Controllers
 
             try
             {
-                var key = "CinemaTime";
-                var value = distributedCache.GetString(key);
-                if (value != null)
+                var cacheKey = "CinemaTime";
+                var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+                if (getCacheSuccess && value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<CinemaSeasonItem>>(value);
+                    var cacheResult = value as List<CinemaSeasonItem>;
+                    return cacheResult;
                 }
+
                 var http = client.CreateClient("http");
                 var results = await http.GetStringAsync($"https://api.bilibili.com/pgc/web/timeline/online?type=1");
                 var obj = JObject.Parse(results);
@@ -225,10 +224,7 @@ namespace BiliLite.WebApi.Controllers
                 }
                 if (list != null && list.Count != 0)
                 {
-                    distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
-                    {
-                        AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-                    });
+                    m_memoryCache.Set(cacheKey, list, TimeSpan.FromHours(2));
                 }
 
                 return list;

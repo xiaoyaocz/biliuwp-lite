@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BiliLite.WebApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace BiliLite.WebApi.Controllers
 {
@@ -14,12 +8,8 @@ namespace BiliLite.WebApi.Controllers
     [ApiController]
     public class RankController : ControllerBase
     {
-        readonly IDistributedCache distributedCache;
-        readonly IHttpClientFactory client;
-        public RankController(IHttpClientFactory httpContext, IDistributedCache cache)
+        public RankController()
         {
-            client = httpContext;
-            distributedCache = cache;
         }
 
         [Route("RankRegion")]

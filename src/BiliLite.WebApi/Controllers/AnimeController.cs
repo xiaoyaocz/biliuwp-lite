@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using BiliLite.WebApi.Models;
 using HtmlAgilityPack;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json.Linq;
 
 namespace BiliLite.WebApi.Controllers
@@ -18,25 +15,27 @@ namespace BiliLite.WebApi.Controllers
     [ApiController]
     public class AnimeController : ControllerBase
     {
-        readonly IDistributedCache distributedCache;
         readonly IHttpClientFactory client;
-        public AnimeController(IHttpClientFactory httpContext, IDistributedCache cache)
+        private readonly IMemoryCache m_memoryCache;
+        public AnimeController(IHttpClientFactory httpContext, IMemoryCache memoryCache)
         {
             client = httpContext;
-            distributedCache = cache;
+            m_memoryCache = memoryCache;
         }
 
         [Route("Bangumi")]
         public async Task<JsonResult> Anime()
         {
-            var value = distributedCache.GetString("AnimeHome");
-            if (value != null)
+            var cacheKey = "AnimeHome";
+            var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+            if (getCacheSuccess && value!=null)
             {
+                var cacheResult = value as BangumiHomeModel;
                 return new JsonResult(new ApiModel<BangumiHomeModel>()
                 {
                     code = 0,
                     message = "",
-                    data = JsonConvert.DeserializeObject<BangumiHomeModel>(value)
+                    data = cacheResult
                 });
             }
 
@@ -74,10 +73,7 @@ namespace BiliLite.WebApi.Controllers
             };
             if (datas.ranks.Count != 0 && datas.banners.Count != 0)
             {
-                distributedCache.SetString("AnimeHome", JsonConvert.SerializeObject(datas), new DistributedCacheEntryOptions()
-                {
-                    AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-                });
+                m_memoryCache.Set(cacheKey, datas, TimeSpan.FromHours(2));
             }
             return new JsonResult(new ApiModel<BangumiHomeModel>()
             {
@@ -90,14 +86,16 @@ namespace BiliLite.WebApi.Controllers
         [Route("Guochuang")]
         public async Task<JsonResult> Guochuang()
         {
-            var value = distributedCache.GetString("GuochuangHome");
-            if (value != null)
+            var cacheKey = "GuochuangHome";
+            var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+            if (getCacheSuccess == true && value != null)
             {
+                var cacheResult = value as BangumiHomeModel;
                 return new JsonResult(new ApiModel<BangumiHomeModel>()
                 {
                     code = 0,
                     message = "",
-                    data = JsonConvert.DeserializeObject<BangumiHomeModel>(value)
+                    data = cacheResult
                 });
             }
 
@@ -120,10 +118,7 @@ namespace BiliLite.WebApi.Controllers
             };
             if (datas.ranks.Count != 0 && datas.banners.Count != 0)
             {
-                distributedCache.SetString("GuochuangHome", JsonConvert.SerializeObject(datas), new DistributedCacheEntryOptions()
-                {
-                    AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-                });
+                m_memoryCache.Set(cacheKey, datas, TimeSpan.FromHours(2));
             }
             return new JsonResult(new ApiModel<BangumiHomeModel>()
             {
@@ -136,26 +131,24 @@ namespace BiliLite.WebApi.Controllers
         [Route("Timeline")]
         public async Task<JsonResult> Timeline(int type = 1)
         {
-            var value = distributedCache.GetString("Timeline" + type);
-            if (value != null)
+            var cacheKey = $"Timeline-{type}";
+            var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+            if (getCacheSuccess == true && value != null)
             {
-                return new JsonResult(new ApiModel<List<BangumiTimeline>>()
+                var cacheResult = value as BangumiTimeline;
+                return new JsonResult(new ApiModel<BangumiTimeline>()
                 {
                     code = 0,
                     message = "",
-                    data = JsonConvert.DeserializeObject<List<BangumiTimeline>>(value)
+                    data = cacheResult
                 });
             }
-
 
             var timelines = await GetTimeLine(type);
 
             if (timelines.Count != 0)
             {
-                distributedCache.SetString("Timeline" + type, JsonConvert.SerializeObject(timelines), new DistributedCacheEntryOptions()
-                {
-                    AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddDays(1).Date)
-                });
+                m_memoryCache.Set(cacheKey, timelines, TimeSpan.FromHours(2));
             }
             return new JsonResult(new ApiModel<List<BangumiTimeline>>()
             {
@@ -324,12 +317,14 @@ namespace BiliLite.WebApi.Controllers
 
             try
             {
-                var key = "Falls" + wid + "Cursor" + cursor;
-                var value = distributedCache.GetString(key);
-                if (value != null)
+                var cacheKey = "Falls" + wid + "Cursor" + cursor;
+                var getCacheSuccess = m_memoryCache.TryGetValue(cacheKey, out var value);
+                if (getCacheSuccess == true && value != null)
                 {
-                    return JsonConvert.DeserializeObject<List<FallItemModel>>(value);
+                    var cacheResult = value as List<FallItemModel>;
+                    return cacheResult;
                 }
+
                 var http = client.CreateClient("http");
                 var results = await http.GetStringAsync($"https://bangumi.bilibili.com/api/fall?appkey=1d8b6e7d45233436&build=5442100&cursor={ cursor}&mobi_app=android&pagesize=4&platform=android&ts={ Utils.GetTimestampS()}&wid={wid}");
                 var obj = JObject.Parse(results);
@@ -348,10 +343,7 @@ namespace BiliLite.WebApi.Controllers
                 }
                 if (list.Count != 0)
                 {
-                    distributedCache.SetString(key, JsonConvert.SerializeObject(list), new DistributedCacheEntryOptions()
-                    {
-                        AbsoluteExpiration = new DateTimeOffset(DateTime.Now.AddHours(2))
-                    });
+                    m_memoryCache.Set(cacheKey, list, TimeSpan.FromHours(1));
                 }
 
                 return list;
