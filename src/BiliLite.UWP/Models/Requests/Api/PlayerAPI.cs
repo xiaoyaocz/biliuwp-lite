@@ -252,8 +252,9 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public string GenerateMPD(GenerateMPDModel generate)
         {
+            var baseUrl = SettingService.GetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, ApiConstants.BILI_LITE_WEB_API_DEFAULT_BASE_URL);
             var par = Newtonsoft.Json.JsonConvert.SerializeObject(generate);
-            return $"{ApiHelper.IL_BASE_URL}/api/player/generatempd?par={Uri.EscapeDataString(par)}";
+            return $"{baseUrl}api/player/generatempd?par={Uri.EscapeDataString(par)}";
         }
     }
 }
