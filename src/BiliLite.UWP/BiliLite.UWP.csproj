@@ -128,6 +128,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Models\Common\Comment\CommentItem.cs" />
     <Compile Include="Models\Common\Comment\CommentMemberFansDetailModel.cs" />
     <Compile Include="Models\Common\Comment\CommentMemberUserSailingCardbgFanModel.cs" />

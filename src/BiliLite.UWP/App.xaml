@@ -45,6 +45,7 @@
             <convert:ImageCompressionConvert x:Key="imageConvert"></convert:ImageCompressionConvert>
             <convert:ImageSourceConvert x:Key="imageConvert2"></convert:ImageSourceConvert>
             <convert:DisplayConvert x:Key="display"></convert:DisplayConvert>
+            <convert:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"></convert:BoolToVisibilityConverter>
             <FontFamily x:Key="VanFont">ms-appx:///Assets/Fonts/vanfont.otf#vanfont</FontFamily>
             <FontFamily x:Key="BiliIconFont">ms-appx:///Assets/Fonts/biliicon.ttf#biliicon</FontFamily>
             <CornerRadius x:Key="ImageCornerRadius">4</CornerRadius>

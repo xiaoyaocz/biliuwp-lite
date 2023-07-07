@@ -49,35 +49,21 @@ namespace BiliLite.Controls
         {
             m_mapper = App.ServiceProvider.GetService<IMapper>();
             m_viewModel = App.ServiceProvider.GetService<CommentControlViewModel>();
+            DataContext = m_viewModel;
             this.InitializeComponent();
             m_commentApi = new CommentApi();
             emoteVM = new EmoteVM();
-            this.SizeChanged += CommentControl_SizeChanged;
         }
 
         #endregion
 
         #region Properties
 
-        public bool IsWide
-        {
-            get => (bool)GetValue(IsWideProperty);
-            set => SetValue(IsWideProperty, value);
-        }
-
-        public static readonly DependencyProperty IsWideProperty =
-            DependencyProperty.Register(nameof(IsWide), typeof(bool), typeof(CommentControl), new PropertyMetadata(false));
-
         public int CommentCount => ListViewComments.Items.Count;
 
         #endregion
 
         #region Private Methods
-
-        private void CommentControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            IsWide = e.NewSize.Width >= 500;
-        }
 
         private void BtnUser_Click(object sender, RoutedEventArgs e)
         {
@@ -586,6 +572,14 @@ namespace BiliLite.Controls
             MessageCenter.OpenImageViewer(pictures, index);
         }
 
+        private void CommentControl_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                m_viewModel.Width = e.NewSize.Width;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -636,6 +630,5 @@ namespace BiliLite.Controls
         }
 
         #endregion
-
     }
 }

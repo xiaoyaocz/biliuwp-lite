@@ -12,7 +12,9 @@
     xmlns:comment="using:BiliLite.ViewModels.Comment"
     xmlns:common="using:BiliLite.Models.Common"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    x:Name="CommentControlContent"
+    SizeChanged="CommentControl_OnSizeChanged">
 
     <UserControl.Resources>
         <convert:DatetimeConvert x:Name="Datetime"></convert:DatetimeConvert>
@@ -97,8 +99,12 @@
                     </Grid>
                 </HyperlinkButton>
                 <!--粉丝牌-->
-                <Grid x:Name="FansNarrow" Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay,Converter={StaticResource display}}" Margin="8 0"  Grid.Row="2" Grid.RowSpan="3" HorizontalAlignment="Center" VerticalAlignment="Top">
-                    <Border  Visibility="{x:Bind Path=Member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}" >
+                <Grid x:Name="FansNarrow" Visibility="{Binding ElementName=CommentControlContent,Path=DataContext.IsWideMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}" Margin="8 0"  Grid.Row="2" Grid.RowSpan="1" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Border  Visibility="{x:Bind Path=Member.ShowFansDetail,Mode=OneWay}" HorizontalAlignment="Center" BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}" >
                         <Border.Background>
                             <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
                                 <GradientStop Color="{x:Bind Path=Member.FansDetail.MedalColor,Converter={StaticResource colorConvert},Mode=OneWay,ConverterParameter=1}"/>
@@ -127,7 +133,7 @@
                                 Foreground="{x:Bind Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" VerticalAlignment="Center"></TextBlock>
                     <Image VerticalAlignment="Center" Height="12" Margin="8 4 8 0" Source="{Binding Path=Member.LV}"></Image>
                     <!--粉丝牌-->
-                    <Grid Visibility="{Binding ElementName=comment,Path=IsWide,Mode=OneWay}" Margin="0 4 0 0" VerticalAlignment="Center">
+                    <Grid Visibility="{Binding ElementName=m_viewModel,Path=IsWideMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}" Margin="0 4 0 0" VerticalAlignment="Center">
                         <Border  Visibility="{x:Bind Path=Member.ShowFansDetail,Mode=OneWay}"  BorderThickness="1" CornerRadius="2" BorderBrush="{x:Bind Path=Member.FansDetail.MedalColorBorder,Converter={StaticResource colorConvert},Mode=OneWay}" >
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
@@ -178,11 +184,31 @@
                     <Run Text="{x:Bind Path=Content.PlatStr}"></Run>
                     <Run Text="{x:Bind Path=ReplyControl.Location}"></Run>
                 </TextBlock>
-                <ContentControl  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="4 0" Content="{x:Bind Path=Content.Text}">
+
+                <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Visibility="{Binding ElementName=CommentControlContent,Path=DataContext.IsNarrowMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}">
+                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Visibility="{Binding ElementName=CommentControlContent,Path=DataContext.IsWideMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}">
+                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CommentContentTemplate" x:DataType="comment:CommentViewModel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <ContentControl  Grid.Row="0" Margin="4 0" Content="{x:Bind Path=Content.Text}">
 
                 </ContentControl>
                 <toolkit:AdaptiveGridView
-                    Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                    Grid.Row="1" 
                     x:Name="NotePicturesView"
                     StretchContentForSingleRow="False"
                     OneRowModeEnabled="True"
@@ -204,16 +230,17 @@
                         </DataTemplate>
                     </toolkit:AdaptiveGridView.ItemTemplate>
                 </toolkit:AdaptiveGridView>
-                <Grid Margin="0 8 0 0" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="4">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                        <HyperlinkButton  Click="BtnLike_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
+                <Grid Margin="0 8 0 0" Grid.Row="2">
+                    <StackPanel Orientation="{Binding ElementName=CommentControlContent, Path=DataContext.CommentActionOrientation}" VerticalAlignment="Center">
+
+                        <HyperlinkButton  Click="BtnLike_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" ToolTipService.ToolTip="{x:Bind Like}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
                                 <TextBlock  Margin="4 0" Text="{x:Bind LikeStr,Mode=OneWay}"></TextBlock>
                             </StackPanel>
                         </HyperlinkButton>
-                        <HyperlinkButton  Click="BtnShowComment_Click" Foreground="Gray"  Margin="8 0" HorizontalContentAlignment="Left">
+                        <HyperlinkButton  Click="BtnShowComment_Click" Foreground="Gray"  ToolTipService.ToolTip="{x:Bind Rcount}"  Margin="8 0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <fa:FontAwesome Icon="Regular_Comment" FontSize="14"></fa:FontAwesome>
                                 <TextBlock Margin="4 0" Text="{x:Bind RcountStr,Mode=OneWay}"></TextBlock>
@@ -230,14 +257,16 @@
                                 <TextBlock ></TextBlock>
                             </StackPanel>
                         </HyperlinkButton>
+
+                        <Border Visibility="{x:Bind Path=UpAction.Like,Mode=OneWay}" Background="#3C808080" CornerRadius="2">
+                            <TextBlock FontSize="10" Margin="8 8" Foreground="Gray">UP主觉得很赞</TextBlock>
+                        </Border>
                     </StackPanel>
 
-                    <Border Visibility="{x:Bind Path=UpAction.Like,Mode=OneWay}" Background="#3C808080" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="2">
-                        <TextBlock FontSize="12" Margin="8 4" Foreground="Gray">UP主觉得很赞</TextBlock>
-                    </Border>
+
                 </Grid>
 
-                <StackPanel Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=ShowReplies,Mode=OneWay}">
+                <StackPanel Grid.Row="3" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=ShowReplies,Mode=OneWay}">
 
                     <StackPanel  Visibility="{x:Bind Path=ShowReplyBox,Mode=OneWay}" Margin="0 0 0 4">
                         <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=ReplyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
@@ -268,15 +297,15 @@
                             <DataTemplate>
                                 <StackPanel>
 
-                                    <HyperlinkButton Foreground="{Binding Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=mid}" Click="BtnUser_Click">
+                                    <HyperlinkButton Foreground="{Binding Path=Member.Vip.VipType,Converter={StaticResource colorSelct},ConverterParameter=2}" Tag="{Binding Path=Mid}" Click="BtnUser_Click">
                                         <StackPanel Orientation="Horizontal"  >
                                             <TextBlock  Text="{Binding Path=Member.Uname}"  VerticalAlignment="Center"></TextBlock>
                                             <Image Height="12" Margin="8 0" Source="{Binding Path=Member.LV}"></Image>
                                         </StackPanel>
                                     </HyperlinkButton>
-                                    <TextBlock FontSize="12"  IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center"  ToolTipService.ToolTip="{Binding Path=ctime,Converter={StaticResource Datetime}}">
+                                    <TextBlock FontSize="12"  IsTextSelectionEnabled="True" Foreground="Gray" VerticalAlignment="Center"  ToolTipService.ToolTip="{Binding Path=Ctime,Converter={StaticResource Datetime}}">
                                                 <Run Text="{Binding Path=Time}"></Run>
-                                                <Run Text="{Binding Path=reply_control.Location}"></Run>
+                                                <Run Text="{Binding Path=ReplyControl.Location}"></Run>
                                     </TextBlock>
                                     <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
                                     <ContentControl Margin="0 8 0 0" Content="{Binding Path=Content.Text}">
@@ -289,7 +318,7 @@
                                             <HyperlinkButton  Click="BtnLike_Click" Foreground="{Binding LikeColor}" Margin="8 0" HorizontalContentAlignment="Left">
                                                 <StackPanel Orientation="Horizontal">
                                                     <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
-                                                    <TextBlock  Margin="4 0" Text="{Binding Path=like_str}"></TextBlock>
+                                                    <TextBlock  Margin="4 0" Text="{Binding Path=LikeStr}"></TextBlock>
                                                 </StackPanel>
                                             </HyperlinkButton>
 
@@ -362,7 +391,6 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
-
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -370,26 +398,26 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid  BorderThickness="0 0 0 1" BorderBrush="#33808080">
-            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="HotComments" Visibility="{x:Bind m_viewModel.HotCommentsVisibility}">
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="HotComments" Visibility="{x:Bind m_viewModel.HotCommentsVisibility,Mode=OneWay}">
                 <TextBlock Margin="12 8 0 0" VerticalAlignment="Center"  FontSize="20" >热门评论</TextBlock>
                 <HyperlinkButton x:Name="BtnNewSort" Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom"  Click="BtnNewSort_Click"  HorizontalAlignment="Right">
                     <TextBlock>按最新排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="NewComment" Visibility="{x:Bind m_viewModel.NewCommentVisibility}">
+            <StackPanel Padding="0 0 0 8" Orientation="Horizontal" x:Name="NewComment" Visibility="{x:Bind m_viewModel.NewCommentVisibility,Mode=OneWay}">
                 <TextBlock Margin="12 8 0 0" FontSize="20" VerticalAlignment="Center" >最新评论</TextBlock>
                 <HyperlinkButton x:Name="BtnHotSort"  Margin="8 0 0 0" Padding="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Click="BtnHotSort_Click" >
                     <TextBlock>按热门排序</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
-            <AppBarButton x:Name="BtnRefresh" Click="BtnRefresh_Click" Margin="{x:Bind m_viewModel.BtnRefreshMargin}" Width="40" Height="40" HorizontalAlignment="Right">
+            <AppBarButton x:Name="BtnRefresh" Click="BtnRefresh_Click" Margin="{x:Bind m_viewModel.BtnRefreshMargin,Mode=OneWay}" Width="40" Height="40" HorizontalAlignment="Right">
                 <AppBarButton.Icon>
                     <SymbolIcon Margin="0 -4 0 8" Symbol="Refresh"></SymbolIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
         </Grid>
         <ListView x:Name="ListViewComments"
-                  Padding="0 0 12 0"
+                  Padding="{x:Bind m_viewModel.ListViewCommentsPadding}"
                   Grid.Row="1"
                   ItemsSource="{x:Bind m_viewModel.Comments}"
                   ItemTemplate="{StaticResource commentTemplate}" 
@@ -400,11 +428,11 @@
             <ListView.Footer>
                 <StackPanel>
                     <ProgressBar x:Name="PrLoad" Visibility="{x:Bind m_viewModel.PrLoadVisibility, Mode=OneWay}" IsIndeterminate="True" Background="#00000000" ></ProgressBar>
-                    <HyperlinkButton x:Name="BtnLoadMore" Click="BtnLoadMore_Click" Visibility="{x:Bind m_viewModel.BtnLoadMoreVisibility}" HorizontalAlignment="Center">
+                    <HyperlinkButton x:Name="BtnLoadMore" Click="BtnLoadMore_Click" Visibility="{x:Bind m_viewModel.BtnLoadMoreVisibility,Mode=OneWay}" HorizontalAlignment="Center">
                         <TextBlock>加载更多</TextBlock>
                     </HyperlinkButton>
-                    <TextBlock x:Name="NoRepost" Visibility="{x:Bind m_viewModel.NoRepostVisibility}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
-                    <TextBlock x:Name="CloseRepost" Visibility="{x:Bind m_viewModel.CloseRepostVisibility}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
+                    <TextBlock x:Name="NoRepost" Visibility="{x:Bind m_viewModel.NoRepostVisibility,Mode=OneWay}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">还没有人评论</TextBlock>
+                    <TextBlock x:Name="CloseRepost" Visibility="{x:Bind m_viewModel.CloseRepostVisibility,Mode=OneWay}" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 24">禁止评论</TextBlock>
                 </StackPanel>
             </ListView.Footer>
         </ListView>
