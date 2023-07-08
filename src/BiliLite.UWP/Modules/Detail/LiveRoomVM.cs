@@ -373,7 +373,7 @@ namespace BiliLite.Modules
             set { _bag = value; DoPropertyChanged("Bag"); }
         }
 
-        public List<LiveRoomWebUrlDurlItemModel> urls { get; set; }
+        public List<LiveRoomRealPlayUrlsModel> urls { get; set; }
         private LiveWalletInfo _wallet;
 
         public LiveWalletInfo WalletInfo
@@ -453,19 +453,42 @@ namespace BiliLite.Modules
                 {
                     var data = await results.GetJson<ApiDataModel<LiveRoomPlayUrlModel>>();
                     if (data.success)
-                    {
+                    {   
+                        // 暂时不使用用flv流
+                        LiveRoomWebUrlStreamItemModel stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_hls");
+                        List<LiveRoomWebUrlCodecItemModel> codec_list = stream.format[0].codec;
+
                         int i = 1;
-                        foreach (var item in data.data.durl)
+                        foreach (var codec_item in codec_list)
                         {
-                            item.name = "线路" + i;
+                            foreach (var item in codec_item.url_info)
+                            {
+                                item.name = "线路" + i;
+                                i++;
+                            }
+                        }
+
+                        // 暂时不使用hevc流
+                        var codec = codec_list.FirstOrDefault(item => item.codec_name == "avc");
+
+                        var accept_qn_list = codec.accept_qn;
+                        qualites ??= data.data.playurl_info.playurl.g_qn_desc.Where(item => accept_qn_list.Contains(item.qn)).ToList();
+                        current_qn = data.data.playurl_info.playurl.g_qn_desc.FirstOrDefault(x => x.qn == codec.current_qn);
+
+                        i = 0;
+                        var url_list = new List<LiveRoomRealPlayUrlsModel>();
+                        foreach (var item in codec.url_info)
+                        {
+                            var url_item = new LiveRoomRealPlayUrlsModel
+                            {
+                                url = codec.url_info[i].host + codec.base_url + codec.url_info[i].extra,
+                                name = codec.url_info[i].name
+                            };
+                            url_list.Add(url_item);
                             i++;
                         }
-                        if (qualites == null)
-                        {
-                            qualites = data.data.quality_description;
-                        }
-                        current_qn = data.data.quality_description.FirstOrDefault(x => x.qn == data.data.current_qn);
-                        urls = data.data.durl;
+                        urls = url_list;
+
                         ChangedPlayUrl?.Invoke(this, data.data);
                     }
                     else
@@ -1431,23 +1454,49 @@ namespace BiliLite.Modules
 
     public class LiveRoomPlayUrlModel
     {
-        public int current_qn { get; set; }
-        public List<LiveRoomWebUrlQualityDescriptionItemModel> quality_description { get; set; }
-        public List<LiveRoomWebUrlDurlItemModel> durl { get; set; }
+        public LiveRoomWebUrlPlayurlInfoItemModel playurl_info { get; set; }
+    }
+    public class LiveRoomWebUrlPlayurlInfoItemModel
+    {
+        public LiveRoomWebUrlPlayurlItemModel playurl { get; set; }
+    }
+    public class LiveRoomWebUrlPlayurlItemModel
+    {
+        public List<LiveRoomWebUrlQualityDescriptionItemModel> g_qn_desc { get; set; }
+        public List<LiveRoomWebUrlStreamItemModel> stream { get; set; }
     }
     public class LiveRoomWebUrlQualityDescriptionItemModel
     {
         public int qn { get; set; }
         public string desc { get; set; }
     }
-    public class LiveRoomWebUrlDurlItemModel
+    public class LiveRoomWebUrlStreamItemModel
+    {
+        public List<LiveRoomWebUrlFormatItemModel> format { get; set; }
+        public string protocol_name { get; set; }
+    }
+    public class LiveRoomWebUrlFormatItemModel
+    {
+        public List<LiveRoomWebUrlCodecItemModel> codec { get; set; }
+    }
+    public class LiveRoomWebUrlCodecItemModel
+    {
+        public int current_qn { get; set; }
+        public string base_url { get; set; }
+        public string codec_name { get; set; }
+        public List<int> accept_qn { get; set; }
+        public List<LiveRoomWebUrlUrlinfoItemModel> url_info { get; set; }
+    }
+    public class LiveRoomWebUrlUrlinfoItemModel
+    {
+        public string name { get; set; }
+        public string host { get; set; }
+        public string extra { get; set; }
+    }
+    public class LiveRoomRealPlayUrlsModel
     {
         public string name { get; set; }
         public string url { get; set; }
-        public int length { get; set; }
-        public int order { get; set; }
-        public int stream_type { get; set; }
-        public int ptag { get; set; }
     }
 
     namespace LiveRoomDetailModels
