@@ -11,7 +11,7 @@ namespace BiliLite.Modules
 {
     public class IModules : INotifyPropertyChanged
     {
-        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         public virtual ReturnModel<T> HandelError<T>(Exception ex, [CallerMemberName] string methodName = null)
         {
@@ -26,7 +26,7 @@ namespace BiliLite.Modules
             else
             {
                 var type = new StackTrace().GetFrame(1).GetMethod().ReflectedType;
-                logger.Log(ex.Message, LogType.ERROR, ex, methodName, type.Name);
+                _logger.Log(ex.Message, LogType.ERROR, ex, methodName, type.Name);
                 return new ReturnModel<T>()
                 {
                     success = false,

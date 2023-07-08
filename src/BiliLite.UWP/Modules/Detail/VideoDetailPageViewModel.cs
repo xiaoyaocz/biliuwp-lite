@@ -3,30 +3,41 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoMapper;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Common.Video.Detail;
 using BiliLite.Models.Responses;
 using BiliLite.Models.Requests.Api;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Services;
-using BiliLite.Models.Common.Video;
-using Newtonsoft.Json;
+using BiliLite.ViewModels.Common;
+using BiliLite.ViewModels.Video;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Modules
 {
-    public class VideoDetailVM : IModules
+    public class VideoDetailPageViewModel : BaseViewModel
     {
-        ILogger _logger = GlobalLogger.FromCurrentType();
+        #region Fields
+
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         readonly FavoriteApi favoriteAPI;
         readonly VideoAPI videoAPI;
         readonly PlayerAPI PlayerAPI;
         readonly FollowAPI followAPI;
-        public VideoDetailVM()
+        private readonly IMapper m_mapper;
+
+        #endregion
+
+        #region Constructors
+
+        public VideoDetailPageViewModel()
         {
+            m_mapper = App.ServiceProvider.GetService<IMapper>();
             videoAPI = new VideoAPI();
             favoriteAPI = new FavoriteApi();
             PlayerAPI = new PlayerAPI();
@@ -36,88 +47,64 @@ namespace BiliLite.Modules
             DislikeCommand = new RelayCommand(DoDislike);
             LaunchUrlCommand = new RelayCommand<object>(LaunchUrl);
             CoinCommand = new RelayCommand<string>(DoCoin);
-            //FavoriteCommand = new RelayCommand<string>(DoFavorite);
             AttentionCommand = new RelayCommand(DoAttentionUP);
             SetStaffHeightCommand = new RelayCommand<string>(SetStaffHeight);
         }
+
+        #endregion
+
+        #region Properties
+
         public ICommand RefreshCommand { get; private set; }
+
         public ICommand LikeCommand { get; private set; }
+
         public ICommand DislikeCommand { get; private set; }
+
         public ICommand CoinCommand { get; private set; }
-        //public ICommand FavoriteCommand { get; private set; }
+
         public ICommand AttentionCommand { get; private set; }
+
         public ICommand LaunchUrlCommand { get; private set; }
+
+        public ICommand SetStaffHeightCommand { get; private set; }
+
+        public bool Loading { get; set; } = true;
+
+        public bool Loaded { get; set; }
+
+        public bool ShowError { get; set; }
+
+        public string ErrorMsg { get; set; } = "";
+
+        public VideoDetailViewModel VideoInfo { get; set; }
+
+        public double StaffHeight { get; set; } = 88.0;
+
+        public bool ShowMoreStaff { get; set; }
+
+        public ObservableCollection<FavoriteItemModel> MyFavorite { get; set; }
+
+        #endregion
+
+        #region Private Methods
 
         private async void LaunchUrl(object paramenter)
         {
             await MessageCenter.HandelUrl(paramenter.ToString());
-            return;
         }
 
-        private bool _loading = true;
-        public bool Loading
-        {
-            get { return _loading; }
-            set { _loading = value; DoPropertyChanged("Loading"); }
-        }
-        private bool _loaded = false;
-        public bool Loaded
-        {
-            get { return _loaded; }
-            set { _loaded = value; DoPropertyChanged("Loaded"); }
-        }
-        private bool _ShowError = false;
-        public bool ShowError
-        {
-            get { return _ShowError; }
-            set { _ShowError = value; DoPropertyChanged("ShowError"); }
-        }
-        private string _errorMsg = "";
-
-        public string ErrorMsg
-        {
-            get { return _errorMsg; }
-            set { _errorMsg = value; DoPropertyChanged("ErrorMsg"); }
-        }
-
-
-        private VideoDetailModel _videoInfo;
-        public VideoDetailModel VideoInfo
-        {
-            get { return _videoInfo; }
-            set { _videoInfo = value; DoPropertyChanged("VideoInfo"); }
-        }
-
-        private double _staffHeight = 88.0;
-        public double StaffHeight
-        {
-            get { return _staffHeight; }
-            set { _staffHeight = value; DoPropertyChanged("StaffHeight"); }
-        }
-
-        private bool _showMoreStaff;
-
-        public bool showMoreStaff
-        {
-            get { return _showMoreStaff; }
-            set { _showMoreStaff = value; DoPropertyChanged("showMoreStaff"); }
-        }
-        public ICommand SetStaffHeightCommand { get; private set; }
-        public void SetStaffHeight(string height)
+        private void SetStaffHeight(string height)
         {
             var h = Convert.ToDouble(height);
-            showMoreStaff = h > StaffHeight;
+            ShowMoreStaff = h > StaffHeight;
             StaffHeight = h;
-
         }
 
+        #endregion
 
-        private ObservableCollection<FavoriteItemModel> _myFavorite;
-        public ObservableCollection<FavoriteItemModel> MyFavorite
-        {
-            get { return _myFavorite; }
-            set { _myFavorite = value; DoPropertyChanged("MyFavorite"); }
-        }
+        #region Public Methods
+
         public async Task LoadFavorite(string avid)
         {
             try
@@ -193,14 +180,15 @@ namespace BiliLite.Modules
                     throw new CustomizedErrorException(data.message);
                 }
 
-                VideoInfo = data.data;
+                var videoInfoViewModel = m_mapper.Map<VideoDetailViewModel>(data.data);
+                VideoInfo = videoInfoViewModel;
                 if (needGetUserReq)
                 {
                     await GetAttentionUp();
                 }
                 Loaded = true;
 
-                await LoadFavorite(data.data.aid);
+                await LoadFavorite(data.data.Aid);
             }
             catch (Exception ex)
             {
@@ -222,10 +210,12 @@ namespace BiliLite.Modules
                 Loading = false;
             }
         }
+
         public void Refresh()
         {
 
         }
+
         public async void DoLike()
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
@@ -235,22 +225,22 @@ namespace BiliLite.Modules
             }
             try
             {
-                var results = await videoAPI.Like(VideoInfo.aid, VideoInfo.req_user.dislike, VideoInfo.req_user.like).Request();
+                var results = await videoAPI.Like(VideoInfo.Aid, VideoInfo.ReqUser.Dislike, VideoInfo.ReqUser.Like).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        if (VideoInfo.req_user.like == 1)
+                        if (VideoInfo.ReqUser.Like == 1)
                         {
-                            VideoInfo.req_user.like = 0;
-                            VideoInfo.stat.like -= 1;
+                            VideoInfo.ReqUser.Like = 0;
+                            VideoInfo.Stat.Like -= 1;
                         }
                         else
                         {
-                            VideoInfo.req_user.like = 1;
-                            VideoInfo.req_user.dislike = 0;
-                            VideoInfo.stat.like += 1;
+                            VideoInfo.ReqUser.Like = 1;
+                            VideoInfo.ReqUser.Dislike = 0;
+                            VideoInfo.Stat.Like += 1;
                         }
                         if (!string.IsNullOrEmpty(data.data["toast"]?.ToString()))
                         {
@@ -288,23 +278,23 @@ namespace BiliLite.Modules
             }
             try
             {
-                var results = await videoAPI.Dislike(VideoInfo.aid, VideoInfo.req_user.dislike, VideoInfo.req_user.like).Request();
+                var results = await videoAPI.Dislike(VideoInfo.Aid, VideoInfo.ReqUser.Dislike, VideoInfo.ReqUser.Like).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        if (VideoInfo.req_user.dislike == 1)
+                        if (VideoInfo.ReqUser.Dislike == 1)
                         {
-                            VideoInfo.req_user.dislike = 0;
+                            VideoInfo.ReqUser.Dislike = 0;
                         }
                         else
                         {
-                            VideoInfo.req_user.dislike = 1;
-                            if (VideoInfo.req_user.like == 1)
+                            VideoInfo.ReqUser.Dislike = 1;
+                            if (VideoInfo.ReqUser.Like == 1)
                             {
-                                VideoInfo.req_user.like = 0;
-                                VideoInfo.stat.like -= 1;
+                                VideoInfo.ReqUser.Like = 0;
+                                VideoInfo.Stat.Like -= 1;
                             }
 
 
@@ -346,21 +336,21 @@ namespace BiliLite.Modules
             }
             try
             {
-                var results = await videoAPI.Triple(VideoInfo.aid).Request();
+                var results = await videoAPI.Triple(VideoInfo.Aid).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        VideoInfo.req_user.like = 1;
-                        VideoInfo.stat.like += 1;
-                        VideoInfo.req_user.coin = 1;
-                        VideoInfo.stat.coin += 1;
-                        VideoInfo.req_user.favorite = 1;
-                        VideoInfo.stat.favorite += 1;
-                        if (VideoInfo.req_user.dislike == 1)
+                        VideoInfo.ReqUser.Like = 1;
+                        VideoInfo.Stat.Like += 1;
+                        VideoInfo.ReqUser.Coin = 1;
+                        VideoInfo.Stat.Coin += 1;
+                        VideoInfo.ReqUser.Favorite = 1;
+                        VideoInfo.Stat.Favorite += 1;
+                        if (VideoInfo.ReqUser.Dislike == 1)
                         {
-                            VideoInfo.req_user.dislike = 0;
+                            VideoInfo.ReqUser.Dislike = 0;
                         }
 
                         Notify.ShowMessageToast("三连完成");
@@ -395,21 +385,21 @@ namespace BiliLite.Modules
             var coinNum = Convert.ToInt32(num);
             try
             {
-                var results = await videoAPI.Coin(VideoInfo.aid, coinNum).Request();
+                var results = await videoAPI.Coin(VideoInfo.Aid, coinNum).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
                     if (data.success)
                     {
-                        if (VideoInfo.req_user.coin == 1)
+                        if (VideoInfo.ReqUser.Coin == 1)
                         {
-                            VideoInfo.req_user.coin = 0;
-                            VideoInfo.stat.coin -= coinNum;
+                            VideoInfo.ReqUser.Coin = 0;
+                            VideoInfo.Stat.Coin -= coinNum;
                         }
                         else
                         {
-                            VideoInfo.req_user.coin = 1;
-                            VideoInfo.stat.coin += coinNum;
+                            VideoInfo.ReqUser.Coin = 1;
+                            VideoInfo.Stat.Coin += coinNum;
                         }
                         if (!string.IsNullOrEmpty(data.data["toast"]?.ToString()))
                         {
@@ -456,13 +446,13 @@ namespace BiliLite.Modules
                     {
                         if (fav_ids.Count != 0)
                         {
-                            VideoInfo.req_user.favorite = 1;
-                            VideoInfo.stat.favorite += 1;
+                            VideoInfo.ReqUser.Favorite = 1;
+                            VideoInfo.Stat.Favorite += 1;
                         }
                         else
                         {
-                            VideoInfo.req_user.favorite = 0;
-                            VideoInfo.stat.favorite -= 1;
+                            VideoInfo.ReqUser.Favorite = 0;
+                            VideoInfo.Stat.Favorite -= 1;
                         }
                         if (!string.IsNullOrEmpty(data.data["toast"]?.ToString()))
                         {
@@ -489,43 +479,40 @@ namespace BiliLite.Modules
                 var handel = HandelError<object>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
-
-
-
         }
 
         public async Task GetAttentionUp()
         {
-            VideoInfo.req_user ??= new VideoDetailReqUserModel();
-            VideoInfo.req_user.attention = -999;
+            VideoInfo.ReqUser ??= new VideoDetailReqUserViewModel();
+            VideoInfo.ReqUser.Attention = -999;
             if (!SettingService.Account.Logined)
             {
                 return;
             }
 
-            var result = await followAPI.GetAttention(VideoInfo.owner.mid).Request();
+            var result = await followAPI.GetAttention(VideoInfo.Owner.Mid).Request();
             if (!result.status) return;
             var data = await result.GetJson<ApiDataModel<UserAttentionResponse>>();
             if (data.data.Attribute == 2 || data.data.Attribute == 6)
             {
-                VideoInfo.req_user.attention = 1;
+                VideoInfo.ReqUser.Attention = 1;
             }
         }
 
         public async void DoAttentionUP()
         {
-            var result = await AttentionUP(VideoInfo.owner.mid, VideoInfo.req_user.attention == 1 ? 2 : 1);
+            var result = await AttentionUP(VideoInfo.Owner.Mid, VideoInfo.ReqUser.Attention == 1 ? 2 : 1);
             if (result)
             {
-                if (VideoInfo.req_user.attention == 1)
+                if (VideoInfo.ReqUser.Attention == 1)
                 {
-                    VideoInfo.req_user.attention = -999;
-                    VideoInfo.owner_ext.fans -= 1;
+                    VideoInfo.ReqUser.Attention = -999;
+                    VideoInfo.OwnerExt.Fans -= 1;
                 }
                 else
                 {
-                    VideoInfo.req_user.attention = 1;
-                    VideoInfo.owner_ext.fans += 1;
+                    VideoInfo.ReqUser.Attention = 1;
+                    VideoInfo.OwnerExt.Fans += 1;
                 }
             }
         }
@@ -568,16 +555,13 @@ namespace BiliLite.Modules
                 Notify.ShowMessageToast(handel.message);
                 return false;
             }
-
-
-
         }
 
         public async Task<string> GetPlayUrl()
         {
             try
             {
-                var results = await PlayerAPI.VideoPlayUrl(VideoInfo.aid, VideoInfo.pages[0].cid, 80, false).Request();
+                var results = await PlayerAPI.VideoPlayUrl(VideoInfo.Aid, VideoInfo.Pages[0].Cid, 80, false).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<JObject>>();
@@ -606,366 +590,9 @@ namespace BiliLite.Modules
             }
         }
 
-    }
-
-    public class VideoDetailModel : IModules
-    {
-        public string bvid { get; set; }
-        public string aid { get; set; }
-        /// <summary>
-        /// 视频数量
-        /// </summary>
-        public int videos { get; set; }
-        /// <summary>
-        /// 分区ID
-        /// </summary>
-        public int tid { get; set; }
-        /// <summary>
-        /// 分区名
-        /// </summary>
-        public string tname { get; set; }
-        /// <summary>
-        /// 封面
-        /// </summary>
-        public string pic { get; set; }
-        public string title { get; set; }
-        /// <summary>
-        /// 上传时间
-        /// </summary>
-        public long pubdate { get; set; }
-        /// <summary>
-        /// 创建时间
-        /// </summary>
-        public long ctime { get; set; }
-        /// <summary>
-        /// 简介
-        /// </summary>
-        public string desc { get; set; }
-
-        public long attribute { get; set; }
-        public int state { get; set; }
-        /// <summary>
-        /// 时长
-        /// </summary>
-        public int duration { get; set; }
-        public VideoDetailRightsModel rights { get; set; }
-        public string dynamic { get; set; }
-        /// <summary>
-        /// UP主
-        /// </summary>
-        public VideoDetailOwnerModel owner { get; set; }
-
-        /// <summary>
-        /// UP主信息扩展
-        /// </summary>
-        public VideoDetailOwnerExtModel owner_ext { get; set; } = new VideoDetailOwnerExtModel();
-        /// <summary>
-        /// 数据
-        /// </summary>
-        public VideoDetailStatModel stat { get; set; }
-
-        /// <summary>
-        /// 用户数据
-        /// </summary>
-        public VideoDetailReqUserModel req_user { get; set; } = new VideoDetailReqUserModel();
-        /// <summary>
-        /// Tag
-        /// </summary>
-        public List<VideoDetailTagModel> tag { get; set; }
+        #endregion
 
 
-        private List<VideoDetailRelatesModel> _relates;
-        /// <summary>
-        /// 推荐
-        /// </summary>
-        public List<VideoDetailRelatesModel> relates
-        {
-            get { return _relates; }
-            set { _relates = value.Where(x => !string.IsNullOrEmpty(x.aid)).ToList(); }
-        }
-
-
-
-        public string share_subtitle { get; set; }
-        public string short_link { get; set; }
-
-        [JsonProperty("ugc_season")]
-        public VideoUgcSeason UgcSeason { get; set; }
-
-        public bool ShowUgcSeason => UgcSeason != null && UgcSeason.Sections != null && UgcSeason.Sections.Count > 0;
-
-        public string redirect_url { get; set; }
-
-        public List<VideoDetailPagesModel> pages { get; set; }
-
-        public bool showPages
-        {
-            get
-            {
-                return pages != null && pages.Count > 1;
-            }
-        }
-        /// <summary>
-        /// 互动视频
-        /// </summary>
-        public VideoDetailInteractionModel interaction { get; set; }
-        public List<VideoDetailStaffModel> staff { get; set; }
-
-        public bool showStaff
-        {
-            get
-            {
-                return staff != null;
-            }
-        }
-
-        public string argue_msg { get; set; }
-        public bool showArgueMsg
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(argue_msg);
-            }
-        }
-        public VideoDetailHistoryModel history { get; set; }
-    }
-    public class VideoDetailRightsModel
-    {
-        public int bp { get; set; }
-        /// <summary>
-        /// 能不能充电
-        /// </summary>
-        public int elec { get; set; }
-        /// <summary>
-        /// 能不能下载
-        /// </summary>
-        public int download { get; set; }
-        /// <summary>
-        /// 是不是电影
-        /// </summary>
-        public int movie { get; set; }
-        /// <summary>
-        /// 是不是付费
-        /// </summary>
-        public int pay { get; set; }
-    }
-    public class VideoDetailOwnerModel
-    {
-        public string mid { get; set; }
-        public string name { get; set; }
-        public string face { get; set; }
-    }
-    public class VideoDetailOwnerExtModel
-    {
-        /// <summary>
-        /// 粉丝数
-        /// </summary>
-        public int fans { get; set; }
-        /// <summary>
-        /// 大会员信息
-        /// </summary>
-        /// <summary>
-        /// 认证信息
-        /// </summary>
-        public VideoDetailOwnerExtOfficialVerifyModel official_verify { get; set; }
-    }
-    public class VideoDetailOwnerExtVipModel
-    {
-        public int vipType { get; set; }
-        public int vipStatus { get; set; }
-
-    }
-    public class VideoDetailOwnerExtOfficialVerifyModel
-    {
-        /// <summary>
-        /// 0个人认证,1企业认证
-        /// </summary>
-        public int type { get; set; }
-        public string desc { get; set; }
-
-    }
-    public class VideoDetailStatModel : IModules
-    {
-        public string aid { get; set; }
-        /// <summary>
-        /// 播放
-        /// </summary>
-        public int view { get; set; }
-        /// <summary>
-        /// 弹幕
-        /// </summary>
-        public int danmaku { get; set; }
-        /// <summary>
-        /// 评论
-        /// </summary>
-        public int reply { get; set; }
-
-        private int _favorite;
-        /// <summary>
-        /// 收藏
-        /// </summary>
-        public int favorite
-        {
-            get { return _favorite; }
-            set { _favorite = value; DoPropertyChanged("favorite"); }
-        }
-
-        private int _coin;
-        /// <summary>
-        /// 投币
-        /// </summary>
-        public int coin
-        {
-            get { return _coin; }
-            set { _coin = value; DoPropertyChanged("coin"); }
-        }
-        private int _share;
-        /// <summary>
-        /// 分享
-        /// </summary>
-        public int share
-        {
-            get { return _share; }
-            set { _share = value; DoPropertyChanged("share"); }
-        }
-
-        private int _like;
-        /// <summary>
-        /// 点赞
-        /// </summary>
-        public int like
-        {
-            get { return _like; }
-            set { _like = value; DoPropertyChanged("like"); }
-        }
-        /// <summary>
-        /// 不喜欢，固定0
-        /// </summary>
-        public int dislike { get; set; }
-    }
-    public class VideoDetailReqUserModel : IModules
-    {
-        private int _attention;
-        /// <summary>
-        /// 是否关注
-        /// </summary>
-        public int attention
-        {
-            get { return _attention; }
-            set { _attention = value; DoPropertyChanged("attention"); }
-        }
-
-        private int _guest_attention;
-        /// <summary>
-        /// 是否特别关注
-        /// </summary>
-        public int guest_attention
-        {
-            get { return _guest_attention; }
-            set { _guest_attention = value; DoPropertyChanged("guest_attention"); }
-        }
-
-        private int _favorite;
-        /// <summary>
-        /// 是否收藏
-        /// </summary>
-        public int favorite
-        {
-            get { return _favorite; }
-            set { _favorite = value; DoPropertyChanged("favorite"); }
-        }
-
-        private int _like;
-        /// <summary>
-        /// 是否点赞
-        /// </summary>
-        public int like
-        {
-            get { return _like; }
-            set { _like = value; DoPropertyChanged("like"); }
-        }
-
-        private int _coin;
-        /// <summary>
-        /// 是否投币
-        /// </summary>
-        public int coin
-        {
-            get { return _coin; }
-            set { _coin = value; DoPropertyChanged("coin"); }
-        }
-
-        private int _dislike;
-        /// <summary>
-        /// 是否不喜欢
-        /// </summary>
-        public int dislike
-        {
-            get { return _dislike; }
-            set { _dislike = value; DoPropertyChanged("dislike"); }
-        }
-    }
-
-    public class VideoDetailTagModel
-    {
-        public int tag_id { get; set; }
-        public string tag_name { get; set; }
-    }
-
-    public class VideoDetailRelatesModel
-    {
-        public string aid { get; set; }
-        public string pic { get; set; }
-        public string title { get; set; }
-        public VideoDetailOwnerModel owner { get; set; }
-        public VideoDetailStatModel stat { get; set; }
-    }
-
-    public class VideoDetailPagesModel
-    {
-        public string cid { get; set; }
-        public string page { get; set; }
-        public string part { get; set; }
-        public int duration { get; set; }
-        public string dmlink { get; set; }
-        public string download_title { get; set; }
-        public string download_subtitle { get; set; }
-    }
-    public class VideoDetailInteractionModel
-    {
-        public int graph_version { get; set; }
-        public VideoDetailInteractionHistoryNodeModel history_node { get; set; }
-
-    }
-    public class VideoDetailInteractionHistoryNodeModel
-    {
-        public int node_id { get; set; }
-        public string title { get; set; }
-        public long cid { get; set; }
-    }
-    public class VideoDetailStaffModel : IModules
-    {
-        public string mid { get; set; }
-        public string title { get; set; }
-        public string face { get; set; }
-        public string name { get; set; }
-
-        public VideoDetailOwnerExtVipModel vip { get; set; }
-        public VideoDetailOwnerExtOfficialVerifyModel official_verify { get; set; }
-        private int _attention;
-
-        public int attention
-        {
-            get { return _attention; }
-            set { _attention = value; DoPropertyChanged("attention"); }
-        }
-
-    }
-
-    public class VideoDetailHistoryModel
-    {
-        public string cid { get; set; }
-        public int progress { get; set; }
 
     }
 }

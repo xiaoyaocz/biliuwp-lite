@@ -840,7 +840,7 @@ namespace BiliLite.Pages
         {
             if (liveRoomVM.LiveInfo != null)
             {
-                var result = await new VideoDetailVM().AttentionUP(liveRoomVM.LiveInfo.room_info.uid.ToString(), 1);
+                var result = await new VideoDetailPageViewModel().AttentionUP(liveRoomVM.LiveInfo.room_info.uid.ToString(), 1);
                 if (result)
                 {
                     liveRoomVM.Attention = true;
@@ -853,7 +853,7 @@ namespace BiliLite.Pages
         {
             if (liveRoomVM.LiveInfo != null)
             {
-                var result = await new VideoDetailVM().AttentionUP(liveRoomVM.LiveInfo.room_info.uid.ToString(), 2);
+                var result = await new VideoDetailPageViewModel().AttentionUP(liveRoomVM.LiveInfo.room_info.uid.ToString(), 2);
                 if (result)
                 {
                     liveRoomVM.Attention = false;
