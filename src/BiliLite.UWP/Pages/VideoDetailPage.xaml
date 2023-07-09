@@ -85,7 +85,7 @@
                 <Grid Background="Transparent">
                     <control:PlayerControl x:Name="player" AllMediaEndEvent="player_AllMediaEndEvent" FullScreenEvent="PlayerControl_FullScreenEvent" FullWindowEvent="PlayerControl_FullWindowEvent" ChangeEpisodeEvent="PlayerControl_ChangeEpisodeEvent"/>
                 </Grid>
-                <Grid Grid.Row="1" x:Name="BottomActionBar" SizeChanged="BottomActionBar_OnSizeChanged">
+                <Grid Grid.Row="1" x:Name="BottomActionBar" SizeChanged="BottomActionBar_OnSizeChanged" Background="{ThemeResource ApplicationBackground}">
                     <StackPanel Orientation="Horizontal" >
                         <Button Holding="btnLike_Holding" 
                                   RightTapped="btnLike_RightTapped"
