@@ -43,7 +43,7 @@ namespace BiliLite.Pages
     {
         private static readonly ILogger logger = GlobalLogger.FromCurrentType();
 
-        VideoDetailPageViewModel m_videoDetailPageViewModel;
+        private readonly VideoDetailPageViewModel m_viewModel;
         string avid = "";
         string bvid = "";
         bool is_bvid = false;
@@ -56,11 +56,11 @@ namespace BiliLite.Pages
             this.Loaded += VideoDetailPage_Loaded;
             this.Player = this.player;
             NavigationCacheMode = NavigationCacheMode.Enabled;
-            m_videoDetailPageViewModel = new VideoDetailPageViewModel();
-            this.DataContext = m_videoDetailPageViewModel;
+            m_viewModel = new VideoDetailPageViewModel();
+            this.DataContext = m_viewModel;
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            this.RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+            m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
             this.RightInfoGridSplitter.IsEnabled = SettingService.GetValue<bool>(SettingConstants.UI.RIGHT_WIDTH_CHANGEABLE, false);
         }
 
@@ -81,11 +81,11 @@ namespace BiliLite.Pages
         }
         private void ClosePage()
         {
-            if (m_videoDetailPageViewModel != null)
+            if (m_viewModel != null)
             {
-                m_videoDetailPageViewModel.Loaded = false;
-                m_videoDetailPageViewModel.Loading = true;
-                m_videoDetailPageViewModel.VideoInfo = null;
+                m_viewModel.Loaded = false;
+                m_viewModel.Loading = true;
+                m_viewModel.VideoInfo = null;
             }
             changedFlag = true;
             player?.FullScreen(false);
@@ -95,8 +95,8 @@ namespace BiliLite.Pages
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
-            request.Data.Properties.Title = m_videoDetailPageViewModel.VideoInfo.Title;
-            request.Data.SetWebLink(new Uri(m_videoDetailPageViewModel.VideoInfo.ShortLink));
+            request.Data.Properties.Title = m_viewModel.VideoInfo.Title;
+            request.Data.SetWebLink(new Uri(m_viewModel.VideoInfo.ShortLink));
         }
         VideoPlaylist playlist;
         bool flag = false;
@@ -137,7 +137,7 @@ namespace BiliLite.Pages
             }
             else
             {
-                Title = m_videoDetailPageViewModel?.VideoInfo?.Title ?? "视频详情";
+                Title = m_viewModel?.VideoInfo?.Title ?? "视频详情";
                 MessageCenter.ChangeTitle(this, Title);
             }
 
@@ -157,7 +157,7 @@ namespace BiliLite.Pages
                 bvid = id;
                 is_bvid = true;
             }
-            await m_videoDetailPageViewModel.LoadVideoDetail(id, is_bvid);
+            await m_viewModel.LoadVideoDetail(id, is_bvid);
             if (this.VideoCover != null)
             {
                 this.VideoCover.Visibility = SettingService.GetValue<bool>(SettingConstants.UI.SHOW_DETAIL_COVER, true) ? Visibility.Visible : Visibility.Collapsed;
@@ -167,21 +167,21 @@ namespace BiliLite.Pages
                 SettingService.SetValue("一键三连提示", false);
                 Notify.ShowMessageToast("右键或长按点赞按钮可以一键三连哦~", 5);
             }
-            if (m_videoDetailPageViewModel.VideoInfo == null)
+            if (m_viewModel.VideoInfo == null)
             {
                 flag = false;
                 return;
             }
 
-            avid = m_videoDetailPageViewModel.VideoInfo.Aid;
-            var desc = m_videoDetailPageViewModel.VideoInfo.Desc.ToRichTextBlock(null);
+            avid = m_viewModel.VideoInfo.Aid;
+            var desc = m_viewModel.VideoInfo.Desc.ToRichTextBlock(null);
 
             contentDesc.Content = desc;
-            ChangeTitle(m_videoDetailPageViewModel.VideoInfo.Title);
+            ChangeTitle(m_viewModel.VideoInfo.Title);
             CreateQR();
-            if (!string.IsNullOrEmpty(m_videoDetailPageViewModel.VideoInfo.RedirectUrl))
+            if (!string.IsNullOrEmpty(m_viewModel.VideoInfo.RedirectUrl))
             {
-                var result = await MessageCenter.HandelSeasonID(m_videoDetailPageViewModel.VideoInfo.RedirectUrl);
+                var result = await MessageCenter.HandelSeasonID(m_viewModel.VideoInfo.RedirectUrl);
                 if (!string.IsNullOrEmpty(result))
                 {
                     this.Frame.Navigate(typeof(SeasonDetailPage), result);
@@ -196,10 +196,10 @@ namespace BiliLite.Pages
             {
                 CommentMode = (int)CommentApi.CommentType.Video,
                 CommentSort = CommentApi.CommentSort.Hot,
-                Oid = m_videoDetailPageViewModel.VideoInfo.Aid
+                Oid = m_viewModel.VideoInfo.Aid
             });
 
-            if (playlist != null || !m_videoDetailPageViewModel.VideoInfo.ShowUgcSeason)
+            if (playlist != null || !m_viewModel.VideoInfo.ShowUgcSeason)
             {
                 flag = false;
                 return;
@@ -213,29 +213,29 @@ namespace BiliLite.Pages
         {
             List<PlayInfo> playInfos = new List<PlayInfo>();
             int i = 0;
-            foreach (var item in m_videoDetailPageViewModel.VideoInfo.Pages)
+            foreach (var item in m_viewModel.VideoInfo.Pages)
             {
                 playInfos.Add(new PlayInfo()
                 {
-                    avid = m_videoDetailPageViewModel.VideoInfo.Aid,
+                    avid = m_viewModel.VideoInfo.Aid,
                     cid = item.Cid,
                     duration = item.Duration,
-                    is_interaction = m_videoDetailPageViewModel.VideoInfo.Interaction != null,
+                    is_interaction = m_viewModel.VideoInfo.Interaction != null,
                     order = i,
                     play_mode = VideoPlayType.Video,
                     title = "P" + item.Page + " " + item.Part,
-                    area = m_videoDetailPageViewModel.VideoInfo.Title.ParseArea(m_videoDetailPageViewModel.VideoInfo.Owner.Mid)
+                    area = m_viewModel.VideoInfo.Title.ParseArea(m_viewModel.VideoInfo.Owner.Mid)
                 });
                 i++;
             }
             var index = 0;
-            if (m_videoDetailPageViewModel.VideoInfo.History != null)
+            if (m_viewModel.VideoInfo.History != null)
             {
-                var history = m_videoDetailPageViewModel.VideoInfo.Pages.FirstOrDefault(x => x.Cid.Equals(m_videoDetailPageViewModel.VideoInfo.History.Cid));
+                var history = m_viewModel.VideoInfo.Pages.FirstOrDefault(x => x.Cid.Equals(m_viewModel.VideoInfo.History.Cid));
                 if (history != null)
                 {
-                    SettingService.SetValue<double>(history.Cid, Convert.ToDouble(m_videoDetailPageViewModel.VideoInfo.History.Progress));
-                    index = m_videoDetailPageViewModel.VideoInfo.Pages.IndexOf(history);
+                    SettingService.SetValue<double>(history.Cid, Convert.ToDouble(m_viewModel.VideoInfo.History.Progress));
+                    index = m_viewModel.VideoInfo.Pages.IndexOf(history);
                     //player.InitializePlayInfo(playInfos, );
                 }
             }
@@ -249,7 +249,7 @@ namespace BiliLite.Pages
             {
                 Playlist = new List<VideoPlaylistItem>()
             };
-            foreach (var section in m_videoDetailPageViewModel.VideoInfo.UgcSeason.Sections)
+            foreach (var section in m_viewModel.VideoInfo.UgcSeason.Sections)
             {
                 foreach (var item in section.Episodes)
                 {
@@ -283,7 +283,7 @@ namespace BiliLite.Pages
                     Height = 200,
                     Width = 200
                 };
-                var data = barcodeWriter.Write(m_videoDetailPageViewModel.VideoInfo.ShortLink);
+                var data = barcodeWriter.Write(m_viewModel.VideoInfo.ShortLink);
                 imgQR.Source = data;
             }
             catch (Exception ex)
@@ -358,7 +358,7 @@ namespace BiliLite.Pages
         private async void btnAttention_Click(object sender, RoutedEventArgs e)
         {
             var data = (sender as Button).DataContext as VideoDetailStaffViewModel;
-            var result = await m_videoDetailPageViewModel.AttentionUP(data.Mid, data.Attention == 1 ? 2 : 1);
+            var result = await m_viewModel.AttentionUP(data.Mid, data.Attention == 1 ? 2 : 1);
             if (result)
             {
                 if (data.Attention == 1)
@@ -395,9 +395,9 @@ namespace BiliLite.Pages
 
         private void btnLike_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel.VideoInfo.ReqUser.Like == 0)
+            if (m_viewModel.VideoInfo.ReqUser.Like == 0)
             {
-                m_videoDetailPageViewModel.DoTriple();
+                m_viewModel.DoTriple();
             }
         }
 
@@ -419,13 +419,13 @@ namespace BiliLite.Pages
         }
         private void btnShareCopy_Click(object sender, RoutedEventArgs e)
         {
-            $"{m_videoDetailPageViewModel.VideoInfo.Title}\r\n{m_videoDetailPageViewModel.VideoInfo.ShortLink}".SetClipboard();
+            $"{m_viewModel.VideoInfo.Title}\r\n{m_viewModel.VideoInfo.ShortLink}".SetClipboard();
             Notify.ShowMessageToast("已复制内容到剪切板");
         }
 
         private void btnShareCopyUrl_Click(object sender, RoutedEventArgs e)
         {
-            m_videoDetailPageViewModel.VideoInfo.ShortLink.SetClipboard();
+            m_viewModel.VideoInfo.ShortLink.SetClipboard();
             Notify.ShowMessageToast("已复制链接到剪切板");
         }
 
@@ -435,13 +435,13 @@ namespace BiliLite.Pages
             if (e)
             {
                 this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
-                RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -450,12 +450,12 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -494,42 +494,42 @@ namespace BiliLite.Pages
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Contact,
-                    title = m_videoDetailPageViewModel.VideoInfo.Owner.Name,
+                    title = m_viewModel.VideoInfo.Owner.Name,
                     page = typeof(UserInfoPage),
-                    parameters = m_videoDetailPageViewModel.VideoInfo.Owner.Mid
+                    parameters = m_viewModel.VideoInfo.Owner.Mid
                 });
             }
         }
 
         private void btnLike_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel.VideoInfo.ReqUser.Like == 0)
+            if (m_viewModel.VideoInfo.ReqUser.Like == 0)
             {
-                m_videoDetailPageViewModel.DoTriple();
+                m_viewModel.DoTriple();
             }
         }
 
         private void listAddFavorite_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as FavoriteItemModel;
-            m_videoDetailPageViewModel.DoFavorite(new List<string>() { item.id }, avid);
+            m_viewModel.DoFavorite(new List<string>() { item.id }, avid);
         }
 
         private void BtnAddFavorite_Click(object sender, RoutedEventArgs e)
         {
-            m_videoDetailPageViewModel.DoFavorite(m_videoDetailPageViewModel.MyFavorite.Where(x => x.is_fav).Select(x => x.id).ToList(), avid);
+            m_viewModel.DoFavorite(m_viewModel.MyFavorite.Where(x => x.is_fav).Select(x => x.id).ToList(), avid);
         }
 
         private async void btnOpenWeb_Click(object sender, RoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri(m_videoDetailPageViewModel.VideoInfo.ShortLink));
+            await Launcher.LaunchUriAsync(new Uri(m_viewModel.VideoInfo.ShortLink));
         }
 
         private void ImageEx_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel.VideoInfo?.Pic == null) return;
+            if (m_viewModel.VideoInfo?.Pic == null) return;
             MessageCenter.OpenImageViewer(new List<string>() {
-                m_videoDetailPageViewModel.VideoInfo.Pic
+                m_viewModel.VideoInfo.Pic
             }, 0);
         }
 
@@ -542,7 +542,7 @@ namespace BiliLite.Pages
             }
             CreateFavFolderDialog createFavFolderDialog = new CreateFavFolderDialog();
             await createFavFolderDialog.ShowAsync();
-            await m_videoDetailPageViewModel.LoadFavorite(m_videoDetailPageViewModel.VideoInfo.Aid);
+            await m_viewModel.LoadFavorite(m_viewModel.VideoInfo.Aid);
         }
 
         private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
@@ -553,7 +553,7 @@ namespace BiliLite.Pages
 
         private void BtnWatchLater_Click(object sender, RoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel == null || m_videoDetailPageViewModel.VideoInfo == null) return;
+            if (m_viewModel == null || m_viewModel.VideoInfo == null) return;
             Modules.User.WatchLaterVM.Instance.AddToWatchlater(avid);
         }
 
@@ -588,19 +588,19 @@ namespace BiliLite.Pages
 
         private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel.VideoInfo == null || m_videoDetailPageViewModel.VideoInfo.Pages == null || m_videoDetailPageViewModel.VideoInfo.Pages.Count == 0) return;
+            if (m_viewModel.VideoInfo == null || m_viewModel.VideoInfo.Pages == null || m_viewModel.VideoInfo.Pages.Count == 0) return;
             var downloadItem = new DownloadItem()
             {
-                Cover = m_videoDetailPageViewModel.VideoInfo.Pic,
-                ID = m_videoDetailPageViewModel.VideoInfo.Aid,
+                Cover = m_viewModel.VideoInfo.Pic,
+                ID = m_viewModel.VideoInfo.Aid,
                 Episodes = new List<DownloadEpisodeItem>(),
-                Subtitle = m_videoDetailPageViewModel.VideoInfo.Bvid,
-                Title = m_videoDetailPageViewModel.VideoInfo.Title,
+                Subtitle = m_viewModel.VideoInfo.Bvid,
+                Title = m_viewModel.VideoInfo.Title,
                 Type = DownloadType.Video,
-                UpMid = m_videoDetailPageViewModel.VideoInfo.Owner.Mid.ToInt32(),
+                UpMid = m_viewModel.VideoInfo.Owner.Mid.ToInt32(),
             };
             int i = 0;
-            foreach (var item in m_videoDetailPageViewModel.VideoInfo.Pages)
+            foreach (var item in m_viewModel.VideoInfo.Pages)
             {
                 //检查正在下载及下载完成是否存在此视频
                 int state = 0;
@@ -615,8 +615,8 @@ namespace BiliLite.Pages
                 //如果正在下载state=2,下载完成state=3
                 downloadItem.Episodes.Add(new DownloadEpisodeItem()
                 {
-                    AVID = m_videoDetailPageViewModel.VideoInfo.Aid,
-                    BVID = m_videoDetailPageViewModel.VideoInfo.Bvid,
+                    AVID = m_viewModel.VideoInfo.Aid,
+                    BVID = m_viewModel.VideoInfo.Bvid,
                     CID = item.Cid,
                     EpisodeID = "",
                     Index = i,
@@ -632,7 +632,7 @@ namespace BiliLite.Pages
 
         private async void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            if (m_videoDetailPageViewModel.Loading) return;
+            if (m_viewModel.Loading) return;
             await InitializeVideo(_id);
         }
 
@@ -651,12 +651,12 @@ namespace BiliLite.Pages
 
         private void CopyTitleBtn_Click(object sender, RoutedEventArgs e)
         {
-            m_videoDetailPageViewModel.VideoInfo.Title.SetClipboard();
+            m_viewModel.VideoInfo.Title.SetClipboard();
         }
 
         private void CopyAuthorBtn_Click(object sender, RoutedEventArgs e)
         {
-            m_videoDetailPageViewModel.VideoInfo.Owner.Name.SetClipboard();
+            m_viewModel.VideoInfo.Owner.Name.SetClipboard();
         }
 
         private void listEpisode_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
@@ -667,6 +667,30 @@ namespace BiliLite.Pages
         private void listEpisode_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void BottomActionBar_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                m_viewModel.BottomActionBarWidth = e.NewSize.Width;
+            }
+            if (e.NewSize.Height != e.PreviousSize.Height)
+            {
+                m_viewModel.BottomActionBarHeight = e.NewSize.Height;
+            }
+        }
+
+        private void VideoDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                m_viewModel.PageWidth = e.NewSize.Width;
+            }
+            if (e.NewSize.Height != e.PreviousSize.Height)
+            {
+                m_viewModel.PageHeight = e.NewSize.Height;
+            }
         }
     }
 }

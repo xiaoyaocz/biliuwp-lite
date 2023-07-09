@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml;
 using AutoMapper;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
@@ -16,6 +17,7 @@ using BiliLite.Services;
 using BiliLite.ViewModels.Common;
 using BiliLite.ViewModels.Video;
 using Microsoft.Extensions.DependencyInjection;
+using PropertyChanged;
 
 namespace BiliLite.Modules
 {
@@ -49,6 +51,7 @@ namespace BiliLite.Modules
             CoinCommand = new RelayCommand<string>(DoCoin);
             AttentionCommand = new RelayCommand(DoAttentionUP);
             SetStaffHeightCommand = new RelayCommand<string>(SetStaffHeight);
+            OpenRightInfoCommand = new RelayCommand(OpenRightInfo);
         }
 
         #endregion
@@ -69,6 +72,8 @@ namespace BiliLite.Modules
 
         public ICommand SetStaffHeightCommand { get; private set; }
 
+        public ICommand OpenRightInfoCommand { get; private set; }
+
         public bool Loading { get; set; } = true;
 
         public bool Loaded { get; set; }
@@ -85,6 +90,64 @@ namespace BiliLite.Modules
 
         public ObservableCollection<FavoriteItemModel> MyFavorite { get; set; }
 
+        public double BottomActionBarHeight { get; set; }
+
+        public double BottomActionBarWidth { get; set; }
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowNormalDownloadBtn => !(BottomActionBarWidth < 460);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowFlyoutDownloadBtn => (BottomActionBarWidth < 460);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowNormalShareBtn => !(BottomActionBarWidth < 390);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowFlyoutShareBtn => (BottomActionBarWidth < 390);
+
+        public double PageHeight { get; set; }
+
+        public double PageWidth { get; set; }
+
+        [DependsOn(nameof(PageWidth))]
+        public int PlayerGridColumnSpan => PageWidth < 1000 ? 2 : 1;
+
+        public GridLength DefaultRightInfoWidth { get; set; } = new GridLength(320);
+
+        public bool IsOpenRightInfo { get; set; }
+
+        [DependsOn(nameof(PageWidth))]
+        public bool ShowOpenRightInfoBtn => (PageWidth < 1000);
+
+        [DependsOn(nameof(PageWidth),nameof(IsOpenRightInfo))]
+        public GridLength RightInfoWidth
+        {
+            get
+            {
+                if (PageWidth < 1000 && !IsOpenRightInfo)
+                {
+                    return new GridLength(0);
+                }
+
+                return DefaultRightInfoWidth;
+            }
+        }
+
+        [DependsOn(nameof(PageHeight), nameof(PageWidth))]
+        public double RightInfoHeight
+        {
+            get
+            {
+                if (PageWidth < 1000)
+                {
+                    return PageHeight - BottomActionBarHeight;
+                }
+
+                return PageHeight;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -99,6 +162,11 @@ namespace BiliLite.Modules
             var h = Convert.ToDouble(height);
             ShowMoreStaff = h > StaffHeight;
             StaffHeight = h;
+        }
+
+        private void OpenRightInfo()
+        {
+            IsOpenRightInfo = !IsOpenRightInfo;
         }
 
         #endregion

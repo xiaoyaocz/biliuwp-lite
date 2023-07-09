@@ -5,6 +5,7 @@
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     x:Key="Dark">
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ApplicationBackground" Color="#FF282828" />
     <Color x:Key="TopPaneBackground">#00000000</Color>
     <Color x:Key="HighLightColor">#ec407a</Color>
     <Color x:Key="TextColor">#CCFFFFFF</Color>
@@ -14,7 +15,7 @@
     <Color x:Key="SystemColorHighLightColor">#ec407a</Color>
 
     <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource TopPaneBackground}" />
-    <Color x:Key="NoTapGridBackground">#E6000014</Color>
+    <Color x:Key="NoTapGridBackground">#FF282828</Color>
 
     <Color x:Key="TabViewBackground">Transparent</Color>
     <SolidColorBrush x:Key="TabViewItemHeaderBackgroundSelected" Color="{ThemeResource TopPaneBackground}"/>

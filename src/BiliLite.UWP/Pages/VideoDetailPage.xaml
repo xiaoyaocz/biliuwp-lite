@@ -14,7 +14,8 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:detail="using:BiliLite.Models.Common.Video.Detail"
     xmlns:video="using:BiliLite.ViewModels.Video"
-    Background="Transparent">
+    Background="Transparent"
+    SizeChanged="VideoDetailPage_OnSizeChanged">
     <Page.Resources>
         <Style TargetType="Button">
             <Style.Setters>
@@ -64,14 +65,19 @@
             <MenuFlyoutItem Text="复制标题" x:Name="CopyTitleBtn" Click="CopyTitleBtn_Click"/>
             <MenuFlyoutItem Text="复制作者" x:Name="CopyAuthorBtn" Click="CopyAuthorBtn_Click"/>
         </MenuFlyout>
+        <MenuFlyout x:Name="ShareMenu">
+            <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
+            <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
+            <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
+        </MenuFlyout>
     </Page.Resources>
     <Grid>
-        <Grid Visibility="{x:Bind Path=m_videoDetailPageViewModel.Loaded,Mode=OneWay}">
+        <Grid Visibility="{x:Bind Path=m_viewModel.Loaded,Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition  Width="320" x:Name="RightInfo"/>
+                <ColumnDefinition  Width="{x:Bind m_viewModel.RightInfoWidth,Mode=OneWay}"  x:Name="RightInfo"/>
             </Grid.ColumnDefinitions>
-            <Grid  Background="{ThemeResource NavigationViewTopPaneBackground}" x:Name="playerGrid" >
+            <Grid  Background="{ThemeResource NavigationViewTopPaneBackground}" x:Name="playerGrid" Grid.ColumnSpan="{x:Bind m_viewModel.PlayerGridColumnSpan,Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto" x:Name="BottomInfo"/>
@@ -79,28 +85,28 @@
                 <Grid Background="Transparent">
                     <control:PlayerControl x:Name="player" AllMediaEndEvent="player_AllMediaEndEvent" FullScreenEvent="PlayerControl_FullScreenEvent" FullWindowEvent="PlayerControl_FullWindowEvent" ChangeEpisodeEvent="PlayerControl_ChangeEpisodeEvent"/>
                 </Grid>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" x:Name="BottomActionBar" SizeChanged="BottomActionBar_OnSizeChanged">
                     <StackPanel Orientation="Horizontal" >
                         <Button Holding="btnLike_Holding" 
                                   RightTapped="btnLike_RightTapped"
-                                  Command="{x:Bind Path=m_videoDetailPageViewModel.LikeCommand}" 
-                                  Foreground="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Like,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" 
+                                  Command="{x:Bind Path=m_viewModel.LikeCommand}" 
+                                  Foreground="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Like,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}" 
                                   ToolTipService.ToolTip="右击或长按可以一键三连哦"
                                   Background="Transparent"
                                   Margin="0 0 4 0"
                                   Width="56">
                             <StackPanel>
                                 <FontIcon  FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6C6;" />
-                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Stat.Like,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_viewModel.VideoInfo.Stat.Like,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                                 <!--<fa:FontAwesome Icon="Solid_ThumbsUp"></fa:FontAwesome>-->
                             </StackPanel>
 
                         </Button>
-                        <Button Command="{x:Bind Path=m_videoDetailPageViewModel.DislikeCommand}" 
+                        <Button Command="{x:Bind Path=m_viewModel.DislikeCommand}" 
                                 Background="Transparent"
                                 Margin="0 0 4 0"
                                 Width="56"
-                                Foreground="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Dislike,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                                Foreground="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Dislike,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
                             <StackPanel>
                                 <FontIcon Margin="0 -2 0 2" FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE6C5;" />
                                 <TextBlock  FontSize="12" TextAlignment="Center" Text="不喜欢"></TextBlock>
@@ -109,10 +115,10 @@
                         <Button Background="Transparent"
                                 Margin="0 0 4 0"
                                 Width="56"
-                                Foreground="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Favorite,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                                Foreground="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Favorite,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
                             <StackPanel>
                                 <FontIcon  FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE673;" />
-                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Stat.Favorite,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_viewModel.VideoInfo.Stat.Favorite,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                             </StackPanel>
                             <Button.Flyout>
                                 <Flyout>
@@ -127,7 +133,7 @@
                                                 <TextBlock>创建</TextBlock>
                                             </HyperlinkButton>
                                         </Grid>
-                                        <ListView Grid.Row="1" Margin="0 8 0 0" ItemClick="listAddFavorite_ItemClick" ItemsSource="{x:Bind Path=m_videoDetailPageViewModel.MyFavorite,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="True">
+                                        <ListView Grid.Row="1" Margin="0 8 0 0" ItemClick="listAddFavorite_ItemClick" ItemsSource="{x:Bind Path=m_viewModel.MyFavorite,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="True">
                                             <ListView.ItemContainerStyle>
                                                 <Style TargetType="ListViewItem">
                                                     <Setter Property="Padding" Value="4"></Setter>
@@ -161,15 +167,15 @@
                         <Button Background="Transparent"
                                 Margin="0"
                                 Width="56" 
-                                Foreground="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Coin,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
+                                Foreground="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Coin,Mode=OneWay,Converter={StaticResource colorSelct},ConverterParameter=1}">
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE670;" />
-                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Stat.Coin,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="{x:Bind Path=m_viewModel.VideoInfo.Stat.Coin,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"></TextBlock>
                             </StackPanel>
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Command="{x:Bind Path=m_videoDetailPageViewModel.CoinCommand}" CommandParameter="1">投一个币</MenuFlyoutItem>
-                                    <MenuFlyoutItem Command="{x:Bind Path=m_videoDetailPageViewModel.CoinCommand}" CommandParameter="2">投两个币</MenuFlyoutItem>
+                                    <MenuFlyoutItem Command="{x:Bind Path=m_viewModel.CoinCommand}" CommandParameter="1">投一个币</MenuFlyoutItem>
+                                    <MenuFlyoutItem Command="{x:Bind Path=m_viewModel.CoinCommand}" CommandParameter="2">投两个币</MenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
@@ -178,22 +184,18 @@
                         <Button x:Name="btnShare"
                                 Background="Transparent"
                                 Margin="0 0 4 0"
-                                Width="56" Foreground="{ThemeResource TextColor}">
+                                Visibility="{x:Bind m_viewModel.ShowNormalShareBtn,Mode=OneWay}"
+                                Width="56" Foreground="{ThemeResource TextColor}"
+                                Flyout="{StaticResource ShareMenu}">
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE671;" />
                                 <TextBlock FontSize="12" TextAlignment="Center" Text="分享"></TextBlock>
                             </StackPanel>
-                            <Button.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
-                                    <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
-                                    <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
-                                </MenuFlyout>
-                            </Button.Flyout>
                         </Button>
                         <Button Background="Transparent"
                                 Margin="0 0 4 0"
                                 Width="56"
+                                Visibility="{x:Bind m_viewModel.ShowNormalDownloadBtn,Mode=OneWay}"
                                 x:Name="btnDownload" Click="btnDownload_Click" Foreground="{ThemeResource TextColor}">
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE672;" />
@@ -207,8 +209,8 @@
                             <AppBarButton.Flyout>
                                 <Flyout x:Name="qrFlyout">
                                     <StackPanel MaxWidth="220">
-                                        <TextBlock Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Title,Mode=OneWay}" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
-                                        <TextBlock  TextWrapping="Wrap" TextAlignment="Center">AV<Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Aid,Mode=OneWay}"/></TextBlock>
+                                        <TextBlock Text="{x:Bind Path=m_viewModel.VideoInfo.Title,Mode=OneWay}" TextWrapping="Wrap" TextAlignment="Center"></TextBlock>
+                                        <TextBlock  TextWrapping="Wrap" TextAlignment="Center">AV<Run Text="{x:Bind Path=m_viewModel.VideoInfo.Aid,Mode=OneWay}"/></TextBlock>
                                         <Grid Margin="0 8">
                                             <Image  x:Name="imgQR" Width="200" Height="200"></Image>
                                             <Image VerticalAlignment="Center" HorizontalAlignment="Center" Width="64" Height="64" Source="ms-appx:///Assets/SmallTile.scale-100.png"></Image>
@@ -243,6 +245,12 @@
                             </StackPanel>
                             <Button.Flyout>
                                 <MenuFlyout>
+                                    <MenuFlyoutSubItem Text="分享" Visibility="{x:Bind m_viewModel.ShowFlyoutShareBtn,Mode=OneWay}">
+                                        <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
+                                        <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
+                                        <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutItem Click="btnDownload_Click" Visibility="{x:Bind m_viewModel.ShowFlyoutDownloadBtn,Mode=OneWay}">下载</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="BtnWatchLater_Click" >稍后再看</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="btnOpenQR_Click" >手机观看</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="btnOpenWeb_Click" >浏览器打开</MenuFlyoutItem>
@@ -250,11 +258,21 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
+                        <Button Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56"
+                                Visibility="{x:Bind m_viewModel.ShowOpenRightInfoBtn,Mode=OneWay}"
+                                x:Name="BtnOpenRightInfo" Command="{x:Bind m_viewModel.OpenRightInfoCommand}" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xe68a;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="详情"></TextBlock>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Grid>
 
-            <Grid Grid.Column="1"  Background="Transparent">
+            <Grid Grid.Column="1"  Background="{ThemeResource ApplicationBackground}" VerticalAlignment="Top" Height="{x:Bind m_viewModel.RightInfoHeight,Mode=OneWay}">
                 <Pivot x:Name="pivot" >
                     <PivotItem Margin="0">
                         <PivotItem.Header>
@@ -265,23 +283,23 @@
                                 <Border x:Name="VideoCover" Margin="0 0 0 8" CornerRadius="{StaticResource ImageCornerRadius}">
                                     <toolkit:ImageEx IsCacheEnabled="True" 
                                                  Tapped="ImageEx_Tapped"
-                                             PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Pic,Mode=OneWay,Converter={StaticResource imageConvert},ConverterParameter='400w'}">
+                                             PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=m_viewModel.VideoInfo.Pic,Mode=OneWay,Converter={StaticResource imageConvert},ConverterParameter='400w'}">
                                     </toolkit:ImageEx>
                                 </Border>
 
-                                <Border Padding="8"  Margin="0 0 0 8" Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ShowArgueMsg,Mode=OneWay}" Background="#33808080" CornerRadius="4">
+                                <Border Padding="8"  Margin="0 0 0 8" Visibility="{x:Bind Path=m_viewModel.VideoInfo.ShowArgueMsg,Mode=OneWay}" Background="#33808080" CornerRadius="4">
                                     <Grid >
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <fa:FontAwesome Icon="Solid_ExclamationTriangle" Margin="0 0 12 0" Foreground="Orange"></fa:FontAwesome>
-                                        <TextBlock Grid.Column="1" FontSize="14"  TextWrapping="Wrap" Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ArgueMsg,Mode=OneWay}"></TextBlock>
+                                        <TextBlock Grid.Column="1" FontSize="14"  TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.VideoInfo.ArgueMsg,Mode=OneWay}"></TextBlock>
                                     </Grid>
                                 </Border>
-                                <TextBlock  TextWrapping="Wrap" FontSize="18" Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Title,Mode=OneWay}" RightTapped="TitleText_RightTapped" x:Name="TitleText"></TextBlock>
-                                <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True"><Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Stat.View,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>播放 · <Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Stat.Danmaku,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>弹幕 <Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Bvid,Mode=OneWay}"/></TextBlock>
-                                <HyperlinkButton x:Name="btnOpenUser" Click="btnOpenUser_Click" Margin="0 8 0 0" Foreground="{ThemeResource TextColor}" Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ShowStaff,Mode=OneWay,Converter={StaticResource display}}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0">
+                                <TextBlock  TextWrapping="Wrap" FontSize="18" Text="{x:Bind Path=m_viewModel.VideoInfo.Title,Mode=OneWay}" RightTapped="TitleText_RightTapped" x:Name="TitleText"></TextBlock>
+                                <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True"><Run Text="{x:Bind Path=m_viewModel.VideoInfo.Stat.View,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>播放 · <Run Text="{x:Bind Path=m_viewModel.VideoInfo.Stat.Danmaku,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>弹幕 <Run Text="{x:Bind Path=m_viewModel.VideoInfo.Bvid,Mode=OneWay}"/></TextBlock>
+                                <HyperlinkButton x:Name="btnOpenUser" Click="btnOpenUser_Click" Margin="0 8 0 0" Foreground="{ThemeResource TextColor}" Visibility="{x:Bind Path=m_viewModel.VideoInfo.ShowStaff,Mode=OneWay,Converter={StaticResource display}}" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="auto"/>
@@ -290,26 +308,26 @@
                                         </Grid.ColumnDefinitions>
                                         <Ellipse Width="36" Height="36">
                                             <Ellipse.Fill>
-                                                <ImageBrush ImageSource="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Owner.Face,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='48h'}"></ImageBrush>
+                                                <ImageBrush ImageSource="{x:Bind Path=m_viewModel.VideoInfo.Owner.Face,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='48h'}"></ImageBrush>
                                             </Ellipse.Fill>
                                         </Ellipse>
                                         <StackPanel Grid.Column="1">
-                                            <TextBlock Margin="8 0"  Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Owner.Name,Mode=OneWay}"></TextBlock>
-                                            <TextBlock Margin="8 0" FontSize="12" Foreground="Gray"><Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.OwnerExt.Fans,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>粉丝</TextBlock>
+                                            <TextBlock Margin="8 0"  Text="{x:Bind Path=m_viewModel.VideoInfo.Owner.Name,Mode=OneWay}"></TextBlock>
+                                            <TextBlock Margin="8 0" FontSize="12" Foreground="Gray"><Run Text="{x:Bind Path=m_viewModel.VideoInfo.OwnerExt.Fans,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>粉丝</TextBlock>
                                         </StackPanel>
                                         <Button Width="80" 
-                                    Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Attention,Converter={StaticResource display},ConverterParameter=1,Mode=OneWay}" 
-                                    Command="{x:Bind Path=m_videoDetailPageViewModel.AttentionCommand}" 
+                                    Visibility="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Attention,Converter={StaticResource display},ConverterParameter=1,Mode=OneWay}" 
+                                    Command="{x:Bind Path=m_viewModel.AttentionCommand}" 
                                     Grid.Column="2" Padding="16 4"  FontSize="12">已关注</Button>
                                         <Button Width="80" 
-                                    Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ReqUser.Attention,Converter={StaticResource display},ConverterParameter=-999,Mode=OneWay}" 
-                                    Command="{x:Bind Path=m_videoDetailPageViewModel.AttentionCommand}" 
+                                    Visibility="{x:Bind Path=m_viewModel.VideoInfo.ReqUser.Attention,Converter={StaticResource display},ConverterParameter=-999,Mode=OneWay}" 
+                                    Command="{x:Bind Path=m_viewModel.AttentionCommand}" 
                                     Grid.Column="2" Padding="16 4"  BorderThickness="1" Background="Transparent" BorderBrush="{ThemeResource HighLightColor}" Foreground="{ThemeResource HighLightColor}" FontSize="12">关注</Button>
                                     </Grid>
                                 </HyperlinkButton>
 
-                                <StackPanel Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ShowStaff,Mode=OneWay}">
-                                    <ItemsControl ItemsSource="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Staff,Mode=OneWay}" Margin="0 8 0 0" MaxHeight="{x:Bind Path=m_videoDetailPageViewModel.StaffHeight,Mode=OneWay}" >
+                                <StackPanel Visibility="{x:Bind Path=m_viewModel.VideoInfo.ShowStaff,Mode=OneWay}">
+                                    <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.VideoInfo.Staff,Mode=OneWay}" Margin="0 8 0 0" MaxHeight="{x:Bind Path=m_viewModel.StaffHeight,Mode=OneWay}" >
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="video:VideoDetailStaffViewModel">
                                                 <HyperlinkButton  Click="btnOpenUser_Click" Foreground="{ThemeResource TextColor}" Margin="0 8 0 0"  HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Padding="0">
@@ -340,20 +358,20 @@
                                         </ItemsControl.ItemTemplate>
 
                                     </ItemsControl>
-                                    <HyperlinkButton Command="{x:Bind Path=m_videoDetailPageViewModel.SetStaffHeightCommand}" CommandParameter="2000.0" Visibility="{x:Bind Path=m_videoDetailPageViewModel.ShowMoreStaff,Mode=OneWay,Converter={StaticResource display}}" HorizontalAlignment="Center" Foreground="Gray">
+                                    <HyperlinkButton Command="{x:Bind Path=m_viewModel.SetStaffHeightCommand}" CommandParameter="2000.0" Visibility="{x:Bind Path=m_viewModel.ShowMoreStaff,Mode=OneWay,Converter={StaticResource display}}" HorizontalAlignment="Center" Foreground="Gray">
                                         <StackPanel>
-                                            <TextBlock>制作团队(<Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Staff.Count,Mode=OneWay,TargetNullValue='0'}"/>人)</TextBlock>
+                                            <TextBlock>制作团队(<Run Text="{x:Bind Path=m_viewModel.VideoInfo.Staff.Count,Mode=OneWay,TargetNullValue='0'}"/>人)</TextBlock>
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE011;" />
                                         </StackPanel>
                                     </HyperlinkButton>
-                                    <HyperlinkButton Command="{x:Bind Path=m_videoDetailPageViewModel.SetStaffHeightCommand}" CommandParameter="88.0" Visibility="{x:Bind Path=m_videoDetailPageViewModel.ShowMoreStaff,Mode=OneWay}" HorizontalAlignment="Center" Foreground="Gray">
+                                    <HyperlinkButton Command="{x:Bind Path=m_viewModel.SetStaffHeightCommand}" CommandParameter="88.0" Visibility="{x:Bind Path=m_viewModel.ShowMoreStaff,Mode=OneWay}" HorizontalAlignment="Center" Foreground="Gray">
                                         <StackPanel>
                                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE010;" />
                                         </StackPanel>
                                     </HyperlinkButton>
                                 </StackPanel>
 
-                                <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True">发布于 <Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.PubDate,Mode=OneWay,Converter={StaticResource datetime}}"/></TextBlock>
+                                <TextBlock Margin="0 4 0 0" Foreground="Gray" IsTextSelectionEnabled="True">发布于 <Run Text="{x:Bind Path=m_viewModel.VideoInfo.PubDate,Mode=OneWay,Converter={StaticResource datetime}}"/></TextBlock>
                                 <StackPanel x:Name="stDesc" Margin="0 8 0 0" >
                                     <TextBlock x:Name="txtDesc" 
                                            Visibility="Collapsed" 
@@ -362,21 +380,21 @@
                                            IsTextSelectionEnabled="False"  
                                            TextTrimming="CharacterEllipsis" 
                                            TextWrapping="Wrap" Foreground="Gray"  
-                                           Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Desc,Mode=OneWay}"></TextBlock>
+                                           Text="{x:Bind Path=m_viewModel.VideoInfo.Desc,Mode=OneWay}"></TextBlock>
                                     <ContentControl x:Name="contentDesc"  Foreground="Gray"  ></ContentControl>
                                 </StackPanel>
                                 <toolkit:AdaptiveGridView 
-                                    Visibility="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.ShowPages,Mode=OneWay}" 
+                                    Visibility="{x:Bind Path=m_viewModel.VideoInfo.ShowPages,Mode=OneWay}" 
                                     DesiredWidth="180" 
                                     ItemHeight="36"  
                                     Margin="0 8 0 0" 
                                     x:Name="listEpisode"  
                                     SelectionChanged="listEpisode_SelectionChanged" 
-                                    ItemsSource="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Pages,Mode=OneWay}"
+                                    ItemsSource="{x:Bind Path=m_viewModel.VideoInfo.Pages,Mode=OneWay}"
                                     PreviewKeyDown="listEpisode_PreviewKeyDown"
                                     PreviewKeyUp="listEpisode_PreviewKeyUp">
                                     <GridView.Header>
-                                        <TextBlock Margin="0 8" FontSize="16">分集(共<Run Text="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Pages.Count,Mode=OneWay}"/>P)</TextBlock>
+                                        <TextBlock Margin="0 8" FontSize="16">分集(共<Run Text="{x:Bind Path=m_viewModel.VideoInfo.Pages.Count,Mode=OneWay}"/>P)</TextBlock>
                                     </GridView.Header>
                                     <GridView.ItemContainerStyle>
                                         <Style TargetType="GridViewItem">
@@ -396,7 +414,7 @@
 
                                 </toolkit:AdaptiveGridView>
 
-                                <ItemsControl ItemsSource="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Tag,Mode=OneWay}" Margin="0 8 0 0">
+                                <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.VideoInfo.Tag,Mode=OneWay}" Margin="0 8 0 0">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <toolkit:WrapPanel VerticalSpacing="4" />
@@ -425,7 +443,7 @@
                         <PivotItem.Header>
                             <TextBlock Text="推荐" FontSize="18"></TextBlock>
                         </PivotItem.Header>
-                        <ListView Padding="12 0" SelectionMode="None"  ItemClick="listRelates_ItemClick" ItemsSource="{x:Bind Path=m_videoDetailPageViewModel.VideoInfo.Relates,Mode=OneWay}" IsItemClickEnabled="True">
+                        <ListView Padding="12 0" SelectionMode="None"  ItemClick="listRelates_ItemClick" ItemsSource="{x:Bind Path=m_viewModel.VideoInfo.Relates,Mode=OneWay}" IsItemClickEnabled="True">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="Padding" Value="0"></Setter>
@@ -479,16 +497,16 @@
                 </controls:GridSplitter.RenderTransform>
             </controls:GridSplitter>
         </Grid>
-        <Grid Visibility="{x:Bind Path=m_videoDetailPageViewModel.ShowError,Mode=OneWay}" Background="Transparent">
+        <Grid Visibility="{x:Bind Path=m_viewModel.ShowError,Mode=OneWay}" Background="Transparent">
             <StackPanel VerticalAlignment="Center">
                 <FontIcon  FontFamily="{StaticResource BiliIconFont}"  HorizontalAlignment="Center" FontSize="36" Glyph="&#xE68E;" />
-                <TextBlock Text="{x:Bind Path=m_videoDetailPageViewModel.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>
+                <TextBlock Text="{x:Bind Path=m_viewModel.ErrorMsg,Mode=OneWay}" TextAlignment="Center" Margin="0 8 0 0"></TextBlock>
                 <HyperlinkButton Click="btnRefresh_Click" HorizontalAlignment="Center">
                     <TextBlock>点击刷新</TextBlock>
                 </HyperlinkButton>
             </StackPanel>
         </Grid>
-        <ProgressRing IsActive="True" Grid.ColumnSpan="2"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=m_videoDetailPageViewModel.Loading,Mode=OneWay}"></ProgressRing>
+        <ProgressRing IsActive="True" Grid.ColumnSpan="2"  HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}"></ProgressRing>
     </Grid>
    
 </local:PlayPage>
