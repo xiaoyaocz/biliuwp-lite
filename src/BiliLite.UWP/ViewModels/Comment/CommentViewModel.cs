@@ -131,7 +131,7 @@ namespace BiliLite.ViewModels.Comment
 
         public CommentMemberModel Member { get; set; }
 
-        public CommentContentModel Content { get; set; }
+        public CommentContentViewModel Content { get; set; }
 
         public CommentUPActionModel UpAction { get; set; }
 

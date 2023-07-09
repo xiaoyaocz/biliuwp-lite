@@ -186,11 +186,11 @@
                 </TextBlock>
 
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Visibility="{Binding ElementName=CommentControlContent,Path=DataContext.IsNarrowMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}">
-                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
+                    <ContentPresenter Content="{x:Bind Mode=OneWay}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Visibility="{Binding ElementName=CommentControlContent,Path=DataContext.IsWideMode,Mode=OneWay,Converter={StaticResource BoolToVisibilityConverter}}">
-                    <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
+                    <ContentPresenter Content="{x:Bind Mode=OneWay}" ContentTemplate="{StaticResource CommentContentTemplate}"></ContentPresenter>
                 </StackPanel>
             </Grid>
         </DataTemplate>

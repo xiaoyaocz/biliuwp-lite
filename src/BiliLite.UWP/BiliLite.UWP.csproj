@@ -163,6 +163,7 @@
     <Compile Include="Models\Common\Video\Detail\VideoDetailRelatesModel.cs" />
     <Compile Include="Models\Common\Video\Detail\VideoDetailHistoryModel.cs" />
     <Compile Include="Models\Common\Video\Detail\VideoDetailInteractionHistoryNodeModel.cs" />
+    <Compile Include="ViewModels\Comment\CommentContentViewModel.cs" />
     <Compile Include="ViewModels\Video\VideoDetailReqUserViewModel.cs" />
     <Compile Include="ViewModels\Video\VideoDetailRelatesViewModel.cs" />
     <Compile Include="ViewModels\Video\VideoDetailStatViewModel.cs" />
@@ -421,7 +422,7 @@
     <Compile Include="Modules\Detail\SeasonDetailVM.cs" />
     <Compile Include="Modules\Season\SeasonIndexVM.cs" />
     <Compile Include="Modules\SettingVM.cs" />
-    <Compile Include="Modules\Detail\VideoDetailPageViewModel.cs" />
+    <Compile Include="ViewModels\Video\VideoDetailPageViewModel.cs" />
     <Compile Include="Modules\User\MyFollowVideoVM.cs" />
     <Compile Include="Modules\User\SendDynamic\SendDynamicVM.cs" />
     <Compile Include="Modules\User\SendDynamic\TopicVM.cs" />

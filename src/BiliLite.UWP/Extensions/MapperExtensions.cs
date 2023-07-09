@@ -23,6 +23,8 @@ namespace BiliLite.Extensions
                 expression.CreateMap<CommentViewModel, CommentItem>();
                 expression.CreateMap<DataCommentModel, DataCommentViewModel>();
                 expression.CreateMap<DataCommentViewModel, DataCommentModel>();
+                expression.CreateMap<CommentContentViewModel, CommentContentModel>();
+                expression.CreateMap<CommentContentModel, CommentContentViewModel>();
                 expression.CreateMap<VideoDetailViewModel, VideoDetailModel>();
                 expression.CreateMap<VideoDetailModel, VideoDetailViewModel>(); 
                 expression.CreateMap<VideoDetailStaffViewModel, VideoDetailStaffModel>(); 
