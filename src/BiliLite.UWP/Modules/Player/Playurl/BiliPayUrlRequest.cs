@@ -139,8 +139,12 @@ namespace BiliLite.Modules.Player.Playurl
             BiliFlacItem flacAudio;
 
             var flacJToken = playUrlInfoResult["dash"]["flac"];
-            if (flacJToken == null) flacAudio = null;
-            else flacAudio= JsonConvert.DeserializeObject<BiliFlacItem>(flacJToken.ToString());
+            flacAudio = flacJToken == null ? null : JsonConvert.DeserializeObject<BiliFlacItem>(flacJToken.ToString());
+
+            BiliDolbyItem dolbyAudio;
+
+            var dolbyJToken = playUrlInfoResult["dash"]["dolby"];
+            dolbyAudio = dolbyJToken == null ? null : JsonConvert.DeserializeObject<BiliDolbyItem>(dolbyJToken.ToString());
 
             var qn = quality;
 
@@ -179,7 +183,21 @@ namespace BiliLite.Modules.Player.Playurl
             }
 
             // 处理杜比音效
-            //TODO: 杜比音效暂不支持
+            if (dolbyAudio != null && dolbyAudio.Audio!=null&& dolbyAudio.Audio.Count>0)
+            {
+                var audio = dolbyAudio.Audio[0];
+                audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
+                info.AudioQualites.Add(new BiliDashAudioPlayUrlInfo()
+                {
+                    HasPlayUrl = true,
+                    QualityID = audio.id,
+                    QualityName = SoundQualityConstants.Dictionary[audio.id],
+                    Referer = referer,
+                    UserAgent = userAgent,
+                    Timelength = timeLength,
+                    Audio = audio.ToBiliDashItem(),
+                });
+            }
 
             BiliDashItem currentAudio = null;
 

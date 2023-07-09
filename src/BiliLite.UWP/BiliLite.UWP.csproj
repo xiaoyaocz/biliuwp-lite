@@ -183,7 +183,7 @@
     <Compile Include="Models\Common\Video\LocalPlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayInfo.cs" />
     <Compile Include="Models\Common\Video\PlayUrlInfos\BiliDashAudioPlayUrlInfo.cs" />
-    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliFlacItem.cs" />
+    <Compile Include="Models\Common\Video\PlayUrlInfos\BiliSpecAudioItem.cs" />
     <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlInfo.cs" />
     <Compile Include="Models\Common\Video\PlayUrlInfos\BiliPlayUrlQualitesInfo.cs" />
     <Compile Include="Models\Common\Video\SoundQualityDictionary.cs" />
