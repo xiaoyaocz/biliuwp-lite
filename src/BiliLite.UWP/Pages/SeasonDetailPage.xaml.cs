@@ -50,7 +50,8 @@ namespace BiliLite.Pages
             seasonReviewVM = new SeasonReviewVM();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+            m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+            this.RightInfoGridSplitter.IsEnabled = SettingService.GetValue<bool>(SettingConstants.UI.RIGHT_WIDTH_CHANGEABLE, false);
         }
 
         private void SeasonDetailPage_Loaded(object sender, RoutedEventArgs e)
@@ -272,13 +273,13 @@ namespace BiliLite.Pages
             if (e)
             {
                 this.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.UI.DISPLAY_MODE, 0) == 0 ? -48 : -48, 0, 0);
-                RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
                 this.Margin = new Thickness(0);
-                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -287,12 +288,12 @@ namespace BiliLite.Pages
         {
             if (e)
             {
-                RightInfo.Width = new GridLength(0, GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(0, GridUnitType.Pixel);
                 BottomInfo.Height = new GridLength(0, GridUnitType.Pixel);
             }
             else
             {
-                RightInfo.Width = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
+                m_viewModel.DefaultRightInfoWidth = new GridLength(SettingService.GetValue<double>(SettingConstants.UI.RIGHT_DETAIL_WIDTH, 320), GridUnitType.Pixel);
                 BottomInfo.Height = GridLength.Auto;
             }
         }
@@ -562,6 +563,30 @@ namespace BiliLite.Pages
         private void listEpisode_PreviewKeyUp(object sender, KeyRoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void BottomActionBar_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                m_viewModel.BottomActionBarWidth = e.NewSize.Width;
+            }
+            if (e.NewSize.Height != e.PreviousSize.Height)
+            {
+                m_viewModel.BottomActionBarHeight = e.NewSize.Height;
+            }
+        }
+
+        private void SeasonDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                m_viewModel.PageWidth = e.NewSize.Width;
+            }
+            if (e.NewSize.Height != e.PreviousSize.Height)
+            {
+                m_viewModel.PageHeight = e.NewSize.Height;
+            }
         }
     }
 }

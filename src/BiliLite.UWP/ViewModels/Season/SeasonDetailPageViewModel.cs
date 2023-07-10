@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml;
 using AutoMapper;
 using BiliLite.Extensions;
 using BiliLite.Models;
@@ -16,6 +17,7 @@ using BiliLite.ViewModels.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PropertyChanged;
 
 namespace BiliLite.ViewModels.Season
 {
@@ -38,6 +40,7 @@ namespace BiliLite.ViewModels.Season
             m_playerApi = new PlayerAPI();
             m_followApi = new FollowAPI();
             FollowCommand = new RelayCommand(DoFollow);
+            OpenRightInfoCommand = new RelayCommand(OpenRightInfo);
         }
 
         #endregion
@@ -45,6 +48,8 @@ namespace BiliLite.ViewModels.Season
         #region Properties
 
         public ICommand FollowCommand { get; private set; }
+
+        public ICommand OpenRightInfoCommand { get; private set; }
 
         public SeasonDetailViewModel Detail { get; set; }
 
@@ -66,8 +71,75 @@ namespace BiliLite.ViewModels.Season
 
         public bool NothingPlay { get; set; }
 
+        public double BottomActionBarHeight { get; set; }
+
+        public double BottomActionBarWidth { get; set; }
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowNormalDownloadBtn => !(BottomActionBarWidth < 460);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowFlyoutDownloadBtn => (BottomActionBarWidth < 460);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowNormalShareBtn => !(BottomActionBarWidth < 390);
+
+        [DependsOn(nameof(BottomActionBarWidth))]
+        public bool ShowFlyoutShareBtn => (BottomActionBarWidth < 390);
+
+        public double PageHeight { get; set; }
+
+        public double PageWidth { get; set; }
+
+        [DependsOn(nameof(PageWidth))]
+        public int PlayerGridColumnSpan => PageWidth < 1000 ? 2 : 1;
+
+        public GridLength DefaultRightInfoWidth { get; set; } = new GridLength(320);
+
+        public bool IsOpenRightInfo { get; set; }
+
+        [DependsOn(nameof(PageWidth))]
+        public bool ShowOpenRightInfoBtn => (PageWidth < 1000);
+
+        [DependsOn(nameof(PageWidth), nameof(IsOpenRightInfo))]
+        public GridLength RightInfoWidth
+        {
+            get
+            {
+                if (PageWidth < 1000 && !IsOpenRightInfo)
+                {
+                    return new GridLength(0);
+                }
+
+                return DefaultRightInfoWidth;
+            }
+        }
+
+        [DependsOn(nameof(PageHeight), nameof(PageWidth))]
+        public double RightInfoHeight
+        {
+            get
+            {
+                if (PageWidth < 1000)
+                {
+                    return PageHeight - BottomActionBarHeight;
+                }
+
+                return PageHeight;
+            }
+        }
+
         #endregion
-        
+
+        #region Private Methods
+
+        private void OpenRightInfo()
+        {
+            IsOpenRightInfo = !IsOpenRightInfo;
+        }
+
+        #endregion
+
         #region Public Methods
 
         public async Task LoadSeasonDetail(string seasonId)

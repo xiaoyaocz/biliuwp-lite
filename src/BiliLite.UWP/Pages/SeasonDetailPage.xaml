@@ -12,7 +12,8 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:control="using:BiliLite.Controls" xmlns:season="using:BiliLite.Modules.Season"
     xmlns:season1="using:BiliLite.Models.Common.Season"
-    Background="Transparent">
+    Background="Transparent"
+    SizeChanged="SeasonDetailPage_OnSizeChanged">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="datetime" ></convert:DatetimeConvert>
         <convert:ColorSelecteConvert x:Key="colorSelct" ></convert:ColorSelecteConvert>
@@ -24,9 +25,9 @@
         <Grid x:Name="detail" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition  Width="320" x:Name="RightInfo"/>
+                <ColumnDefinition  Width="{x:Bind m_viewModel.RightInfoWidth,Mode=OneWay}" x:Name="RightInfo"/>
             </Grid.ColumnDefinitions>
-            <Grid Background="{ThemeResource NavigationViewTopPaneBackground}">
+            <Grid Background="{ThemeResource NavigationViewTopPaneBackground}" Grid.ColumnSpan="{x:Bind m_viewModel.PlayerGridColumnSpan,Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto" x:Name="BottomInfo"/>
@@ -34,7 +35,7 @@
                 <Grid Background="Black">
                     <control:PlayerControl x:Name="player" FullScreenEvent="PlayerControl_FullScreenEvent" FullWindowEvent="PlayerControl_FullWindowEvent" ChangeEpisodeEvent="PlayerControl_ChangeEpisodeEvent"/>
                 </Grid>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" x:Name="BottomActionBar" SizeChanged="BottomActionBar_OnSizeChanged" Background="{ThemeResource ApplicationBackground}">
                     <StackPanel Orientation="Horizontal" >
                         <Button Background="Transparent"
                                 Width="56" 
@@ -63,6 +64,7 @@
                         <Button x:Name="btnShare"
                                 Background="Transparent"
                                 Width="56" 
+                                Visibility="{x:Bind m_viewModel.ShowNormalShareBtn,Mode=OneWay}"
                                 Margin="0 0 4 0" Foreground="{ThemeResource TextColor}">
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE671;" />
@@ -79,6 +81,7 @@
                         <Button x:Name="btnDownload" Click="btnDownload_Click"  
                                 Background="Transparent"
                                 Width="56" 
+                                Visibility="{x:Bind m_viewModel.ShowNormalDownloadBtn,Mode=OneWay}"
                                 Margin="0 0 4 0" Foreground="{ThemeResource TextColor}">
                             <StackPanel>
                                 <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xE672;" />
@@ -126,12 +129,27 @@
                             </StackPanel>
                             <Button.Flyout>
                                 <MenuFlyout>
-
+                                    <MenuFlyoutSubItem Text="分享" Visibility="{x:Bind m_viewModel.ShowFlyoutShareBtn,Mode=OneWay}">
+                                        <MenuFlyoutItem Click="btnShareCopyUrl_Click" Icon="Copy" Text="复制链接"/>
+                                        <MenuFlyoutItem Click="btnShareCopy_Click" Icon="Copy" Text="复制标题链接"/>
+                                        <MenuFlyoutItem Click="btnShare_Click" Icon="Share" Text="分享到..."/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutItem Click="btnDownload_Click" Visibility="{x:Bind m_viewModel.ShowFlyoutDownloadBtn,Mode=OneWay}">下载</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="btnOpenQR_Click" >手机观看</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="btnOpenWeb_Click" >浏览器打开</MenuFlyoutItem>
                                     <MenuFlyoutItem Click="btnRefresh_Click">刷新</MenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
+                        </Button>
+                        <Button Background="Transparent"
+                                Margin="0 0 4 0"
+                                Width="56"
+                                Visibility="{x:Bind m_viewModel.ShowOpenRightInfoBtn,Mode=OneWay}"
+                                x:Name="BtnOpenRightInfo" Command="{x:Bind m_viewModel.OpenRightInfoCommand}" Foreground="{ThemeResource TextColor}">
+                            <StackPanel>
+                                <FontIcon FontFamily="{StaticResource BiliIconFont}" Glyph="&#xe68a;" />
+                                <TextBlock FontSize="12" TextAlignment="Center" Text="详情"></TextBlock>
+                            </StackPanel>
                         </Button>
                         <!--<AppBarButton Label="磁贴">
                             <AppBarButton.Icon>
@@ -141,285 +159,308 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-            <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged" Grid.Column="1" Background="Transparent">
-                <PivotItem Margin="0">
-                    <PivotItem.Header>
-                        <TextBlock  Text="选集" FontSize="18"></TextBlock>
-                    </PivotItem.Header>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="12">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="120"/>
+            <Grid Grid.Column="1" VerticalAlignment="Top" Background="{ThemeResource ApplicationBackground}"   Height="{x:Bind m_viewModel.RightInfoHeight,Mode=OneWay}">
 
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Border CornerRadius="{StaticResource ImageCornerRadius}">
-                                    <Grid>
-                                        <Image Tapped="Image_Tapped" Source="{x:Bind Path=m_viewModel.Detail.Cover,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='200w'}"></Image>
-                                        <Border Visibility="{x:Bind Path=m_viewModel.Detail.ShowBadge,Mode=OneWay}" VerticalAlignment="Top" Background="#FFFB9E60" Opacity="1" HorizontalAlignment="Right" Margin="4" Padding="4 2" CornerRadius="4">
-                                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=m_viewModel.Detail.Badge,Mode=OneWay}"></TextBlock>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                                <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                                    <TextBlock TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Title,Mode=OneWay}"></TextBlock>
-                                    <TextBlock Margin="0 2" Foreground="Gray"><Run Text="{x:Bind Path=m_viewModel.Detail.Stat.Play,Mode=OneWay}"/> <Run Text="{x:Bind Path=m_viewModel.Detail.Stat.Followers,Mode=OneWay}"/></TextBlock>
-                                    <TextBlock Margin="0 2" Foreground="Gray" Text="{x:Bind Path=m_viewModel.Detail.Publish.PubTimeShow,Mode=OneWay}"></TextBlock>
-                                    <TextBlock Margin="0 2" Foreground="Gray"  Text="{x:Bind Path=m_viewModel.Detail.Publish.TimeLengthShow,Mode=OneWay}"></TextBlock>
-                                    <TextBlock Visibility="{x:Bind Path=m_viewModel.Detail.ShowRating,Mode=OneWay}" Margin="0 2 0 0" FontSize="18" FontWeight="Bold" Foreground="Orange" Text="{x:Bind Path=m_viewModel.Detail.Rating.Score,Mode=OneWay}"><Run FontSize="12" FontWeight="Normal">分</Run></TextBlock>
-                                    <TextBlock Visibility="{x:Bind Path=m_viewModel.Detail.ShowRating,Mode=OneWay}" FontSize="12" Foreground="Gray"><Run Text="{x:Bind Path=m_viewModel.Detail.Rating.Count,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>人评分</TextBlock>
-                                </StackPanel>
-                            </Grid>
-                            <Button Margin="0 16 0 0" Visibility="{x:Bind Path=m_viewModel.Detail.ShowPayment,Mode=OneWay}" BorderBrush="#FFFB9E60" Background="Transparent" HorizontalAlignment="Stretch" Foreground="#FFFB9E60">
-                                <TextBlock Text="{x:Bind Path=m_viewModel.Detail.Payment.Dialog.Title,Mode=OneWay}"></TextBlock>
-                            </Button>
-                            <toolkit:AdaptiveGridView x:Name="listEpisode" 
+                <Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged"  >
+                    <PivotItem Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock  Text="选集" FontSize="18"></TextBlock>
+                        </PivotItem.Header>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border CornerRadius="{StaticResource ImageCornerRadius}">
+                                        <Grid>
+                                            <Image Tapped="Image_Tapped" Source="{x:Bind Path=m_viewModel.Detail.Cover,Mode=OneWay,Converter={StaticResource imageConvert2},ConverterParameter='200w'}"></Image>
+                                            <Border Visibility="{x:Bind Path=m_viewModel.Detail.ShowBadge,Mode=OneWay}" VerticalAlignment="Top" Background="#FFFB9E60" Opacity="1" HorizontalAlignment="Right" Margin="4" Padding="4 2" CornerRadius="4">
+                                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=m_viewModel.Detail.Badge,Mode=OneWay}"></TextBlock>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="8 0 0 0">
+                                        <TextBlock TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Title,Mode=OneWay}"></TextBlock>
+                                        <TextBlock Margin="0 2" Foreground="Gray"><Run Text="{x:Bind Path=m_viewModel.Detail.Stat.Play,Mode=OneWay}"/> <Run Text="{x:Bind Path=m_viewModel.Detail.Stat.Followers,Mode=OneWay}"/></TextBlock>
+                                        <TextBlock Margin="0 2" Foreground="Gray" Text="{x:Bind Path=m_viewModel.Detail.Publish.PubTimeShow,Mode=OneWay}"></TextBlock>
+                                        <TextBlock Margin="0 2" Foreground="Gray"  Text="{x:Bind Path=m_viewModel.Detail.Publish.TimeLengthShow,Mode=OneWay}"></TextBlock>
+                                        <TextBlock Visibility="{x:Bind Path=m_viewModel.Detail.ShowRating,Mode=OneWay}" Margin="0 2 0 0" FontSize="18" FontWeight="Bold" Foreground="Orange" Text="{x:Bind Path=m_viewModel.Detail.Rating.Score,Mode=OneWay}"><Run FontSize="12" FontWeight="Normal">分</Run></TextBlock>
+                                        <TextBlock Visibility="{x:Bind Path=m_viewModel.Detail.ShowRating,Mode=OneWay}" FontSize="12" Foreground="Gray"><Run Text="{x:Bind Path=m_viewModel.Detail.Rating.Count,Mode=OneWay,Converter={StaticResource numberToStringConvert}}"/>人评分</TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                                <Button Margin="0 16 0 0" Visibility="{x:Bind Path=m_viewModel.Detail.ShowPayment,Mode=OneWay}" BorderBrush="#FFFB9E60" Background="Transparent" HorizontalAlignment="Stretch" Foreground="#FFFB9E60">
+                                    <TextBlock Text="{x:Bind Path=m_viewModel.Detail.Payment.Dialog.Title,Mode=OneWay}"></TextBlock>
+                                </Button>
+                                <toolkit:AdaptiveGridView x:Name="listEpisode" 
                                                       DesiredWidth="120" ItemHeight="36" 
                                                       Visibility="{x:Bind Path=m_viewModel.ShowEpisodes,Mode=OneWay}"
                                                       SelectionChanged="listEpisode_SelectionChanged" 
                                                       PreviewKeyDown="listEpisode_PreviewKeyDown"
                                                       PreviewKeyUp="listEpisode_PreviewKeyUp"
                                                       Margin="0 8 0 0"  ItemsSource="{x:Bind Path=m_viewModel.Episodes,Mode=OneWay}">
-                                <GridView.Header>
-                                    <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">正片</TextBlock>
-                                </GridView.Header>
-                                <GridView.ItemContainerStyle>
-                                    <Style TargetType="GridViewItem">
-                                        <Setter Property="BorderThickness" Value="1"></Setter>
-                                        <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
-                                        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                                    </Style>
-                                </GridView.ItemContainerStyle>
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="season1:SeasonDetailEpisodeModel">
-                                        <Grid ToolTipService.ToolTip="{x:Bind Path=LongTitle}">
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=Title}"/></TextBlock>
-                                            <Border Visibility="{x:Bind Path=ShowBadge}" VerticalAlignment="Top" Padding="4 2" CornerRadius="0 0 0 4" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">
-                                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=Badge}"></TextBlock>
-                                            </Border>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
-                              
-                            </toolkit:AdaptiveGridView>
-                            <toolkit:AdaptiveGridView x:Name="listPreview" 
+                                    <GridView.Header>
+                                        <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">正片</TextBlock>
+                                    </GridView.Header>
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="BorderThickness" Value="1"></Setter>
+                                            <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="season1:SeasonDetailEpisodeModel">
+                                            <Grid ToolTipService.ToolTip="{x:Bind Path=LongTitle}">
+                                                <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=Title}"/></TextBlock>
+                                                <Border Visibility="{x:Bind Path=ShowBadge}" VerticalAlignment="Top" Padding="4 2" CornerRadius="0 0 0 4" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">
+                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=Badge}"></TextBlock>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+
+                                </toolkit:AdaptiveGridView>
+                                <toolkit:AdaptiveGridView x:Name="listPreview" 
                                                       Visibility="{x:Bind Path=m_viewModel.ShowPreview,Mode=OneWay}"
                                                       DesiredWidth="120" ItemHeight="36" SelectionChanged="listPreview_SelectionChanged" Margin="0 8 0 0"  ItemsSource="{x:Bind Path=m_viewModel.Previews,Mode=OneWay}">
-                                <GridView.Header>
-                                    <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">预告/花絮</TextBlock>
-                                </GridView.Header>
-                                <GridView.ItemContainerStyle>
-                                    <Style TargetType="GridViewItem">
-                                        <Setter Property="BorderThickness" Value="1"></Setter>
-                                        <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
-                                        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                                    </Style>
-                                </GridView.ItemContainerStyle>
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="season1:SeasonDetailEpisodeModel">
-                                        <Grid ToolTipService.ToolTip="{x:Bind Path=LongTitle}">
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=Title}"/></TextBlock>
-                                            <Border Visibility="{x:Bind Path=ShowBadge}" VerticalAlignment="Top" Padding="4 2" CornerRadius="0 0 0 4" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">
-                                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=Badge}"></TextBlock>
-                                            </Border>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
+                                    <GridView.Header>
+                                        <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">预告/花絮</TextBlock>
+                                    </GridView.Header>
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="BorderThickness" Value="1"></Setter>
+                                            <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="season1:SeasonDetailEpisodeModel">
+                                            <Grid ToolTipService.ToolTip="{x:Bind Path=LongTitle}">
+                                                <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=Title}"/></TextBlock>
+                                                <Border Visibility="{x:Bind Path=ShowBadge}" VerticalAlignment="Top" Padding="4 2" CornerRadius="0 0 0 4" Background="{ThemeResource HighLightColor}" HorizontalAlignment="Right">
+                                                    <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=Badge}"></TextBlock>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
 
-                            </toolkit:AdaptiveGridView>
-                            <TextBlock Visibility="{x:Bind Path=m_viewModel.NothingPlay,Mode=OneWay}" TextAlignment="Center">尚未开播或不支持你所在地区</TextBlock>
-                            <toolkit:AdaptiveGridView 
+                                </toolkit:AdaptiveGridView>
+                                <TextBlock Visibility="{x:Bind Path=m_viewModel.NothingPlay,Mode=OneWay}" TextAlignment="Center">尚未开播或不支持你所在地区</TextBlock>
+                                <toolkit:AdaptiveGridView 
                                 x:Name="SeasonList"
                                 SelectedItem="{x:Bind Path=m_viewModel.Detail.CurrentSeason,Mode=OneWay}"
                                 SelectionChanged="SeasonList_SelectionChanged"
                                 Visibility="{x:Bind Path=m_viewModel.Detail.ShowSeasons,Mode=OneWay}"
                                 DesiredWidth="200" ItemHeight="36"  Margin="0 8 0 0"  
                                 ItemsSource="{x:Bind Path=m_viewModel.Detail.Seasons,Mode=OneWay}">
-                                <GridView.Header>
-                                    <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">系列</TextBlock>
-                                </GridView.Header>
-                                <GridView.ItemContainerStyle>
-                                    <Style TargetType="GridViewItem">
-                                        <Setter Property="BorderThickness" Value="1"></Setter>
-                                        <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
-                                        <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                                    </Style>
-                                </GridView.ItemContainerStyle>
-                                <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="season1:SeasonDetailSeasonItemModel">
-                                        <Grid ToolTipService.ToolTip="{x:Bind Path=Title}" Padding="4 0">
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=SeasonTitle}"/></TextBlock>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GridView.ItemTemplate>
+                                    <GridView.Header>
+                                        <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">系列</TextBlock>
+                                    </GridView.Header>
+                                    <GridView.ItemContainerStyle>
+                                        <Style TargetType="GridViewItem">
+                                            <Setter Property="BorderThickness" Value="1"></Setter>
+                                            <Setter Property="BorderBrush" Value="#e9e9e9"></Setter>
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch"></Setter>
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                                        </Style>
+                                    </GridView.ItemContainerStyle>
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate x:DataType="season1:SeasonDetailSeasonItemModel">
+                                            <Grid ToolTipService.ToolTip="{x:Bind Path=Title}" Padding="4 0">
+                                                <TextBlock VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"><Run Text="{x:Bind Path=SeasonTitle}"/></TextBlock>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
 
-                            </toolkit:AdaptiveGridView>
-                        </StackPanel>
-                    </ScrollViewer>
-                </PivotItem>
-                <PivotItem Margin="0">
-                    <PivotItem.Header>
-                        <TextBlock Text="评论" FontSize="18"></TextBlock>
-                    </PivotItem.Header>
-                    <control:CommentControl x:Name="comment"/>
-                </PivotItem>
-                <PivotItem Margin="0">
-                    <PivotItem.Header>
-                        <TextBlock Text="详情" FontSize="18"></TextBlock>
-                    </PivotItem.Header>
-                    <ScrollViewer Padding="12 8" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                         
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">标题</TextBlock>
-                            <TextBlock IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Title,Mode=OneWay}"></TextBlock>
-                            <TextBlock IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Alias,Mode=OneWay}"></TextBlock>
-                            <TextBlock IsTextSelectionEnabled="True" Margin="0 4" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.OriginName,Mode=OneWay}"></TextBlock>
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="简介"></TextBlock>
-                            <TextBlock  Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Evaluate,Mode=OneWay}"></TextBlock>
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">地区</TextBlock>
-                            <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.Detail.Areas,Mode=OneWay}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <toolkit:WrapPanel VerticalSpacing="4" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="season1:SeasonDetailAreaItemModel">
-                                        <HyperlinkButton x:Name="btnOpenIndexWithArea" Click="btnOpenIndexWithArea_Click" Margin="0 0 8 0" Foreground="{ThemeResource TextColor}">
-                                            <Border CornerRadius="4" Padding="8 4" Background="{ThemeResource TopPaneBackground}">
-                                                <TextBlock FontSize="14" Text="{x:Bind Path=Name}"></TextBlock>
-                                            </Border>
-                                        </HyperlinkButton>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">标签</TextBlock>
-                            <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.Detail.Styles,Mode=OneWay}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <toolkit:WrapPanel VerticalSpacing="4" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="season1:SeasonDetailStyleItemModel">
-                                        <HyperlinkButton x:Name="btnOpenIndexWithStyle" Click="btnOpenIndexWithStyle_Click" Margin="0 0 8 0" Foreground="{ThemeResource TextColor}">
-                                            <Border CornerRadius="4" Padding="8 4" Background="{ThemeResource TopPaneBackground}">
-                                                <TextBlock FontSize="14" Text="{x:Bind Path=Name}"></TextBlock>
-                                            </Border>
-                                        </HyperlinkButton>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="{x:Bind Path=m_viewModel.Detail.Actor.Title,Mode=OneWay}"></TextBlock>
-                            <TextBlock Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Actor.Info,Mode=OneWay}"></TextBlock>
-                            <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="{x:Bind Path=m_viewModel.Detail.Staff.Title,Mode=OneWay}"></TextBlock>
-                            <TextBlock Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Staff.Info,Mode=OneWay}"></TextBlock>
-                            
-                        </StackPanel>
-                    </ScrollViewer>
-                </PivotItem>
-               
-                <PivotItem Margin="0">
-                    <PivotItem.Header>
-                        <TextBlock Text="点评" FontSize="18"></TextBlock>
-                    </PivotItem.Header>
-                    <Grid>
-                        <ListView SelectionMode="None" ItemsSource="{x:Bind Path=seasonReviewVM.Items,Mode=OneWay}">
-                            <ListView.Header>
-                                <StackPanel Margin="0 8">
-                                    <my:RatingControl FontSize="36" Caption="{x:Bind Path=m_viewModel.Detail.Rating.Score,Mode=OneWay}"  Value="{x:Bind Path=m_viewModel.Detail.Rating.Score5,Mode=OneWay}" IsReadOnly="True"></my:RatingControl>
-                                    <TextBlock FontSize="12" HorizontalAlignment="Center" Foreground="Gray">共<Run Text="{x:Bind Path=m_viewModel.Detail.Rating.Count,Mode=OneWay}"></Run>人评分</TextBlock>
-                                </StackPanel>
-                            </ListView.Header>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                    <Setter Property="Padding" Value="12 4" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="season:SeasonShortReviewItemModel">
-                                    <StackPanel>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Ellipse Width="36" Height="36">
-                                                <Ellipse.Fill>
-                                                    <ImageBrush Stretch="UniformToFill" ImageSource="{x:Bind Path=author.avatar,Converter={StaticResource imageConvert2},ConverterParameter='56h'}"></ImageBrush>
-                                                </Ellipse.Fill>
-                                            </Ellipse>
-                                            <StackPanel Grid.Column="1" Margin="8 0">
-                                                <!--<StackPanel Orientation="Horizontal">
+                                </toolkit:AdaptiveGridView>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </PivotItem>
+                    <PivotItem Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock Text="评论" FontSize="18"></TextBlock>
+                        </PivotItem.Header>
+                        <control:CommentControl x:Name="comment"/>
+                    </PivotItem>
+                    <PivotItem Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock Text="详情" FontSize="18"></TextBlock>
+                        </PivotItem.Header>
+                        <ScrollViewer Padding="12 8" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">标题</TextBlock>
+                                <TextBlock IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Title,Mode=OneWay}"></TextBlock>
+                                <TextBlock IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.Alias,Mode=OneWay}"></TextBlock>
+                                <TextBlock IsTextSelectionEnabled="True" Margin="0 4" TextWrapping="Wrap" Text="{x:Bind Path=m_viewModel.Detail.OriginName,Mode=OneWay}"></TextBlock>
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="简介"></TextBlock>
+                                <TextBlock  Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Evaluate,Mode=OneWay}"></TextBlock>
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">地区</TextBlock>
+                                <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.Detail.Areas,Mode=OneWay}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel VerticalSpacing="4" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="season1:SeasonDetailAreaItemModel">
+                                            <HyperlinkButton x:Name="btnOpenIndexWithArea" Click="btnOpenIndexWithArea_Click" Margin="0 0 8 0" Foreground="{ThemeResource TextColor}">
+                                                <Border CornerRadius="4" Padding="8 4" Background="{ThemeResource TopPaneBackground}">
+                                                    <TextBlock FontSize="14" Text="{x:Bind Path=Name}"></TextBlock>
+                                                </Border>
+                                            </HyperlinkButton>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold">标签</TextBlock>
+                                <ItemsControl ItemsSource="{x:Bind Path=m_viewModel.Detail.Styles,Mode=OneWay}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <toolkit:WrapPanel VerticalSpacing="4" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="season1:SeasonDetailStyleItemModel">
+                                            <HyperlinkButton x:Name="btnOpenIndexWithStyle" Click="btnOpenIndexWithStyle_Click" Margin="0 0 8 0" Foreground="{ThemeResource TextColor}">
+                                                <Border CornerRadius="4" Padding="8 4" Background="{ThemeResource TopPaneBackground}">
+                                                    <TextBlock FontSize="14" Text="{x:Bind Path=Name}"></TextBlock>
+                                                </Border>
+                                            </HyperlinkButton>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="{x:Bind Path=m_viewModel.Detail.Actor.Title,Mode=OneWay}"></TextBlock>
+                                <TextBlock Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Actor.Info,Mode=OneWay}"></TextBlock>
+                                <TextBlock Margin="0 8" FontSize="18" FontWeight="Bold" Text="{x:Bind Path=m_viewModel.Detail.Staff.Title,Mode=OneWay}"></TextBlock>
+                                <TextBlock Foreground="Gray" TextWrapping="Wrap" IsTextSelectionEnabled="True" Text="{x:Bind Path=m_viewModel.Detail.Staff.Info,Mode=OneWay}"></TextBlock>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </PivotItem>
+
+                    <PivotItem Margin="0">
+                        <PivotItem.Header>
+                            <TextBlock Text="点评" FontSize="18"></TextBlock>
+                        </PivotItem.Header>
+                        <Grid>
+                            <ListView SelectionMode="None" ItemsSource="{x:Bind Path=seasonReviewVM.Items,Mode=OneWay}">
+                                <ListView.Header>
+                                    <StackPanel Margin="0 8">
+                                        <my:RatingControl FontSize="36" Caption="{x:Bind Path=m_viewModel.Detail.Rating.Score,Mode=OneWay}"  Value="{x:Bind Path=m_viewModel.Detail.Rating.Score5,Mode=OneWay}" IsReadOnly="True"></my:RatingControl>
+                                        <TextBlock FontSize="12" HorizontalAlignment="Center" Foreground="Gray">共<Run Text="{x:Bind Path=m_viewModel.Detail.Rating.Count,Mode=OneWay}"></Run>人评分</TextBlock>
+                                    </StackPanel>
+                                </ListView.Header>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="12 4" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="season:SeasonShortReviewItemModel">
+                                        <StackPanel>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Width="36" Height="36">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush Stretch="UniformToFill" ImageSource="{x:Bind Path=author.avatar,Converter={StaticResource imageConvert2},ConverterParameter='56h'}"></ImageBrush>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+                                                <StackPanel Grid.Column="1" Margin="8 0">
+                                                    <!--<StackPanel Orientation="Horizontal">
                                                 <TextBlock VerticalAlignment="Center">xiaoyaocz</TextBlock>
                                                 
                                             </StackPanel>-->
-                                                <TextBlock VerticalAlignment="Center" Text="{x:Bind Path=author.uname}" Foreground="{x:Bind Path=author.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}"></TextBlock>
-                                                <TextBlock FontSize="12" Foreground="Gray" Text="{x:Bind Path=ctime,Converter={StaticResource datetime},ConverterParameter='ts'}"></TextBlock>
-                                                
-                                            </StackPanel>
-                                            <Viewbox Height="20"  Grid.Column="2">
-                                                <my:RatingControl Value="{x:Bind Path=score_5}" IsReadOnly="True"></my:RatingControl>
-                                            </Viewbox>
-                                        </Grid>
-                                        <TextBlock  Margin="44 8 0 8" IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind content}"></TextBlock>
-                                        <StackPanel Margin="44 0 0 0" Orientation="Horizontal">
-                                            <HyperlinkButton Width="56"
+                                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Path=author.uname}" Foreground="{x:Bind Path=author.vip.vipType,Converter={StaticResource colorSelct},ConverterParameter=2}"></TextBlock>
+                                                    <TextBlock FontSize="12" Foreground="Gray" Text="{x:Bind Path=ctime,Converter={StaticResource datetime},ConverterParameter='ts'}"></TextBlock>
+
+                                                </StackPanel>
+                                                <Viewbox Height="20"  Grid.Column="2">
+                                                    <my:RatingControl Value="{x:Bind Path=score_5}" IsReadOnly="True"></my:RatingControl>
+                                                </Viewbox>
+                                            </Grid>
+                                            <TextBlock  Margin="44 8 0 8" IsTextSelectionEnabled="True" TextWrapping="Wrap" Text="{x:Bind content}"></TextBlock>
+                                            <StackPanel Margin="44 0 0 0" Orientation="Horizontal">
+                                                <HyperlinkButton Width="56"
                                                              x:Name="btnReviewLike"
                                                              Click="btnReviewLike_Click"
                                                              Visibility="{x:Bind Path=stat.liked,Mode=OneWay,Converter={StaticResource display},ConverterParameter=1}"
                                                              Foreground="{ThemeResource HighLightColor}" 
                                                              HorizontalContentAlignment="Left">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
-                                                    <TextBlock  Margin="4 0" Text="{x:Bind Path=stat.likes,Mode=OneWay}"></TextBlock>
-                                                </StackPanel>
-                                            </HyperlinkButton>
-                                            <HyperlinkButton Width="56"
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
+                                                        <TextBlock  Margin="4 0" Text="{x:Bind Path=stat.likes,Mode=OneWay}"></TextBlock>
+                                                    </StackPanel>
+                                                </HyperlinkButton>
+                                                <HyperlinkButton Width="56"
                                                              Click="btnReviewLike_Click"
                                                              Visibility="{x:Bind Path=stat.liked,Mode=OneWay,Converter={StaticResource display},ConverterParameter=0}"
                                                              Foreground="Gray" 
                                                              HorizontalContentAlignment="Left">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
-                                                    <TextBlock  Margin="4 0" Text="{x:Bind Path=stat.likes,Mode=OneWay}"></TextBlock>
-                                                </StackPanel>
-                                            </HyperlinkButton>
-  
-                                            <HyperlinkButton
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <fa:FontAwesome Icon="Regular_ThumbsUp" FontSize="14"></fa:FontAwesome>
+                                                        <TextBlock  Margin="4 0" Text="{x:Bind Path=stat.likes,Mode=OneWay}"></TextBlock>
+                                                    </StackPanel>
+                                                </HyperlinkButton>
+
+                                                <HyperlinkButton
                                                 Foreground="Gray" 
                                                  x:Name="btnReviewDislike"
                                                              Click="btnReviewDislike_Click"
                                                 HorizontalContentAlignment="Left">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <fa:FontAwesome Icon="Regular_ThumbsDown" Margin="0 4 0 0" FontSize="14"></fa:FontAwesome>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <fa:FontAwesome Icon="Regular_ThumbsDown" Margin="0 4 0 0" FontSize="14"></fa:FontAwesome>
 
-                                                </StackPanel>
-                                            </HyperlinkButton>
+                                                    </StackPanel>
+                                                </HyperlinkButton>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                           
-                            <ListView.Footer>
-                                <Grid>
-                                    <HyperlinkButton Command="{x:Bind Path=seasonReviewVM.LoadMoreCommand}" HorizontalAlignment="Center" Visibility="{x:Bind Path=seasonReviewVM.CanLoadMore,Mode=OneWay}">
-                                        <TextBlock>加载更多</TextBlock>
-                                    </HyperlinkButton>
-                                    <ProgressRing  IsActive="True" Visibility="{x:Bind Path=seasonReviewVM.Loading,Mode=OneWay}"  VerticalAlignment="Center" Width="24"></ProgressRing>
-                                </Grid>
-                            </ListView.Footer>
-                        </ListView>
-                    </Grid>
-                </PivotItem>
-            </Pivot>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+
+                                <ListView.Footer>
+                                    <Grid>
+                                        <HyperlinkButton Command="{x:Bind Path=seasonReviewVM.LoadMoreCommand}" HorizontalAlignment="Center" Visibility="{x:Bind Path=seasonReviewVM.CanLoadMore,Mode=OneWay}">
+                                            <TextBlock>加载更多</TextBlock>
+                                        </HyperlinkButton>
+                                        <ProgressRing  IsActive="True" Visibility="{x:Bind Path=seasonReviewVM.Loading,Mode=OneWay}"  VerticalAlignment="Center" Width="24"></ProgressRing>
+                                    </Grid>
+                                </ListView.Footer>
+                            </ListView>
+                        </Grid>
+                    </PivotItem>
+                </Pivot>
+            </Grid>
+            <toolkit:GridSplitter
+                IsEnabled="False"
+                x:Name="RightInfoGridSplitter"
+                GripperCursor="Default"
+                HorizontalAlignment="Left"
+                Grid.Column="1"
+                ResizeDirection="Auto"
+                ResizeBehavior="BasedOnAlignment"
+                CursorBehavior="ChangeOnSplitterHover"
+                Width="16">
+                <toolkit:GridSplitter.Background>
+                    <SolidColorBrush Opacity="0"></SolidColorBrush>
+                </toolkit:GridSplitter.Background>
+                <toolkit:GridSplitter.GripperForeground>
+                    <SolidColorBrush Opacity="0"></SolidColorBrush>
+                </toolkit:GridSplitter.GripperForeground>
+                <toolkit:GridSplitter.RenderTransform>
+                    <TranslateTransform X="-8" />
+                </toolkit:GridSplitter.RenderTransform>
+            </toolkit:GridSplitter>
         </Grid>
         <Border Visibility="{x:Bind Path=m_viewModel.ShowError,Mode=OneWay}" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="48 24" Background="#33FFFFFF">
             <StackPanel VerticalAlignment="Center">
