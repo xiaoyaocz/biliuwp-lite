@@ -6,28 +6,22 @@ using BiliLite.Modules.Season;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Extensions;
 using BiliLite.Models.Common.Comment;
+using BiliLite.Models.Common.Season;
 using BiliLite.Models.Common.Video;
-using BiliLite.ViewModels.Download;
 using BiliLite.Models.Download;
+using BiliLite.ViewModels.Season;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -40,7 +34,7 @@ namespace BiliLite.Pages
     {
         private static readonly ILogger logger = GlobalLogger.FromCurrentType();
 
-        SeasonDetailVM seasonDetailVM;
+        SeasonDetailPageViewModel m_viewModel;
         SeasonReviewVM seasonReviewVM;
         string season_id = "";
         string ep_id = "";
@@ -52,7 +46,7 @@ namespace BiliLite.Pages
             this.Loaded += SeasonDetailPage_Loaded;
             this.Player = this.player;
             NavigationCacheMode = NavigationCacheMode.Enabled;
-            seasonDetailVM = new SeasonDetailVM();
+            m_viewModel = new SeasonDetailPageViewModel();
             seasonReviewVM = new SeasonReviewVM();
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
@@ -74,11 +68,11 @@ namespace BiliLite.Pages
         }
         private void ClosePage()
         {
-            if (seasonDetailVM != null)
+            if (m_viewModel != null)
             {
-                seasonDetailVM.Loaded = false;
-                seasonDetailVM.Loading = true;
-                seasonDetailVM.Detail = null;
+                m_viewModel.Loaded = false;
+                m_viewModel.Loading = true;
+                m_viewModel.Detail = null;
             }
             changedFlag = true;
             player?.FullScreen(false);
@@ -88,7 +82,7 @@ namespace BiliLite.Pages
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest request = args.Request;
-            request.Data.Properties.Title = seasonDetailVM.Detail.title;
+            request.Data.Properties.Title = m_viewModel.Detail.Title;
             request.Data.SetWebLink(new Uri("http://b23.tv/ss" + season_id));
         }
 
@@ -122,22 +116,21 @@ namespace BiliLite.Pages
             }
             else
             {
-                Title = seasonDetailVM?.Detail?.title ?? "视频详情";
+                Title = m_viewModel?.Detail?.Title ?? "视频详情";
                 MessageCenter.ChangeTitle(this, Title);
             }
-
         }
 
         private async Task InitSeasonDetail()
         {
-            await seasonDetailVM.LoadSeasonDetail(season_id);
+            await m_viewModel.LoadSeasonDetail(season_id);
 
-            if (seasonDetailVM.Detail != null)
+            if (m_viewModel.Detail != null)
             {
-                ChangeTitle(seasonDetailVM.Detail.title);
+                ChangeTitle(m_viewModel.Detail.Title);
 
 
-                seasonReviewVM.MediaID = seasonDetailVM.Detail.media_id;
+                seasonReviewVM.MediaID = m_viewModel.Detail.MediaId;
 
                 InitializePlayInfo();
                 CreateQR();
@@ -147,19 +140,19 @@ namespace BiliLite.Pages
 
         private void InitializePlayInfo()
         {
-            if (seasonDetailVM.NothingPlay) return;
-            selectProview = !seasonDetailVM.ShowEpisodes;
+            if (m_viewModel.NothingPlay) return;
+            selectProview = !m_viewModel.ShowEpisodes;
 
             var index = 0;
-            if (string.IsNullOrEmpty(ep_id) && seasonDetailVM.Detail.user_status?.progress != null)
+            if (string.IsNullOrEmpty(ep_id) && m_viewModel.Detail.UserStatus?.Progress != null)
             {
-                ep_id = seasonDetailVM.Detail.user_status.progress.last_ep_id.ToString();
-                SettingService.SetValue<double>("ep" + ep_id, Convert.ToDouble(seasonDetailVM.Detail.user_status.progress.last_time));
+                ep_id = m_viewModel.Detail.UserStatus.Progress.LastEpId.ToString();
+                SettingService.SetValue<double>("ep" + ep_id, Convert.ToDouble(m_viewModel.Detail.UserStatus.Progress.LastTime));
             }
-            var selectItem = (selectProview ? seasonDetailVM.Previews : seasonDetailVM.Episodes).FirstOrDefault(x => x.id.ToString() == ep_id);
+            var selectItem = (selectProview ? m_viewModel.Previews : m_viewModel.Episodes).FirstOrDefault(x => x.Id.ToString() == ep_id);
             if (selectItem != null)
             {
-                index = (selectProview ? seasonDetailVM.Previews : seasonDetailVM.Episodes).IndexOf(selectItem);
+                index = (selectProview ? m_viewModel.Previews : m_viewModel.Episodes).IndexOf(selectItem);
             }
             if (selectProview)
             {
@@ -174,22 +167,22 @@ namespace BiliLite.Pages
         {
             List<PlayInfo> playInfos = new List<PlayInfo>();
             int i = 0;
-            foreach (var item in seasonDetailVM.Episodes)
+            foreach (var item in m_viewModel.Episodes)
             {
                 playInfos.Add(new PlayInfo()
                 {
-                    avid = item.aid,
-                    cid = item.cid,
+                    avid = item.Aid,
+                    cid = item.Cid,
                     duration = 0,
-                    season_id = seasonDetailVM.Detail.season_id,
-                    season_type = seasonDetailVM.Detail.type,
-                    ep_id = item.id.ToString(),
-                    is_vip = item.status != 2,
+                    season_id = m_viewModel.Detail.SeasonId,
+                    season_type = m_viewModel.Detail.Type,
+                    ep_id = item.Id.ToString(),
+                    is_vip = item.Status != 2,
                     is_interaction = false,
                     order = i,
                     play_mode = VideoPlayType.Season,
-                    title = item.title + " " + item.long_title,
-                    area = seasonDetailVM.Detail.title.ParseArea(seasonDetailVM.Detail.up_info?.mid ?? 0)
+                    title = item.Title + " " + item.LongTitle,
+                    area = m_viewModel.Detail.Title.ParseArea(m_viewModel.Detail.UpInfo?.Mid ?? 0)
                 });
                 i++;
             }
@@ -205,22 +198,22 @@ namespace BiliLite.Pages
         {
             List<PlayInfo> playInfos = new List<PlayInfo>();
             int i = 0;
-            foreach (var item in seasonDetailVM.Previews)
+            foreach (var item in m_viewModel.Previews)
             {
                 playInfos.Add(new PlayInfo()
                 {
-                    avid = item.aid,
-                    cid = item.cid,
+                    avid = item.Aid,
+                    cid = item.Cid,
                     duration = 0,
-                    season_id = seasonDetailVM.Detail.season_id,
-                    season_type = seasonDetailVM.Detail.type,
-                    ep_id = item.id.ToString(),
-                    is_vip = item.status != 2,
+                    season_id = m_viewModel.Detail.SeasonId,
+                    season_type = m_viewModel.Detail.Type,
+                    ep_id = item.Id.ToString(),
+                    is_vip = item.Status != 2,
                     is_interaction = false,
                     order = i,
                     play_mode = VideoPlayType.Season,
-                    title = item.title + " " + item.long_title,
-                    area = seasonDetailVM.Detail.title.ParseArea(seasonDetailVM.Detail.up_info?.mid ?? 0)
+                    title = item.Title + " " + item.LongTitle,
+                    area = m_viewModel.Detail.Title.ParseArea(m_viewModel.Detail.UpInfo?.Mid ?? 0)
                 });
                 i++;
             }
@@ -262,7 +255,7 @@ namespace BiliLite.Pages
         }
         private void btnShareCopy_Click(object sender, RoutedEventArgs e)
         {
-            $"{seasonDetailVM.Detail.title}\r\nhttp://b23.tv/ss{season_id}".SetClipboard();
+            $"{m_viewModel.Detail.Title}\r\nhttp://b23.tv/ss{season_id}".SetClipboard();
             Notify.ShowMessageToast("已复制内容到剪切板");
         }
 
@@ -311,14 +304,14 @@ namespace BiliLite.Pages
             if (selectProview)
             {
                 listPreview.SelectedIndex = e;
-                ep_id = seasonDetailVM.Previews[e].id.ToString();
-                aid = seasonDetailVM.Previews[e].aid;
+                ep_id = m_viewModel.Previews[e].Id.ToString();
+                aid = m_viewModel.Previews[e].Aid;
             }
             else
             {
                 listEpisode.SelectedIndex = e;
-                ep_id = seasonDetailVM.Episodes[e].id.ToString();
-                aid = seasonDetailVM.Episodes[e].aid;
+                ep_id = m_viewModel.Episodes[e].Id.ToString();
+                aid = m_viewModel.Episodes[e].Aid;
             }
 
             CreateQR();
@@ -344,12 +337,12 @@ namespace BiliLite.Pages
                 UpdatePlayInfoToEpisode(listEpisode.SelectedIndex);
             }
             player.ChangePlayIndex(listEpisode.SelectedIndex);
-            ep_id = seasonDetailVM.Episodes[listEpisode.SelectedIndex].id.ToString();
+            ep_id = m_viewModel.Episodes[listEpisode.SelectedIndex].Id.ToString();
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)CommentApi.CommentType.Video,
                 CommentSort = CommentApi.CommentSort.Hot,
-                Oid = seasonDetailVM.Episodes[listEpisode.SelectedIndex].aid
+                Oid = m_viewModel.Episodes[listEpisode.SelectedIndex].Aid
             });
             CreateQR();
         }
@@ -366,12 +359,12 @@ namespace BiliLite.Pages
                 UpdatePlayInfoToPreview(listPreview.SelectedIndex);
             }
             player.ChangePlayIndex(listPreview.SelectedIndex);
-            ep_id = seasonDetailVM.Episodes[listPreview.SelectedIndex].id.ToString();
+            ep_id = m_viewModel.Episodes[listPreview.SelectedIndex].Id.ToString();
             comment.LoadComment(new LoadCommentInfo()
             {
                 CommentMode = (int)CommentApi.CommentType.Video,
                 CommentSort = CommentApi.CommentSort.Hot,
-                Oid = seasonDetailVM.Episodes[listPreview.SelectedIndex].aid
+                Oid = m_viewModel.Episodes[listPreview.SelectedIndex].Aid
             });
             CreateQR();
         }
@@ -407,15 +400,15 @@ namespace BiliLite.Pages
                 return;
             }
             var item = SeasonList.SelectedItem as SeasonDetailSeasonItemModel;
-            if (item.season_id.ToString() != season_id)
+            if (item.SeasonId.ToString() != season_id)
             {
 
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
-                    parameters = item.season_id,
-                    title = item.title
+                    parameters = item.SeasonId,
+                    title = item.Title
                 });
                 //this.Frame.Navigate(typeof(SeasonDetailPage), item.season_id);
             }
@@ -428,11 +421,11 @@ namespace BiliLite.Pages
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),
-                title = data.name,
+                title = data.Name,
                 parameters = new SeasonIndexParameter()
                 {
-                    type = (IndexSeasonType)seasonDetailVM.Detail.type,
-                    area = data.id
+                    type = (IndexSeasonType)m_viewModel.Detail.Type,
+                    area = data.Id
                 }
             });
         }
@@ -445,11 +438,11 @@ namespace BiliLite.Pages
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),
-                title = data.name,
+                title = data.Name,
                 parameters = new SeasonIndexParameter()
                 {
-                    type = (IndexSeasonType)seasonDetailVM.Detail.type,
-                    style = data.id
+                    type = (IndexSeasonType)m_viewModel.Detail.Type,
+                    style = data.Id
                 }
             });
         }
@@ -495,36 +488,36 @@ namespace BiliLite.Pages
 
         private void Image_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (seasonDetailVM.Detail?.cover == null) return;
+            if (m_viewModel.Detail?.Cover == null) return;
             MessageCenter.OpenImageViewer(new List<string>() {
-                seasonDetailVM.Detail.cover
+                m_viewModel.Detail.Cover
             }, 0);
         }
 
         private async void btnDownload_Click(object sender, RoutedEventArgs e)
         {
-            if (seasonDetailVM.Detail == null || seasonDetailVM.Detail.episodes == null || seasonDetailVM.Detail.episodes.Count == 0) return;
+            if (m_viewModel.Detail == null || m_viewModel.Detail.Episodes == null || m_viewModel.Detail.Episodes.Count == 0) return;
             var downloadItem = new DownloadItem()
             {
-                Cover = seasonDetailVM.Detail.cover,
-                SeasonID = seasonDetailVM.Detail.season_id,
-                SeasonType = seasonDetailVM.Detail.type,
+                Cover = m_viewModel.Detail.Cover,
+                SeasonID = m_viewModel.Detail.SeasonId,
+                SeasonType = m_viewModel.Detail.Type,
                 Episodes = new List<DownloadEpisodeItem>(),
-                Subtitle = seasonDetailVM.Detail.subtitle,
-                Title = seasonDetailVM.Detail.title,
-                UpMid = seasonDetailVM.Detail.up_info?.mid ?? 0,
+                Subtitle = m_viewModel.Detail.Subtitle,
+                Title = m_viewModel.Detail.Title,
+                UpMid = m_viewModel.Detail.UpInfo?.Mid ?? 0,
                 Type = DownloadType.Season
             };
             int i = 0;
-            foreach (var item in seasonDetailVM.Detail.episodes)
+            foreach (var item in m_viewModel.Detail.Episodes)
             {
                 // 检查正在下载及下载完成是否存在此视频
                 int state = 0;
-                if (DownloadVM.Instance.Downloadings.FirstOrDefault(x => x.EpisodeID == item.id.ToString()) != null)
+                if (DownloadVM.Instance.Downloadings.FirstOrDefault(x => x.EpisodeID == item.Id.ToString()) != null)
                 {
                     state = 2;
                 }
-                if (DownloadVM.Instance.Downloadeds.FirstOrDefault(x => x.Epsidoes.FirstOrDefault(y => y.EpisodeID == item.id.ToString()) != null) != null)
+                if (DownloadVM.Instance.Downloadeds.FirstOrDefault(x => x.Epsidoes.FirstOrDefault(y => y.EpisodeID == item.Id.ToString()) != null) != null)
                 {
                     state = 3;
                 }
@@ -532,15 +525,15 @@ namespace BiliLite.Pages
                 //如果正在下载state=2,下载完成state=3
                 downloadItem.Episodes.Add(new DownloadEpisodeItem()
                 {
-                    CID = item.cid,
-                    EpisodeID = item.id.ToString(),
+                    CID = item.Cid,
+                    EpisodeID = item.Id.ToString(),
                     Index = i,
-                    Title = item.title + " " + item.long_title,
+                    Title = item.Title + " " + item.LongTitle,
                     State = state,
-                    AVID = item.aid,
-                    BVID = item.bvid,
-                    ShowBadge = item.show_badge,
-                    Badge = item.badge,
+                    AVID = item.Aid,
+                    BVID = item.Bvid,
+                    ShowBadge = item.ShowBadge,
+                    Badge = item.Badge,
                     IsPreview = item.IsPreview
                 });
                 i++;
@@ -552,7 +545,7 @@ namespace BiliLite.Pages
 
         private async void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            if (seasonDetailVM.Loading) return;
+            if (m_viewModel.Loading) return;
             await InitSeasonDetail();
         }
 
