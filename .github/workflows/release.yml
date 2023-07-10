@@ -83,9 +83,10 @@ jobs:
         cd OnlinePageToPDF-Node
         npm install
         node index.js --waitTime=35000 --pageUrl="http://markdown.muyan233.top:352/?fileUrl=https%3A%2F%2Fraw.githubusercontent.com%2Fywmoyue%2Fbiliuwp-lite%2Fmaster%2Fdocument%2Finstall-readme.md" --pdfFilePath="安装教程.pdf"
-        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test\安装教程.pdf
-        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test\安装教程.pdf
-        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test\安装教程.pdf
+        cd ..
+        cp ./OnlinePageToPDF-Node/安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test\安装教程.pdf
+        cp ./OnlinePageToPDF-Node/安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test\安装教程.pdf
+        cp ./OnlinePageToPDF-Node/安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test\安装教程.pdf
       
     - name: Create Package Directory
       run: New-Item -ItemType Directory -Path C:\Package
