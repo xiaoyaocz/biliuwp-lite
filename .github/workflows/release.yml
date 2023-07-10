@@ -39,17 +39,12 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Download SigningCertificate
-      run: curl --location $env:Webdav_addr --header "$env:Webdav_auth" -o "$env:UWP_Project_Directory/$env:SigningCertificate" --insecure
-
-    - name: Download nuget package
-      run: curl --location $env:nuget_package_addr --header "$env:Webdav_auth" -o "$env:nuget_package" --insecure
-      
-    - name: Decompress nuget package
-      run: Expand-Archive -path $env:nuget_package -DestinationPath ./
-
-    - name: Copy nuget package
-      run: cp -r ./packages ./src/
+    - name: Download and process necessary files
+      run: |
+        curl --location $env:Webdav_addr --header "$env:Webdav_auth" -o "$env:UWP_Project_Directory/$env:SigningCertificate" --insecure
+        curl --location $env:nuget_package_addr --header "$env:Webdav_auth" -o "$env:nuget_package" --insecure
+        Expand-Archive -path $env:nuget_package -DestinationPath ./
+        cp -r ./packages ./src/
 
     - uses: release-drafter/release-drafter@v5
       name: Create release draft
@@ -82,14 +77,15 @@ jobs:
         BuildMode: SideloadOnly
         Configuration: Release
 
-    - name: Copy install-readme
-      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test\安装教程.txt
-      
-    - name: Copy install-readme
-      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test\安装教程.txt
-      
-    - name: Copy install-readme
-      run: cp ./document/install-readme.text ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test\安装教程.txt
+    - name: document processing
+      run: |
+        git clone https://github.com/ywmoyue/OnlinePageToPDF-Node.git
+        cd OnlinePageToPDF-Node
+        npm install
+        node index.js --waitTime=35000 --pageUrl="http://markdown.muyan233.top:352/?fileUrl=https%3A%2F%2Fraw.githubusercontent.com%2Fywmoyue%2Fbiliuwp-lite%2Fmaster%2Fdocument%2Finstall-readme.md" --pdfFilePath="安装教程.pdf"
+        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x64_Test\安装教程.pdf
+        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_x86_Test\安装教程.pdf
+        cp ./安装教程.pdf ${{env.UWP_Project_Directory}}\AppPackages\${{env.AppName}}_${{github.event.inputs.version}}_ARM64_Test\安装教程.pdf
       
     - name: Create Package Directory
       run: New-Item -ItemType Directory -Path C:\Package
