@@ -25,7 +25,7 @@ namespace BiliLite.Services
     /// </summary>
     public static class MessageCenter
     {
-        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         public static event EventHandler<bool> MiniWindowEvent;
         public static event EventHandler<NavigationInfo> NavigateToPageEvent;
@@ -101,7 +101,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log("清除用户Cookie", LogType.ERROR, ex);
+                _logger.Log("清除用户Cookie", LogType.ERROR, ex);
             }
         }
 
@@ -588,15 +588,15 @@ namespace BiliLite.Services
             }
 
         }
-        public async static void OpenWindow(Type page, object par)
+        public static async void OpenWindow(Type page, object par)
         {
 
-            CoreApplicationView newView = CoreApplication.CreateNewView();
-            int newViewId = 0;
+            var newView = CoreApplication.CreateNewView();
+            var newViewId = 0;
 
             await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Frame frame = new Frame();
+                var frame = new Frame();
                 frame.Navigate(page, par);
                 Window.Current.Content = frame;
                 Window.Current.Activate();
@@ -604,14 +604,17 @@ namespace BiliLite.Services
                 ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(800, 800));
                 ApplicationView.GetForCurrentView().Consolidated += (sender, args) =>
                 {
-                    frame.Navigate(typeof(BlankPage));
-                    CoreWindow.GetForCurrentThread().Close();
+                    try
+                    {
+                        newView.CoreWindow.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error("关闭窗口错误", ex);
+                    }
                 };
             });
-            bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
-
-
-
+            var viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
         }
 
     }
