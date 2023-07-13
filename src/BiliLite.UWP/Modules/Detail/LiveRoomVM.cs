@@ -453,9 +453,21 @@ namespace BiliLite.Modules
                 {
                     var data = await results.GetJson<ApiDataModel<LiveRoomPlayUrlModel>>();
                     if (data.success)
-                    {   
-                        // 暂时不使用用flv流
-                        LiveRoomWebUrlStreamItemModel stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_hls");
+                    {
+                        // 暂时不优先使用flv流
+                        LiveRoomWebUrlStreamItemModel stream = null;
+                        if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_hls"))
+                        {
+                            stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_hls");
+                        }
+                        else if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_stream"))
+                        {
+                            stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_stream");
+                        }
+                        else
+                        {
+                            throw new Exception();
+                        }
                         List<LiveRoomWebUrlCodecItemModel> codec_list = stream.format[0].codec;
 
                         int i = 1;
