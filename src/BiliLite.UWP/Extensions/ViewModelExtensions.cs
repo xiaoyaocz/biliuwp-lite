@@ -8,8 +8,8 @@ namespace BiliLite.Extensions
     {
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
-            services.AddScoped<DownloadDialogViewModel>();
-            services.AddScoped<CommentControlViewModel>();
+            services.AddTransient<DownloadDialogViewModel>();
+            services.AddTransient<CommentControlViewModel>();
             return services;
         }
     }
