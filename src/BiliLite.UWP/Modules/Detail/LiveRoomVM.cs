@@ -23,7 +23,7 @@ namespace BiliLite.Modules
 {
     public class LiveRoomVM : IModules, IDisposable
     {
-        private static readonly ILogger logger = GlobalLogger.FromCurrentType();
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
         public LiveRoomAnchorLotteryVM anchorLotteryVM;
         readonly LiveRoomAPI liveRoomAPI;
@@ -434,89 +434,71 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("读取直播头衔失败", LogType.FATAL, ex);
+                _logger.Log("读取直播头衔失败", LogType.FATAL, ex);
             }
         }
         /// <summary>
         /// 读取直播播放地址
         /// </summary>
-        /// <param name="roomid"></param>
+        /// <param name="roomId"></param>
         /// <param name="qn"></param>
         /// <returns></returns>
-        public async Task GetPlayUrl(int roomid, int qn = 0)
+        public async Task GetPlayUrl(int roomId, int qn = 0)
         {
             try
             {
                 Loading = true;
-                var results = await PlayerAPI.LivePlayUrl(roomid.ToString(), qn).Request();
-                if (results.status)
+                var results = await PlayerAPI.LivePlayUrl(roomId.ToString(), qn).Request();
+                if (!results.status)
                 {
-                    var data = await results.GetJson<ApiDataModel<LiveRoomPlayUrlModel>>();
-                    if (data.success)
-                    {
-                        // 暂时不优先使用flv流
-                        LiveRoomWebUrlStreamItemModel stream = null;
-                        if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_hls"))
-                        {
-                            stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_hls");
-                        }
-                        else if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_stream"))
-                        {
-                            stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_stream");
-                        }
-                        else
-                        {
-                            throw new Exception();
-                        }
-                        List<LiveRoomWebUrlCodecItemModel> codec_list = stream.format[0].codec;
+                    throw new CustomizedErrorException(results.message);
+                }
+                var data = await results.GetJson<ApiDataModel<LiveRoomPlayUrlModel>>();
 
-                        int i = 1;
-                        foreach (var codec_item in codec_list)
-                        {
-                            foreach (var item in codec_item.url_info)
-                            {
-                                item.name = "线路" + i;
-                                i++;
-                            }
-                        }
-
-                        // 暂时不使用hevc流
-                        var codec = codec_list.FirstOrDefault(item => item.codec_name == "avc");
-
-                        var accept_qn_list = codec.accept_qn;
-                        qualites ??= data.data.playurl_info.playurl.g_qn_desc.Where(item => accept_qn_list.Contains(item.qn)).ToList();
-                        current_qn = data.data.playurl_info.playurl.g_qn_desc.FirstOrDefault(x => x.qn == codec.current_qn);
-
-                        i = 0;
-                        var url_list = new List<LiveRoomRealPlayUrlsModel>();
-                        foreach (var item in codec.url_info)
-                        {
-                            var url_item = new LiveRoomRealPlayUrlsModel
-                            {
-                                url = codec.url_info[i].host + codec.base_url + codec.url_info[i].extra,
-                                name = codec.url_info[i].name
-                            };
-                            url_list.Add(url_item);
-                            i++;
-                        }
-                        urls = url_list;
-
-                        ChangedPlayUrl?.Invoke(this, data.data);
-                    }
-                    else
-                    {
-                        Notify.ShowMessageToast(data.message);
-                    }
+                if (!data.success)
+                {
+                    throw new CustomizedErrorException(data.message);
+                }
+                // 暂时不优先使用flv流
+                LiveRoomWebUrlStreamItemModel stream = null;
+                if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_hls"))
+                {
+                    stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_hls");
+                }
+                else if (data.data.playurl_info.playurl.stream.Any(item => item.protocol_name == "http_stream"))
+                {
+                    stream = data.data.playurl_info.playurl.stream.FirstOrDefault(item => item.protocol_name == "http_stream");
                 }
                 else
                 {
-                    Notify.ShowMessageToast(results.message);
-
+                    throw new CustomizedErrorException("找不到直播流地址");
                 }
+                var codecList = stream.format[0].codec;
+
+                var routeIndex = 1;
+                foreach (var item in codecList.SelectMany(codecItem => codecItem.url_info))
+                {
+                    item.name = "线路" + routeIndex;
+                    routeIndex++;
+                }
+
+                // 暂时不使用hevc流
+                var codec = codecList.FirstOrDefault(item => item.codec_name == "avc");
+
+                var acceptQnList = codec.accept_qn;
+                qualites ??= data.data.playurl_info.playurl.g_qn_desc.Where(item => acceptQnList.Contains(item.qn)).ToList();
+                current_qn = data.data.playurl_info.playurl.g_qn_desc.FirstOrDefault(x => x.qn == codec.current_qn);
+                
+                var urlList = codec.url_info.Select(urlInfo => new LiveRoomRealPlayUrlsModel { url = urlInfo.host + codec.base_url + urlInfo.extra, name = urlInfo.name }).ToList();
+
+                urls = urlList;
+
+                ChangedPlayUrl?.Invoke(this, data.data);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Notify.ShowMessageToast("读取播放地址失败");
+                Notify.ShowMessageToast($"读取播放地址失败:{ex.Message}");
+                _logger.Error($"读取播放地址失败:{ex.Message}", ex);
             }
             finally
             {
@@ -884,7 +866,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取礼物信息失败");
-                logger.Log("读取礼物信息失败", LogType.ERROR, ex);
+                _logger.Log("读取礼物信息失败", LogType.ERROR, ex);
             }
         }
 
@@ -951,7 +933,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取舰队失败");
-                logger.Log("读取舰队失败", LogType.ERROR, ex);
+                _logger.Log("读取舰队失败", LogType.ERROR, ex);
             }
             finally
             {
@@ -1021,7 +1003,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取直播免费瓜子时间失败");
-                logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                _logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
 
@@ -1052,7 +1034,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取直播免费瓜子时间失败");
-                logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                _logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
             }
         }
 
@@ -1106,7 +1088,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                _logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
                 Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1140,7 +1122,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                _logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
                 Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1195,7 +1177,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("发送弹幕出现错误", LogType.ERROR, ex);
+                _logger.Log("发送弹幕出现错误", LogType.ERROR, ex);
                 Notify.ShowMessageToast("发送弹幕出现错误");
                 return false;
             }
