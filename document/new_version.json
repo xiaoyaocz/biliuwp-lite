@@ -1,7 +1,7 @@
 {
-    "version": "4.6.7",
-    "version_num": 40607,
-    "version_desc": "更新内容:\r\n\r\n* 部分调用BiliLiteWebApi的请求变更请求地址为配置的WebApi地址\r\n\r\n* 评论区图片添加占位图\r\n\r\n* 视频详情页与番剧详情页支持响应式切换布局\r\n\r\n* 评论控件支持响应式切换布局\r\n\r\n* 支持音质选择杜比全景声\r\n\r\n* 提供安装教程文档到安装压缩包中\r\n\r\n* 修复单窗口模式页面重叠Bug\r\n\r\n* 修复部分直播无法播放\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.8",
+    "version_num": 40608,
+    "version_desc": "更新内容:\r\n\r\n* 修复评论区视图模型加载错误\r\n\r\n* 修复新窗口打开图片后关闭窗口导致程序崩溃\r\n\r\n* 修复读取直播地址失败\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
