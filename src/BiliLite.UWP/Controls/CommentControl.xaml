@@ -336,12 +336,12 @@
                                                     <TextBlock  Margin="4 0">删除</TextBlock>
                                                 </StackPanel>
                                             </HyperlinkButton>
-                                            <HyperlinkButton Foreground="Gray" >
+                                            <!--<HyperlinkButton Foreground="Gray" >
                                                 <StackPanel Orientation="Horizontal">
 
                                                     <TextBlock  Margin="4 0">举报</TextBlock>
                                                 </StackPanel>
-                                            </HyperlinkButton>
+                                            </HyperlinkButton>-->
 
                                         </StackPanel>
 
