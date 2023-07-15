@@ -214,6 +214,7 @@
                     OneRowModeEnabled="True"
                     ItemHeight="80"
                     ItemsSource="{x:Bind Path=Content.Pictures}"
+                    Visibility="{x:Bind Path=Content.ShowPictures}"
                     SelectionMode="None"
                     ItemClick="NotePicturesView_ItemClick"
                     IsItemClickEnabled="True">

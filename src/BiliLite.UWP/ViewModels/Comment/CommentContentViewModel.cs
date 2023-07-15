@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
@@ -11,6 +12,20 @@ namespace BiliLite.ViewModels.Comment
     public class CommentContentViewModel : BaseViewModel
     {
         public List<NotePicture> Pictures { get; set; }
+        public Visibility ShowPictures
+        { 
+            get 
+            {
+                if (Pictures.Count > 0)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                { 
+                    return Visibility.Collapsed; 
+                }
+            } 
+        }
         public string Message { get; set; }
         public int Plat { get; set; }
 
