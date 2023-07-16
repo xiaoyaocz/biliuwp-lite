@@ -180,6 +180,8 @@
     <Compile Include="Models\Common\Season\SeasonDetailUpInfoModel.cs" />
     <Compile Include="Models\Common\Season\SeasonDetailModel.cs" />
     <Compile Include="Models\Common\Season\SeasonDetailUserStatusModel.cs" />
+    <Compile Include="Models\Common\User\SubmitVideoItemModel.cs" />
+    <Compile Include="Models\Common\User\SubmitVideoTlistItemModel.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailUserStatusViewModel.cs" />
     <Compile Include="ViewModels\Comment\CommentContentViewModel.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailViewModel.cs" />
@@ -449,7 +451,7 @@
     <Compile Include="Modules\User\UserDetail\UserFavlistVM.cs" />
     <Compile Include="Modules\User\UserDetail\UserFollowVM.cs" />
     <Compile Include="Modules\User\UserDetail\UserSubmitArticleVM.cs" />
-    <Compile Include="Modules\User\UserDetail\UserSubmitVideoVM.cs" />
+    <Compile Include="ViewModels\User\UserSubmitVideoViewModel.cs" />
     <Compile Include="Modules\User\WatchLaterVM.cs" />
     <Compile Include="NoTabMainPage.xaml.cs">
       <DependentUpon>NoTabMainPage.xaml</DependentUpon>

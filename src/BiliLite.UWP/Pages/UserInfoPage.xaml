@@ -11,6 +11,7 @@
     xmlns:convert="using:BiliLite.Converters"
     xmlns:modules="using:BiliLite.Modules.User"
     xmlns:control="using:BiliLite.Controls" xmlns:modules1="using:BiliLite.Modules.User.UserDetail"
+    xmlns:user="using:BiliLite.Models.Common.User"
     Background="{ThemeResource ApplicationBackground}">
     <Page.Resources>
         <ResourceDictionary>
@@ -194,25 +195,25 @@
                                     StretchContentForSingleRow="False" 
                                     SelectionMode="None" 
                                     IsItemClickEnabled="True" 
-                                    CanLoadMore="{x:Bind Path=userSubmitVideoVM.SubmitVideoCanLoadMore,Mode=OneWay}"
+                                    CanLoadMore="{x:Bind Path=m_userSubmitVideoViewModel.SubmitVideoCanLoadMore,Mode=OneWay}"
                                     LoadMoreBottomOffset="0"
-                                    LoadMoreCommand="{x:Bind Path=userSubmitVideoVM.LoadMoreSubmitVideoCommand}"
-                                    ItemsSource="{x:Bind Path=userSubmitVideoVM.SubmitVideoItems,Mode=OneWay}"
+                                    LoadMoreCommand="{x:Bind Path=m_userSubmitVideoViewModel.LoadMoreSubmitVideoCommand}"
+                                    ItemsSource="{x:Bind Path=m_userSubmitVideoViewModel.SubmitVideoItems,Mode=OneWay}"
                                     ItemClick="SubmitVideo_ItemClick"
                                     OneRowModeEnabled="False">
                                     <toolkit:AdaptiveGridView.Header>
                                         <Grid Margin="4 8">
                                             <StackPanel Orientation="Horizontal">
-                                                <ComboBox DisplayMemberPath="name" ItemsSource="{x:Bind Path=userSubmitVideoVM.Tlist,Mode=OneWay}" SelectionChanged="ComboBox_SelectionChanged" SelectedItem="{x:Bind Path=userSubmitVideoVM.SelectTid,Mode=TwoWay}">
+                                                <ComboBox DisplayMemberPath="Name" ItemsSource="{x:Bind Path=m_userSubmitVideoViewModel.Tlist,Mode=OneWay}" SelectionChanged="ComboBox_SelectionChanged" SelectedItem="{x:Bind Path=m_userSubmitVideoViewModel.SelectTid,Mode=TwoWay}">
 
                                                 </ComboBox>
-                                                <ComboBox x:Name="comVideoOrder" SelectionChanged="comVideoOrder_SelectionChanged" Margin="8 0"  SelectedIndex="{x:Bind Path=userSubmitVideoVM.SelectOrder,Mode=TwoWay}">
+                                                <ComboBox x:Name="comVideoOrder" SelectionChanged="comVideoOrder_SelectionChanged" Margin="8 0"  SelectedIndex="{x:Bind Path=m_userSubmitVideoViewModel.SelectOrder,Mode=TwoWay}">
                                                     <ComboBoxItem>最新发布</ComboBoxItem>
                                                     <ComboBoxItem>最多播放</ComboBoxItem>
                                                     <ComboBoxItem>最多收藏</ComboBoxItem>
                                                 </ComboBox>
                                             </StackPanel>
-                                            <AutoSuggestBox Text="{x:Bind Path=userSubmitVideoVM.Keyword,Mode=TwoWay}" x:Name="searchVideo" QuerySubmitted="searchVideo_QuerySubmitted" QueryIcon="Find" PlaceholderText="搜索视频" Width="160" HorizontalAlignment="Right"></AutoSuggestBox>
+                                            <AutoSuggestBox Text="{x:Bind Path=m_userSubmitVideoViewModel.Keyword,Mode=TwoWay}" x:Name="searchVideo" QuerySubmitted="searchVideo_QuerySubmitted" QueryIcon="Find" PlaceholderText="搜索视频" Width="160" HorizontalAlignment="Right"></AutoSuggestBox>
                                         </Grid>
                                     </toolkit:AdaptiveGridView.Header>
                                     <toolkit:AdaptiveGridView.ItemContainerStyle>
@@ -221,7 +222,7 @@
                                         </Style>
                                     </toolkit:AdaptiveGridView.ItemContainerStyle>
                                     <toolkit:AdaptiveGridView.ItemTemplate>
-                                        <DataTemplate x:DataType="modules1:SubmitVideoItemModel">
+                                        <DataTemplate x:DataType="user:SubmitVideoItemModel">
                                             <Grid Background="#00FFFFFF">
                                                 <Grid.ContextFlyout>
                                                     <MenuFlyout>
@@ -234,17 +235,17 @@
                                                 </Grid.ColumnDefinitions>
                                                 <Border Margin="4" CornerRadius="{StaticResource ImageCornerRadius}">
                                                     <Grid>
-                                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                                                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=Pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                                                         <Border CornerRadius="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="4" Padding="4 2" Background="#99000000">
-                                                            <TextBlock Foreground="White" FontSize="12" Text="{x:Bind length}"></TextBlock>
+                                                            <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Length}"></TextBlock>
                                                         </Border>
                                                     </Grid>
                                                 </Border>
                                                 <StackPanel Grid.Column="1" Margin="4 0 0 0" >
-                                                    <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                                    <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Title}"></TextBlock>
 
-                                                    <TextBlock Foreground="Gray" Margin="0 4 0 0">观看:<Run Text="{x:Bind Path=play,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=video_review,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
-                                                    <TextBlock Foreground="Gray" Margin="0 4 0 0">发表于 <Run Text="{x:Bind Path=created,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
+                                                    <TextBlock Foreground="Gray" Margin="0 4 0 0">观看:<Run Text="{x:Bind Path=Play,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=VideoReview,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                                    <TextBlock Foreground="Gray" Margin="0 4 0 0">发表于 <Run Text="{x:Bind Path=Created,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
                                                 </StackPanel>
                                                 <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
                                             </Grid>
@@ -252,15 +253,15 @@
                                     </toolkit:AdaptiveGridView.ItemTemplate>
                                     <toolkit:AdaptiveGridView.Footer>
                                         <StackPanel>
-                                            <HyperlinkButton  Command="{x:Bind Path=userSubmitVideoVM.LoadMoreSubmitVideoCommand}" Visibility="{x:Bind Path=userSubmitVideoVM.SubmitVideoCanLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                                            <HyperlinkButton  Command="{x:Bind Path=m_userSubmitVideoViewModel.LoadMoreSubmitVideoCommand}" Visibility="{x:Bind Path=m_userSubmitVideoViewModel.SubmitVideoCanLoadMore,Mode=OneWay}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
                                                 <TextBlock>加载更多</TextBlock>
                                             </HyperlinkButton>
-                                            <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=userSubmitVideoVM.LoadingSubmitVideo,Mode=OneWay}"></ProgressRing>
+                                            <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_userSubmitVideoViewModel.LoadingSubmitVideo,Mode=OneWay}"></ProgressRing>
                                         </StackPanel>
                                     </toolkit:AdaptiveGridView.Footer>
                                 </control:MyAdaptiveGridView>
-                                <TextBlock Visibility="{x:Bind Path=userSubmitVideoVM.Nothing,Mode=OneWay}" Text="这里什么都没有呢..." Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-                                <control:RoundButton x:Name="btnRefresh" Command="{x:Bind Path=userSubmitVideoVM.RefreshSubmitVideoCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+                                <TextBlock Visibility="{x:Bind Path=m_userSubmitVideoViewModel.Nothing,Mode=OneWay}" Text="这里什么都没有呢..." Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                                <control:RoundButton x:Name="btnRefresh" Command="{x:Bind Path=m_userSubmitVideoViewModel.RefreshSubmitVideoCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
                                     <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
                                 </control:RoundButton>
                             </Grid>
