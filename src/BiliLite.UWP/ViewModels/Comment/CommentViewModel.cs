@@ -3,10 +3,12 @@ using System.Collections.ObjectModel;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Controls;
 using BiliLite.Models.Common.Comment;
 using BiliLite.Modules;
 using BiliLite.Services;
 using BiliLite.ViewModels.Common;
+using BiliLite.Extensions;
 using PropertyChanged;
 
 namespace BiliLite.ViewModels.Comment
@@ -188,6 +190,57 @@ namespace BiliLite.ViewModels.Comment
                 {
                     return false;
                 }
+            }
+        }
+        public int ExpandLength { get; set; } = 75;
+        public bool ShowExpandBtn
+        {
+            get
+            {
+                if (Content.Message.Length > ExpandLength)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public RichTextBlock ShortComment
+        {
+            get
+            {
+                if (ShowExpandBtn)
+                {
+                    return (Content.Message.Substring(0, ExpandLength) + "...").ToRichTextBlock(Content.Emote);
+                }
+                else
+                {
+                    return Content.Text;
+                }
+            }
+        }
+        public bool IsExpand { get; set; } = false;
+
+        private RichTextBlock _RealText;
+        public RichTextBlock RealText
+        {
+            get 
+            {
+                if (_RealText == null) 
+                {
+                    return ShortComment;
+                }
+                else
+                {
+                    return _RealText;
+                }
+            }
+            set
+            {
+                _RealText = value;
+                OnPropertyChanged("RealText");
             }
         }
         private async void ButtonClick(object paramenter)
