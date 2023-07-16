@@ -176,6 +176,20 @@ namespace BiliLite.ViewModels.Comment
 
         public RelayCommand<object> LaunchUrlCommand { get; private set; }
 
+        public bool ShowPics 
+        {
+            get
+            {
+                if (Content.Pictures.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         private async void ButtonClick(object paramenter)
         {
             await MessageCenter.HandelUrl(paramenter.ToString());
