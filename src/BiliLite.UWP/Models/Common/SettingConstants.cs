@@ -93,17 +93,17 @@ namespace BiliLite.Models.Common
             public const string OPEN_URL_BROWSER = "OpenUrlWithBrowser";
 
             /// <summary>
-            /// 启用长评论收起
+            /// 启用长评论折叠
             /// </summary>
             public const string ENABLE_COMMENT_SHRINK = "EnableCommentShrink";
 
             /// <summary>
-            /// 收起评论长度
+            /// 折叠评论长度
             /// </summary>
             public const string COMMENT_SHRINK_LENGTH = "CommentShrinkLength";
 
             /// <summary>
-            /// 默认收起评论长度
+            /// 默认折叠评论长度
             /// </summary>
             public const int COMMENT_SHRINK_DEFAULT_LENGTH = 75;
         }
