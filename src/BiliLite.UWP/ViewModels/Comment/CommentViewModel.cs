@@ -9,17 +9,27 @@ using BiliLite.Modules;
 using BiliLite.Services;
 using BiliLite.ViewModels.Common;
 using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using PropertyChanged;
 
 namespace BiliLite.ViewModels.Comment
 {
     public class CommentViewModel : BaseViewModel
     {
+        private readonly int m_commentShrinkLength;
+        private readonly bool m_enableCommentShrink;
+
         public CommentViewModel()
         {
-            LaunchUrlCommand = new RelayCommand<object>(ButtonClick);
+            LaunchUrlCommand = new RelayCommand<object>(LaunchUrl_Click);
+            CommentExpandCommand = new RelayCommand(CommentExpand_Click);
+            m_commentShrinkLength = SettingService.GetValue(SettingConstants.UI.COMMENT_SHRINK_LENGTH,
+                SettingConstants.UI.COMMENT_SHRINK_DEFAULT_LENGTH);
+            m_enableCommentShrink = SettingService.GetValue(SettingConstants.UI.ENABLE_COMMENT_SHRINK, true);
         }
-        
+
+        public RelayCommand CommentExpandCommand { get; private set; }
+
         public int Action { get; set; }
 
         [DependsOn(nameof(Action))]
@@ -171,81 +181,42 @@ namespace BiliLite.ViewModels.Comment
         public int LoadPage { get; set; } = 1;
 
         public string ReplyAt => "回复 @" + Member.Uname;
-        
+
         public string ReplyText { get; set; }
-        
+
         public bool ShowTop { get; set; } = false;
 
         public RelayCommand<object> LaunchUrlCommand { get; private set; }
 
-        public bool ShowPics 
-        {
-            get
-            {
-                if (Content.Pictures.Count > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        public int ExpandLength { get; set; } = 75;
-        public bool ShowExpandBtn
-        {
-            get
-            {
-                if (Content.Message.Length > ExpandLength)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        public RichTextBlock ShortComment
-        {
-            get
-            {
-                if (ShowExpandBtn)
-                {
-                    return (Content.Message.Substring(0, ExpandLength) + "...").ToRichTextBlock(Content.Emote);
-                }
-                else
-                {
-                    return Content.Text;
-                }
-            }
-        }
-        public bool IsExpand { get; set; } = false;
+        public bool ShowPics => Content.Pictures.Count > 0;
 
-        private RichTextBlock _RealText;
-        public RichTextBlock RealText
+        public bool IsContentNeedExpand => m_enableCommentShrink && Content.Message.Length > m_commentShrinkLength;
+
+        [DependsOn(nameof(IsExpanded))]
+        public RichTextBlock CommentText
         {
-            get 
+            get
             {
-                if (_RealText == null) 
-                {
-                    return ShortComment;
-                }
+                if (!IsContentNeedExpand || IsContentNeedExpand && IsExpanded)
+                    return Content.Text;
                 else
-                {
-                    return _RealText;
-                }
-            }
-            set
-            {
-                _RealText = value;
-                OnPropertyChanged("RealText");
+                    return $"{Content.Message.Substring(0, m_commentShrinkLength)}...".ToRichTextBlock(Content.Emote);
             }
         }
-        private async void ButtonClick(object paramenter)
+
+        public bool IsExpanded { get; set; } = false;
+
+        [DependsOn(nameof(IsExpanded))]
+        public string ExtendBtnText => IsExpanded ? "收起" : "展开";
+
+        private async void LaunchUrl_Click(object paramenter)
         {
             await MessageCenter.HandelUrl(paramenter.ToString());
+        }
+
+        private void CommentExpand_Click()
+        {
+            IsExpanded = !IsExpanded;
         }
     }
 }

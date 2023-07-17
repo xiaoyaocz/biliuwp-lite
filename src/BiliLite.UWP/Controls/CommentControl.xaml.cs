@@ -580,23 +580,6 @@ namespace BiliLite.Controls
             }
         }
 
-        private void BtnExpand_Click(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as HyperlinkButton;
-            var m = btn.DataContext as CommentViewModel;
-            if (m.IsExpand)
-            {
-                btn.Content = "展开";
-                m.RealText = m.ShortComment;
-            }
-            else
-            {
-                btn.Content = "收起";
-                m.RealText = m.Content.Text;
-            }
-            m.IsExpand = !m.IsExpand;
-        }
-
         #endregion
 
         #region Public Methods

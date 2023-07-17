@@ -13,6 +13,7 @@
     <Color x:Key="HighLightTextColor">#FFFFFFFF</Color>
     <Color x:Key="DefaultTextColor">#CC000000</Color>
     <Color x:Key="SystemColorHighLightColor">#ec407a</Color>
+    <Color x:Key="LinkTextColor">#008ac5</Color>
 
     <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{ThemeResource TopPaneBackground}" />
     <Color x:Key="NoTapGridBackground">#FFF9F9F9</Color>

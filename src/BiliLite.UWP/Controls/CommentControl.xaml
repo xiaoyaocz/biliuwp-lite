@@ -206,10 +206,10 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <ContentControl Grid.Row="0" Margin="4 0" Content="{Binding Path=RealText}" Visibility="Visible">
+                <ContentControl Grid.Row="0" Margin="4 0" Content="{Binding Path=CommentText,Mode=OneWay}" Visibility="Visible">
                 </ContentControl>
 
-                <HyperlinkButton Grid.Row="1" Click="BtnExpand_Click" HorizontalContentAlignment="Left" Content="展开" Visibility="{x:Bind Path=ShowExpandBtn}">
+                <HyperlinkButton Grid.Row="1" Command="{x:Bind CommentExpandCommand}" Foreground="{ThemeResource LinkTextColor}"  HorizontalContentAlignment="Left" Content="{x:Bind ExtendBtnText,Mode=OneWay}" Visibility="{x:Bind Path=IsContentNeedExpand,Mode=OneWay}">
                 </HyperlinkButton>
 
                 <toolkit:AdaptiveGridView
@@ -314,10 +314,10 @@
                                                 <Run Text="{Binding Path=ReplyControl.Location}"></Run>
                                     </TextBlock>
                                     <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
-                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=RealText}" Visibility="Visible">
+                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=CommentText,Mode=OneWay}" Visibility="Visible">
                                     </ContentControl>
 
-                                    <HyperlinkButton Click="BtnExpand_Click" HorizontalContentAlignment="Left" Content="展开" Visibility="{Binding Path=ShowExpandBtn}">
+                                    <HyperlinkButton Command="{Binding CommentExpandCommand}" Foreground="{ThemeResource LinkTextColor}"  HorizontalContentAlignment="Left" Content="{Binding ExtendBtnText}" Visibility="{Binding Path=IsContentNeedExpand,Mode=OneWay}">
                                     </HyperlinkButton>
 
                                     <Grid>
@@ -344,16 +344,7 @@
                                                     <TextBlock  Margin="4 0">删除</TextBlock>
                                                 </StackPanel>
                                             </HyperlinkButton>
-                                            <!--<HyperlinkButton Foreground="Gray" >
-                                                <StackPanel Orientation="Horizontal">
-
-                                                    <TextBlock  Margin="4 0">举报</TextBlock>
-                                                </StackPanel>
-                                            </HyperlinkButton>-->
-
                                         </StackPanel>
-
-
 
                                     </Grid>
 
