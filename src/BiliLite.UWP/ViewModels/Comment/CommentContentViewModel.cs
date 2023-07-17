@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;

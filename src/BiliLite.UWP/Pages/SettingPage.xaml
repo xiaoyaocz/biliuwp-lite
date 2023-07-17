@@ -169,6 +169,17 @@
                                     </ComboBox.Items>
                                 </ComboBox>
                             </StackPanel>
+
+                            <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8"  FontSize="16">启用长评论折叠</TextBlock>
+                                <ToggleSwitch x:Name="swEnableCommentShrink" ></ToggleSwitch>
+                            </StackPanel>
+
+                            <StackPanel  Margin="0 0 0 8">
+                                <TextBlock  Margin="0 8" FontSize="16">评论折叠长度</TextBlock>
+                                <controls:NumberBox x:Name="numCommentShrinkLength" Minimum="0"  Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="1" ></controls:NumberBox>
+                            </StackPanel>
+
                             <StackPanel  Margin="0 0 0 8">
                                 <TextBlock  Margin="0 8"  FontSize="16">新窗口打开图片预览</TextBlock>
                                 <ToggleSwitch x:Name="swPreviewImageNavigateToPage" ></ToggleSwitch>
