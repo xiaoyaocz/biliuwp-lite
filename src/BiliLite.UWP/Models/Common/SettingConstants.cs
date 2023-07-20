@@ -91,6 +91,21 @@ namespace BiliLite.Models.Common
             /// 浏览器打开无法处理的链接
             /// </summary>
             public const string OPEN_URL_BROWSER = "OpenUrlWithBrowser";
+
+            /// <summary>
+            /// 启用长评论折叠
+            /// </summary>
+            public const string ENABLE_COMMENT_SHRINK = "EnableCommentShrink";
+
+            /// <summary>
+            /// 折叠评论长度
+            /// </summary>
+            public const string COMMENT_SHRINK_LENGTH = "CommentShrinkLength";
+
+            /// <summary>
+            /// 默认折叠评论长度
+            /// </summary>
+            public const int COMMENT_SHRINK_DEFAULT_LENGTH = 75;
         }
 
         public class Account

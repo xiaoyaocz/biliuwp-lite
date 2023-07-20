@@ -203,17 +203,23 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <ContentControl  Grid.Row="0" Margin="4 0" Content="{x:Bind Path=Content.Text}">
 
+                <ContentControl Grid.Row="0" Margin="4 0" Content="{Binding Path=CommentText,Mode=OneWay}" Visibility="Visible">
                 </ContentControl>
+
+                <HyperlinkButton Grid.Row="1" Command="{x:Bind CommentExpandCommand}" Foreground="{ThemeResource LinkTextColor}"  HorizontalContentAlignment="Left" Content="{x:Bind ExtendBtnText,Mode=OneWay}" Visibility="{x:Bind Path=IsContentNeedExpand,Mode=OneWay}">
+                </HyperlinkButton>
+
                 <toolkit:AdaptiveGridView
-                    Grid.Row="1" 
+                    Grid.Row="2" 
                     x:Name="NotePicturesView"
                     StretchContentForSingleRow="False"
                     OneRowModeEnabled="True"
                     ItemHeight="80"
                     ItemsSource="{x:Bind Path=Content.Pictures}"
+                    Visibility="{x:Bind Path=ShowPics}"
                     SelectionMode="None"
                     ItemClick="NotePicturesView_ItemClick"
                     IsItemClickEnabled="True">
@@ -231,7 +237,7 @@
                     </toolkit:AdaptiveGridView.ItemTemplate>
                 </toolkit:AdaptiveGridView>
 
-                <Grid Margin="0 8 0 0" Grid.Row="2">
+                <Grid Margin="0 8 0 0" Grid.Row="3">
                     <StackPanel Orientation="{Binding ElementName=CommentControlContent, Path=DataContext.CommentActionOrientation}" VerticalAlignment="Center">
 
                         <HyperlinkButton  Click="BtnLike_Click" Foreground="{x:Bind LikeColor,Mode=OneWay}" ToolTipService.ToolTip="{x:Bind Like}" Margin="4 0 8 0" HorizontalContentAlignment="Left">
@@ -266,7 +272,7 @@
 
                 </Grid>
 
-                <StackPanel Grid.Row="3" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=ShowReplies,Mode=OneWay}">
+                <StackPanel Grid.Row="4" Margin="0 4" Background="#19AAAAAA" Padding="8" Visibility="{x:Bind Path=ShowReplies,Mode=OneWay}">
 
                     <StackPanel  Visibility="{x:Bind Path=ShowReplyBox,Mode=OneWay}" Margin="0 0 0 4">
                         <TextBox MaxLength="233" BorderThickness="0" TextWrapping="Wrap"  Text="{x:Bind Path=ReplyText,Mode=TwoWay}" FontSize="14" MinHeight="48" PlaceholderText="说点什么吧..." AcceptsReturn="True"></TextBox>
@@ -308,9 +314,11 @@
                                                 <Run Text="{Binding Path=ReplyControl.Location}"></Run>
                                     </TextBlock>
                                     <!--<TextBlock Text="{Binding Path=content.message}" IsTextSelectionEnabled="True" TextWrapping="Wrap"></TextBlock>-->
-                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=Content.Text}">
-
+                                    <ContentControl Margin="0 8 0 0" Content="{Binding Path=CommentText,Mode=OneWay}" Visibility="Visible">
                                     </ContentControl>
+
+                                    <HyperlinkButton Command="{Binding CommentExpandCommand}" Foreground="{ThemeResource LinkTextColor}"  HorizontalContentAlignment="Left" Content="{Binding ExtendBtnText}" Visibility="{Binding Path=IsContentNeedExpand,Mode=OneWay}">
+                                    </HyperlinkButton>
 
                                     <Grid>
                                         <StackPanel Margin="0 4" Orientation="Horizontal">
@@ -336,16 +344,7 @@
                                                     <TextBlock  Margin="4 0">删除</TextBlock>
                                                 </StackPanel>
                                             </HyperlinkButton>
-                                            <HyperlinkButton Foreground="Gray" >
-                                                <StackPanel Orientation="Horizontal">
-
-                                                    <TextBlock  Margin="4 0">举报</TextBlock>
-                                                </StackPanel>
-                                            </HyperlinkButton>
-
                                         </StackPanel>
-
-
 
                                     </Grid>
 

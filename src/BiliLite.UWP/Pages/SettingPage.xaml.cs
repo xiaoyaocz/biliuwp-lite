@@ -189,7 +189,7 @@ namespace BiliLite.Pages
 
             // 鼠标中键/侧键行为
             cbMouseMiddleAction.SelectedIndex = SettingService.GetValue(SettingConstants.UI.MOUSE_MIDDLE_ACTION, (int)MouseMiddleActions.Back);
-            cbDetailDisplay.Loaded += new RoutedEventHandler((sender, e) =>
+            cbMouseMiddleAction.Loaded += new RoutedEventHandler((sender, e) =>
             {
                 cbMouseMiddleAction.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
                 {
@@ -206,6 +206,26 @@ namespace BiliLite.Pages
                     SettingService.SetValue(SettingConstants.UI.DETAIL_DISPLAY, cbDetailDisplay.SelectedIndex);
                 });
             });
+
+            // 启用长评论收起
+            swEnableCommentShrink.IsOn = SettingService.GetValue(SettingConstants.UI.ENABLE_COMMENT_SHRINK, true);
+            swEnableCommentShrink.Loaded += (sender, e) =>
+            {
+                swEnableCommentShrink.Toggled += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.UI.ENABLE_COMMENT_SHRINK, swEnableCommentShrink.IsOn);
+                };
+            };
+
+            // 评论收起长度
+            numCommentShrinkLength.Value = SettingService.GetValue(SettingConstants.UI.COMMENT_SHRINK_LENGTH, SettingConstants.UI.COMMENT_SHRINK_DEFAULT_LENGTH);
+            numCommentShrinkLength.Loaded += (sender, e) =>
+            {
+                numCommentShrinkLength.ValueChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.UI.COMMENT_SHRINK_LENGTH, (int)numCommentShrinkLength.Value);
+                };
+            };
 
             //动态显示
             cbDynamicDisplayMode.SelectedIndex = SettingService.GetValue<int>(SettingConstants.UI.DYNAMIC_DISPLAY_MODE, 0);
