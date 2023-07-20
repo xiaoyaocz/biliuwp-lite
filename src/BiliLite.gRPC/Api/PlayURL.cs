@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Google.Protobuf;
-using Proto.Reply;
-using Proto.Request;
+using Bilibili.App.Playurl.V1;
 
 namespace BiliLite.gRPC.Api
 {
@@ -23,11 +19,11 @@ namespace BiliLite.gRPC.Api
         public async Task<PlayViewReply> VideoPlayView(long aid, long cid,int qn,int fnval , CodeType codeType, string access_key="")
         {
             var message = new PlayViewReq() { 
-                EpId=aid,
+                Aid= aid,
                 Cid=cid,
                 Qn=qn,
                 Fnval= fnval,
-                Fourk=1,
+                Fourk=true,
                 PreferCodecType= codeType
             };
             var result=await  GrpcRequest.Instance.SendMessage("https://app.bilibili.com/bilibili.app.playurl.v1.PlayURL/PlayView", message, access_key);
@@ -54,11 +50,11 @@ namespace BiliLite.gRPC.Api
         {
             var message = new PlayViewReq()
             {
-                EpId = epid,
+                Aid = epid,
                 Cid = cid,
                 Qn = qn,
                 Fnval = fnval,
-                Fourk = 1,
+                Fourk = true,
                 PreferCodecType = codeType
             };
             var result = await GrpcRequest.Instance.SendMessage("https://app.bilibili.com/bilibili.pgc.gateway.player.v1.PlayURL/PlayView", message, access_key);

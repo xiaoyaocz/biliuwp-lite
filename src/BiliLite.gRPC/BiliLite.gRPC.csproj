@@ -4,36 +4,143 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Proto\Config\device.proto" />
-    <None Remove="Proto\Config\fawkesreq.proto" />
-    <None Remove="Proto\Config\locale.proto" />
-    <None Remove="Proto\Config\metadata.proto" />
-    <None Remove="Proto\Config\network.proto" />
-    <None Remove="Proto\Config\restriction.proto" />
-    <None Remove="Proto\Reply\PlayViewReply.proto" />
-    <None Remove="Proto\Request\PlayViewReq.proto" />
+	<ItemGroup>
+		<PackageReference Include="Flurl.Http" Version="3.2.4" />
+		<PackageReference Include="Google.Api.CommonProtos" Version="2.10.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.23.4" />
+		<PackageReference Include="Google.Protobuf.Tools" Version="3.23.4" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.55.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.56.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
-    <PackageReference Include="Grpc" Version="2.34.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.34.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="bilibili\metadata\metadata.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\pagination\pagination.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\playershared\playershared.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\render\render.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\rpc\status.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\ad\v1\ad.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\viewunite\pgcanymodel.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\viewunite\ugcanymodel.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\broadcast.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\laser.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\mod.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\push.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\room.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v1\test.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\v2\laser.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dynamic\common\dynamic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dynamic\gw\gateway.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\gaia\gw\gw_api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\im\type\im.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\device\device.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\fawkes\fawkes.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\locale\locale.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\network\network.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\parabox\parabox.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\metadata\restriction\restriction.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\polymer\demo\demo.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\relation\interfaces\api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\account\fission\v1\fission.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\api\player\v1\player.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\api\probe\v1\probe.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\archive\v1\archive.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\card\v1\ad.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\card\v1\card.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\card\v1\common.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\card\v1\double.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\card\v1\single.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\click\v1\heartbeat.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\download.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\dynamic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\experimental.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\internaldevice.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\night.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\other.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\pegasus.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\play.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\privacy.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\setting\search.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\distribution\v1\distribution.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\dynamic\common\dynamic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\dynamic\v1\dynamic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\dynamic\v2\campus.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\dynamic\v2\dynamic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\dynamic\v2\opus.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\interfaces\v1\history.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\interfaces\v1\media.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\interfaces\v1\search.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\interfaces\v1\space.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\listener\v1\listener.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\nativeact\v1\nativeact.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\playeronline\v1\playeronline.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\playerunite\pgcanymodel\pgcanymodel.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\playerunite\ugcanymodel\ugcanymodel.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\playerunite\v1\playerunite.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\playurl\v1\playurl.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\resource\v1\module.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\search\v2\search.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\space\v1\space.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\splash\v1\splash.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\topic\v1\topic.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\view\v1\view.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\viewunite\v1\viewunite.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\wall\v1\wall.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\editor\notify.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\esports\notify.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\fission\notify.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\im\notify.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\main\dm.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\main\native.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\main\resource.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\main\search.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\note\sync.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\ogv\freya.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\ogv\live.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\ticket\activitygame.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\broadcast\message\tv\proj.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\im\interfaces\v1\im.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\pangu\gallery\v1\gallery.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\polymer\contract\v1\contract.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\polymer\list\v1\list.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\vega\deneb\v1\deneb.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\web\interfaces\v1\interfaces.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\web\space\v1\space.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\archive\middleware\v1\preload.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\resource\privacy\v1\api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\show\gateway\v1\service.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\show\mixture\v1\mixture.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\show\popular\v1\popular.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\show\rank\v1\rank.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\app\show\region\v1\region.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\cheese\gateway\player\v1\playurl.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\community\interfacess\biligram\v1\biligram.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\community\service\dm\v1\dm.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\community\service\govern\v1\govern.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dagw\component\avatar\common\common.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dagw\component\avatar\v1\avatar.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dagw\component\avatar\v1\plugin.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dynamic\interfaces\campus\v1\api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\dynamic\interfaces\feed\v1\api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\im\interfaces\inner-interface\v1\api.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\live\app\room\v1\room.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\live\general\interfaces\v1\interfaces.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\main\community\reply\v1\reply.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\pgc\gateway\player\v1\playurl.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\pgc\gateway\player\v2\playurl.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\pgc\service\premiere\v1\premiere.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\polymer\app\search\v1\search.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\polymer\community\govern\v1\govern.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\tv\interfaces\dm\v1\dm.proto" GrpcServices="Client" />
+		<Protobuf Include="bilibili\main\common\arch\doll\v1\doll.proto" GrpcServices="Client" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Protobuf Include="Proto\Config\device.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Config\fawkesreq.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Config\locale.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Config\metadata.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Config\network.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Config\restriction.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Reply\PlayViewReply.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Request\PlayViewReq.proto" GrpcServices="Client" />
-    <Protobuf Include="Proto\Reply\DanmakuReply.proto" GrpcServices="Client" />
-  </ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Models\" />
+	  <Folder Include="Services\" />
+	</ItemGroup>
 
 </Project>

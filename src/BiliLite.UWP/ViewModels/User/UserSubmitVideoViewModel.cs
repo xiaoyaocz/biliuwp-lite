@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoMapper;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Common.User;
@@ -24,13 +27,18 @@ namespace BiliLite.ViewModels.User
         private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
         private readonly UserDetailAPI m_userDetailApi;
         private SubmitVideoTlistItemModel m_selectTid;
+        private readonly GrpcService m_grpcService;
+        private readonly IMapper m_mapper;
+        private string m_lastAid;
 
         #endregion
 
         #region Constructors
 
-        public UserSubmitVideoViewModel()
+        public UserSubmitVideoViewModel(GrpcService grpcService, IMapper mapper)
         {
+            m_grpcService = grpcService;
+            m_mapper = mapper;
             m_userDetailApi = new UserDetailAPI();
             RefreshSubmitVideoCommand = new RelayCommand(Refresh);
             LoadMoreSubmitVideoCommand = new RelayCommand(LoadMore);
@@ -83,22 +91,24 @@ namespace BiliLite.ViewModels.User
 
         private void GetSubmitVideoCore(JObject data)
         {
-            if (Tlist.Count == 1)
-            {
-                foreach (var item in data["data"]["list"]["tlist"])
-                {
-                    Tlist.Add(JsonConvert.DeserializeObject<SubmitVideoTlistItemModel>(item.First.ToString()));
-                }
-            }
-            var items = JsonConvert.DeserializeObject<ObservableCollection<SubmitVideoItemModel>>(
-                data["data"]["list"]["vlist"].ToString());
+            var cursorItems = JsonConvert.DeserializeObject<List<SubmitVideoCursorItem>>(
+                data["data"]["item"].ToString());
+            var count = data["data"]["count"].ToInt32();
+            var items = m_mapper.Map<List<SubmitVideoItemModel>>(cursorItems);
+            AttachSubmitVideoItems(items, count);
+            m_lastAid = cursorItems.LastOrDefault()?.Aid;
+        }
+
+        private void AttachSubmitVideoItems(List<SubmitVideoItemModel> submitVideoItems, int count)
+        {
             if (SubmitVideoItems == null)
             {
-                SubmitVideoItems = items;
+                var observableSubmitVideoItems = new ObservableCollection<SubmitVideoItemModel>(submitVideoItems);
+                SubmitVideoItems = observableSubmitVideoItems;
             }
             else
             {
-                foreach (var item in items)
+                foreach (var item in submitVideoItems)
                 {
                     SubmitVideoItems.Add(item);
                 }
@@ -108,7 +118,6 @@ namespace BiliLite.ViewModels.User
             {
                 Nothing = true;
             }
-            var count = data["data"]["page"]["count"].ToInt32();
             if (SubmitVideoItems.Count >= count)
             {
                 SubmitVideoCanLoadMore = false;
@@ -131,21 +140,30 @@ namespace BiliLite.ViewModels.User
                 Nothing = false;
                 SubmitVideoCanLoadMore = false;
                 LoadingSubmitVideo = true;
-                var api = await m_userDetailApi.SubmitVideos(Mid, SubmitVideoPage, keyword: Keyword, tid: SelectTid.Tid,
-                    order: (SubmitVideoOrder)SelectOrder);
-                CurrentTid = SelectTid.Tid;
-                var results = await api.Request();
-                if (!results.status)
+                if (string.IsNullOrEmpty(Keyword))
                 {
-                    throw new CustomizedErrorException(results.message);
-                }
-                var data = results.GetJObject();
-                if (data["code"].ToInt32() != 0)
-                {
-                    throw new CustomizedErrorException(data["message"].ToString());
-                }
+                    var api = m_userDetailApi.SubmitVideosCursor(Mid, order: (SubmitVideoOrder)SelectOrder, cursor: m_lastAid);
+                    CurrentTid = SelectTid.Tid;
+                    var results = await api.Request();
+                    if (!results.status)
+                    {
+                        throw new CustomizedErrorException(results.message);
+                    }
+                    var data = results.GetJObject();
+                    if (data["code"].ToInt32() != 0)
+                    {
+                        throw new CustomizedErrorException(data["message"].ToString());
+                    }
 
-                GetSubmitVideoCore(data);
+                    GetSubmitVideoCore(data);
+                }
+                else
+                {
+                    var searchArchive = await m_grpcService.SearchSpaceArchive(Mid, SubmitVideoPage, keyword: Keyword);
+
+                    var submitVideoItems = m_mapper.Map<List<SubmitVideoItemModel>>(searchArchive.Archives);
+                    AttachSubmitVideoItems(submitVideoItems, (int)searchArchive.Total);
+                }
             }
             catch (Exception ex)
             {
@@ -175,6 +193,7 @@ namespace BiliLite.ViewModels.User
             }
             SubmitVideoItems = null;
             SubmitVideoPage = 1;
+            m_lastAid = null;
             await GetSubmitVideo();
         }
 

@@ -9,6 +9,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using LogLevel = NLog.LogLevel;
 
 namespace BiliLite.Services
 {
@@ -20,6 +23,17 @@ namespace BiliLite.Services
         private static bool IsAutoClearLogFile => SettingService.GetValue<bool>(SettingConstants.Other.AUTO_CLEAR_LOG_FILE, true);
         private static int AutoClearLogFileDay => SettingService.GetValue<int>(SettingConstants.Other.AUTO_CLEAR_LOG_FILE_DAY, 7);
         private static bool IsProtectLogInfo => SettingService.GetValue<bool>(SettingConstants.Other.PROTECT_LOG_INFO, true);
+
+        public static ILoggerFactory Factory
+        {
+            get
+            {
+                return LoggerFactory.Create(logging =>
+                {
+                    logging.AddNLog(config);
+                });
+            }
+        }
 
         public static void Init()
         {

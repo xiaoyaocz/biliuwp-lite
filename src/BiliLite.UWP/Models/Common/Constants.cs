@@ -11,7 +11,7 @@
         /// b站官网域名
         /// </summary>
         public const string BILIBILI_DOMAIN = "https://www.bilibili.com";
-
+        
         public static class App
         {
             /// <summary>

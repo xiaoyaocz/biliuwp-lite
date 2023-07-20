@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Bilibili.App.View.V1;
+using Bilibili.Metadata;
+using Bilibili.Metadata.Device;
+using Bilibili.Metadata.Fawkes;
+using Bilibili.Metadata.Locale;
+using Bilibili.Metadata.Network;
 using Google.Protobuf;
-using Proto.Header;
 
-namespace BiliLite.gRPC
+namespace BiliLite.gRPC.Api
 {
     public class GrpcRequestHeaderConfig
     {
@@ -74,10 +77,11 @@ namespace BiliLite.gRPC
         public string GetNetworkBin()
         {
             var msg = new Network();
-            msg.Type = Network.Types.TYPE.Wifi;
+            msg.Type = NetworkType.Wifi;
             msg.Oid = network_oid;
             return ToBase64(msg.ToByteArray());
         }
+
         public string GetRestrictionBin()
         {
             var msg = new Restriction();
@@ -87,8 +91,8 @@ namespace BiliLite.gRPC
         public string GetLocaleBin()
         {
             var msg = new Locale();
-            msg.CLocale = new Locale.Types.LocaleIds();
-            msg.SLocale = new Locale.Types.LocaleIds();
+            msg.CLocale = new LocaleIds();
+            msg.SLocale = new LocaleIds();
             msg.CLocale.Language = language;
             msg.CLocale.Region = region;
             msg.SLocale.Language = language;

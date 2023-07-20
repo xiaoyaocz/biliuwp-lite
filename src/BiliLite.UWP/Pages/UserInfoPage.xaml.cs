@@ -5,23 +5,12 @@ using BiliLite.Modules.User;
 using BiliLite.Modules.User.UserDetail;
 using BiliLite.Pages.User;
 using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common.User;
 using BiliLite.ViewModels.User;
+using Microsoft.Extensions.DependencyInjection;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -60,7 +49,7 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             Title = "用户中心";
             userDetailVM = new Modules.User.UserDetailVM();
-            m_userSubmitVideoViewModel = new UserSubmitVideoViewModel();
+            m_userSubmitVideoViewModel = App.ServiceProvider.GetService<UserSubmitVideoViewModel>();
             userSubmitArticleVM = new UserSubmitArticleVM();
             userFavlistVM = new UserFavlistVM();
             dynamicVM = new DynamicVM();
@@ -170,9 +159,21 @@ namespace BiliLite.Pages
             }
         }
 
-        private void SubmitVideo_ItemClick(object sender, ItemClickEventArgs e)
+        private async void SubmitVideo_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as SubmitVideoItemModel;
+            if (!string.IsNullOrEmpty(data.RedirectUrl))
+            {
+                var seasonId = await MessageCenter.HandelSeasonID(data.RedirectUrl);
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    title = data.Title,
+                    parameters = seasonId
+                });
+                return;
+            }
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
@@ -212,16 +213,16 @@ namespace BiliLite.Pages
 
         private void comVideoOrder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            m_userSubmitVideoViewModel.Keyword = "";
             m_userSubmitVideoViewModel?.Refresh();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (m_userSubmitVideoViewModel != null && m_userSubmitVideoViewModel.CurrentTid != m_userSubmitVideoViewModel.SelectTid.Tid)
-            {
-
-                m_userSubmitVideoViewModel?.Refresh();
-            }
+            if (m_userSubmitVideoViewModel == null ||
+                m_userSubmitVideoViewModel.CurrentTid == m_userSubmitVideoViewModel.SelectTid.Tid) return;
+            m_userSubmitVideoViewModel.Keyword = "";
+            m_userSubmitVideoViewModel?.Refresh();
 
         }
 

@@ -1,4 +1,5 @@
 ﻿using BiliLite.Extensions;
+using BiliLite.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,6 +11,8 @@ namespace BiliLite
         {
             services.AddMapper();
             services.AddViewModels();
+            
+            services.AddSingleton<GrpcService>();
         }
     }
 }

@@ -73,6 +73,20 @@ namespace BiliLite.Models.Requests.Api.User
             api.parameter = await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
+
+        public ApiModel SubmitVideosCursor(string mid, int pagesize = 30, SubmitVideoOrder order = SubmitVideoOrder.pubdate,string cursor=null)
+        {
+            var api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://app.bilibili.com/x/v2/space/archive/cursor",
+                parameter =
+                    $"{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}&vmid={mid}&ps={pagesize}&order={order.ToString()}&aid={cursor}",
+            };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
+            return api;
+        }
+
         /// <summary>
         /// 用户专栏投稿
         /// </summary>
