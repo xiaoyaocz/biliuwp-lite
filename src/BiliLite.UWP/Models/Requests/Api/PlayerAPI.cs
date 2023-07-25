@@ -2,6 +2,7 @@
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
+using System.Threading.Tasks;
 
 namespace BiliLite.Models.Requests.Api
 {
@@ -166,14 +167,16 @@ namespace BiliLite.Models.Requests.Api
         /// <param name="aid">AV</param>
         /// <param name="cid">CID</param>
         /// <returns></returns>
-        public ApiModel GetPlayerInfo(string aid, string cid, string bvid)
+        public async Task<ApiModel> GetPlayerInfo(string aid, string cid, string bvid)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/v2",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/wbi/v2",
                 parameter = $"cid={cid}&aid={aid}&bvid={bvid}",
+                need_cookie = true,
             };
+            api.parameter = await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
 

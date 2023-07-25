@@ -79,7 +79,7 @@ namespace BiliLite.Modules
             var playerInfo = new PlayerInfo();
             try
             {
-                var api = PlayerAPI.GetPlayerInfo(aid: aid, cid: cid, "");
+                var api = await PlayerAPI.GetPlayerInfo(aid: aid, cid: cid, "");
                 var result = await api.Request();
                 if (result.status)
                 {

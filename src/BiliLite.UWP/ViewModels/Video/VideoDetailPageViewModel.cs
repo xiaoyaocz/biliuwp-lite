@@ -222,15 +222,6 @@ namespace BiliLite.Modules
                 }
 
                 var data = await results.GetJson<ApiDataModel<VideoDetailModel>>();
-                if (!data.success)
-                {
-                    // 通过代理获取视频详情
-                    var result_proxy = await videoAPI.DetailProxy(id, isbvid).Request();
-                    if (result_proxy.status)
-                    {
-                        data = await result_proxy.GetJson<ApiDataModel<VideoDetailModel>>();
-                    }
-                }
 
                 if (!data.success)
                 {

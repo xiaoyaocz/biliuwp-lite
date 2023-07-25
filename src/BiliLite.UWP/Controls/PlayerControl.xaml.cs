@@ -1017,29 +1017,25 @@ namespace BiliLite.Controls
 
         private async void SubtitleTimer_Tick(object sender, object e)
         {
-            if (Player.PlayState == PlayState.Playing)
+            if (Player.PlayState != PlayState.Playing) return;
+            if (subtitles == null)
             {
-                if (subtitles == null)
-                {
-                    return;
-                }
-                var time = Player.Position;
-                var first = subtitles.body.FirstOrDefault(x => x.from <= time && x.to >= time);
-                if (first != null)
-                {
-                    if (first.content != currentSubtitleText)
-                    {
-                        BorderSubtitle.Visibility = Visibility.Visible;
-                        BorderSubtitle.Child = await GenerateSubtitleItem(first.content);
-                        currentSubtitleText = first.content;
-
-                    }
-                }
-                else
-                {
-                    BorderSubtitle.Visibility = Visibility.Collapsed;
-                    currentSubtitleText = "";
-                }
+                return;
+            }
+            var time = Player.Position;
+            if (subtitles.body == null) return;
+            var first = subtitles.body.FirstOrDefault(x => x.from <= time && x.to >= time);
+            if (first != null)
+            {
+                if (first.content == currentSubtitleText) return;
+                BorderSubtitle.Visibility = Visibility.Visible;
+                BorderSubtitle.Child = await GenerateSubtitleItem(first.content);
+                currentSubtitleText = first.content;
+            }
+            else
+            {
+                BorderSubtitle.Visibility = Visibility.Collapsed;
+                currentSubtitleText = "";
             }
         }
 
