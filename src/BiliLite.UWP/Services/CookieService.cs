@@ -16,17 +16,16 @@ namespace BiliLite.Services
         {
             var cookiesStr = SettingService.GetValue(SettingConstants.Account.BILIBILI_COOKIES, "");
             m_cookies = new List<HttpCookieItem>();
-            if (string.IsNullOrEmpty(cookiesStr)) return;
+            if (string.IsNullOrEmpty(cookiesStr))
+            {
+                // 兼容旧版本
+                m_cookies = GetOldVersionCookies();
+                return;
+            }
             var cookies = JsonConvert.DeserializeObject<List<HttpCookieItem>>(cookiesStr);
             if (cookies.FirstOrDefault()?.Expires > DateTimeOffset.Now)
             {
                 m_cookies = cookies;
-            }
-
-            // 兼容旧版本
-            if (m_cookies.Count == 0)
-            {
-                m_cookies = GetOldVersionCookies();
             }
         }
 
