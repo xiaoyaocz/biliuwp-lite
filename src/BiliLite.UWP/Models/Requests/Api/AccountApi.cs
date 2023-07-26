@@ -2,11 +2,19 @@
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Models.Requests.Api
 {
     public class AccountApi
     {
+        private readonly CookieService m_cookieService;
+
+        public AccountApi()
+        {
+            m_cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
+        }
+
         /// <summary>
         /// 读取登录密码加密信息
         /// </summary>
@@ -88,11 +96,12 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel SendSMSWithCaptcha(string cid, string phone, string session_id, string seccode = "", string validate = "", string challenge = "", string recaptcha_token = "")
         {
+            var buvid = ApiHelper.GetBuvid();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-login/sms/send",
-                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&gee_seccode={seccode}&gee_validate={validate}&gee_challenge={challenge}&recaptcha_token={recaptcha_token}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+                body = $"buvid={buvid}&actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&gee_seccode={seccode}&gee_validate={validate}&gee_challenge={challenge}&recaptcha_token={recaptcha_token}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
             };
             api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
             return api;
@@ -424,7 +433,7 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel CheckCookies()
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             var api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
@@ -456,7 +465,7 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel RefreshCookie(string refreshCsrf,string refreshToken)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             var api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -473,7 +482,7 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel ConfirmRefreshCookie(string refreshToken)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             var api = new ApiModel()
             {
                 method = RestSharp.Method.Post,

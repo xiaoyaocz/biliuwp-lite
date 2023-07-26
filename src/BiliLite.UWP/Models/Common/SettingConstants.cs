@@ -135,6 +135,11 @@ namespace BiliLite.Models.Common
             /// 是否web登录
             /// </summary>
             public const string IS_WEB_LOGIN = "isWebLogin";
+
+            /// <summary>
+            /// Cookies
+            /// </summary>
+            public const string BILIBILI_COOKIES = "BiliBiliCookies";
         }
 
         public class VideoDanmaku

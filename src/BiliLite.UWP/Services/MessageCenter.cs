@@ -16,7 +16,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Web.Http.Filters;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Services
 {
@@ -79,25 +79,8 @@ namespace BiliLite.Services
         {
             try
             {
-                var domains = new string[] {
-                    "http://bilibili.com",
-                    "http://biligame.com",
-                    "http://bigfun.cn",
-                    "http://bigfunapp.cn",
-                    "http://dreamcast.hk",
-                    Constants.GET_COOKIE_DOMAIN,
-                };
-                //删除Cookie
-                HttpBaseProtocolFilter httpBaseProtocolFilter = new HttpBaseProtocolFilter();
-                foreach (var domain in domains)
-                {
-                    var cookies = httpBaseProtocolFilter.CookieManager.GetCookies(new Uri(domain));
-                    foreach (var item in cookies)
-                    {
-                        httpBaseProtocolFilter.CookieManager.DeleteCookie(item);
-                    }
-                }
-
+                var cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
+                cookieService.ClearCookies();
             }
             catch (Exception ex)
             {

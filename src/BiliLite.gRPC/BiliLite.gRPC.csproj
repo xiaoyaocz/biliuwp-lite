@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Flurl.Http" Version="3.2.4" />
 		<PackageReference Include="Google.Api.CommonProtos" Version="2.10.0" />
