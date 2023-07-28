@@ -1135,7 +1135,7 @@ namespace BiliLite.Controls
             }
             catch (Exception ex)
             {
-                _logger.Log("暂停出现错误", LogType.ERROR, ex);
+                _logger.Log("暂停出现错误", LogType.Error, ex);
             }
 
         }

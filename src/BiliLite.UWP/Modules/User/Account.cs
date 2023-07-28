@@ -123,7 +123,7 @@ namespace BiliLite.Modules
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"SSO失败", LogType.ERROR, ex);
+                    _logger.Log($"SSO失败", LogType.Error, ex);
                 }
 
                 //读取个人资料
@@ -134,7 +134,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
+                _logger.Log("安全验证后设置保存信息失败", LogType.Error, ex);
                 return false;
             }
         }
@@ -158,7 +158,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                _logger.Log("读取个人资料失败", LogType.Error, ex);
                 return null;
             }
         }

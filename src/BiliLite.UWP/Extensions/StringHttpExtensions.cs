@@ -75,7 +75,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -110,7 +110,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -136,7 +136,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求Stream失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Stream失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -160,7 +160,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求Buffer失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Buffer失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -182,7 +182,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求String失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求String失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -227,7 +227,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,

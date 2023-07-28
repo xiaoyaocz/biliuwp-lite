@@ -434,7 +434,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("读取直播头衔失败", LogType.FATAL, ex);
+                _logger.Log("读取直播头衔失败", LogType.Fatal, ex);
             }
         }
         /// <summary>
@@ -866,7 +866,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取礼物信息失败");
-                _logger.Log("读取礼物信息失败", LogType.ERROR, ex);
+                _logger.Log("读取礼物信息失败", LogType.Error, ex);
             }
         }
 
@@ -933,7 +933,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取舰队失败");
-                _logger.Log("读取舰队失败", LogType.ERROR, ex);
+                _logger.Log("读取舰队失败", LogType.Error, ex);
             }
             finally
             {
@@ -1003,7 +1003,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取直播免费瓜子时间失败");
-                _logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                _logger.Log("读取直播免费瓜子时间失败", LogType.Error, ex);
             }
         }
 
@@ -1034,7 +1034,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取直播免费瓜子时间失败");
-                _logger.Log("读取直播免费瓜子时间失败", LogType.ERROR, ex);
+                _logger.Log("读取直播免费瓜子时间失败", LogType.Error, ex);
             }
         }
 
@@ -1088,7 +1088,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                _logger.Log("赠送礼物出现错误", LogType.Error, ex);
                 Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1122,7 +1122,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("赠送礼物出现错误", LogType.ERROR, ex);
+                _logger.Log("赠送礼物出现错误", LogType.Error, ex);
                 Notify.ShowMessageToast("赠送礼物出现错误");
             }
 
@@ -1177,7 +1177,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("发送弹幕出现错误", LogType.ERROR, ex);
+                _logger.Log("发送弹幕出现错误", LogType.Error, ex);
                 Notify.ShowMessageToast("发送弹幕出现错误");
                 return false;
             }
@@ -1323,7 +1323,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("读取直播排行榜失败：" + RankType);
-                logger.Log("读取直播排行榜失败" + RankType, LogType.ERROR, ex);
+                logger.Log("读取直播排行榜失败" + RankType, LogType.Error, ex);
             }
             finally
             {
@@ -1431,7 +1431,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("加载主播抽奖信息失败", LogType.ERROR, ex);
+                logger.Log("加载主播抽奖信息失败", LogType.Error, ex);
             }
         }
 

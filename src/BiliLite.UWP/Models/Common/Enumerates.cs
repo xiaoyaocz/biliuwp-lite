@@ -2,10 +2,13 @@
 {
     public enum LogType
     {
-        INFO,
-        DEBUG,
-        ERROR,
-        FATAL
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal,
+        Necessary,
     }
 
     public enum LoginStatus

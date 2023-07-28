@@ -26,7 +26,7 @@ namespace BiliLite.Modules
             else
             {
                 var type = new StackTrace().GetFrame(1).GetMethod().ReflectedType;
-                _logger.Log(ex.Message, LogType.ERROR, ex, methodName, type.Name);
+                _logger.Log(ex.Message, LogType.Error, ex, methodName, type.Name);
                 return new ReturnModel<T>()
                 {
                     success = false,

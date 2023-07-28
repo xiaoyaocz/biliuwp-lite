@@ -84,7 +84,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                _logger.Log("清除用户Cookie", LogType.ERROR, ex);
+                _logger.Log("清除用户Cookie", LogType.Error, ex);
             }
         }
 
@@ -92,8 +92,9 @@ namespace BiliLite.Services
         ///统一处理Url
         /// </summary>
         /// <param name="par"></param>
-        public async static Task<bool> HandelUrl(string url, bool dontGoTo = false)
+        public static async Task<bool> HandelUrl(string url, bool dontGoTo = false)
         {
+            _logger.Debug($"处理链接：{url}");
             if (url.First() == '@')
             {
                 return false;
@@ -114,19 +115,8 @@ namespace BiliLite.Services
              * bilibili://story/722919541
              */
 
-            var video = StringExtensions.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
-            if (video != "")
-            {
-                NavigateToPage(null, new NavigationInfo()
-                {
-                    icon = Symbol.Play,
-                    page = typeof(VideoDetailPage),
-                    title = "视频加载中...",
-                    parameters = video,
-                    dontGoTo = dontGoTo,
-                });
-                return true;
-            }
+            var video = "";
+
             video = StringExtensions.RegexMatch(url, @"bilibili://video/(\d+)");
             if (video != "")
             {
@@ -153,6 +143,21 @@ namespace BiliLite.Services
                 });
                 return true;
             }
+
+            video = StringExtensions.RegexMatch(url.Replace("aid", "av").Replace("/", "").Replace("=", ""), @"av(\d+)");
+            if (video != "")
+            {
+                NavigateToPage(null, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(VideoDetailPage),
+                    title = "视频加载中...",
+                    parameters = video,
+                    dontGoTo = dontGoTo,
+                });
+                return true;
+            }
+
             video = StringExtensions.RegexMatch(url, @"avid=(\d+)");
             if (video != "")
             {

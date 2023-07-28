@@ -118,7 +118,7 @@ namespace BiliLite.Modules.Live
                     {
                         return;
                     }
-                    logger.Log("直播接收包出错", LogType.ERROR, ex);
+                    logger.Log("直播接收包出错", LogType.Error, ex);
                 }
             }
         }

@@ -331,7 +331,7 @@ namespace BiliLite.Modules.Live
                 }
                 catch (Exception ex)
                 {
-                    logger.Log("加载直播弹幕失败", LogType.ERROR, ex);
+                    logger.Log("加载直播弹幕失败", LogType.Error, ex);
                 }
 
                 await Task.Delay(delay);

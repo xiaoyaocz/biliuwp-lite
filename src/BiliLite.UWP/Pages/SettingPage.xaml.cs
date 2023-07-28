@@ -735,6 +735,15 @@ namespace BiliLite.Pages
             {
                 SettingService.SetValue(SettingConstants.Other.PROTECT_LOG_INFO, swProtectLogInfo.IsOn);
             });
+            // 日志级别
+            cbLogLevel.SelectedIndex = SettingService.GetValue(SettingConstants.Other.LOG_LEVEL, 2);
+            cbLogLevel.Loaded += (sender, e) =>
+            {
+                cbLogLevel.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Other.LOG_LEVEL, cbLogLevel.SelectedIndex);
+                };
+            };
             // BiliLiteWebApi
             BiliLiteWebApiTextBox.Text = SettingService.GetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, ApiConstants.BILI_LITE_WEB_API_DEFAULT_BASE_URL);
             BiliLiteWebApiTextBox.Loaded += (sender, e) =>

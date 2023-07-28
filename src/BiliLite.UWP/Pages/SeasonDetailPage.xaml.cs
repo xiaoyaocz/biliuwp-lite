@@ -388,7 +388,7 @@ namespace BiliLite.Pages
             }
             catch (Exception ex)
             {
-                logger.Log("创建二维码失败epid" + ep_id, LogType.ERROR, ex);
+                logger.Log("创建二维码失败epid" + ep_id, LogType.Error, ex);
                 Notify.ShowMessageToast("创建二维码失败");
             }
 

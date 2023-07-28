@@ -161,7 +161,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("登录二次验证失败", LogType.ERROR, ex);
+                logger.Log("登录二次验证失败", LogType.Error, ex);
             }
         }
 
@@ -612,7 +612,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
+                logger.Log("读取和加载登录二维码失败", LogType.Error, ex);
                 Notify.ShowMessageToast("加载二维码失败");
             }
             finally
@@ -710,7 +710,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("获取验证手机号失败", LogType.ERROR, ex);
+                logger.Log("获取验证手机号失败", LogType.Error, ex);
             }
         }
 
@@ -743,7 +743,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("发送短信验证码失败", LogType.ERROR, ex);
+                logger.Log("发送短信验证码失败", LogType.Error, ex);
             }
         }
 
@@ -844,7 +844,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取极验验证码失败", LogType.ERROR, ex);
+                logger.Log("读取极验验证码失败", LogType.Error, ex);
                 return null;
             }
         }

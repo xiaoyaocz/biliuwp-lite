@@ -11,22 +11,22 @@ namespace BiliLite.Services
 
         public void Info(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
-            LogService.Log(message, LogType.INFO, ex, methodName, m_typeName);
+            LogService.Log(message, LogType.Info, ex, methodName, m_typeName);
         }
 
         public void Debug(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
-            LogService.Log(message, LogType.DEBUG, ex, methodName, m_typeName);
+            LogService.Log(message, LogType.Debug, ex, methodName, m_typeName);
         }
 
         public void Error(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
-            LogService.Log(message, LogType.ERROR, ex, methodName, m_typeName);
+            LogService.Log(message, LogType.Error, ex, methodName, m_typeName);
         }
 
         public void Fatal(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
-            LogService.Log(message, LogType.FATAL, ex, methodName, m_typeName);
+            LogService.Log(message, LogType.Fatal, ex, methodName, m_typeName);
         }
 
         public void Log(string message, LogType type, Exception ex = null, [CallerMemberName] string methodName = null, string typeName = null)

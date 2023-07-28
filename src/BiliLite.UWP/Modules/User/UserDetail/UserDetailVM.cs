@@ -68,7 +68,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.Error, ex);
                 Notify.ShowMessageToast("读取个人资料失败");
             }
         }
@@ -98,7 +98,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.Error, ex);
                 return null;
             }
         }
@@ -135,7 +135,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                logger.Log("读取个人资料失败", LogType.Error, ex);
                 return null;
             }
         }

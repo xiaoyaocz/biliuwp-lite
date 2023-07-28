@@ -155,7 +155,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("读取弹幕屏蔽词失败", LogType.ERROR, ex);
+                logger.Log("读取弹幕屏蔽词失败", LogType.Error, ex);
             }
         }
 
@@ -173,7 +173,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                logger.Log("添加弹幕屏蔽词失败", LogType.ERROR, ex);
+                logger.Log("添加弹幕屏蔽词失败", LogType.Error, ex);
                 return false;
             }
         }

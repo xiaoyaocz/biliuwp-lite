@@ -80,7 +80,7 @@ namespace BiliLite.Extensions
             try
             {
                 var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
-                _logger.Info($"BiliLite.UWP version: {num}");
+                _logger.Log($"BiliLite.UWP version: {num}", LogType.Necessary);
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersionResponse>(result.results);
                 var ignoreVersion = SettingService.GetValue(SettingConstants.Other.IGNORE_VERSION, "");

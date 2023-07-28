@@ -133,7 +133,7 @@ namespace BiliLite.Dialogs
             }
             catch (Exception ex)
             {
-                logger.Log("注入JS对象失败", LogType.ERROR, ex);
+                logger.Log("注入JS对象失败", LogType.Error, ex);
             }
         }
 

@@ -550,6 +550,11 @@ namespace BiliLite.Models.Common
             public const string PROTECT_LOG_INFO = "protectLogInfo";
 
             /// <summary>
+            /// 日志级别
+            /// </summary>
+            public const string LOG_LEVEL = "LogLevel";
+
+            /// <summary>
             /// 忽略版本
             /// </summary>
             public const string IGNORE_VERSION = "ignoreVersion";

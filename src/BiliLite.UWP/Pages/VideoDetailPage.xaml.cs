@@ -288,7 +288,7 @@ namespace BiliLite.Pages
             }
             catch (Exception ex)
             {
-                logger.Log("创建二维码失败avid" + avid, LogType.ERROR, ex);
+                logger.Log("创建二维码失败avid" + avid, LogType.Error, ex);
                 Notify.ShowMessageToast("创建二维码失败");
             }
 

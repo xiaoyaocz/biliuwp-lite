@@ -168,7 +168,7 @@ namespace BiliLite.Modules
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("弹幕加载失败:" + ex.Message);
-                logger.Log("grpc弹幕加载失败", LogType.FATAL, ex);
+                logger.Log("grpc弹幕加载失败", LogType.Fatal, ex);
             }
             return danmuList;
         }
