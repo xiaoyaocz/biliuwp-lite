@@ -9,6 +9,11 @@ namespace BiliLite.Services
     {
         private string m_typeName;
 
+        public void Trace(string message, Exception ex = null, string methodName = null)
+        {
+            LogService.Log(message, LogType.Trace, ex, methodName, m_typeName);
+        }
+
         public void Info(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
             LogService.Log(message, LogType.Info, ex, methodName, m_typeName);
