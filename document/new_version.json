@@ -1,6 +1,6 @@
 {
     "version": "4.6.10",
-    "version_num": 406010,
+    "version_num": 40610,
     "version_desc": "更新内容:\r\n\r\n* 支持设置日志级别\r\n\r\n* 修复首页点击视频错误跳转\r\n\r\n* 修复用户粉丝列表加载\r\n\r\n* 修复短信登录时Cookie保存出错\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
