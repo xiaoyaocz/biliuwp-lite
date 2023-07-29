@@ -162,6 +162,7 @@ namespace BiliLite.Models.Requests.Api.User
                 method = RestSharp.Method.Get,
                 baseUrl = $"{ApiHelper.API_BASE_URL}/x/relation/followers",
                 parameter = $"vmid={mid}&ps={pagesize}&pn={page}&order=desc",
+                need_cookie = true,
             };
             return api;
         }
