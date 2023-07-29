@@ -104,18 +104,15 @@ namespace BiliLite.Modules
                     if (cookie != null)
                     {
                         var cookies = new List<HttpCookieItem>();
-                        foreach (var domainItem in cookie.domains)
+                        cookies.AddRange(cookie.cookies.Select(cookieItem => new HttpCookieItem()
                         {
-                            cookies.AddRange(cookie.cookies.Select(cookieItem => new HttpCookieItem()
-                            {
-                                Domain = domainItem,
-                                Expires = TimeExtensions.TimestampToDatetime(cookieItem.expires),
-                                HttpOnly = cookieItem.http_only == 1,
-                                Name = cookieItem.name,
-                                Secure = cookieItem.secure == 1,
-                                Value = cookieItem.value,
-                            }));
-                        }
+                            Domain = Constants.BILIBILI_DOMAIN,
+                            Expires = TimeExtensions.TimestampToDatetime(cookieItem.expires),
+                            HttpOnly = cookieItem.http_only == 1,
+                            Name = cookieItem.name,
+                            Secure = cookieItem.secure == 1,
+                            Value = cookieItem.value,
+                        }));
                         m_cookieService.Cookies = cookies;
                     }
                     //执行SSO

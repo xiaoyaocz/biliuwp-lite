@@ -112,9 +112,9 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Post,
                 baseUrl = "https://passport.bilibili.com/x/passport-login/login/sms",
-                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&captcha_key={captcha_key}&code={code}&" + ApiHelper.MustParameter(ApiHelper.LoginKey)
+                body = $"actionKey=appkey&cid={cid}&tel={phone}&login_session_id={session_id}&captcha_key={captcha_key}&code={code}&" + ApiHelper.MustParameter(ApiHelper.AndroidKey)
             };
-            api.body += ApiHelper.GetSign(api.body, ApiHelper.LoginKey);
+            api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
         /// <summary>
