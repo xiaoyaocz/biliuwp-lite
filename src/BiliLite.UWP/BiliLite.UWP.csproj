@@ -191,6 +191,16 @@
     <Compile Include="Models\Common\Season\SeasonDetailUserStatusModel.cs" />
     <Compile Include="Models\Common\User\SubmitVideoItemModel.cs" />
     <Compile Include="Models\Common\User\SubmitVideoTlistItemModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendADInfoCreativeModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendADInfoModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendBannerItemModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendDescButtonModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendItemArgsModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendRcmdReasonStyleModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendThreePointV2ItemModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendThreePointV2ItemReasonsModel.cs" />
+    <Compile Include="Models\Common\Recommend\RecommendItemModel.cs" />
+    <Compile Include="Models\Requests\ApiParams\RecommondFeedbackParams.cs" />
     <Compile Include="Services\CookieService.cs" />
     <Compile Include="Services\GrpcService.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailUserStatusViewModel.cs" />
@@ -448,7 +458,7 @@
     <Compile Include="Modules\User\MyFollowSeasonVM.cs" />
     <Compile Include="Modules\Player\PlayerVM.cs" />
     <Compile Include="Modules\RankVM.cs" />
-    <Compile Include="Modules\Home\RecommendVM.cs" />
+    <Compile Include="ViewModels\Home\RecommendPageViewModel.cs" />
     <Compile Include="Modules\RelayCommand.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailPageViewModel.cs" />
     <Compile Include="Modules\Season\SeasonIndexVM.cs" />

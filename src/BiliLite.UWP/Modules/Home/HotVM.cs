@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Models.Common.Recommend;
 using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules

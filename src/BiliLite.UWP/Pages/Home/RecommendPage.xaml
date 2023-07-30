@@ -12,13 +12,14 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:fa="using:FontAwesome5"
+    xmlns:recommend="using:BiliLite.Models.Common.Recommend"
     Background="Transparent">
 
     <Page.Resources>
         <covert:ColorConvert x:Key="colorConvert"></covert:ColorConvert>
         <covert:CountDisplayConvert x:Key="countDisplayConvert"></covert:CountDisplayConvert>
         <Flyout x:Name="Menu" >
-            <ListView  ItemClick="ListMenu_ItemClick" ItemsSource="{Binding Path=three_point_v2}" ScrollViewer.VerticalScrollMode="Disabled" SelectionMode="None" IsItemClickEnabled="True">
+            <ListView  ItemClick="ListMenu_ItemClick" ItemsSource="{Binding Path=ThreePointV2}" ScrollViewer.VerticalScrollMode="Disabled" SelectionMode="None" IsItemClickEnabled="True">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -27,10 +28,10 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="modules:RecommendThreePointV2ItemModel">
+                    <DataTemplate x:DataType="recommend:RecommendThreePointV2ItemModel">
                         <StackPanel MaxWidth="320" VerticalAlignment="Center">
-                            <TextBlock ><Run Text="{x:Bind title}"></Run><Run Text="{x:Bind subtitle}" Foreground="Gray" FontSize="14"></Run></TextBlock>
-                            <GridView  Visibility="{x:Bind Path=reasons,Converter={StaticResource display}}" ItemClick="ListDislike_ItemClick" Margin="0 8 0 0" Padding="0" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" IsItemClickEnabled="True"  ItemsSource="{x:Bind reasons}" SelectionMode="None">
+                            <TextBlock ><Run Text="{x:Bind Title}"></Run><Run Text="{x:Bind Subtitle}" Foreground="Gray" FontSize="14"></Run></TextBlock>
+                            <GridView  Visibility="{x:Bind Path=Reasons,Converter={StaticResource display}}" ItemClick="ListDislike_ItemClick" Margin="0 8 0 0" Padding="0" ScrollViewer.VerticalScrollMode="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" IsItemClickEnabled="True"  ItemsSource="{x:Bind Reasons}" SelectionMode="None">
                                 <GridView.ItemContainerStyle>
                                     <Style TargetType="GridViewItem">
                                         <Setter Property="Width" Value="120"></Setter>
@@ -41,8 +42,8 @@
                                     </Style>
                                 </GridView.ItemContainerStyle>
                                 <GridView.ItemTemplate>
-                                    <DataTemplate x:DataType="modules:RecommendThreePointV2ItemReasonsModel">
-                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind name}"></TextBlock>
+                                    <DataTemplate x:DataType="recommend:RecommendThreePointV2ItemReasonsModel">
+                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{x:Bind Name}"></TextBlock>
                                     </DataTemplate>
                                 </GridView.ItemTemplate>
                             </GridView>
@@ -51,7 +52,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Flyout>
-        <DataTemplate x:Key="Grid" x:DataType="modules:RecommendItemModel">
+        <DataTemplate x:Key="Grid" x:DataType="recommend:RecommendItemModel">
             <Grid ContextFlyout="{StaticResource Menu}" x:Name="RecommendItemGrid" PointerPressed="RecommendItemGrid_PointerPressed">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -63,8 +64,8 @@
                     <toolkit:ImageEx IsCacheEnabled="True"  
                                      PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   
                                      Stretch="UniformToFill" 
-                                     Source="{x:Bind Path=cover,Converter={StaticResource imageConvert}, ConverterParameter='200h'}"></toolkit:ImageEx>
-                    <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind showCoverText}">
+                                     Source="{x:Bind Path=Cover,Converter={StaticResource imageConvert}, ConverterParameter='200h'}"></toolkit:ImageEx>
+                    <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind ShowCoverText}">
                         <Grid.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <GradientStop Color="#CC000005" Offset="0.993"/>
@@ -72,37 +73,37 @@
                             </LinearGradientBrush>
                         </Grid.Background>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock  FontSize="12"  Foreground="White" Text="{x:Bind left_text}"></TextBlock>
+                            <TextBlock  FontSize="12"  Foreground="White" Text="{x:Bind LeftText}"></TextBlock>
                             <!--<fa:FontAwesome Foreground="White" Icon="Regular_PlayCircle" FontSize="12" Margin="0 2 8 0" ></fa:FontAwesome>
                                             <TextBlock  FontSize="12" Foreground="White" Text="{x:Bind cover_left_text_1}"></TextBlock>
                                             <fa:FontAwesome Foreground="White" Icon="Solid_AlignLeft" FontSize="12" Margin="12 2 8 0"></fa:FontAwesome>
                                             <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind cover_left_text_2}"></TextBlock>-->
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind cover_right_text}"></TextBlock>
+                            <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind CoverRightText}"></TextBlock>
                         </StackPanel>
                     </Grid>
                 </Grid>
                 </Border>
 
-                <TextBlock Grid.Row="1" Margin="4 4 4 0"  MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                <TextBlock Grid.Row="1" Margin="4 4 4 0"  MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Title}"></TextBlock>
                 <StackPanel  Grid.Row="2" Margin="4 0 4 4" Orientation="Horizontal">
-                    <Border Visibility="{x:Bind showRcmd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
+                    <Border Visibility="{x:Bind ShowRcmd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="{x:Bind Path=RcmdReasonStyle.BorderColor,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=RcmdReasonStyle.BgColor,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=RcmdReasonStyle.TextColor,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=RcmdReasonStyle.Text}"></TextBlock>
                     </Border>
-                    <Border Visibility="{x:Bind showAD}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="Gray"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                    <Border Visibility="{x:Bind ShowAd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="Gray"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
                         <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="广告"></TextBlock>
                     </Border>
-                    <Border Visibility="{x:Bind showBadge}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="#FFDF85A0"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFDF85A0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                    <Border Visibility="{x:Bind ShowBadge}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="#FFDF85A0"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                        <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFDF85A0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Badge}"></TextBlock>
                     </Border>
-                    <TextBlock  TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind bottomText}"></TextBlock>
+                    <TextBlock  TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind BottomText}"></TextBlock>
                 </StackPanel>
 
 
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="List" x:DataType="modules:RecommendItemModel">
+        <DataTemplate x:Key="List" x:DataType="recommend:RecommendItemModel">
             <Grid ContextFlyout="{StaticResource Menu}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -110,8 +111,8 @@
                 </Grid.ColumnDefinitions>
                 <Border CornerRadius="{StaticResource ImageCornerRadius}">
                     <Grid Width="160">
-                        <toolkit:ImageEx IsCacheEnabled="True"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='200h'}"></toolkit:ImageEx>
-                        <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind showCoverText}">
+                        <toolkit:ImageEx IsCacheEnabled="True"  PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Stretch="UniformToFill" Source="{x:Bind Path=Cover,Converter={StaticResource imageConvert},ConverterParameter='200h'}"></toolkit:ImageEx>
+                        <Grid VerticalAlignment="Bottom" Padding="8" Visibility="{x:Bind ShowCoverText}">
                             <Grid.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#CC000005" Offset="0.993"/>
@@ -126,7 +127,7 @@
                                             <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind cover_left_text_2}"></TextBlock>-->
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind cover_right_text}"></TextBlock>
+                                <TextBlock  FontSize="12" Foreground="White"  Text="{x:Bind CoverRightText}"></TextBlock>
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -137,19 +138,19 @@
                         <RowDefinition />
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock  MaxLines="3" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
-                    <TextBlock Grid.Row="1" Margin="0 4" Foreground="Gray" FontSize="12" Text="{x:Bind left_text}"></TextBlock>
+                    <TextBlock  MaxLines="3" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Title}"></TextBlock>
+                    <TextBlock Grid.Row="1" Margin="0 4" Foreground="Gray" FontSize="12" Text="{x:Bind LeftText}"></TextBlock>
                     <StackPanel  Grid.Row="2" Margin="0 0 0 4" Orientation="Horizontal">
-                        <Border Visibility="{x:Bind showRcmd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
+                        <Border Visibility="{x:Bind ShowRcmd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="{x:Bind Path=RcmdReasonStyle.BorderColor,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=RcmdReasonStyle.BgColor,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=RcmdReasonStyle.TextColor,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=RcmdReasonStyle.Text}"></TextBlock>
                         </Border>
-                        <Border Visibility="{x:Bind showAD}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="Gray"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                        <Border Visibility="{x:Bind ShowAd}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="Gray"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
                             <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="广告"></TextBlock>
                         </Border>
-                        <Border Visibility="{x:Bind showBadge}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="#FFDF85A0"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFDF85A0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                        <Border Visibility="{x:Bind ShowBadge}" Margin="0 0 8 0" BorderThickness="1" BorderBrush="#FFDF85A0"  HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFDF85A0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Badge}"></TextBlock>
                         </Border>
-                        <TextBlock  TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind bottomText}"></TextBlock>
+                        <TextBlock  TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind BottomText}"></TextBlock>
                     </StackPanel>
                 </Grid>
 
@@ -165,7 +166,7 @@
             <Grid >
                 <controls:MyAdaptiveGridView x:Name="RecommendGridView"
                                           ItemClick="RecommendGridView_ItemClick"
-                                          ItemsSource="{x:Bind Path=recommendVM.Items,Mode=OneWay}"
+                                          ItemsSource="{x:Bind Path=m_viewModel.Items,Mode=OneWay}"
                                           OneRowModeEnabled="False"
                                           ItemHeight="240"
                                           DesiredWidth="260"
@@ -173,9 +174,9 @@
                                          
                                           SelectionMode="None"
                                           LoadMoreBottomOffset="0"
-                                          LoadMoreCommand="{x:Bind Path=recommendVM.LoadMoreCommand}"
+                                          LoadMoreCommand="{x:Bind Path=m_viewModel.LoadMoreCommand}"
                                           CanLoadMore="True"
-                                          Loading="{x:Bind Path=recommendVM.Loading,Mode=OneWay}"
+                                          Loading="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}"
                                           IsItemClickEnabled="True">
                     <toolkit:AdaptiveGridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
@@ -184,12 +185,12 @@
                         </Style>
                     </toolkit:AdaptiveGridView.ItemContainerStyle>
                     <controls:MyAdaptiveGridView.Header>
-                        <controls:Carousel x:Name="control" Visibility="{x:Bind Path=recommendVM.Banner.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="12 0" ItemsSource="{x:Bind Path=recommendVM.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="1.77"  MaxHeight="240">
+                        <controls:Carousel x:Name="control" Visibility="{x:Bind Path=m_viewModel.Banner.Count,Mode=OneWay,Converter={StaticResource countDisplayConvert}}" Margin="12 0" ItemsSource="{x:Bind Path=m_viewModel.Banner,Mode=OneWay}" MaxItems="1" SlideInterval="0" AspectRatio="1.77"  MaxHeight="240">
                             <controls:Carousel.ContentTemplate>
-                                <DataTemplate x:DataType="modules:RecommendBannerItemModel">
+                                <DataTemplate x:DataType="recommend:RecommendBannerItemModel">
                                     <HyperlinkButton Margin="12 0" Padding="0" Click="BannerItem_Click">
                                         <Border CornerRadius="{StaticResource ImageCornerRadius}">
-                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Source="{x:Bind Path=image,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
+                                            <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png"   Source="{x:Bind Path=Image,Converter={StaticResource imageConvert},ConverterParameter='240h'}"></toolkit:ImageEx>
                                         </Border>
                                     </HyperlinkButton>
                                 </DataTemplate>
@@ -198,26 +199,26 @@
                     </controls:MyAdaptiveGridView.Header>
                     <controls:MyAdaptiveGridView.Footer>
                         <Grid>
-                            <HyperlinkButton Visibility="{x:Bind Path=recommendVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center"  Command="{x:Bind Path=recommendVM.LoadMoreCommand}">
+                            <HyperlinkButton Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center"  Command="{x:Bind Path=m_viewModel.LoadMoreCommand}">
                                 <TextBlock>加载更多</TextBlock>
                             </HyperlinkButton>
-                            <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=recommendVM.Loading,Mode=OneWay}"></ProgressRing>
+                            <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}"></ProgressRing>
                         </Grid>
                     </controls:MyAdaptiveGridView.Footer>
                 </controls:MyAdaptiveGridView>
             </Grid>
         </winui:RefreshContainer>
         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="20 12" HorizontalAlignment="Right">
-            <controls:RoundButton x:Name="btnGrid"  Visibility="Collapsed" ToolTipService.ToolTip="切换为网格显示" Click="btnGrid_Click" Margin="0 0 0 8"  Padding="12">
+            <controls:RoundButton x:Name="BtnGrid"  Visibility="Collapsed" ToolTipService.ToolTip="切换为网格显示" Click="BtnGrid_Click" Margin="0 0 0 8"  Padding="12">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80A;"  Foreground="White"/>
             </controls:RoundButton>
-            <controls:RoundButton x:Name="btnList"  ToolTipService.ToolTip="切换为列表显示" Click="btnList_Click" Margin="0 0 0 8"  Padding="12">
+            <controls:RoundButton x:Name="BtnList"  ToolTipService.ToolTip="切换为列表显示" Click="BtnList_Click" Margin="0 0 0 8"  Padding="12">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE292;" Foreground="White"/>
             </controls:RoundButton>
-            <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
+            <controls:RoundButton x:Name="BtnTop" Click="BtnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
             </controls:RoundButton>
-            <controls:RoundButton Padding="12" Command="{x:Bind Path=recommendVM.RefreshCommand}" >
+            <controls:RoundButton Padding="12" Command="{x:Bind Path=m_viewModel.RefreshCommand}" >
                 <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
             </controls:RoundButton>
         </StackPanel>
