@@ -71,12 +71,12 @@
                 <Grid>
                     <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=season.cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                     <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
-                        <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Path=season.season.type_name}"></TextBlock>
+                        <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Path=season.season.TypeName}"></TextBlock>
                     </Border>
 
                 </Grid>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=season.season.title}"></TextBlock>
+                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=season.season.Title}"></TextBlock>
                     <TextBlock  Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=season.new_desc}"></TextBlock>
                     <TextBlock Foreground="Gray" Margin="0 2 0 0">更新于 <Run Text="{x:Bind Path=desc.timestamp,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
                 </StackPanel>

@@ -293,7 +293,12 @@
                                 <TextBlock Foreground="White" FontSize="18">选集</TextBlock>
                             </PivotItem.Header>
                             <Grid>
-                                <ListView Margin="0 4" x:Name="EpisodeList" SelectionChanged="EpisodeList_SelectionChanged" DisplayMemberPath="title" >
+                                <ListView Margin="0 4" x:Name="EpisodeList" SelectionChanged="EpisodeList_SelectionChanged" >
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding title}" ToolTipService.ToolTip="{Binding title}"></TextBlock>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
                                             <Setter Property="Foreground" Value="White"></Setter>
@@ -307,8 +312,12 @@
                                           Visibility="Collapsed" 
                                           ItemsSource="{Binding Path=List,Mode=OneWay}"
                                           SelectedItem="{Binding Path=Select,Mode=OneWay}"
-                                          SelectionChanged="NodeList_SelectionChanged" 
-                                          DisplayMemberPath="title" >
+                                          SelectionChanged="NodeList_SelectionChanged" >
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding title}" ToolTipService.ToolTip="{Binding title}"></TextBlock>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
                                             <Setter Property="Foreground" Value="White"></Setter>

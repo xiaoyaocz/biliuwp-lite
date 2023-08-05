@@ -269,31 +269,6 @@ namespace BiliLite.Extensions
             return color;
         }
 
-        public static string HandelTimestamp(this string ts)
-        {
-            if (ts.Length == 10)
-            {
-                ts += "0000000";
-            }
-            DateTime dtStart = new DateTime(1970, 1, 1, 0, 0, 0);
-            long lTime = long.Parse(ts);
-            TimeSpan toNow = new TimeSpan(lTime);
-            DateTime dt = dtStart.Add(toNow).ToLocalTime();
-            TimeSpan span = DateTime.Now.Date - dt.Date;
-            if (span.TotalDays <= 0)
-            {
-                return "今天" + dt.ToString("HH:mm");
-            }
-            else if (span.TotalDays >= 1 && span.TotalDays < 2)
-            {
-                return "昨天" + dt.ToString("HH:mm");
-            }
-            else
-            {
-                return dt.ToString("yyyy-MM-dd HH:mm");
-            }
-        }
-
         #region Private methods
 
         /// <summary>

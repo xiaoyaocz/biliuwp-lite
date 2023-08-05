@@ -14,7 +14,32 @@ namespace BiliLite.Extensions
             DateTime dtStart = new DateTime(1970, 1, 1, 8, 0, 0);
             long lTime = long.Parse(ts + "0000000");
             TimeSpan toNow = new TimeSpan(lTime);
+            
             return dtStart.Add(toNow);
+        }
+
+        public static string HandelTimestamp(this long ts)
+        {
+            var dateTime = DateTimeOffset.FromUnixTimeSeconds(ts).ToLocalTime();
+            var timeSpan = DateTimeOffset.Now - dateTime;
+            if (timeSpan.TotalDays <= 0)
+            {
+                return "今天" + dateTime.ToString("HH:mm");
+            }
+            else if (timeSpan.TotalDays >= 1 && timeSpan.TotalDays < 2)
+            {
+                return "昨天" + dateTime.ToString("HH:mm");
+            }
+            else
+            {
+                return dateTime.ToString("yyyy-MM-dd HH:mm");
+            }
+        }
+
+        public static string ProgressToTime(this long progress)
+        {
+            var ts = TimeSpan.FromSeconds(progress);
+            return ts.ToString(ts.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
         }
 
         /// <summary>

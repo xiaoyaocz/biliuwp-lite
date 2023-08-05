@@ -171,4 +171,20 @@
         MultiFlv,
         Dash
     }
+
+    public enum DynamicType
+    {
+        /// <summary>
+        /// 用户关注动态
+        /// </summary>
+        UserDynamic,
+        /// <summary>
+        /// 话题动态
+        /// </summary>
+        Topic,
+        /// <summary>
+        /// 个人空间动态
+        /// </summary>
+        Space
+    }
 }

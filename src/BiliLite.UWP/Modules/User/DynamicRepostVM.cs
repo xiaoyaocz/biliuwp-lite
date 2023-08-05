@@ -140,7 +140,7 @@ namespace BiliLite.Modules.User
                 Datetime = TimeExtensions.TimestampToDatetime(item.desc.timestamp).ToString(),
                 DynamicID = item.desc.dynamic_id,
                 Mid = item.desc.uid,
-                Time = item.desc.timestamp.ToString().HandelTimestamp(),
+                Time = item.desc.timestamp.HandelTimestamp(),
                 UserCommand = UserCommand
             };
             var content = "";

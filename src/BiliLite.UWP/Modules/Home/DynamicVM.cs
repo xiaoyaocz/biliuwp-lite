@@ -230,10 +230,17 @@ namespace BiliLite.Modules
     }
     public class DynamicSeasonCardApiSeasonInfoModel
     {
-        public string type_name { get; set; }
-        public string cover { get; set; }
-        public string title { get; set; }
-        public int is_finish { get; set; }
-        public int season_id { get; set; }
+        [JsonProperty("type_name")]
+        public string TypeName { get; set; }
+
+        public string Cover { get; set; }
+
+        public string Title { get; set; }
+
+        [JsonProperty("is_finish")]
+        public int IsFinish { get; set; }
+
+        [JsonProperty("season_id")]
+        public int SeasonId { get; set; }
     }
 }

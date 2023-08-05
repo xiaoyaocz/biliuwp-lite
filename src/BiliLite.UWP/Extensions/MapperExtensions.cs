@@ -36,7 +36,7 @@ namespace BiliLite.Extensions
                     .ForMember(dest => dest.Play, opt => opt.MapFrom(src => src.Archive.Stat.View))
                     .ForMember(dest => dest.Pic, opt => opt.MapFrom(src => src.Archive.Pic))
                     .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Archive.Title.Replace("<em class=\"keyword\">", "").Replace("</em>", "")))
-                    .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Archive.Duration))
+                    .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Archive.Duration.ProgressToTime()))
                     .ForMember(dest => dest.Aid, opt => opt.MapFrom(src => src.Archive.Aid))
                     .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Archive.Ctime))
                     .ForMember(dest => dest.VideoReview, opt => opt.MapFrom(src => src.Archive.Stat.Danmaku))
@@ -44,7 +44,7 @@ namespace BiliLite.Extensions
 
                 expression.CreateMap<SubmitVideoCursorItem, SubmitVideoItemModel>()
                     .ForMember(dest => dest.Pic, opt => opt.MapFrom(src => src.Cover))
-                    .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Duration))
+                    .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Duration.ProgressToTime()))
                     .ForMember(dest => dest.Aid, opt => opt.MapFrom(src => src.Aid))
                     .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.CTime))
                     .ForMember(dest => dest.VideoReview, opt => opt.MapFrom(src => src.Danmaku));

@@ -382,6 +382,7 @@ namespace BiliLite.Modules.User
                 var results = await accountApi.SMSLogin(CurrentCountry.country_code, Phone, Code, sessionId, captchaKey).Request();
                 if (results.status)
                 {
+                    SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, false);
                     var data = await results.GetData<LoginResultModel>();
                     var result = await HandelLoginResult(data.code, data.message, data.data);
                     HnadelResult(result);
@@ -439,6 +440,7 @@ namespace BiliLite.Modules.User
                 var results = await accountApi.LoginV3(UserName, pwd).Request();
                 if (results.status)
                 {
+                    SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, false);
                     var data = await results.GetData<LoginResultModel>();
                     var result = await HandelLoginResult(data.code, data.message, data.data);
 

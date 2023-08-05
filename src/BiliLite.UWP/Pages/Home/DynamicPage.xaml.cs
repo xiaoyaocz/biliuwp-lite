@@ -73,8 +73,8 @@ namespace BiliLite.Pages.Home
                 {
                     icon = Symbol.Play,
                     page = typeof(SeasonDetailPage),
-                    parameters = item.season.season.season_id,
-                    title = item.season.season.title,
+                    parameters = item.season.season.SeasonId,
+                    title = item.season.season.Title,
                     dontGoTo = dontGoTo
                 });
             }

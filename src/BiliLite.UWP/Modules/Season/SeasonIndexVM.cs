@@ -325,7 +325,7 @@ namespace BiliLite.Modules
                 }
                 else
                 {
-                    return renewal_time.ToString().HandelTimestamp() + "更新";
+                    return renewal_time.HandelTimestamp() + "更新";
                 }
             }
         }
