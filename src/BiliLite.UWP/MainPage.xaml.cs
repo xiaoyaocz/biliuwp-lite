@@ -36,7 +36,22 @@ namespace BiliLite
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
             MessageCenter.GoBackEvent += MessageCenter_GoBackEvent;
+
+            App.Current.Suspending += Current_Suspending;
             // Window.Current.Content.PointerPressed += Content_PointerPressed;
+        }
+
+        private void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            var tabs = tabView.TabItems;
+            foreach (var tab in tabs)
+            {
+                if(!(tab is TabViewItem tabItem))continue;
+                if(!(tabItem.Content is MyFrame frame)) continue;
+                var page = frame.Content;
+                if(!(page is PlayPage playPage)) continue;
+                playPage.DisposePlayer();
+            }
         }
 
         private void MessageCenter_GoBackEvent(object sender, EventArgs e)

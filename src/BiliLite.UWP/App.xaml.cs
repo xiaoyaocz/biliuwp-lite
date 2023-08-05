@@ -53,6 +53,7 @@ namespace BiliLite
                 .Register()
                 .UnhandledException += SynchronizationContext_UnhandledException;
         }
+
         private void SynchronizationContext_UnhandledException(object sender, AysncUnhandledExceptionEventArgs e)
         {
             e.Handled = true;

@@ -35,6 +35,12 @@ namespace BiliLite.Pages
         {
             Player.PlayerInstance.Play();
         }
+
+        public void DisposePlayer()
+        {
+            Player?.Dispose();
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))
