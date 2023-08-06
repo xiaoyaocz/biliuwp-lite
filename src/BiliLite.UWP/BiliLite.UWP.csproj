@@ -201,6 +201,14 @@
     <Compile Include="Models\Common\Recommend\RecommendThreePointV2ItemReasonsModel.cs" />
     <Compile Include="Models\Common\Recommend\RecommendItemModel.cs" />
     <Compile Include="Models\Requests\ApiParams\RecommondFeedbackParams.cs" />
+    <Compile Include="Controls\DataTemplateSelectors\DynamicItemDataTemplateSelector.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicDescModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicItemModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicSeasonCardApiSeasonInfoModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicSeasonCardModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicVideoCardModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicVideoCardOwnerModel.cs" />
+    <Compile Include="Models\Common\Dynamic\DynamicVideoCardStatModel.cs" />
     <Compile Include="Services\CookieService.cs" />
     <Compile Include="Services\GrpcService.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailUserStatusViewModel.cs" />
@@ -444,7 +452,7 @@
     <Compile Include="Modules\Season\AnimeTimelineVM.cs" />
     <Compile Include="Modules\Home\AnimeVM.cs" />
     <Compile Include="Modules\Home\CinemaVM.cs" />
-    <Compile Include="Modules\Home\DynamicVM.cs" />
+    <Compile Include="ViewModels\Home\DynamicPageViewModel.cs" />
     <Compile Include="Modules\Home\HomeVM.cs" />
     <Compile Include="Modules\Home\HotVM.cs" />
     <Compile Include="Modules\IModules.cs" />

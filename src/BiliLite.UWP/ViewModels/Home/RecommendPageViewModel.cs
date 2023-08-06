@@ -157,7 +157,7 @@ namespace BiliLite.ViewModels.Home
                     Notify.ShowMessageToast(ex.Message);
                     return;
                 }
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<RecommendPageViewModel>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

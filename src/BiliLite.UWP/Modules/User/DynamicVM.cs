@@ -21,6 +21,7 @@ using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Services;
 using BiliLite.ViewModels.Common;
+using DynamicItemDataTemplateSelector = BiliLite.Controls.DataTemplateSelectors.DynamicItemDataTemplateSelector;
 
 namespace BiliLite.Modules.User
 {

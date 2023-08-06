@@ -14,6 +14,7 @@ namespace BiliLite.Extensions
             services.AddTransient<CommentControlViewModel>();
             services.AddTransient<UserSubmitVideoViewModel>();
             services.AddTransient<RecommendPageViewModel>();
+            services.AddTransient<DynamicPageViewModel>();
             return services;
         }
     }
