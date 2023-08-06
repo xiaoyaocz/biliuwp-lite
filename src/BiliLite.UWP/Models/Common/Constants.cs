@@ -34,5 +34,28 @@
             /// </summary>
             public const string BACKGROUND_IAMGE_URL = "ms-appx:///Assets/Image/background.jpg";
         }
+
+        public static class Images
+        {
+            /// <summary>
+            /// 榜单图标
+            /// </summary>
+            public const string RANK_ICON_IMAGE = "ms-appx:///Assets/Icon/榜单.png";
+
+            /// <summary>
+            /// 索引图标
+            /// </summary>
+            public const string INDEX_ICON_IMAGE = "ms-appx:///Assets/Icon/索引.png";
+
+            /// <summary>
+            /// 时间表图标
+            /// </summary>
+            public const string TIMELINE_ICON_IMAGE = "ms-appx:///Assets/Icon/时间表.png";
+
+            /// <summary>
+            /// 我的图标
+            /// </summary>
+            public const string MY_ICON_IMAGE = "ms-appx:///Assets/Icon/我的.png";
+        }
     }
 }

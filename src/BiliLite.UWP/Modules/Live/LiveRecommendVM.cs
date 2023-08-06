@@ -115,7 +115,7 @@ namespace BiliLite.Modules.Live
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<LiveRecommendVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

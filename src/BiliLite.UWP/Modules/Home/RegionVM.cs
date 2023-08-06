@@ -40,7 +40,7 @@ namespace BiliLite.Modules.Home
             catch (Exception ex)
             {
                 Regions = await AppHelper.GetDefaultRegions();
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<RegionVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

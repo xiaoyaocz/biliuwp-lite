@@ -42,9 +42,6 @@ namespace BiliLite.Pages.Home
 
         #endregion
 
-        #region Properties
-        #endregion
-
         #region Protected Methods
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {

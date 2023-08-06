@@ -4,20 +4,13 @@ using BiliLite.Models.Common;
 using BiliLite.Modules;
 using BiliLite.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common.Anime;
+using BiliLite.ViewModels.Home;
+using Microsoft.Extensions.DependencyInjection;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -29,9 +22,10 @@ namespace BiliLite.Pages.Home
     public sealed partial class AnimePage : Page
     {
         private AnimeType animeType;
-        public Modules.AnimeVM homeBangumi { get; set; }
+        public AnimePageViewModel m_viewModel { get; set; }
         public AnimePage()
         {
+            m_viewModel = App.ServiceProvider.GetService<AnimePageViewModel>();
             this.InitializeComponent();
 
             MessageCenter.LoginedEvent += MessageCenter_LoginedEvent;
@@ -41,42 +35,42 @@ namespace BiliLite.Pages.Home
 
         private void MessageCenter_LogoutedEvent(object sender, EventArgs e)
         {
-            homeBangumi.ShowFollows = false;
+            m_viewModel.ShowFollows = false;
         }
 
         private async void MessageCenter_LoginedEvent(object sender, object e)
         {
-            homeBangumi.ShowFollows = true;
-            await homeBangumi.GetFollows();
+            m_viewModel.ShowFollows = true;
+            await m_viewModel.GetFollows();
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.New)
             {
                 animeType = (AnimeType)Convert.ToInt32(e.Parameter);
-                homeBangumi = new Modules.AnimeVM(animeType);
-                this.DataContext = homeBangumi;
+                m_viewModel.SetAnimeType(animeType);
+                this.DataContext = m_viewModel;
                 await LoadData();
             }
 
         }
         private async Task LoadData()
         {
-            await homeBangumi.GetBangumiHome();
+            await m_viewModel.GetBangumiHome();
             if (SettingService.Account.Logined)
             {
-                homeBangumi.ShowFollows = true;
-                await homeBangumi.GetFollows();
+                m_viewModel.ShowFollows = true;
+                await m_viewModel.GetFollows();
             }
         }
 
         private async void btnLoadMoreFall_Click(object sender, RoutedEventArgs e)
         {
             var element = (sender as HyperlinkButton);
-            var data = element.DataContext as AnimeFallModel;
-            await homeBangumi.GetFallMore(element.DataContext as AnimeFallModel);
+            var data = element.DataContext as AnimeFallViewModel;
+            await m_viewModel.GetFallMore(element.DataContext as AnimeFallViewModel);
         }
 
 
@@ -87,7 +81,7 @@ namespace BiliLite.Pages.Home
 
         private async void gvFall_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var result = await MessageCenter.HandelUrl((e.ClickedItem as AnimeFallItemModel).link);
+            var result = await MessageCenter.HandelUrl((e.ClickedItem as AnimeFallItemModel).Link);
             if (!result)
             {
                 Notify.ShowMessageToast("不支持打开的链接");
@@ -113,7 +107,7 @@ namespace BiliLite.Pages.Home
 
         private async void BannerItem_Click(object sender, RoutedEventArgs e)
         {
-            var result = await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as AnimeBannerModel).url);
+            var result = await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as AnimeBannerModel).Url);
             if (!result)
             {
                 Notify.ShowMessageToast("不支持打开的链接");
@@ -126,10 +120,10 @@ namespace BiliLite.Pages.Home
             {
                 icon = Symbol.Filter,
                 page = typeof(Bangumi.AnimeIndexPage),
-                title = animeType == AnimeType.bangumi ? "番剧索引" : "国创索引",
+                title = animeType == AnimeType.Bangumi ? "番剧索引" : "国创索引",
                 parameters = new SeasonIndexParameter()
                 {
-                    type = animeType == AnimeType.bangumi ? IndexSeasonType.Anime : IndexSeasonType.Guochuang
+                    type = animeType == AnimeType.Bangumi ? IndexSeasonType.Anime : IndexSeasonType.Guochuang
                 }
             });
         }

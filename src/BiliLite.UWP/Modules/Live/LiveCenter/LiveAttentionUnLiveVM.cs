@@ -109,7 +109,7 @@ namespace BiliLite.Modules.Live.LiveCenter
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<LiveAttentionUnLiveVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

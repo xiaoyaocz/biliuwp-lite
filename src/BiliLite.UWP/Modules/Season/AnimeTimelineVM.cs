@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BiliLite.Models;
 using BiliLite.Extensions;
+using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
@@ -20,12 +21,12 @@ namespace BiliLite.Modules
                     new AnimeTypeItem()
                     {
                         Name="番剧",
-                        AnimeType= AnimeType.bangumi
+                        AnimeType= AnimeType.Bangumi
                     },
                     new AnimeTypeItem()
                     {
                         Name="国创",
-                        AnimeType= AnimeType.guochuang
+                        AnimeType= AnimeType.GuoChuang
                     }
                 };
             SelectAnimeType = AnimeTypeItems.FirstOrDefault(x => x.AnimeType == type);
@@ -102,7 +103,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<AnimeTimelineVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

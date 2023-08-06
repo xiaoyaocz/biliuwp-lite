@@ -187,4 +187,17 @@
         /// </summary>
         Space
     }
+
+    public enum AnimeType
+    {
+        /// <summary>
+        /// 番剧
+        /// </summary>
+        Bangumi = 1,
+
+        /// <summary>
+        /// 国创
+        /// </summary>
+        GuoChuang = 4
+    }
 }

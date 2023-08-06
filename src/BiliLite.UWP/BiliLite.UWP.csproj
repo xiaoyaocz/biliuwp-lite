@@ -209,6 +209,12 @@
     <Compile Include="Models\Common\Dynamic\DynamicVideoCardModel.cs" />
     <Compile Include="Models\Common\Dynamic\DynamicVideoCardOwnerModel.cs" />
     <Compile Include="Models\Common\Dynamic\DynamicVideoCardStatModel.cs" />
+    <Compile Include="Models\Common\Anime\AnimeBannerModel.cs" />
+    <Compile Include="Models\Common\Anime\AnimeFallItemModel.cs" />
+    <Compile Include="Models\Common\Anime\AnimeRankModel.cs" />
+    <Compile Include="Models\Common\Anime\AnimeFallModel.cs" />
+    <Compile Include="ViewModels\Home\AnimeFallViewModel.cs" />
+    <Compile Include="Models\Common\Anime\AnimeHomeModel.cs" />
     <Compile Include="Services\CookieService.cs" />
     <Compile Include="Services\GrpcService.cs" />
     <Compile Include="ViewModels\Season\SeasonDetailUserStatusViewModel.cs" />
@@ -450,7 +456,7 @@
     <Compile Include="Modules\Season\SeasonReviewVM.cs" />
     <Compile Include="Modules\User\Account.cs" />
     <Compile Include="Modules\Season\AnimeTimelineVM.cs" />
-    <Compile Include="Modules\Home\AnimeVM.cs" />
+    <Compile Include="ViewModels\Home\AnimePageViewModel.cs" />
     <Compile Include="Modules\Home\CinemaVM.cs" />
     <Compile Include="ViewModels\Home\DynamicPageViewModel.cs" />
     <Compile Include="Modules\Home\HomeVM.cs" />

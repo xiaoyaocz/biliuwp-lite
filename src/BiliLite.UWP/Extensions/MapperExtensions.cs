@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Bilibili.App.Interface.V1;
+using BiliLite.Models.Common.Anime;
 using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Common.Season;
 using BiliLite.Models.Common.User;
 using BiliLite.Models.Common.Video.Detail;
 using BiliLite.Models.Download;
+using BiliLite.Modules;
 using BiliLite.ViewModels.Comment;
 using BiliLite.ViewModels.Download;
+using BiliLite.ViewModels.Home;
 using BiliLite.ViewModels.Season;
 using BiliLite.ViewModels.Video;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +34,7 @@ namespace BiliLite.Extensions
                 expression.CreateMap<VideoDetailReqUserModel, VideoDetailReqUserViewModel>();
                 expression.CreateMap<SeasonDetailUserStatusModel, SeasonDetailUserStatusViewModel>();
                 expression.CreateMap<SeasonDetailModel, SeasonDetailViewModel>();
+                expression.CreateMap<AnimeFallModel, AnimeFallViewModel>();
 
                 expression.CreateMap<Arc, SubmitVideoItemModel>()
                     .ForMember(dest => dest.Play, opt => opt.MapFrom(src => src.Archive.Stat.View))

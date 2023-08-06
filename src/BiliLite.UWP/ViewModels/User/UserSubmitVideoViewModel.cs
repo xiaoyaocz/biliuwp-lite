@@ -173,7 +173,7 @@ namespace BiliLite.ViewModels.User
                 }
                 else
                 {
-                    var handel = HandelError<AnimeHomeModel>(ex);
+                    var handel = HandelError<UserSubmitVideoViewModel>(ex);
                     Notify.ShowMessageToast(handel.message);
                 }
 

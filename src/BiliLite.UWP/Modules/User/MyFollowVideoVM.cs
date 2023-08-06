@@ -91,7 +91,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<MyFollowVideoVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -135,7 +135,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<MyFollowVideoVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
         }
@@ -165,7 +165,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<MyFollowVideoVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             return false;

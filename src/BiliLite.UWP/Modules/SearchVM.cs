@@ -293,7 +293,7 @@ namespace BiliLite.Modules
                     _logger.Error("搜索失败", ex);
                 }
 
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -414,7 +414,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -501,7 +501,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -616,7 +616,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -699,7 +699,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -781,7 +781,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SearchVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

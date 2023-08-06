@@ -89,7 +89,7 @@ namespace BiliLite.Pages
                     icon = Symbol.FourBars,
                     page = typeof(SeasonRankPage),
                     title = "热门榜单",
-                    parameters = AnimeType.bangumi
+                    parameters = AnimeType.Bangumi
                 });
                 return;
             }
@@ -101,7 +101,7 @@ namespace BiliLite.Pages
                     icon = Symbol.FourBars,
                     page = typeof(SeasonRankPage),
                     title = "热门榜单",
-                    parameters = AnimeType.guochuang
+                    parameters = AnimeType.GuoChuang
                 });
                 return;
             } 

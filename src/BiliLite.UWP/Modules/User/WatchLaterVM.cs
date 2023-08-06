@@ -150,7 +150,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<WatchLaterVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -194,7 +194,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<WatchLaterVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
         }
@@ -223,7 +223,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<WatchLaterVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
         }
@@ -253,7 +253,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<WatchLaterVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
         }

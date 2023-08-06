@@ -611,7 +611,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<DynamicVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -652,7 +652,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<DynamicVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
