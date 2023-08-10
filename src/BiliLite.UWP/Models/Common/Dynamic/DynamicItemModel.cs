@@ -1,5 +1,4 @@
-﻿using BiliLite.Modules;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BiliLite.Models.Common.Dynamic
 {
@@ -14,12 +13,23 @@ namespace BiliLite.Models.Common.Dynamic
         /// <summary>
         /// json字符串,根据desc里的type，获得数据
         /// </summary>
-        public string Card { get; set; }
+        public string Card
+        {
+            set
+            {
+                Video = Desc is { Type: 8 }
+                    ? Newtonsoft.Json.JsonConvert.DeserializeObject<DynamicVideoCardModel>(value)
+                    : null;
+                Season = Desc is { Type: 512 }
+                    ? Newtonsoft.Json.JsonConvert.DeserializeObject<DynamicSeasonCardModel>(value)
+                    : null;
+            }
+        }
 
         public DynamicDescModel Desc { get; set; }
 
-        public DynamicVideoCardModel Video => Desc is { Type: 8 } ? Newtonsoft.Json.JsonConvert.DeserializeObject<DynamicVideoCardModel>(Card) : null;
+        public DynamicVideoCardModel Video { get; set; }
 
-        public DynamicSeasonCardModel Season => Desc is { Type: 512 } ? Newtonsoft.Json.JsonConvert.DeserializeObject<DynamicSeasonCardModel>(Card) : null;
+        public DynamicSeasonCardModel Season { get; set; }
     }
 }

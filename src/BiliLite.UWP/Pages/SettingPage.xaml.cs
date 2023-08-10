@@ -744,6 +744,14 @@ namespace BiliLite.Pages
                     SettingService.SetValue(SettingConstants.Other.LOG_LEVEL, cbLogLevel.SelectedIndex);
                 };
             };
+
+            // 优先使用Grpc请求动态
+            swFirstGrpcRequestDynamic.IsOn = SettingService.GetValue<bool>(SettingConstants.Other.FIRST_GRPC_REQUEST_DYNAMIC, true);
+            swFirstGrpcRequestDynamic.Toggled += ((e, args) =>
+            {
+                SettingService.SetValue(SettingConstants.Other.FIRST_GRPC_REQUEST_DYNAMIC, swFirstGrpcRequestDynamic.IsOn);
+            });
+
             // BiliLiteWebApi
             BiliLiteWebApiTextBox.Text = SettingService.GetValue(SettingConstants.Other.BILI_LITE_WEB_API_BASE_URL, ApiConstants.BILI_LITE_WEB_API_DEFAULT_BASE_URL);
             BiliLiteWebApiTextBox.Loaded += (sender, e) =>

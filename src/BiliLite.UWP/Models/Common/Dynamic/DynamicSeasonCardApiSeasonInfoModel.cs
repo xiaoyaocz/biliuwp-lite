@@ -15,6 +15,6 @@ namespace BiliLite.Models.Common.Dynamic
         public int IsFinish { get; set; }
 
         [JsonProperty("season_id")]
-        public int SeasonId { get; set; }
+        public long SeasonId { get; set; }
     }
 }

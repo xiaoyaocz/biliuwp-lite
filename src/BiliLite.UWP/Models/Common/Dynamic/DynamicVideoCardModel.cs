@@ -1,5 +1,4 @@
-﻿using BiliLite.Modules;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace BiliLite.Models.Common.Dynamic
 {
@@ -15,7 +14,7 @@ namespace BiliLite.Models.Common.Dynamic
 
         public string Desc { get; set; }
 
-        public int Duration { get; set; }
+        public long Duration { get; set; }
 
         public string Dynamic { get; set; }
 
@@ -30,6 +29,16 @@ namespace BiliLite.Models.Common.Dynamic
 
         public string Title { get; set; }
 
+        public long SeasonId { get; set; }
+
         public DynamicVideoCardStatModel Stat { get; set; }
+
+        public string ViewCountText { get; set; }
+
+        public string DanmakuCountText { get; set; }
+
+        public string DisplayViewCountText => !string.IsNullOrEmpty(ViewCountText) ? ViewCountText : $"观看:{Stat.View}";
+
+        public string DisplayDanmakuCountText => !string.IsNullOrEmpty(DanmakuCountText) ? DanmakuCountText : $"弹幕:{Stat.Danmaku}";
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BiliLite.Extensions;
+using Newtonsoft.Json;
 
 namespace BiliLite.Models.Common.Dynamic
 {
@@ -31,5 +32,21 @@ namespace BiliLite.Models.Common.Dynamic
         public int Status { get; set; }
 
         public long Timestamp { get; set; }
+
+        public string TimeText { get; set; }
+
+        public string DisplayTimeText
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(TimeText))
+                {
+                    return TimeText;
+                }
+
+                var dateTime = Timestamp.TimestampToDatetime();
+                return $"更新于 {dateTime.DateTimeToDisplayTimeText()}";
+            }
+        }
     }
 }

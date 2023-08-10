@@ -29,6 +29,7 @@ namespace BiliLite.Models.Common.Dynamic
 
         [JsonProperty("episode_id")]
         public int EpisodeId { get; set; }
+
         public DynamicSeasonCardApiSeasonInfoModel Season { get; set; }
     }
 }

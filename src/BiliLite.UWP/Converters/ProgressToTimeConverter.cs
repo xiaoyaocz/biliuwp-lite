@@ -7,28 +7,31 @@ namespace BiliLite.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null)
+            switch (value)
             {
-                return "00:00";
-            }
-            if (value is double)
-            {
-                TimeSpan ts = TimeSpan.FromSeconds((double)value);
+                case null:
+                    return "00:00";
+                case double second:
+                {
+                    var ts = TimeSpan.FromSeconds(second);
                 
-                return ts.ToString(ts.TotalHours>=1? @"hh\:mm\:ss" : @"mm\:ss");
+                    return ts.ToString(ts.TotalHours>=1? @"hh\:mm\:ss" : @"mm\:ss");
+                }
+                case int _:
+                {
+                    var ts = TimeSpan.FromSeconds(System.Convert.ToDouble(value));
+                    return ts.ToString(ts.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
+                }
+                case TimeSpan secondSpan:
+                    return secondSpan.ToString(secondSpan.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
+                case string secondStr:
+                {
+                    var ts = TimeSpan.FromSeconds(long.Parse(secondStr));
+                    return ts.ToString(ts.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
+                }
+                default:
+                    return value.ToString();
             }
-            if (value is int)
-            {
-               
-                TimeSpan ts = TimeSpan.FromSeconds(System.Convert.ToDouble(value));
-                return ts.ToString(ts.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
-            }
-            if (value is TimeSpan)
-            {
-                var ts= (TimeSpan)value;
-                return ts.ToString(ts.TotalHours >= 1 ? @"hh\:mm\:ss" : @"mm\:ss");
-            }
-            return value.ToString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

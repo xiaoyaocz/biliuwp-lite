@@ -1,12 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
+using Bilibili.App.Dynamic.V2;
 using Bilibili.App.Interface.V1;
 using BiliLite.Models.Common.Anime;
 using BiliLite.Models.Common.Comment;
+using BiliLite.Models.Common.Dynamic;
 using BiliLite.Models.Common.Season;
 using BiliLite.Models.Common.User;
 using BiliLite.Models.Common.Video.Detail;
 using BiliLite.Models.Download;
-using BiliLite.Modules;
 using BiliLite.ViewModels.Comment;
 using BiliLite.ViewModels.Download;
 using BiliLite.ViewModels.Home;
@@ -55,6 +58,93 @@ namespace BiliLite.Extensions
             }));
             services.AddSingleton<IMapper>(mapper);
             return services;
+        }
+
+        public static List<DynamicItemModel> MapToDynamicItemModels(this IEnumerable<DynamicItem> dynamicItems)
+        {
+            var dynamicItemModels = new List<DynamicItemModel>();
+            foreach (var src in dynamicItems)
+            {
+                var type = 0;
+                switch (src.CardType)
+                {
+                    case DynamicType.Av:
+                        type = 8;
+                        break;
+                    case DynamicType.Pgc:
+                        type = 512;
+                        break;
+                }
+
+                var moduleAuthor = src.Modules.FirstOrDefault(x => x.ModuleType == DynModuleType.ModuleAuthor);
+                var moduleDynamic = src.Modules.FirstOrDefault(x => x.ModuleType == DynModuleType.ModuleDynamic);
+
+                var dynDesc = new DynamicDescModel()
+                {
+                    Type = type,
+                    DynamicId = src.Extend.DynIdStr,
+                    TimeText = moduleAuthor.ModuleAuthor.PtimeLabelText
+                };
+                var dynItemModel = new DynamicItemModel()
+                {
+                    Desc = dynDesc,
+                };
+                switch (type)
+                {
+                    case 8:
+                        {
+                            var dynVideoStat = new DynamicVideoCardStatModel()
+                            {
+                                View = moduleDynamic.ModuleDynamic.DynArchive.View
+                            };
+                            var dynOwner = new DynamicVideoCardOwnerModel()
+                            {
+                                Face = src.Extend.OrigFace,
+                                Name = src.Extend.OrigName,
+                            };
+                            var dynVideo = new DynamicVideoCardModel()
+                            {
+                                Aid = moduleDynamic.ModuleDynamic
+                                    .DynArchive.Avid.ToString(),
+                                Duration = moduleDynamic.ModuleDynamic.DynArchive.Duration,
+                                Pic = src.Extend.OrigImgUrl,
+                                Title = moduleDynamic.ModuleDynamic.DynArchive.Title,
+                                Stat = dynVideoStat,
+                                Owner = dynOwner,
+                                SeasonId = moduleDynamic.ModuleDynamic.DynArchive.PgcSeasonId,
+                                ViewCountText = moduleDynamic.ModuleDynamic.DynArchive.CoverLeftText2,
+                                DanmakuCountText = moduleDynamic.ModuleDynamic.DynArchive.CoverLeftText3,
+                            };
+                            if (string.IsNullOrEmpty(dynVideo.Title))
+                            {
+                                dynVideo.Title = src.Extend.OrigDesc.FirstOrDefault()?.Text;
+                            }
+                            dynItemModel.Video = dynVideo;
+                            break;
+                        }
+                    case 512:
+                        {
+                            var seasonInfo = new DynamicSeasonCardApiSeasonInfoModel()
+                            {
+                                Title = src.Extend.OrigName,
+                                SeasonId = moduleDynamic.ModuleDynamic.DynPgc.SeasonId,
+                            };
+                            var dynSeason = new DynamicSeasonCardModel()
+                            {
+                                Aid = moduleDynamic.ModuleDynamic.DynPgc.Aid.ToString(),
+                                Cover = moduleDynamic.ModuleDynamic.DynPgc.Cover,
+                                Season = seasonInfo,
+                                NewDesc = src.Extend.OrigDesc.FirstOrDefault()?.Text,
+                            };
+                            dynItemModel.Season = dynSeason;
+                            break;
+                        }
+                }
+
+                dynamicItemModels.Add(dynItemModel);
+            }
+
+            return dynamicItemModels;
         }
     }
 }

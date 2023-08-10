@@ -49,7 +49,7 @@
                 </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Video.Title}"></TextBlock>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=Video.Stat.View,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=Video.Stat.Danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0"><Run Text="{x:Bind Path=Video.DisplayViewCountText}"/> <Run Text="{x:Bind Path=Video.DisplayDanmakuCountText}"/></TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="24" Height="24">
                             <Ellipse.Fill>
@@ -58,7 +58,7 @@
                         </Ellipse>
                         <TextBlock Margin="8 0 0 0" Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=Video.Owner.Name}"></TextBlock>
                     </StackPanel>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">发表于 <Run Text="{x:Bind Path=Video.Pubdate,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0" Text="{x:Bind Path=Desc.DisplayTimeText}"></TextBlock>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -78,7 +78,7 @@
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
                     <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Season.Season.Title}"></TextBlock>
                     <TextBlock  Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=Season.NewDesc}"></TextBlock>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">更新于 <Run Text="{x:Bind Path=Desc.Timestamp,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0" Text="{x:Bind Path=Desc.DisplayTimeText}"></TextBlock>
                 </StackPanel>
             </Grid>
         </DataTemplate>

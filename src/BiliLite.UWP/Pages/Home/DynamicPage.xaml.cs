@@ -1,6 +1,5 @@
 ﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
-using BiliLite.Modules;
 using BiliLite.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,28 +52,39 @@ namespace BiliLite.Pages.Home
         private void DynamicItemModelOpen(object sender, DynamicItemModel item, bool dontGoTo = false)
         {
             if (item == null) return;
-            switch (item.Desc.Type)
+
+            if (item.Desc.Type == 512)
             {
-                case 8:
-                    MessageCenter.NavigateToPage(this, new NavigationInfo()
-                    {
-                        icon = Symbol.Play,
-                        page = typeof(VideoDetailPage),
-                        parameters = item.Video.Aid,
-                        title = item.Video.Title,
-                        dontGoTo = dontGoTo
-                    });
-                    break;
-                case 512:
-                    MessageCenter.NavigateToPage(this, new NavigationInfo()
-                    {
-                        icon = Symbol.Play,
-                        page = typeof(SeasonDetailPage),
-                        parameters = item.Season.Season.SeasonId,
-                        title = item.Season.Season.Title,
-                        dontGoTo = dontGoTo
-                    });
-                    break;
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    parameters = item.Season.Season.SeasonId,
+                    title = item.Season.Season.Title,
+                    dontGoTo = dontGoTo
+                });
+            }
+            else if (item.Video.SeasonId != 0)
+            {
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    parameters = item.Video.SeasonId,
+                    title = item.Video.Title,
+                    dontGoTo = dontGoTo
+                });
+            }
+            else
+            {
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(VideoDetailPage),
+                    parameters = item.Video.Aid,
+                    title = item.Video.Title,
+                    dontGoTo = dontGoTo
+                });
             }
         }
 

@@ -577,6 +577,8 @@
                                 <ComboBoxItem>Fatal</ComboBoxItem>
                             </ComboBox.Items>
                         </ComboBox>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">优先使用Grpc请求动态</TextBlock>
+                        <ToggleSwitch x:Name="swFirstGrpcRequestDynamic"></ToggleSwitch>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">BiliLite-WebApi（用于处理UWP无法完成的事项）</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <AutoSuggestBox x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>

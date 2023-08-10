@@ -1,7 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using BiliLite.Models.Common.Dynamic;
-using BiliLite.Modules;
 
 namespace BiliLite.Controls.DataTemplateSelectors
 {

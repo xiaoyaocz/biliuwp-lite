@@ -563,6 +563,11 @@ namespace BiliLite.Models.Common
             /// WebApi地址
             /// </summary>
             public const string BILI_LITE_WEB_API_BASE_URL = "BiliLiteWebApiBaseUrl";
+
+            /// <summary>
+            /// 优先使用Grpc请求动态
+            /// </summary>
+            public const string FIRST_GRPC_REQUEST_DYNAMIC = "FirstGrpcRequestDynamic";
         }
     }
 }
