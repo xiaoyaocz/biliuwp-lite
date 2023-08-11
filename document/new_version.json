@@ -1,7 +1,7 @@
 {
-    "version": "4.6.10",
-    "version_num": 40610,
-    "version_desc": "更新内容:\r\n\r\n* 支持设置日志级别\r\n\r\n* 修复首页点击视频错误跳转\r\n\r\n* 修复用户粉丝列表加载\r\n\r\n* 修复短信登录时Cookie保存出错\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.11",
+    "version_num": 40611,
+    "version_desc": "更新内容:\r\n\r\n* 添加并优先使用gRPC获取视频动态，避免风控412错误\r\n\r\n* 关闭应用时记录视频播放进度\r\n\r\n* 播放器内播放列表添加tooltip显示视频标题\r\n\r\n* 修复图片默认缩放问题\r\n\r\n* 修复使用非扫码方式登录后会报错Cookie刷新失败\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }
