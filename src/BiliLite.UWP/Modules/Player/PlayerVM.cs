@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Atelier39;
 using Bilibili.Tv.Interfaces.Dm.V1;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
@@ -125,16 +126,46 @@ namespace BiliLite.Modules
             }
         }
 
+        public async Task<List<DanmakuItem>> GetDanmakuForDanmakuFrostMaster(string cid, int segment_index = 1)
+        {
+            var danmuList = new List<DanmakuItem>();
+            try
+            {
+#if DEBUG
+                var sw = Stopwatch.StartNew();
+                sw.Start();
+#endif
+
+                var data = await PlayerAPI.SegDanmaku(cid, segment_index).url.GetStream();
+                var result = DmSegMobileReply.Parser.ParseFrom(data);
+
+                danmuList = result.Elems.MapToDanmakuItems();
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine($"获取弹幕耗时：{sw.ElapsedMilliseconds}ms");
+#endif
+            }
+            catch (Exception ex)
+            {
+                Notify.ShowMessageToast("弹幕加载失败:" + ex.Message);
+                logger.Log("grpc弹幕加载失败", LogType.Fatal, ex);
+            }
+            return danmuList;
+        }
+
         public async Task<List<NSDanmaku.Model.DanmakuModel>> GetDanmaku(string cid, int segment_index = 1)
         {
             List<NSDanmaku.Model.DanmakuModel> danmuList = new List<NSDanmaku.Model.DanmakuModel>();
             try
             {
+#if DEBUG
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
+#endif
 
                 var data = await PlayerAPI.SegDanmaku(cid, segment_index).url.GetStream();
                 var result = DmSegMobileReply.Parser.ParseFrom(data);
+
                 foreach (var item in result.Elems)
                 {
                     NSDanmaku.Model.DanmakuLocation location = NSDanmaku.Model.DanmakuLocation.Scroll;
@@ -162,8 +193,10 @@ namespace BiliLite.Modules
                         time_s = item.Progress / 1000
                     });
                 }
+#if DEBUG
                 sw.Stop();
                 Debug.WriteLine($"获取弹幕耗时：{sw.ElapsedMilliseconds}ms");
+#endif
             }
             catch (Exception ex)
             {

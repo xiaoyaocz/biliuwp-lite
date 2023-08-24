@@ -145,6 +145,14 @@ namespace BiliLite.Models.Common
         public class VideoDanmaku
         {
             /// <summary>
+            /// 默认弹幕引擎
+            /// </summary>
+            public const DanmakuEngineType DEFAULT_DANMAKU_ENGINE = DanmakuEngineType.NSDanmaku;
+            /// <summary>
+            /// 弹幕引擎
+            /// </summary>
+            public const string DANMAKU_ENGINE = "DanmakuEngine";
+            /// <summary>
             /// 显示弹幕 Visibility
             /// </summary>
             public const string SHOW = "VideoDanmuShow";

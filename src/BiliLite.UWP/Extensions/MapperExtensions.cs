@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Atelier39;
 using AutoMapper;
 using Bilibili.App.Dynamic.V2;
 using Bilibili.App.Interface.V1;
+using Bilibili.Tv.Interfaces.Dm.V1;
 using BiliLite.Models.Common.Anime;
 using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Common.Dynamic;
@@ -58,6 +60,28 @@ namespace BiliLite.Extensions
             }));
             services.AddSingleton<IMapper>(mapper);
             return services;
+        }
+
+        public static List<DanmakuItem> MapToDanmakuItems(this IEnumerable<DanmakuElem> elems)
+        {
+            var danmakuItems = new List<DanmakuItem>();
+            foreach (var danmakuElem in elems)
+            {
+                var danmakuItem = new DanmakuItem()
+                {
+                    Id = (ulong)danmakuElem.Id,
+                    Text = danmakuElem.Content,
+                    StartMs = (uint)danmakuElem.Progress,
+                    BaseFontSize = danmakuElem.Fontsize,
+                    Mode = (DanmakuMode)danmakuElem.Mode,
+                    TextColor = danmakuElem.Color.ParseColor(),
+                    Weight = danmakuElem.Weight,
+                    MidHash = danmakuElem.MidHash
+                };
+                danmakuItem.ParseAdvanceDanmaku();
+                danmakuItems.Add(danmakuItem);
+            }
+            return danmakuItems.OrderBy(x => x.StartMs).ToList();
         }
 
         public static List<DynamicItemModel> MapToDynamicItemModels(this IEnumerable<DynamicItem> dynamicItems)

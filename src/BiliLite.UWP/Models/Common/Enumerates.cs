@@ -63,17 +63,17 @@
         /// <summary>
         /// 返回或关闭页面
         /// </summary>
-        Back=0,
+        Back = 0,
 
         /// <summary>
         /// 打开新标签页但不跳转 
         /// </summary>
-        NewTap=1,
+        NewTap = 1,
 
         /// <summary>
         /// 无操作
         /// </summary>
-        None=2,
+        None = 2,
     }
 
     public enum DownloadType
@@ -199,5 +199,11 @@
         /// 国创
         /// </summary>
         GuoChuang = 4
+    }
+
+    public enum DanmakuEngineType
+    {
+        NSDanmaku = 0,
+        FrostDanmakuMaster = 1,
     }
 }

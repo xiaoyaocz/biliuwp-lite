@@ -9,6 +9,7 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:font="using:FontAwesome5"
     xmlns:covert="using:BiliLite.Converters" xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:common="using:BiliLite.Models.Common"
     Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
@@ -399,6 +400,18 @@
                 </PivotItem.Header>
                 <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">弹幕引擎</TextBlock>
+                        <ComboBox x:Name="cbDanmakuEngine" SelectedIndex="0" MinWidth="200" SelectedValuePath="Value">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Text}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <ComboBox.Items>
+                                <common:ComboBoxItemData Text="NSDanmaku" Value="0"></common:ComboBoxItemData>
+                                <common:ComboBoxItemData Text="寒霜弹幕使" Value="1"></common:ComboBoxItemData>
+                            </ComboBox.Items>
+                        </ComboBox>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">默认弹幕状态</TextBlock>
                         <ToggleSwitch x:Name="DanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">弹幕顶部距离</TextBlock>
