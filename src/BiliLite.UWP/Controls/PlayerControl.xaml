@@ -11,6 +11,7 @@
     mc:Ignorable="d"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:fa="using:FontAwesome5" xmlns:player="using:BiliLite.Modules.Player"
+    xmlns:common="using:BiliLite.Models.Common"
     d:DesignHeight="800"
     d:DesignWidth="1000">
     <UserControl.Resources>
@@ -459,15 +460,10 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel>
                                     <TextBlock Margin="0 8" >优先选择视频编码</TextBlock>
-                                    <ComboBox x:Name="PlayerSettingMode">
-                                        <ComboBox.Items>
-                                            <ComboBoxItem>FLV/H.264</ComboBoxItem>
-                                            <ComboBoxItem>AVC/H.264</ComboBoxItem>
-                                            <ComboBoxItem>HEVC/H.265</ComboBoxItem>
-                                            <ComboBoxItem>AV1</ComboBoxItem>
-
-                                        </ComboBox.Items>
-                                    </ComboBox>
+                                    <ComboBox x:Name="PlayerSettingMode" 
+                                              ItemsSource="{x:Bind common:DefaultVideoTypeOptions.Options}" 
+                                              SelectedValuePath="Value"
+                                              DisplayMemberPath="Name"></ComboBox>
                                     <ToggleSwitch x:Name="PlayerSettingUseOtherSite" Visibility="Collapsed" Margin="0 8"  Foreground="White" >
                                         <ToggleSwitch.Header>
                                             <TextBlock  Foreground="White">使用外站视频替换无法播放的视频</TextBlock>

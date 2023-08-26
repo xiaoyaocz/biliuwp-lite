@@ -276,14 +276,12 @@ namespace BiliLite.Pages
         private void LoadPlayer()
         {
             //播放类型
-            cbVideoType.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_VIDEO_TYPE, 1);
-            cbVideoType.Loaded += new RoutedEventHandler((sender, e) =>
+            var selectedValue = (PlayUrlCodecMode)SettingService.GetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
+            cbVideoType.SelectedItem = DefaultVideoTypeOptions.GetOption(selectedValue);
+            cbVideoType.SelectionChanged += (e, args) =>
             {
-                cbVideoType.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
-                {
-                    SettingService.SetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, cbVideoType.SelectedIndex);
-                });
-            });
+                SettingService.SetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)cbVideoType.SelectedValue);
+            };
             //视频倍速
             cbVideoSpeed.SelectedIndex = SettingConstants.Player.VideoSpeed.IndexOf(SettingService.GetValue<double>(SettingConstants.Player.DEFAULT_VIDEO_SPEED, 1.0d));
             cbVideoSpeed.Loaded += new RoutedEventHandler((sender, e) =>
@@ -708,14 +706,15 @@ namespace BiliLite.Pages
                 SettingService.SetValue(SettingConstants.Download.SEND_TOAST, swDownloadSendToast.IsOn);
             });
             //下载类型
-            cbDownloadVideoType.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Download.DEFAULT_VIDEO_TYPE, 1);
-            cbDownloadVideoType.Loaded += new RoutedEventHandler((sender, e) =>
+            var selectedValue = (PlayUrlCodecMode)SettingService.GetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
+            cbDownloadVideoType.SelectedItem = DefaultVideoTypeOptions.GetOption(selectedValue);
+            cbDownloadVideoType.Loaded += (sender, e) =>
             {
-                cbDownloadVideoType.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                cbDownloadVideoType.SelectionChanged += (obj, args) =>
                 {
-                    SettingService.SetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, cbDownloadVideoType.SelectedIndex);
-                });
-            });
+                    SettingService.SetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, (int)cbDownloadVideoType.SelectedValue);
+                };
+            };
             //加载旧版本下载的视频
             swDownloadLoadOld.IsOn = SettingService.GetValue<bool>(SettingConstants.Download.LOAD_OLD_DOWNLOAD, false);
             swDownloadLoadOld.Toggled += new RoutedEventHandler((e, args) =>

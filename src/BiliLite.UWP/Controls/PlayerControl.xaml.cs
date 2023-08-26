@@ -638,11 +638,12 @@ namespace BiliLite.Controls
             //BrightnessShield.Opacity = _brightness;
 
             //播放模式
-            PlayerSettingMode.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_VIDEO_TYPE, 1);
-            PlayerSettingMode.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            var selectedValue = (PlayUrlCodecMode)SettingService.GetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
+            PlayerSettingMode.SelectedItem = DefaultVideoTypeOptions.GetOption(selectedValue);
+            PlayerSettingMode.SelectionChanged += (e, args) =>
             {
-                SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_VIDEO_TYPE, PlayerSettingMode.SelectedIndex);
-            });
+                SettingService.SetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)PlayerSettingMode.SelectedValue);
+            };
             //播放列表
             PlayerSettingPlayMode.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_PLAY_MODE, 0);
             PlayerSettingPlayMode.SelectionChanged += new SelectionChangedEventHandler((e, args) =>

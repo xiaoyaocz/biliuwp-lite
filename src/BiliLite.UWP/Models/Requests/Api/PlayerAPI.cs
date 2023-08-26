@@ -23,10 +23,8 @@ namespace BiliLite.Models.Requests.Api
                 parameter = $"avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingService.Account.Logined ? SettingService.Account.Profile.mid.ToString() : "")}",
                 need_cookie = true,
             };
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             if (proxy)
             {
                 api.parameter += $"&area={area}";
@@ -51,11 +49,8 @@ namespace BiliLite.Models.Requests.Api
             {
                 api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
-
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             if (proxy)
             {
@@ -76,10 +71,8 @@ namespace BiliLite.Models.Requests.Api
             {
                 api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
         }

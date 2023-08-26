@@ -18,14 +18,6 @@ using PlayURL = BiliLite.gRPC.Api.PlayURL;
 
 namespace BiliLite.Modules.Player.Playurl
 {
-    enum PlayUrlCodecMode
-    {
-        // int flv=0, dash=1,dash_hevc=2
-        FLV = 0,
-        DASH_H264 = 1,
-        DASH_H265 = 2,
-        DASH_AV1 = 3
-    }
     class BiliPlayUrlRequest
     {
         protected bool IsDownload { get; set; } = false;
@@ -66,7 +58,7 @@ namespace BiliLite.Modules.Player.Playurl
             ReplaceCDNMode = SettingService.GetValue<int>(SettingConstants.Player.REPLACE_CDN, 3);
             CDN = SettingService.GetValue<string>(SettingConstants.Player.CDN_SERVER, "upos-sz-mirrorhwo1.bilivideo.com");
             IsVIP = (SettingService.Account.Logined && SettingService.Account.Profile.vip != null && SettingService.Account.Profile.vip.status != 0);
-            CodecMode = (PlayUrlCodecMode)SettingService.GetValue<int>(IsDownload ? SettingConstants.Download.DEFAULT_VIDEO_TYPE : SettingConstants.Player.DEFAULT_VIDEO_TYPE, 1);
+            CodecMode = (PlayUrlCodecMode)SettingService.GetValue(IsDownload ? SettingConstants.Download.DEFAULT_VIDEO_TYPE : SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
         }
         protected void AddMessage(string type, string msg)
         {

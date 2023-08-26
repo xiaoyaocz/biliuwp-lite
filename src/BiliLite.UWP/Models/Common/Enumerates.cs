@@ -206,4 +206,13 @@
         NSDanmaku = 0,
         FrostDanmakuMaster = 1,
     }
+
+    public enum PlayUrlCodecMode
+    {
+        // int flv=0, dash=1,dash_hevc=2
+        FLV = 0,
+        DASH_H264 = 1,
+        DASH_H265 = 2,
+        DASH_AV1 = 3
+    }
 }

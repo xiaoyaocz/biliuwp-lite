@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:download="using:BiliLite.ViewModels.Download"
+    xmlns:common="using:BiliLite.Models.Common"
     mc:Ignorable="d"
     Title="下载视频"
     PrimaryButtonText="开始"
@@ -25,26 +26,11 @@
             <TextBlock>优先下载格式</TextBlock>
             <ComboBox x:Name="cbVideoType"  
                       Margin="0 4 0 0" 
-                      SelectedIndex="{x:Bind m_viewModel.VideoTypeSelectedIndex, Mode=TwoWay}"
+                      ItemsSource="{x:Bind common:DefaultVideoTypeOptions.Options}" 
+                      SelectedValuePath="Value"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{x:Bind m_viewModel.SelectedVideoType, Mode=TwoWay}"
                       HorizontalAlignment="Stretch">
-                <ComboBox.Items>
-                    <ComboBoxItem>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock >FLV/H264</TextBlock>
-                            <TextBlock VerticalAlignment="Center"  FontSize="12" Foreground="Gray" Margin="8 0">限速、不支持4K</TextBlock>
-                        </StackPanel>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/H264</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/H265</TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left">M4S/AV1</TextBlock>
-                    </ComboBoxItem>
-                </ComboBox.Items>
-                
             </ComboBox>
          
         </StackPanel>
