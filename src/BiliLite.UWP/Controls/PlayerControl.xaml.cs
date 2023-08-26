@@ -792,8 +792,6 @@ namespace BiliLite.Controls
                 ShowPlaylistButton = false;
             }
             EpisodeList.SelectedIndex = index;
-
-
         }
 
         private List<DanmakuItem> FilterFrostDanmaku(IEnumerable<DanmakuItem> danmakus)
@@ -988,6 +986,7 @@ namespace BiliLite.Controls
             {
                 _postion = 0;
             }
+            _logger.Trace("SetPlayItem,上报进度");
             await playerHelper.ReportHistory(CurrentPlayItem, 0);
             await SetDanmaku();
 
@@ -1584,6 +1583,11 @@ namespace BiliLite.Controls
 
             TopOnline.Text = await playerHelper.GetOnline(CurrentPlayItem.avid, CurrentPlayItem.cid);
 
+        }
+
+        public async Task ReportHistory()
+        {
+            await playerHelper.ReportHistory(CurrentPlayItem, Player.Position);
         }
 
         BiliPlayUrlInfo current_quality_info = null;
@@ -2397,6 +2401,8 @@ namespace BiliLite.Controls
                 InteractionChoices.Visibility = Visibility.Visible;
                 return;
             }
+            _logger.Debug("视频结束，上报进度");
+
             playerHelper.ReportHistory(CurrentPlayItem, Player.Duration).RunWithoutAwait();
             //列表顺序播放
             if (PlayerSettingPlayMode.SelectedIndex == 0)
@@ -2600,6 +2606,7 @@ namespace BiliLite.Controls
 
         public async void Dispose()
         {
+            _logger.Trace("Dispose PlayerControl");
             if (CurrentPlayItem != null)
             {
                 SettingService.SetValue<double>(CurrentPlayItem.season_id != 0 ? "ep" + CurrentPlayItem.ep_id : CurrentPlayItem.cid, Player.Position);

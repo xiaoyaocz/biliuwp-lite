@@ -21,6 +21,8 @@ namespace BiliLite
     /// </summary>
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -41,8 +43,9 @@ namespace BiliLite
             // Window.Current.Content.PointerPressed += Content_PointerPressed;
         }
 
-        private void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        private async void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
+            _logger.Trace("应用挂起");
             var tabs = tabView.TabItems;
             foreach (var tab in tabs)
             {
@@ -50,7 +53,7 @@ namespace BiliLite
                 if(!(tabItem.Content is MyFrame frame)) continue;
                 var page = frame.Content;
                 if(!(page is PlayPage playPage)) continue;
-                playPage.DisposePlayer();
+                await playPage.ReportHistory();
             }
         }
 
