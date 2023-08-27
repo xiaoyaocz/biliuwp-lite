@@ -89,14 +89,13 @@ namespace BiliLite.ViewModels.User
 
         #region Private Methods
 
-        private void GetSubmitVideoCore(JObject data)
-        {
+        private void GetSubmitVideoCore(JObject data) {
             var cursorItems = JsonConvert.DeserializeObject<List<SubmitVideoCursorItem>>(
                 data["data"]["item"].ToString());
             var count = data["data"]["count"].ToInt32();
             var items = m_mapper.Map<List<SubmitVideoItemModel>>(cursorItems);
             AttachSubmitVideoItems(items, count);
-            m_lastAid = cursorItems.LastOrDefault()?.Aid;
+            m_lastAid = cursorItems?.LastOrDefault()?.Aid;
         }
 
         private void AttachSubmitVideoItems(List<SubmitVideoItemModel> submitVideoItems, int count)
