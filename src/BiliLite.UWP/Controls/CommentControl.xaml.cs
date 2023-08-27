@@ -104,7 +104,6 @@ namespace BiliLite.Controls
                 var dataCommentModel = JsonConvert.DeserializeObject<DataCommentModel>(result.results);
                 if (dataCommentModel.Code == 0)
                 {
-
                     HandleCommentsNormal(dataCommentModel);
                 }
                 else
@@ -146,6 +145,15 @@ namespace BiliLite.Controls
                 {
                     dataCommentViewModel.Data.Upper.Top.ShowTop = true;
                     dataCommentViewModel.Data.Replies.Insert(0, dataCommentViewModel.Data.Upper.Top);
+                }
+
+                if (dataCommentViewModel.Data.TopReplies != null && dataCommentViewModel.Data.TopReplies.Count > 0)
+                {
+                    foreach (var topReply in dataCommentViewModel.Data.TopReplies)
+                    {
+                        topReply.ShowTop = true;
+                        dataCommentViewModel.Data.Replies.Insert(0, topReply);
+                    }
                 }
 
                 m_viewModel.Comments.AddRange(dataCommentViewModel.Data.Replies);

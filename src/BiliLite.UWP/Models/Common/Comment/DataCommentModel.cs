@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using BiliLite.Controls;
-using BiliLite.ViewModels.Comment;
+using Newtonsoft.Json;
 
 namespace BiliLite.Models.Common.Comment
 {
@@ -24,6 +22,10 @@ namespace BiliLite.Models.Common.Comment
         public List<CommentItem> Replies { get; set; }
 
         public DataCommentModel Upper { get; set; }
-        public CommentViewModel Top { get; set; }
+
+        public CommentItem Top { get; set; }
+
+        [JsonProperty("top_replies")]
+        public List<CommentItem> TopReplies { get; set; }
     }
 }
