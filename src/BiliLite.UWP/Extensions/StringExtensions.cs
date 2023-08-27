@@ -26,6 +26,8 @@ namespace BiliLite.Extensions
     /// <returns></returns>
     public static class StringExtensions
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+
         public static string CcConvertToSrt(this string json, bool toSimplified = false)
         {
             var subtitle = JsonConvert.DeserializeObject<Subtitle>(json);
@@ -79,7 +81,7 @@ namespace BiliLite.Extensions
         /// <returns></returns>
         public static RichTextBlock ToRichTextBlock(this string txt, JObject emote)
         {
-            string input = txt;
+            var input = txt;
             try
             {
                 if (txt != null)
@@ -121,8 +123,9 @@ namespace BiliLite.Extensions
                     return tx;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Error("富文本转换失败", ex);
                 var tx = new RichTextBlock();
                 Paragraph paragraph = new Paragraph();
                 Run run = new Run() { Text = txt };
@@ -131,6 +134,41 @@ namespace BiliLite.Extensions
                 return tx;
 
             }
+        }
+
+        public static int CalculateCommentTextLength(this string input)
+        {
+            var regex = new Regex(@"\[(.*?)\]|https?:\/\/\S+|http?:\/\/\S+");
+            var newInput = regex.Replace(input, "");
+            return newInput.Length;
+        }
+
+        public static string SubstringCommentText(this string input,int length)
+        {
+            var regex = new Regex(@"\[(.*?)\]|https?:\/\/\S+|http?:\/\/\S+");
+            var matches = new Dictionary<int, string>();
+            foreach (Match match in regex.Matches(input))
+            {
+                var index = match.Index;
+                var value = match.Value;
+                matches.Add(index, value);
+            }
+            var newInput = regex.Replace(input, "");
+            var output = newInput.Substring(0, length);
+            foreach (var pair in matches)
+            {
+                var index = pair.Key;
+                var value = pair.Value;
+                if (index < output.Length)
+                {
+                    output = output.Insert(index, value);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return output;
         }
 
         public static string ProtectValues(this string url, params string[] keys)

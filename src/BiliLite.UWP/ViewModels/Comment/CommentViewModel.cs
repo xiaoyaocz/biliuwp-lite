@@ -190,7 +190,7 @@ namespace BiliLite.ViewModels.Comment
 
         public bool ShowPics => Content.Pictures.Count > 0;
 
-        public bool IsContentNeedExpand => m_enableCommentShrink && Content.Message.Length > m_commentShrinkLength;
+        public bool IsContentNeedExpand => m_enableCommentShrink && Content.Message.CalculateCommentTextLength() > m_commentShrinkLength;
 
         [DependsOn(nameof(IsExpanded))]
         public RichTextBlock CommentText
@@ -199,8 +199,7 @@ namespace BiliLite.ViewModels.Comment
             {
                 if (!IsContentNeedExpand || IsContentNeedExpand && IsExpanded)
                     return Content.Text;
-                else
-                    return $"{Content.Message.Substring(0, m_commentShrinkLength)}...".ToRichTextBlock(Content.Emote);
+                return $"{Content.Message.SubstringCommentText(m_commentShrinkLength)}...".ToRichTextBlock(Content.Emote);
             }
         }
 
