@@ -159,7 +159,7 @@ namespace BiliLite.Controls
             }
             m_page++;
 
-            if (model.Data.Replies.Count >= 20)
+            if (model.Data.Replies.Count >= 15)
             {
                 m_viewModel.BtnLoadMoreVisibility = true;
             }
