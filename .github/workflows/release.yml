@@ -53,6 +53,13 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.3
 
+    - name: Windows SDK Install
+      uses: ChristopheLav/windows-sdk-install@v1.0.1
+      with:
+        version-sdk: 18362
+        features: 'OptionId.WindowsPerformanceToolkit,OptionId.WindowsDesktopDebuggers,OptionId.AvrfExternal,OptionId.NetFxSoftwareDevelopmentKit,OptionId.WindowsSoftwareLogoToolkit,OptionId.IpOverUsb,OptionId.MSIInstallTools,OptionId.SigningTools,OptionId.UWPManaged,OptionId.UWPCPP,OptionId.UWPLocalized,OptionId.DesktopCPPx86,OptionId.DesktopCPPx64,OptionId.DesktopCPParm,OptionId.DesktopCPParm64'
+
+
     - name: Update manifest version
       run: |
         [xml]$manifest = get-content ".\$env:UWP_Project_Directory\Package.appxmanifest"
