@@ -158,7 +158,7 @@ namespace BiliLite.Modules.Player.Playurl
                 });
             }
             // 处理无损音质
-            if (flacAudio != null && flacAudio.Display)
+            if (flacAudio is { Display: true, Audio: { } })
             {
                 var audio = flacAudio.Audio;
                 audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
@@ -175,7 +175,7 @@ namespace BiliLite.Modules.Player.Playurl
             }
 
             // 处理杜比音效
-            if (dolbyAudio != null && dolbyAudio.Audio!=null&& dolbyAudio.Audio.Count>0)
+            if (dolbyAudio is { Audio: { } } && dolbyAudio.Audio.Count > 0)
             {
                 var audio = dolbyAudio.Audio[0];
                 audio.baseUrl = await HandleUrl(audio.baseUrl, audio.backupUrl, userAgent, referer, isProxy);
