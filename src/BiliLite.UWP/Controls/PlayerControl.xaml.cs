@@ -2523,7 +2523,7 @@ namespace BiliLite.Controls
         {
             if (!e.need_change)
             {
-                ShowErrorDialog(e.message + "[ChangeEngine]");
+                _logger.Warn($"[ChangeEngine] {e.message}");
                 return;
             }
             VideoLoading.Visibility = Visibility.Visible;
