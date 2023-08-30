@@ -24,6 +24,11 @@ namespace BiliLite.Services
             LogService.Log(message, LogType.Debug, ex, methodName, m_typeName);
         }
 
+        public void Warn(string message, Exception ex = null, [CallerMemberName] string methodName = null)
+        {
+            LogService.Log(message, LogType.Warn, ex, methodName, m_typeName);
+        }
+
         public void Error(string message, Exception ex = null, [CallerMemberName] string methodName = null)
         {
             LogService.Log(message, LogType.Error, ex, methodName, m_typeName);

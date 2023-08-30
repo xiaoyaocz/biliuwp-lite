@@ -48,8 +48,10 @@ namespace BiliLite.Services
                 FileName = storageFolder.Path + @"\log\" + DateTime.Now.ToString("yyyyMMdd") + ".log",
                 Layout = "${longdate}|${level:uppercase=true}|${threadid}|${event-properties:item=type}.${event-properties:item=method}|${message}|${exception:format=Message,StackTrace}"
             };
-            config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
+            config.AddRule(LogLevel.Trace, LogLevel.Trace, logfile);
             config.AddRule(LogLevel.Debug, LogLevel.Debug, logfile);
+            config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
+            config.AddRule(LogLevel.Warn, LogLevel.Warn, logfile);
             config.AddRule(LogLevel.Error, LogLevel.Error, logfile);
             config.AddRule(LogLevel.Fatal, LogLevel.Fatal, logfile);
             LogManager.Configuration = config;

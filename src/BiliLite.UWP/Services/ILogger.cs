@@ -12,6 +12,9 @@ namespace BiliLite.Services
 
         public void Debug(string message, Exception ex = null, [CallerMemberName] string methodName = null);
 
+        public void Warn(string message, Exception ex = null, [CallerMemberName] string methodName = null);
+
+
         public void Error(string message, Exception ex = null, [CallerMemberName] string methodName = null);
 
         public void Fatal(string message, Exception ex = null, [CallerMemberName] string methodName = null);
