@@ -892,12 +892,12 @@
                                                                 </Grid>
 
                                                                 <StackPanel  VerticalAlignment="Center" Grid.Column="1">
-                                                                    <TextBlock FontSize="12" Foreground="Black" Text="{x:Bind username}"></TextBlock>
-                                                                    <TextBlock Foreground="Black">￥<Run Text="{x:Bind Path=price}"/> <Run Foreground="Gray" FontSize="12" Text="("/><Run Foreground="Gray" FontSize="12" Text="{x:Bind Path=price_gold,Converter={StaticResource numberToStringConvert}}"/><Run Foreground="Gray" FontSize="12" Text="金瓜子)"/></TextBlock>
+                                                                    <TextBlock Foreground="Black" Text="{Binding username}" IsTextSelectionEnabled="True"></TextBlock>
+                                                                    <TextBlock Foreground="Black" IsTextSelectionEnabled="True">￥<Run Text="{x:Bind Path=price}"/> <Run Foreground="Gray" FontSize="12" Text="("/><Run Foreground="Gray" FontSize="12" Text="{x:Bind Path=price_gold,Converter={StaticResource numberToStringConvert}}"/><Run Foreground="Gray" FontSize="12" Text="金瓜子)"/></TextBlock>
                                                                 </StackPanel>
                                                             </Grid>
                                                             <Grid Padding="12" Background="{x:Bind Path=background_bottom_color,Mode=OneWay,Converter={StaticResource colorConvert}}">
-                                                                <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="white" Text="{x:Bind Path=message}"></TextBlock>
+                                                                <TextBlock TextWrapping="Wrap" FontSize="14" Foreground="white" Text="{x:Bind Path=message}" IsTextSelectionEnabled="True"></TextBlock>
                                                             </Grid>
                                                         </StackPanel>
                                                     </Flyout>
