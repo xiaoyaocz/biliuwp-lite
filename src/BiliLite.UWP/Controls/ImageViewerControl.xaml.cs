@@ -79,7 +79,17 @@ namespace BiliLite.Controls
                 imgs[i].Width = img.PixelWidth;
                 image.Source = img;
                 UpdateLayout();
-                var factor = scrollViewer.ViewportHeight / imgs[i].Height;
+
+                double factor;
+                if (imgs[i].Height > imgs[i].Width)
+                {
+                    factor = scrollViewer.ViewportHeight / imgs[i].Height;
+                }
+                else
+                {
+                    factor = scrollViewer.ViewportWidth / imgs[i].Width;
+                }
+
                 scrollViewer.ChangeView(null, null, factor > 1 ? 1 : (float)factor);
 
             }

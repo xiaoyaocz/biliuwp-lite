@@ -27,7 +27,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log("读取默认分区失败！" + ex.Message, LogType.ERROR, ex);
+                logger.Log("读取默认分区失败！" + ex.Message, LogType.Error, ex);
                 return new List<Modules.Home.RegionItem>();
             }
         }
@@ -69,7 +69,7 @@ namespace BiliLite.Services
             catch (Exception ex)
             {
                 Regions = await AppHelper.GetDefaultRegions();
-                logger.Log("读取分区失败" + ex.Message, LogType.ERROR, ex);
+                logger.Log("读取分区失败" + ex.Message, LogType.Error, ex);
             }
         }
 

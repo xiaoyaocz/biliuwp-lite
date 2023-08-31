@@ -11,9 +11,11 @@
       xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
       xmlns:fa="using:FontAwesome5"
       xmlns:models="using:BiliLite.Models"
-    Background="Transparent">
+      xmlns:anime="using:BiliLite.Models.Common.Anime"
+      xmlns:home="using:BiliLite.ViewModels.Home"
+      Background="Transparent">
     <Page.Resources>
-        <DataTemplate x:Key="HotAnimeItem" x:DataType="model:AnimeRankModel">
+        <DataTemplate x:Key="HotAnimeItem" x:DataType="anime:AnimeRankModel">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -24,7 +26,7 @@
                 <Border CornerRadius="{StaticResource ImageCornerRadius}">
                     <Grid>
 
-                        <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='300w'}"></toolkit:ImageEx>
+                        <toolkit:ImageEx IsCacheEnabled="True" MaxHeight="240" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=Cover,Converter={StaticResource imageConvert},ConverterParameter='300w'}"></toolkit:ImageEx>
                         <Grid VerticalAlignment="Bottom" Padding="8">
                             <Grid.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -33,16 +35,16 @@
                                 </LinearGradientBrush>
                             </Grid.Background>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=display}"></TextBlock>
+                                <TextBlock FontSize="12" Foreground="White" Text="{x:Bind Path=Display}"></TextBlock>
                             </StackPanel>
                         </Grid>
-                        <Border Visibility="{Binding show_badge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
-                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=badge}"></TextBlock>
+                        <Border Visibility="{Binding ShowBadge}" VerticalAlignment="Top" Background="#FFFB9E60" HorizontalAlignment="Right" Margin="4" Padding="8 4" CornerRadius="2">
+                            <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="#FFFFFFFF" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Badge}"></TextBlock>
                         </Border>
                     </Grid>
                 </Border>
-                <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=title}"></TextBlock>
-                <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=index_show}"></TextBlock>
+                <TextBlock Grid.Row="1" Margin="4 4 4 0" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Title}"></TextBlock>
+                <TextBlock Grid.Row="2" Margin="4 0 4 4" TextWrapping="Wrap" FontSize="12" Foreground="Gray" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=IndexShow}"></TextBlock>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -50,7 +52,7 @@
         <winui:RefreshContainer RefreshRequested="RefreshContainer_RefreshRequested">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel Padding="16 8">
-                    <controls:Carousel x:Name="control" ItemsSource="{x:Bind Path=homeBangumi.HomeData.banners,Mode=OneWay}" MaxItems="1" SlideInterval="5000" AspectRatio="3.49" MaxHeight="240">
+                    <controls:Carousel x:Name="control" ItemsSource="{x:Bind Path=m_viewModel.HomeData.Banners,Mode=OneWay}" MaxItems="1" SlideInterval="5000" AspectRatio="3.49" MaxHeight="240">
                         <controls:Carousel.ContentTemplate>
                             <DataTemplate>
                                 <HyperlinkButton Margin="4 0" Padding="0" Click="BannerItem_Click">
@@ -62,7 +64,7 @@
                         </controls:Carousel.ContentTemplate>
                     </controls:Carousel>
                     <StackPanel  Margin="0 8 0 0">
-                        <GridView ItemClick="GridView_ItemClick" ItemsSource="{x:Bind Path=homeBangumi.Entrances,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
+                        <GridView ItemClick="GridView_ItemClick" ItemsSource="{x:Bind Path=m_viewModel.Entrances,Mode=OneWay}" IsItemClickEnabled="True" SelectionMode="None" HorizontalAlignment="Center">
                             <GridView.ItemTemplate>
                                 <DataTemplate x:DataType="models:PageEntranceModel">
                                     <StackPanel>
@@ -78,7 +80,7 @@
                             </GridView.ItemContainerStyle>
                         </GridView>
                     </StackPanel>
-                    <StackPanel Margin="0 8 0 0" Visibility="{x:Bind Path=homeBangumi.ShowFollows,Mode=OneWay}">
+                    <StackPanel Margin="0 8 0 0" Visibility="{x:Bind Path=m_viewModel.ShowFollows,Mode=OneWay}">
                         <Grid>
                             <TextBlock FontSize="18" FontWeight="Bold">我的追番</TextBlock>
                             <HyperlinkButton x:Name="btnOpenMyFollow" Click="btnOpenMyFollow_Click" HorizontalAlignment="Right" Margin="8 -4 0 0">
@@ -88,9 +90,9 @@
                         <controls:ScrollGridView 
                             MoveOffset="600" 
                             AlwayShowButton="False" 
-                            ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
-                            PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
-                            ItemsSource="{x:Bind Path=homeBangumi.Follows,Mode=OneWay}" 
+                            ItemClick="{x:Bind Path=m_viewModel.SeasonItemClick}" 
+                            PointerPressed="{x:Bind Path=m_viewModel.SeasonItemPressed}"
+                            ItemsSource="{x:Bind Path=m_viewModel.Follows,Mode=OneWay}" 
                             SelectionMode="None" 
                             Margin="-4 0 0 0"
                             ScrollViewer.HorizontalScrollMode="Enabled"
@@ -151,12 +153,12 @@
                                 <TextBlock>完整时间表</TextBlock>
                             </HyperlinkButton>
                         </Grid>
-                        <controls:ScrollGridView ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
-                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
+                        <controls:ScrollGridView ItemClick="{x:Bind Path=m_viewModel.SeasonItemClick}" 
+                                                 PointerPressed="{x:Bind Path=m_viewModel.SeasonItemPressed}"
                                                  Margin="-4 0 0 0"
                                                  MoveOffset="600" 
                                                  AlwayShowButton="False" 
-                                                 ItemsSource="{x:Bind Path=homeBangumi.HomeData.today,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="True">
+                                                 ItemsSource="{x:Bind Path=m_viewModel.HomeData.Today,Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="True">
                             <GridView.ItemContainerStyle>
                                 <Style TargetType="GridViewItem">
                                     <Setter Property="Margin" Value="4"></Setter>
@@ -211,9 +213,9 @@
                         <controls:ScrollGridView x:Name="gridView" 
                                                  Margin="-4 0 0 0"
                                                  MoveOffset="600" AlwayShowButton="False" SelectionMode="None" 
-                                                 ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}"
-                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}" 
-                                                 ItemsSource="{x:Bind Path=homeBangumi.HomeData.ranks,Mode=OneWay}" 
+                                                 ItemClick="{x:Bind Path=m_viewModel.SeasonItemClick}"
+                                                 PointerPressed="{x:Bind Path=m_viewModel.SeasonItemPressed}" 
+                                                 ItemsSource="{x:Bind Path=m_viewModel.HomeData.Ranks,Mode=OneWay}" 
                                                  ScrollViewer.VerticalScrollMode="Disabled" 
                                                  ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
@@ -245,9 +247,9 @@
                                                  Margin="-4 0 0 0"
                                                  AlwayShowButton="False" 
                                                  SelectionMode="None" 
-                                                 ItemClick="{x:Bind Path=homeBangumi.SeasonItemClick}" 
-                                                 PointerPressed="{x:Bind Path=homeBangumi.SeasonItemPressed}"
-                                                 ItemsSource="{x:Bind Path=homeBangumi.HomeData.hots,Mode=OneWay}" 
+                                                 ItemClick="{x:Bind Path=m_viewModel.SeasonItemClick}" 
+                                                 PointerPressed="{x:Bind Path=m_viewModel.SeasonItemPressed}"
+                                                 ItemsSource="{x:Bind Path=m_viewModel.HomeData.Hots,Mode=OneWay}" 
                                                  ScrollViewer.VerticalScrollMode="Disabled" 
                                                  ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                  ScrollViewer.HorizontalScrollBarVisibility="Hidden" 
@@ -268,14 +270,14 @@
                             </GridView.ItemsPanel>
                         </controls:ScrollGridView>
                     </StackPanel>
-                    <ItemsControl Margin="0 8 0 0" ItemsSource="{x:Bind Path=homeBangumi.HomeData.falls,Mode=OneWay}">
+                    <ItemsControl Margin="0 8 0 0" ItemsSource="{x:Bind Path=m_viewModel.AnimeFalls,Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel Orientation="Vertical"></ItemsStackPanel>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="model:AnimeFallModel">
+                            <DataTemplate x:DataType="home:AnimeFallViewModel">
                                 <StackPanel>
                                     <toolkit:AdaptiveGridView ItemClick="gvFall_ItemClick" 
                                                               Margin="-4 0 0 0" 
@@ -283,7 +285,7 @@
                                                               ScrollViewer.VerticalScrollMode="Disabled" 
                                                               ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                               StretchContentForSingleRow="False"
-                                                              ItemsSource="{x:Bind Path=items,Mode=OneWay}" 
+                                                              ItemsSource="{x:Bind Path=Items,Mode=OneWay}" 
                                                               ItemHeight="168" DesiredWidth="540" 
                                                               SelectionMode="None" IsItemClickEnabled="True">
                                         <toolkit:AdaptiveGridView.ItemContainerStyle>
@@ -294,19 +296,19 @@
                                         </toolkit:AdaptiveGridView.ItemContainerStyle>
                                         <toolkit:AdaptiveGridView.Header>
                                             <Grid>
-                                                <TextBlock FontSize="18" Margin="4 0 0 0" FontWeight="Bold" Text="{Binding title}"></TextBlock>
+                                                <TextBlock FontSize="18" Margin="4 0 0 0" FontWeight="Bold" Text="{Binding Title}"></TextBlock>
                                             </Grid>
                                         </toolkit:AdaptiveGridView.Header>
                                         <toolkit:AdaptiveGridView.ItemTemplate>
-                                            <DataTemplate x:DataType="model:AnimeFallItemModel">
+                                            <DataTemplate x:DataType="anime:AnimeFallItemModel">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition />
                                                         <RowDefinition Height="28" />
                                                         <!--<RowDefinition Height="48"/>-->
                                                     </Grid.RowDefinitions>
-                                                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=cover,Converter={StaticResource imageConvert},ConverterParameter='180h'}"></toolkit:ImageEx>
-                                                    <TextBlock Grid.Row="1" Margin="4" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
+                                                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=Cover,Converter={StaticResource imageConvert},ConverterParameter='180h'}"></toolkit:ImageEx>
+                                                    <TextBlock Grid.Row="1" Margin="4" MaxLines="1" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind Title}"></TextBlock>
                                                     <!--<TextBlock  Grid.Row="2" Margin="4 0 4 4" FontSize="12" Foreground="Gray" MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding desc}"></TextBlock>-->
                                                 </Grid>
                                             </DataTemplate>
@@ -328,7 +330,7 @@
         <controls:RoundButton x:Name="btnRefresh" Click="btnRefresh_Click" VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>
-        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=homeBangumi.Loading,Mode=OneWay}" Background="Transparent">
+        <Grid x:Name="gridLoading" Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}" Background="Transparent">
             <ProgressRing IsActive="True" VerticalAlignment="Center" HorizontalAlignment="Center"></ProgressRing>
         </Grid>
     </Grid>

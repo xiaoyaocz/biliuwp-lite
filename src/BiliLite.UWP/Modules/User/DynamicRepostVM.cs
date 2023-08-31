@@ -100,7 +100,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<DynamicRepostVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -140,7 +140,7 @@ namespace BiliLite.Modules.User
                 Datetime = TimeExtensions.TimestampToDatetime(item.desc.timestamp).ToString(),
                 DynamicID = item.desc.dynamic_id,
                 Mid = item.desc.uid,
-                Time = item.desc.timestamp.ToString().HandelTimestamp(),
+                Time = item.desc.timestamp.HandelTimestamp(),
                 UserCommand = UserCommand
             };
             var content = "";

@@ -53,12 +53,13 @@ namespace BiliLite
                 .Register()
                 .UnhandledException += SynchronizationContext_UnhandledException;
         }
+
         private void SynchronizationContext_UnhandledException(object sender, AysncUnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             try
             {
-                logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
+                logger.Log("程序运行出现错误", LogType.Error, e.Exception);
                 Notify.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)
@@ -70,7 +71,7 @@ namespace BiliLite
             e.Handled = true;
             try
             {
-                logger.Log("程序运行出现错误", LogType.ERROR, e.Exception);
+                logger.Log("程序运行出现错误", LogType.Error, e.Exception);
                 Notify.ShowMessageToast("程序出现一个错误，已记录");
             }
             catch (Exception)

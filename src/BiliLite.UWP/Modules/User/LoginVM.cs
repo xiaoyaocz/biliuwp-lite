@@ -161,7 +161,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("登录二次验证失败", LogType.ERROR, ex);
+                logger.Log("登录二次验证失败", LogType.Error, ex);
             }
         }
 
@@ -238,7 +238,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<LoginVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
 
@@ -382,6 +382,7 @@ namespace BiliLite.Modules.User
                 var results = await accountApi.SMSLogin(CurrentCountry.country_code, Phone, Code, sessionId, captchaKey).Request();
                 if (results.status)
                 {
+                    SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, false);
                     var data = await results.GetData<LoginResultModel>();
                     var result = await HandelLoginResult(data.code, data.message, data.data);
                     HnadelResult(result);
@@ -439,6 +440,7 @@ namespace BiliLite.Modules.User
                 var results = await accountApi.LoginV3(UserName, pwd).Request();
                 if (results.status)
                 {
+                    SettingService.SetValue(SettingConstants.Account.IS_WEB_LOGIN, false);
                     var data = await results.GetData<LoginResultModel>();
                     var result = await HandelLoginResult(data.code, data.message, data.data);
 
@@ -612,7 +614,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取和加载登录二维码失败", LogType.ERROR, ex);
+                logger.Log("读取和加载登录二维码失败", LogType.Error, ex);
                 Notify.ShowMessageToast("加载二维码失败");
             }
             finally
@@ -710,7 +712,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("获取验证手机号失败", LogType.ERROR, ex);
+                logger.Log("获取验证手机号失败", LogType.Error, ex);
             }
         }
 
@@ -743,7 +745,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("发送短信验证码失败", LogType.ERROR, ex);
+                logger.Log("发送短信验证码失败", LogType.Error, ex);
             }
         }
 
@@ -844,7 +846,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("读取极验验证码失败", LogType.ERROR, ex);
+                logger.Log("读取极验验证码失败", LogType.Error, ex);
                 return null;
             }
         }

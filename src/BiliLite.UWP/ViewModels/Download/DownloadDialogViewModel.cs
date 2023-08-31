@@ -2,12 +2,13 @@
 using BiliLite.ViewModels.Common;
 using PropertyChanged;
 using System.Collections.Generic;
+using BiliLite.Models.Common;
 
 namespace BiliLite.ViewModels.Download
 {
     public class DownloadDialogViewModel : BaseViewModel
     {
-        public int VideoTypeSelectedIndex { get; set; }
+        public DefaultVideoTypeOption SelectedVideoType { get; set; }
 
         public BiliPlayUrlInfo SelectedQuality { get; set; }
 
@@ -19,7 +20,7 @@ namespace BiliLite.ViewModels.Download
 
         public BiliDashAudioPlayUrlInfo SelectedAudioQuality { get; set; }
 
-        [DependsOn(nameof(VideoTypeSelectedIndex))]
-        public bool ShowAudioQualityComboBox { get => VideoTypeSelectedIndex > 0; }
+        [DependsOn(nameof(SelectedVideoType))]
+        public bool ShowAudioQualityComboBox { get => SelectedVideoType.Value > 0; }
     }
 }

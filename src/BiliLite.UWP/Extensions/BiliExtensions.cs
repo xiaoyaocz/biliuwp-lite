@@ -8,14 +8,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.Web.Http.Filters;
 
 namespace BiliLite.Extensions
 {
@@ -66,30 +64,6 @@ namespace BiliLite.Extensions
         }
 
         /// <summary>
-        /// 获取CSRF令牌
-        /// </summary>
-        /// <returns></returns>
-        public static string GetCSRFToken()
-        {
-            var fiter = new HttpBaseProtocolFilter();
-            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
-            //没有Cookie
-            if (cookies == null || cookies.Count == 0)
-            {
-                throw new Exception("未登录");
-            }
-
-            var csrf = cookies.FirstOrDefault(x => x.Name == "bili_jct")?.Value;
-
-            if (string.IsNullOrEmpty(csrf))
-            {
-                throw new Exception("未登录");
-            }
-
-            return csrf;
-        }
-
-        /// <summary>
         /// 默认一些请求头
         /// </summary>
         /// <returns></returns>
@@ -106,7 +80,7 @@ namespace BiliLite.Extensions
             try
             {
                 var num = $"{SystemInformation.ApplicationVersion.Major}{SystemInformation.ApplicationVersion.Minor.ToString("00")}{SystemInformation.ApplicationVersion.Build.ToString("00")}";
-                _logger.Info($"BiliLite.UWP version: {num}");
+                _logger.Log($"BiliLite.UWP version: {num}", LogType.Necessary);
                 var result = await new GitApi().CheckUpdate().Request();
                 var ver = JsonConvert.DeserializeObject<NewVersionResponse>(result.results);
                 var ignoreVersion = SettingService.GetValue(SettingConstants.Other.IGNORE_VERSION, "");

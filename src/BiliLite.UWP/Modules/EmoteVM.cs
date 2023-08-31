@@ -60,7 +60,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<EmoteVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

@@ -142,6 +142,21 @@ namespace BiliLite.Services
             return url;
         }
 
+        public static string GetBuvid()
+        {
+            var mac = new List<string>();
+            for (var i = 0; i < 6; i++)
+            {
+                var min = Math.Min(0, 0xff);
+                var max = Math.Max(0, 0xff);
+                var num = int.Parse((new Random().Next(min, max + 1)).ToString()).ToString("x2");
+                mac.Add(num);
+            }
+            var md5 = string.Join(":", mac).ToMD5();
+            var md5Arr = md5.ToCharArray();
+            return $"XY{md5Arr[2]}{md5Arr[12]}{md5Arr[22]}{md5}";
+        }
+
         /// <summary>
         /// 默认一些请求头
         /// </summary>

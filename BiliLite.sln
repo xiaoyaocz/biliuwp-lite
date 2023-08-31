@@ -15,11 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiliLite.gRPC", "src\BiliLi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{30AD97ED-AD18-4F64-8D4C-D326B3AB100D}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		document\entrance.json = document\entrance.json
 		document\new_version.json = document\new_version.json
+		nuget.config = nuget.config
 		README.md = README.md
-		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\release-drafter.yml = .github\release-drafter.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "BiliLite.Packages", "src\BiliLite.Packages\BiliLite.Packages.wapproj", "{64B1CE94-6533-489A-94D4-A7152E3BE03F}"

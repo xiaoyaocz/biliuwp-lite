@@ -9,6 +9,7 @@
     xmlns:modules="using:BiliLite.Modules"
     xmlns:font="using:FontAwesome5"
     xmlns:covert="using:BiliLite.Converters" xmlns:controls="using:Microsoft.UI.Xaml.Controls" xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:common="using:BiliLite.Models.Common"
     Background="Transparent">
     <Page.Resources>
         <SolidColorBrush x:Key="PivotHeaderBackground" Color="{ThemeResource TopPaneBackground}"></SolidColorBrush>
@@ -233,14 +234,10 @@
                 <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <TextBlock  Margin="0 16 0 8"  FontSize="16">优先视频编码</TextBlock>
-                        <ComboBox x:Name="cbVideoType" SelectedIndex="0" MinWidth="200">
-                            <ComboBox.Items>
-                                <ComboBoxItem>FLV/H.264</ComboBoxItem>
-                                <ComboBoxItem>AVC/H.264</ComboBoxItem>
-                                <ComboBoxItem>HEVC/H.265</ComboBoxItem>
-                                <ComboBoxItem>AV1</ComboBoxItem>
-                            </ComboBox.Items>
-                        </ComboBox>
+                        <ComboBox  x:Name="cbVideoType" MinWidth="200"
+                                   ItemsSource="{x:Bind common:DefaultVideoTypeOptions.Options}" 
+                                   SelectedValuePath="Value"
+                                   DisplayMemberPath="Name"></ComboBox>
                         <RichTextBlock Margin="0 12 0 0">
                             <Paragraph>
                                 <Run>视频编码为HEVC时系统需要</Run>
@@ -399,6 +396,18 @@
                 </PivotItem.Header>
                 <ScrollViewer Padding="12 0" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
+                        <TextBlock  Margin="0 16 0 8"  FontSize="16">弹幕引擎</TextBlock>
+                        <ComboBox x:Name="cbDanmakuEngine" SelectedIndex="0" MinWidth="200" SelectedValuePath="Value">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Text}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                            <ComboBox.Items>
+                                <common:ComboBoxItemData Text="NSDanmaku" Value="0"></common:ComboBoxItemData>
+                                <common:ComboBoxItemData Text="寒霜弹幕使" Value="1"></common:ComboBoxItemData>
+                            </ComboBox.Items>
+                        </ComboBox>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">默认弹幕状态</TextBlock>
                         <ToggleSwitch x:Name="DanmuSettingState" OnContent="打开" OffContent="关闭"></ToggleSwitch>
                         <TextBlock  Margin="0 16 0 8" FontSize="16">弹幕顶部距离</TextBlock>
@@ -534,16 +543,12 @@
                         <Button x:Name="DownloadChangeOldPath" Margin="0 8">导入旧版目录</Button>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">加载旧版下载的视频</TextBlock>
                         <ToggleSwitch x:Name="swDownloadLoadOld"></ToggleSwitch>
-                        
+
                         <TextBlock  Margin="0 8 0 4"  FontSize="16">优先下载视频类型</TextBlock>
-                        <TextBlock>当选择FLV时不支持4K视频下载，部分视频不支持M4S</TextBlock>
-                        <ComboBox x:Name="cbDownloadVideoType" Margin="0 8"  MinWidth="200">
-                            <ComboBox.Items>
-                                <ComboBoxItem>FLV格式(H264)</ComboBoxItem>
-                                <ComboBoxItem>M4S格式(H264)</ComboBoxItem>
-                                <ComboBoxItem>M4S格式(HEVC)</ComboBoxItem>
-                                <ComboBoxItem>M4S格式(AV1)</ComboBoxItem>
-                            </ComboBox.Items>
+                        <ComboBox x:Name="cbDownloadVideoType" Margin="0 8"  MinWidth="200"
+                                  ItemsSource="{x:Bind common:DefaultVideoTypeOptions.Options}" 
+                                  SelectedValuePath="Value"
+                                  DisplayMemberPath="Name">
                         </ComboBox>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">同时下载多个任务</TextBlock>
                         <ToggleSwitch x:Name="swDownloadParallelDownload"></ToggleSwitch>
@@ -566,6 +571,19 @@
                         <controls:NumberBox x:Name="numAutoClearLogDay" Minimum="0" Margin="0 0 0 8" Width="200" HorizontalAlignment="Left" Value="0" SpinButtonPlacementMode="Compact" SmallChange="2" ></controls:NumberBox>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">保护日志中敏感信息</TextBlock>
                         <ToggleSwitch x:Name="swProtectLogInfo"></ToggleSwitch>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">日志级别</TextBlock>
+                        <ComboBox x:Name="cbLogLevel" Margin="0 8"  MinWidth="200">
+                            <ComboBox.Items>
+                                <ComboBoxItem>Trace</ComboBoxItem>
+                                <ComboBoxItem>Debug</ComboBoxItem>
+                                <ComboBoxItem>Info</ComboBoxItem>
+                                <ComboBoxItem>Warn</ComboBoxItem>
+                                <ComboBoxItem>Error</ComboBoxItem>
+                                <ComboBoxItem>Fatal</ComboBoxItem>
+                            </ComboBox.Items>
+                        </ComboBox>
+                        <TextBlock  Margin="0 8 0 0"  FontSize="16">优先使用Grpc请求动态</TextBlock>
+                        <ToggleSwitch x:Name="swFirstGrpcRequestDynamic"></ToggleSwitch>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">BiliLite-WebApi（用于处理UWP无法完成的事项）</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <AutoSuggestBox x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>

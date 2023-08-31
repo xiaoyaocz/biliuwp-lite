@@ -201,7 +201,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<VideoDetailPageViewModel>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
         }
@@ -222,15 +222,6 @@ namespace BiliLite.Modules
                 }
 
                 var data = await results.GetJson<ApiDataModel<VideoDetailModel>>();
-                if (!data.success)
-                {
-                    // 通过代理获取视频详情
-                    var result_proxy = await videoAPI.DetailProxy(id, isbvid).Request();
-                    if (result_proxy.status)
-                    {
-                        data = await result_proxy.GetJson<ApiDataModel<VideoDetailModel>>();
-                    }
-                }
 
                 if (!data.success)
                 {
@@ -268,7 +259,7 @@ namespace BiliLite.Modules
                     return;
                 }
 
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<VideoDetailPageViewModel>(ex);
                 Notify.ShowMessageToast(handel.message);
                 ShowError = true;
                 ErrorMsg = handel.message;

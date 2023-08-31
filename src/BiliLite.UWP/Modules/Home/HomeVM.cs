@@ -67,7 +67,7 @@ namespace BiliLite.Modules
                 Icon=FontAwesome5.EFontAwesomeIcon.Solid_Paw,
                 Page=typeof(Pages.Home.AnimePage),
                 Title="番剧",
-                Parameters=AnimeType.bangumi,
+                Parameters=AnimeType.Bangumi,
                 NeedLogin=false,
                 Show=true
             },
@@ -75,7 +75,7 @@ namespace BiliLite.Modules
                 Icon= FontAwesome5.EFontAwesomeIcon.Solid_Feather,
                 Page=typeof(Pages.Home.AnimePage),
                 Title="国创",
-                Parameters=AnimeType.guochuang,
+                Parameters=AnimeType.GuoChuang,
                 NeedLogin=false,
                 Show=true
             },

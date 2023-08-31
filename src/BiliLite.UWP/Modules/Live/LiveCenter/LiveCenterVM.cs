@@ -57,7 +57,7 @@ namespace BiliLite.Modules.Live.LiveCenter
             }
             catch (Exception ex)
             {
-                logger.Log("读取签到信息失败", LogType.ERROR, ex);
+                logger.Log("读取签到信息失败", LogType.Error, ex);
                 Notify.ShowMessageToast("读取签到信息失败");
             }
         }

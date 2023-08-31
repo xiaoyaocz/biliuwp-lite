@@ -21,5 +21,14 @@ namespace BiliLite.Converters
         {
             return Visibility.Visible;
         }
+
+        public static Visibility AntiConvert(bool value)
+        {
+            return value switch
+            {
+                true => Visibility.Collapsed,
+                false => Visibility.Visible,
+            };
+        }
     }
 }

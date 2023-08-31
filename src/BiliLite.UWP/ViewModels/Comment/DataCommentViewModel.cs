@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using BiliLite.Models.Common.Comment;
 
 namespace BiliLite.ViewModels.Comment
@@ -22,6 +23,9 @@ namespace BiliLite.ViewModels.Comment
         public ObservableCollection<CommentViewModel> Replies { get; set; }
 
         public DataCommentViewModel Upper { get; set; }
+        
         public CommentViewModel Top { get; set; }
+        
+        public List<CommentViewModel> TopReplies { get; set; }
     }
 }

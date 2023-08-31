@@ -144,7 +144,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     //记录错误，不弹出通知
-                    logger.Log(ex.Message, LogType.ERROR, ex);
+                    logger.Log(ex.Message, LogType.Error, ex);
                 }
 
             }
@@ -191,7 +191,7 @@ namespace BiliLite.Pages
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
              {
-                 logger.Log("直播加载失败", LogType.ERROR, new Exception(args.ErrorMessage));
+                 logger.Log("直播加载失败", LogType.Error, new Exception(args.ErrorMessage));
                  await new MessageDialog($"啊，直播加载失败了\r\n错误信息:{args.ErrorMessage}\r\n请尝试在直播设置中打开/关闭硬解试试", "播放失败").ShowAsync();
              });
 

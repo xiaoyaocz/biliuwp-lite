@@ -8,15 +8,15 @@
     mc:Ignorable="d"
     xmlns:controls="using:BiliLite.Controls" 
     xmlns:convert="using:BiliLite.Converters" 
-    xmlns:modules="using:BiliLite.Modules" 
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls" 
       xmlns:winui="using:Microsoft.UI.Xaml.Controls" 
-      xmlns:fa="using:FontAwesome5" 
-    Background="Transparent">
+      xmlns:fa="using:FontAwesome5"
+      xmlns:dynamic="using:BiliLite.Models.Common.Dynamic"
+      Background="Transparent">
     <Page.Resources>
         <convert:DatetimeConvert x:Key="time"/>
         <convert:ProgressToTimeConverter x:Key="ProgressToTimeConverter"/>
-        <DataTemplate x:Key="DynamicVideo" x:DataType="modules:DynamicItemModel">
+        <DataTemplate x:Key="DynamicVideo" x:DataType="dynamic:DynamicItemModel">
             <Grid Background="#00FFFFFF">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
@@ -30,7 +30,7 @@
                 </Grid.ColumnDefinitions>
                 <Border CornerRadius="{StaticResource ImageCornerRadius}">
                     <Grid>
-                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=video.pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                        <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=Video.Pic,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                         <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
                             <TextBlock Foreground="White" FontSize="12">投稿视频</TextBlock>
                         </Border>
@@ -42,43 +42,43 @@
                                 </LinearGradientBrush>
                             </Grid.Background>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock FontSize="10" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{x:Bind video.duration, Mode=OneWay, Converter={StaticResource ProgressToTimeConverter}}"></TextBlock>
+                                <TextBlock FontSize="10" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Text="{x:Bind Video.Duration, Mode=OneWay, Converter={StaticResource ProgressToTimeConverter}}"></TextBlock>
                             </StackPanel>
                         </Grid>
                     </Grid>
                 </Border>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=video.title}"></TextBlock>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:<Run Text="{x:Bind Path=video.stat.view,Converter={StaticResource numberToStringConvert}}"/> 弹幕:<Run Text="{x:Bind Path=video.stat.danmaku,Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Video.Title}"></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0"><Run Text="{x:Bind Path=Video.DisplayViewCountText}"/> <Run Text="{x:Bind Path=Video.DisplayDanmakuCountText}"/></TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <Ellipse Width="24" Height="24">
                             <Ellipse.Fill>
-                                <ImageBrush ImageSource="{x:Bind Path=video.owner.face,Converter={StaticResource imageConvert2},ConverterParameter='36h'}"></ImageBrush>
+                                <ImageBrush ImageSource="{x:Bind Path=Video.Owner.Face,Converter={StaticResource imageConvert2},ConverterParameter='36h'}"></ImageBrush>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <TextBlock Margin="8 0 0 0" Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=video.owner.name}"></TextBlock>
+                        <TextBlock Margin="8 0 0 0" Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=Video.Owner.Name}"></TextBlock>
                     </StackPanel>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">发表于 <Run Text="{x:Bind Path=video.pubdate,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0" Text="{x:Bind Path=Desc.DisplayTimeText}"></TextBlock>
                 </StackPanel>
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="DynamicSeason" x:DataType="modules:DynamicItemModel">
+        <DataTemplate x:Key="DynamicSeason" x:DataType="dynamic:DynamicItemModel">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="160"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid>
-                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=season.cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
+                    <toolkit:ImageEx IsCacheEnabled="True" PlaceholderSource="ms-appx:///Assets/Thumbnails/Placeholde.png" Stretch="UniformToFill" Source="{x:Bind Path=Season.Cover,Converter={StaticResource imageConvert},ConverterParameter='120h'}"></toolkit:ImageEx>
                     <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
-                        <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Path=season.season.type_name}"></TextBlock>
+                        <TextBlock Foreground="White" FontSize="12" Text="{x:Bind Path=Season.Season.TypeName}"></TextBlock>
                     </Border>
 
                 </Grid>
                 <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=season.season.title}"></TextBlock>
-                    <TextBlock  Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=season.new_desc}"></TextBlock>
-                    <TextBlock Foreground="Gray" Margin="0 2 0 0">更新于 <Run Text="{x:Bind Path=desc.timestamp,Converter={StaticResource time},ConverterParameter='ts'}"/></TextBlock>
+                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=Season.Season.Title}"></TextBlock>
+                    <TextBlock  Foreground="Gray" VerticalAlignment="Center" Text="{x:Bind Path=Season.NewDesc}"></TextBlock>
+                    <TextBlock Foreground="Gray" Margin="0 2 0 0" Text="{x:Bind Path=Desc.DisplayTimeText}"></TextBlock>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -90,88 +90,33 @@
                 ItemHeight="100" 
                 DesiredWidth="600" 
                 StretchContentForSingleRow="False" 
-                LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand,Mode=OneWay}"
+                LoadMoreCommand="{x:Bind Path=m_viewModel.LoadMoreCommand,Mode=OneWay}"
                 CanLoadMore="True"
                 SelectionMode="None" 
                 IsItemClickEnabled="True" 
-                ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}"
+                ItemsSource="{x:Bind Path=m_viewModel.Items,Mode=OneWay}"
                 ItemClick="AdaptiveGridView_ItemClick"
                 PointerPressed="AdaptiveGridView_PointerPressed"
-                ItemTemplateSelector="{x:Bind Path=dynamicVM.dynamicItemDataTemplateSelector,Mode=OneWay}"
-                Loading="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"
+                ItemTemplateSelector="{x:Bind Path=m_viewModel.DynamicItemDataTemplateSelector,Mode=OneWay}"
+                Loading="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}"
                 OneRowModeEnabled="False">
                 <controls:MyAdaptiveGridView.ItemContainerStyle>
                     <Style TargetType="GridViewItem">
                         <Setter Property="Margin" Value="12"></Setter>
                     </Style>
                 </controls:MyAdaptiveGridView.ItemContainerStyle>
-                
-                <!--<toolkit:AdaptiveGridView.Items>
-                    <GridViewItem>
-                        <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="160"/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Grid>
-                                    <Image Source="https://i2.hdslb.com/bfs/archive/a3f0c2352a6c4aa87da29822ad31772fab9a5043.jpg"></Image>
-                                    <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
-                                        <TextBlock Foreground="White" FontSize="12">投稿视频</TextBlock>
-                                    </Border>
-                                   
-                                </Grid>
-                                <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                                    <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis">【鹅厂珍藏】awsl！全球限量3000个这是第0705号隔壁动物园都馋哭了</TextBlock>
-                                <TextBlock Foreground="Gray" Margin="0 2 0 0">观看:11.4万 弹幕:2000</TextBlock>
-                                <StackPanel Orientation="Horizontal">
-                                        <Ellipse Width="24" Height="24">
-                                            <Ellipse.Fill>
-                                                <ImageBrush ImageSource="https://i1.hdslb.com/bfs/face/31706c82949b3ba4756a411825c3f16aeb14ad44.jpg"></ImageBrush>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                        <TextBlock Margin="8 0 0 0" Foreground="Gray" VerticalAlignment="Center">腾讯公司官方帐号</TextBlock>
-                                    </StackPanel>
-                                    <TextBlock Foreground="Gray" Margin="0 2 0 0">发表于 2小时前</TextBlock>
-                                
-                            </StackPanel>
-                            </Grid>
-                      
-                    </GridViewItem>
-                    <GridViewItem>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="160"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid>
-                                <Image Source="https://i0.hdslb.com/bfs/archive/94c37c5e128961ee3ec1685b1744697c7be3d270.jpg"></Image>
-                                <Border Background="{ThemeResource HighLightColor}" Padding="4 2" Margin="4" CornerRadius="2" VerticalAlignment="Top" HorizontalAlignment="Right">
-                                    <TextBlock Foreground="White" FontSize="12">番剧</TextBlock>
-                                </Border>
 
-                            </Grid>
-                            <StackPanel Grid.Column="1" Margin="8 0 0 0">
-                                <TextBlock TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis">这个勇者明明超强却过分慎重</TextBlock>
-                                <TextBlock  Foreground="Gray" VerticalAlignment="Center">第10话 明明是老人却过于厉害</TextBlock>
-                                <TextBlock Foreground="Gray" Margin="0 2 0 0">更新于 2小时前</TextBlock>
-
-                            </StackPanel>
-                        </Grid>
-
-                    </GridViewItem>
-                </toolkit:AdaptiveGridView.Items>-->
-                
                 <toolkit:AdaptiveGridView.Footer>
                     <StackPanel>
-                        <HyperlinkButton  Command="{x:Bind Path=dynamicVM.LoadMoreCommand}" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center" x:Name="btnLoadMore">
+                        <HyperlinkButton  Command="{x:Bind Path=m_viewModel.LoadMoreCommand}" Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center" x:Name="BtnLoadMore">
                             <TextBlock>加载更多</TextBlock>
                         </HyperlinkButton>
-                        <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                        <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_viewModel.Loading,Mode=OneWay}"></ProgressRing>
                     </StackPanel>
                 </toolkit:AdaptiveGridView.Footer>
             </controls:MyAdaptiveGridView>
         </winui:RefreshContainer>
-        <controls:RoundButton x:Name="btnRefresh" Command="{x:Bind Path=dynamicVM.RefreshCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
+        <controls:RoundButton x:Name="BtnRefresh" Command="{x:Bind Path=m_viewModel.RefreshCommand}"  VerticalAlignment="Bottom" Padding="12" Margin="12" HorizontalAlignment="Right">
             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
         </controls:RoundButton>
       

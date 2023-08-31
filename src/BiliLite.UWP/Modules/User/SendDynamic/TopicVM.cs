@@ -62,7 +62,7 @@ namespace BiliLite.Modules.User.SendDynamic
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<TopicVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

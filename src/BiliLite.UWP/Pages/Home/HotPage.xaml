@@ -57,8 +57,8 @@
                         </Border>
                         <StackPanel Grid.Column="1" Margin="4 0 0 0" >
                             <TextBlock MaxLines="2" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{x:Bind title}"></TextBlock>
-                            <Border Margin="0 2 0 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.border_color,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.bg_color,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
-                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.text_color,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.text}"></TextBlock>
+                            <Border Margin="0 2 0 0" BorderThickness="1" BorderBrush="{x:Bind Path=rcmd_reason_style.BorderColor,Converter={StaticResource colorConvert}}"  Background="{x:Bind Path=rcmd_reason_style.BgColor,Converter={StaticResource colorConvert}}" HorizontalAlignment="Left" Padding="4 0" CornerRadius="2">
+                                <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{x:Bind Path=rcmd_reason_style.TextColor,Converter={StaticResource colorConvert}}" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=rcmd_reason_style.Text}"></TextBlock>
                             </Border>
                             <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_1}"></TextBlock>
                             <TextBlock Margin="0 2 0 0" TextTrimming="CharacterEllipsis" Foreground="Gray" Text="{x:Bind right_desc_2}"></TextBlock>

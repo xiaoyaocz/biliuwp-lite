@@ -17,24 +17,26 @@ namespace BiliLite.Models.Requests.Api.Home
             return api;
         }
 
-        public ApiModel Dislike(string _goto, string id, string mid, int reason_id, int rid, int tag_id)
+        public ApiModel Dislike(RecommondFeedbackParams feedbackParams)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://app.biliapi.net/x/feed/dislike",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&goto={_goto}&id={id}&mid={mid}&reason_id={reason_id}&rid={rid}&tag_id={tag_id}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) 
+                            + $"&goto={feedbackParams.GoTo}&id={feedbackParams.Id}&mid={feedbackParams.Mid}&reason_id={feedbackParams.ReasonId}&rid={feedbackParams.Rid}&tag_id={feedbackParams.TagId}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
-        public ApiModel Feedback(string _goto, string id, string mid, int feedback_id, int rid, int tag_id)
+        public ApiModel Feedback(RecommondFeedbackParams feedbackParams)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"https://app.biliapi.net/x/feed/dislike",
-                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + $"&goto={_goto}&id={id}&mid={mid}&feedback_id={feedback_id}&rid={rid}&tag_id={tag_id}"
+                parameter = ApiHelper.MustParameter(ApiHelper.AndroidKey, true) + 
+                            $"&goto={feedbackParams.GoTo}&id={feedbackParams.Id}&mid={feedbackParams.Mid}&feedback_id={feedbackParams.ReasonId}&rid={feedbackParams.Rid}&tag_id={feedbackParams.TagId}"
             };
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;

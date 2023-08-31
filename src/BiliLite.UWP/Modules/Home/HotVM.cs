@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using System.Windows.Input;
 using BiliLite.Extensions;
+using BiliLite.Models.Common.Recommend;
 using BiliLite.Models.Requests.Api.Home;
 
 namespace BiliLite.Modules
@@ -91,7 +92,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<HotVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

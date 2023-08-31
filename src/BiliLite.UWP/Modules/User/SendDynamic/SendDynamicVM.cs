@@ -110,7 +110,7 @@ namespace BiliLite.Modules.User
             }
             catch (Exception ex)
             {
-                logger.Log("图片上传失败", LogType.FATAL, ex);
+                logger.Log("图片上传失败", LogType.Fatal, ex);
                 Notify.ShowMessageToast("图片上传失败");
             }
             finally
@@ -189,7 +189,7 @@ namespace BiliLite.Modules.User
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("转发动态失败" + ex.Message);
-                logger.Log("转发动态失败", LogType.ERROR, ex);
+                logger.Log("转发动态失败", LogType.Error, ex);
                 return false;
             }
 
@@ -280,7 +280,7 @@ namespace BiliLite.Modules.User
             {
 
                 Notify.ShowMessageToast("发表动态发生错误");
-                logger.Log("发表动态失败", LogType.ERROR, ex);
+                logger.Log("发表动态失败", LogType.Error, ex);
                 return false;
             }
 

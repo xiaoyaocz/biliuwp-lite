@@ -82,7 +82,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     homeVM.IsLogin = false;
-                    logger.Log("读取access_key信息失败", LogType.INFO, ex);
+                    logger.Log("读取access_key信息失败", LogType.Info, ex);
                     Notify.ShowMessageToast("读取登录信息失败，请重新登录");
                     //throw;
                 }

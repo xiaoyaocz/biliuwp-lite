@@ -1,12 +1,20 @@
 ﻿using System;
 using BiliLite.Extensions;
 using BiliLite.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace BiliLite.Models.Requests.Api
 {
     public class CommentApi
     {
+        private readonly CookieService m_cookieService;
+
+        public CommentApi()
+        {
+            m_cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
+        }
+
         public enum CommentType
         {
             Video = 1,
@@ -55,7 +63,7 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel CommentV2(string oid, CommentSort sort, int pn, int type, int ps = 30, string offsetStr = null)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             var mode = sort == CommentSort.Hot ? 3 : 2;
             var pagination = new
             {
@@ -89,7 +97,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel Like(string oid, string root, int action, int type)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -103,7 +111,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel ReplyComment(string oid, string root, string parent, string message, int type)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -117,7 +125,7 @@ namespace BiliLite.Models.Requests.Api
 
         public ApiModel DeleteComment(string oid, string rpid, int type)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,
@@ -130,7 +138,7 @@ namespace BiliLite.Models.Requests.Api
         }
         public ApiModel AddComment(string oid, CommentType type, string message)
         {
-            var csrf = BiliExtensions.GetCSRFToken();
+            var csrf = m_cookieService.GetCSRFToken();
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Post,

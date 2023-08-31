@@ -21,6 +21,8 @@ namespace BiliLite
     /// </summary>
     public sealed partial class MainPage : Windows.UI.Xaml.Controls.Page
     {
+        private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -36,7 +38,23 @@ namespace BiliLite
             MessageCenter.ViewImageEvent += MessageCenter_ViewImageEvent;
             MessageCenter.MiniWindowEvent += MessageCenter_MiniWindowEvent;
             MessageCenter.GoBackEvent += MessageCenter_GoBackEvent;
+
+            App.Current.Suspending += Current_Suspending;
             // Window.Current.Content.PointerPressed += Content_PointerPressed;
+        }
+
+        private async void Current_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            _logger.Trace("应用挂起");
+            var tabs = tabView.TabItems;
+            foreach (var tab in tabs)
+            {
+                if(!(tab is TabViewItem tabItem))continue;
+                if(!(tabItem.Content is MyFrame frame)) continue;
+                var page = frame.Content;
+                if(!(page is PlayPage playPage)) continue;
+                await playPage.ReportHistory();
+            }
         }
 
         private void MessageCenter_GoBackEvent(object sender, EventArgs e)

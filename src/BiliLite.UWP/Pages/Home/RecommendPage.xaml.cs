@@ -1,6 +1,5 @@
 ﻿using BiliLite.Extensions;
 using BiliLite.Models.Common;
-using BiliLite.Modules;
 using BiliLite.Modules.User;
 using BiliLite.Services;
 using System;
@@ -11,6 +10,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common.Recommend;
+using BiliLite.ViewModels.Home;
+using Microsoft.Extensions.DependencyInjection;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -21,139 +23,103 @@ namespace BiliLite.Pages.Home
     /// </summary>
     public sealed partial class RecommendPage : Page
     {
-        private bool IsGrid { get; set; } = true;
-        readonly RecommendVM recommendVM;
+        #region Fields
+
+        private bool m_isGrid = true;
+        private readonly RecommendPageViewModel m_viewModel;
+
+        #endregion
+
+        #region Constructors
+
         public RecommendPage()
         {
             this.InitializeComponent();
-            if (SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true))
-            {
-                this.NavigationCacheMode = NavigationCacheMode.Enabled;
-            }
-            else
-            {
-                this.NavigationCacheMode = NavigationCacheMode.Disabled;
-            }
-            recommendVM = new RecommendVM();
-            this.DataContext = recommendVM;
+            this.NavigationCacheMode = SettingService.GetValue<bool>(SettingConstants.UI.CACHE_HOME, true) ? NavigationCacheMode.Enabled : NavigationCacheMode.Disabled;
+            m_viewModel = App.ServiceProvider.GetRequiredService<RecommendPageViewModel>();
+            this.DataContext = m_viewModel;
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        #endregion
+
+        #region Protected Methods
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            if (e.NavigationMode == NavigationMode.New)
+            if (e.NavigationMode != NavigationMode.New) return;
+            if (m_isGrid)
             {
-                if (IsGrid)
-                {
-                    RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
-                }
-
-                SetListDisplay();
-                await recommendVM.GetRecommend();
-                if (SettingService.GetValue<bool>("推荐右键提示", true))
-                {
-                    SettingService.SetValue("推荐右键提示", false);
-                    Notify.ShowMessageToast("右键或长按项目可以进行更多操作哦~", 5);
-                }
+                RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
             }
 
-
+            SetListDisplay();
+            await m_viewModel.GetRecommend();
+            if (!SettingService.GetValue<bool>("推荐右键提示", true)) return;
+            SettingService.SetValue("推荐右键提示", false);
+            Notify.ShowMessageToast("右键或长按项目可以进行更多操作哦~", 5);
         }
+
+        #endregion
+
+        #region Private Methods
+
         private void SetListDisplay()
         {
             var grid = SettingService.GetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 0) == 0;
-            if (grid != IsGrid)
+            if (grid == m_isGrid) return;
+            m_isGrid = grid;
+            if (grid)
             {
-                IsGrid = grid;
-                if (grid)
-                {
-                    btnGrid_Click(this, null);
-                }
-                else
-                {
-                    btnList_Click(this, null);
-                }
+                BtnGrid_Click(this, null);
             }
-
+            else
+            {
+                BtnList_Click(this, null);
+            }
         }
-
 
         private async void RecommendGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var data = e.ClickedItem as Modules.RecommendItemModel;
+            var data = e.ClickedItem as RecommendItemModel;
             await VideoItemClicked(data);
         }
 
-
         private void RefreshContainer_RefreshRequested(Microsoft.UI.Xaml.Controls.RefreshContainer sender, Microsoft.UI.Xaml.Controls.RefreshRequestedEventArgs args)
         {
-            recommendVM.Refresh();
+            m_viewModel.Refresh();
         }
 
         private async void BannerItem_Click(object sender, RoutedEventArgs e)
         {
-            await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as RecommendBannerItemModel).uri);
+            await MessageCenter.HandelUrl(((sender as HyperlinkButton).DataContext as RecommendBannerItemModel).Uri);
         }
 
         private async void ListMenu_ItemClick(object sender, ItemClickEventArgs e)
         {
             var threePoint = e.ClickedItem as RecommendThreePointV2ItemModel;
-            if (threePoint.type == "watch_later")
+            switch (threePoint.Type)
             {
-                var item = (sender as ListView).DataContext as RecommendItemModel;
-                WatchLaterVM.Instance.AddToWatchlater(item.param);
-                return;
+                case "watch_later":
+                {
+                    var item = (sender as ListView).DataContext as RecommendItemModel;
+                    WatchLaterVM.Instance.AddToWatchlater(item.Param);
+                    return;
+                }
+                case "dislike":
+                    await m_viewModel.Dislike(threePoint.Idx, threePoint, null);
+                    return;
+                case "browser":
+                    await Launcher.LaunchUriAsync(new Uri(threePoint.Url));
+                    return;
             }
-            if (threePoint.type == "dislike")
-            {
-                await recommendVM.Dislike(threePoint.idx, threePoint, null);
-                return;
-            }
-            if (threePoint.type == "browser")
-            {
-                await Launcher.LaunchUriAsync(new Uri(threePoint.url));
-                return;
-            }
-
         }
 
         private async void ListDislike_ItemClick(object sender, ItemClickEventArgs e)
         {
             var reasons = e.ClickedItem as RecommendThreePointV2ItemReasonsModel;
             var threePoint = (sender as GridView).DataContext as RecommendThreePointV2ItemModel;
-            await recommendVM.Dislike(threePoint.idx, threePoint, reasons);
-        }
-
-        private void btnTop_Click(object sender, RoutedEventArgs e)
-        {
-            RecommendGridView.ScrollIntoView(RecommendGridView.Items[0]);
-        }
-
-        private void btnList_Click(object sender, RoutedEventArgs e)
-        {
-            IsGrid = false;
-            //右下角按钮
-            btnGrid.Visibility = Visibility.Visible;
-            btnList.Visibility = Visibility.Collapsed;
-            //设置
-            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 1);
-            RecommendGridView.ItemHeight = 100;
-            RecommendGridView.DesiredWidth = 500;
-            RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["List"];
-        }
-
-        private void btnGrid_Click(object sender, RoutedEventArgs e)
-        {
-            IsGrid = true;
-            //右下角按钮
-            btnGrid.Visibility = Visibility.Collapsed;
-            btnList.Visibility = Visibility.Visible;
-            //设置
-            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 0);
-            RecommendGridView.ItemHeight = 240;
-            RecommendGridView.DesiredWidth = 260;
-            RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
+            await m_viewModel.Dislike(threePoint.Idx, threePoint, reasons);
         }
 
         private async void RecommendItemGrid_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -167,25 +133,18 @@ namespace BiliLite.Pages.Home
         private async Task VideoItemClicked(RecommendItemModel data, bool dontGoTo = false)
         {
             if (data == null)
-                if (data.uri == null && data.ad_info != null)
+                if (data.Uri == null && data.AdInfo != null)
                 {
-                    var url = data.ad_info.creative_content.url;
+                    var url = data.AdInfo.CreativeContent.Url;
                     if (!url.Contains("http://") && !url.Contains("https://"))
                     {
-                        url = data.ad_info.creative_content.click_url ?? data.ad_info.creative_content.url;
+                        url = data.AdInfo.CreativeContent.ClickUrl ?? data.AdInfo.CreativeContent.Url;
                     }
                     await MessageCenter.HandelUrl(url, dontGoTo);
-
-                    //MessageCenter.NavigateToPage(this, new NavigationInfo()
-                    //{
-                    //    icon = Symbol.World,
-                    //    page = typeof(WebPage),
-                    //    parameters = url,
-                    //    title = "广告"
-                    //});
+                    
                     return;
                 }
-            if (data.card_goto == "new_tunnel")
+            if (data.CardGoto == "new_tunnel")
             {
                 MessageCenter.NavigateToPage(this, new NavigationInfo()
                 {
@@ -197,15 +156,48 @@ namespace BiliLite.Pages.Home
                 });
                 return;
             }
-            if (await MessageCenter.HandelUrl(data.uri, dontGoTo))
+            if (await MessageCenter.HandelUrl(data.Uri, dontGoTo))
             {
                 return;
             }
-            var browserUri = data.three_point_v2.FirstOrDefault(x => x.type == "browser")?.url ?? "";
+            var browserUri = data.ThreePointV2.FirstOrDefault(x => x.Type == "browser")?.Url ?? "";
             if (!string.IsNullOrEmpty(browserUri) && await MessageCenter.HandelUrl(browserUri, dontGoTo))
             {
                 return;
             }
         }
+
+        private void BtnTop_Click(object sender, RoutedEventArgs e)
+        {
+            RecommendGridView.ScrollIntoView(RecommendGridView.Items[0]);
+        }
+
+        private void BtnList_Click(object sender, RoutedEventArgs e)
+        {
+            m_isGrid = false;
+            //右下角按钮
+            BtnGrid.Visibility = Visibility.Visible;
+            BtnList.Visibility = Visibility.Collapsed;
+            //设置
+            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 1);
+            RecommendGridView.ItemHeight = 100;
+            RecommendGridView.DesiredWidth = 500;
+            RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["List"];
+        }
+
+        private void BtnGrid_Click(object sender, RoutedEventArgs e)
+        {
+            m_isGrid = true;
+            //右下角按钮
+            BtnGrid.Visibility = Visibility.Collapsed;
+            BtnList.Visibility = Visibility.Visible;
+            //设置
+            SettingService.SetValue<int>(SettingConstants.UI.RECMEND_DISPLAY_MODE, 0);
+            RecommendGridView.ItemHeight = 240;
+            RecommendGridView.DesiredWidth = 260;
+            RecommendGridView.ItemTemplate = (DataTemplate)this.Resources["Grid"];
+        }
+
+        #endregion
     }
 }

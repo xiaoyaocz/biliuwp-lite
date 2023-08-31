@@ -180,7 +180,7 @@ namespace BiliLite.Modules.User.UserDetail
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<UserFollowVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

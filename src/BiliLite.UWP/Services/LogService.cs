@@ -9,6 +9,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using LogLevel = NLog.LogLevel;
 
 namespace BiliLite.Services
 {
@@ -21,6 +24,19 @@ namespace BiliLite.Services
         private static int AutoClearLogFileDay => SettingService.GetValue<int>(SettingConstants.Other.AUTO_CLEAR_LOG_FILE_DAY, 7);
         private static bool IsProtectLogInfo => SettingService.GetValue<bool>(SettingConstants.Other.PROTECT_LOG_INFO, true);
 
+        private static int LogLowestLevel => SettingService.GetValue(SettingConstants.Other.LOG_LEVEL, 1);
+
+        public static ILoggerFactory Factory
+        {
+            get
+            {
+                return LoggerFactory.Create(logging =>
+                {
+                    logging.AddNLog(config);
+                });
+            }
+        }
+
         public static void Init()
         {
             config = new LoggingConfiguration();
@@ -32,8 +48,10 @@ namespace BiliLite.Services
                 FileName = storageFolder.Path + @"\log\" + DateTime.Now.ToString("yyyyMMdd") + ".log",
                 Layout = "${longdate}|${level:uppercase=true}|${threadid}|${event-properties:item=type}.${event-properties:item=method}|${message}|${exception:format=Message,StackTrace}"
             };
-            config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
+            config.AddRule(LogLevel.Trace, LogLevel.Trace, logfile);
             config.AddRule(LogLevel.Debug, LogLevel.Debug, logfile);
+            config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
+            config.AddRule(LogLevel.Warn, LogLevel.Warn, logfile);
             config.AddRule(LogLevel.Error, LogLevel.Error, logfile);
             config.AddRule(LogLevel.Fatal, LogLevel.Fatal, logfile);
             LogManager.Configuration = config;
@@ -72,26 +90,37 @@ namespace BiliLite.Services
 
         public static void Log(string message, LogType type, Exception ex = null, [CallerMemberName] string methodName = null, string typeName = "unknowType")
         {
-            Debug.WriteLine("[" + LogType.INFO.ToString() + "]" + message);
+            Debug.WriteLine("[" + LogType.Info.ToString() + "]" + message);
+            if ((int)type < LogLowestLevel) return;
             if (IsProtectLogInfo)
                 message = message.ProtectValues("access_key", "csrf", "access_token", "sign");
-
+            
             var logEvent = new LogEventInfo(LogLevel.Info, null, message);
             switch (type)
             {
-                case LogType.INFO:
-                    logEvent.Level = LogLevel.Info;
+                case LogType.Trace:
+                    logEvent.Level = LogLevel.Trace;
                     break;
-                case LogType.DEBUG:
+                case LogType.Debug:
                     logEvent.Level = LogLevel.Debug;
                     break;
-                case LogType.ERROR:
+                case LogType.Info:
+                    logEvent.Level = LogLevel.Info;
+                    break;
+                case LogType.Warn:
+                    logEvent.Level = LogLevel.Warn;
+                    logEvent.Exception = ex;
+                    break;
+                case LogType.Error:
                     logEvent.Level = LogLevel.Error;
                     logEvent.Exception = ex;
                     break;
-                case LogType.FATAL:
+                case LogType.Fatal:
                     logEvent.Level = LogLevel.Fatal;
                     logEvent.Exception = ex;
+                    break;
+                case LogType.Necessary:
+                    logEvent.Level = LogLevel.Info;
                     break;
                 default:
                     break;

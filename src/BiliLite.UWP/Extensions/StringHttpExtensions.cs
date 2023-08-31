@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 using Windows.Storage.Streams;
-using Windows.Web.Http.Filters;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Diagnostics;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using Flurl.Http;
 using BiliLite.Models.Responses;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Extensions
 {
@@ -75,7 +75,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -110,7 +110,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -136,7 +136,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求Stream失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Stream失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -160,7 +160,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求Buffer失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求Buffer失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -182,7 +182,7 @@ namespace BiliLite.Extensions
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求String失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求String失败" + url, LogType.Error, ex);
                 return null;
             }
         }
@@ -212,21 +212,22 @@ namespace BiliLite.Extensions
         {
             try
             {
-                HttpBaseProtocolFilter fiter = new HttpBaseProtocolFilter();
-                var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
+                var cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
+                var cookies = cookieService.Cookies;
                 //没有Cookie
                 if (cookies == null || cookies.Count == 0)
                 {
                     //访问一遍bilibili.com
-                    await "https://www.bilibili.com".GetHttpResultsAsync();
+                    var getCookieResult = await Constants.BILIBILI_DOMAIN.GetHttpResultsAsync(); 
+                    cookieService.Cookies = getCookieResult.cookies;
                 }
-                cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
+                cookies = cookieService.Cookies;
                 var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
                 return await url.PostHttpResultsAsync(body, headers, cookiesCollection);
             }
             catch (Exception ex)
             {
-                logger.Log("GET请求失败" + url, LogType.ERROR, ex);
+                logger.Log("GET请求失败" + url, LogType.Error, ex);
                 return new HttpResults()
                 {
                     code = ex.HResult,
@@ -238,16 +239,16 @@ namespace BiliLite.Extensions
 
         private static async Task<Dictionary<string, string>> GetCookies()
         {
-            var fiter = new HttpBaseProtocolFilter();
-            var cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
+            var cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
+            var cookies = cookieService.Cookies;
             //没有Cookie
             if (cookies == null || cookies.Count == 0)
             {
                 //访问一遍bilibili.com拿Cookie
                 var getCookieResult = await Constants.BILIBILI_DOMAIN.GetHttpResultsAsync();
-                getCookieResult.cookies.SaveCookie();
+                cookieService.Cookies = getCookieResult.cookies;
             }
-            cookies = fiter.CookieManager.GetCookies(new Uri(Constants.GET_COOKIE_DOMAIN));
+            cookies = cookieService.Cookies;
             var cookiesCollection = cookies.ToDictionary(x => x.Name, x => x.Value);
             return cookiesCollection;
         }

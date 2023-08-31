@@ -177,7 +177,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("目录删除失败，请检查是否文件是否被占用");
-                logger.Log("删除下载视频失败", LogType.FATAL, ex);
+                logger.Log("删除下载视频失败", LogType.Fatal, ex);
             }
         }
 
@@ -236,7 +236,7 @@ namespace BiliLite.Pages
             catch (Exception ex)
             {
                 Notify.ShowMessageToast("目录删除失败，请检查是否文件是否被占用");
-                logger.Log("删除下载视频失败", LogType.FATAL, ex);
+                logger.Log("删除下载视频失败", LogType.Fatal, ex);
             }
 
 
@@ -295,7 +295,7 @@ namespace BiliLite.Pages
                 catch (Exception ex)
                 {
                     Notify.ShowMessageToast("转换SRT字幕失败");
-                    logger.Log("转换字幕失败", LogType.ERROR, ex);
+                    logger.Log("转换字幕失败", LogType.Error, ex);
                 }
 
             }

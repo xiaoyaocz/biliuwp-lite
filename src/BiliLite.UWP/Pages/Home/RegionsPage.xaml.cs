@@ -86,7 +86,7 @@ namespace BiliLite.Pages.Home
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.AnimePage),
                     title = item.name,
-                    parameters = AnimeType.bangumi
+                    parameters = AnimeType.Bangumi
                 });
                 return;
             }
@@ -97,7 +97,7 @@ namespace BiliLite.Pages.Home
                     icon = Symbol.Home,
                     page = typeof(Pages.Home.AnimePage),
                     title = item.name,
-                    parameters = AnimeType.bangumi
+                    parameters = AnimeType.Bangumi
                 });
                 return;
             }

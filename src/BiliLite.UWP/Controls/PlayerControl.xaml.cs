@@ -36,9 +36,11 @@ using BiliLite.Models.Common;
 using BiliLite.Extensions;
 using BiliLite.Models.Common.Video;
 using Windows.UI.Input;
+using Atelier39;
 using BiliLite.Models.Common.Danmaku;
 using BiliLite.Models.Common.Player;
 using BiliLite.Models.Common.Video.PlayUrlInfos;
+using BiliLite.Services.Interfaces;
 
 //https://go.microsoft.com/fwlink/?LinkId=234236 上介绍了“用户控件”项模板
 
@@ -47,6 +49,8 @@ namespace BiliLite.Controls
     public sealed partial class PlayerControl : UserControl, IDisposable
     {
         private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
+        private readonly bool m_useNsDanmaku = true;
+        private readonly IDanmakuController m_danmakuController;
         public event PropertyChangedEventHandler PropertyChanged;
         private GestureRecognizer gestureRecognizer;
         private void DoPropertyChanged(string name)
@@ -134,6 +138,19 @@ namespace BiliLite.Controls
 
             gestureRecognizer = new GestureRecognizer();
             InitializeGesture();
+
+            m_useNsDanmaku = (DanmakuEngineType)SettingService.GetValue(SettingConstants.VideoDanmaku.DANMAKU_ENGINE,
+                (int)SettingConstants.VideoDanmaku.DEFAULT_DANMAKU_ENGINE) == DanmakuEngineType.NSDanmaku;
+            if (m_useNsDanmaku)
+            {
+                m_danmakuController = new NsDanmakuController();
+                m_danmakuController.Init(DanmuControl);
+            }
+            else
+            {
+                m_danmakuController = new FrostMasterDanmakuController();
+                m_danmakuController.Init(DanmakuCanvas);
+            }
         }
 
         private void Timer_focus_Tick(object sender, object e)
@@ -187,7 +204,7 @@ namespace BiliLite.Controls
         }
         private void PlayerControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DanmuControl.ClearAll();
+            m_danmakuController.Clear();
             Window.Current.CoreWindow.KeyDown += PlayerControl_KeyDown;
             Window.Current.CoreWindow.KeyUp += PlayerControl_KeyUp;
             BtnFoucs.Focus(FocusState.Programmatic);
@@ -369,13 +386,13 @@ namespace BiliLite.Controls
                     break;
                 case Windows.System.VirtualKey.F9:
                 case Windows.System.VirtualKey.D:
-                    if (DanmuControl.Visibility == Visibility.Visible)
+                    if (!m_danmakuController.DanmakuViewModel.IsHide)
                     {
-                        DanmuControl.Visibility = Visibility.Collapsed;
+                        m_danmakuController.Hide();
                     }
                     else
                     {
-                        DanmuControl.Visibility = Visibility.Visible;
+                        m_danmakuController.Show();
                     }
                     break;
                 case Windows.System.VirtualKey.Z:
@@ -449,65 +466,66 @@ namespace BiliLite.Controls
             DanmuSettingHideTop.IsOn = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.HIDE_TOP, false);
             if (DanmuSettingHideTop.IsOn)
             {
-                DanmuControl.HideDanmaku(DanmakuLocation.Top);
+                m_danmakuController.HideTop();
             }
             DanmuSettingHideTop.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingService.SetValue<bool>(SettingConstants.VideoDanmaku.HIDE_TOP, DanmuSettingHideTop.IsOn);
                 if (DanmuSettingHideTop.IsOn)
                 {
-                    DanmuControl.HideDanmaku(DanmakuLocation.Top);
+                    m_danmakuController.HideTop();
                 }
                 else
                 {
-                    DanmuControl.ShowDanmaku(DanmakuLocation.Top);
+                    m_danmakuController.ShowTop();
                 }
             });
             //底部
             DanmuSettingHideBottom.IsOn = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.HIDE_BOTTOM, false);
             if (DanmuSettingHideBottom.IsOn)
             {
-                DanmuControl.HideDanmaku(DanmakuLocation.Bottom);
+                m_danmakuController.HideBottom();
             }
             DanmuSettingHideBottom.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingService.SetValue<bool>(SettingConstants.VideoDanmaku.HIDE_BOTTOM, DanmuSettingHideBottom.IsOn);
                 if (DanmuSettingHideBottom.IsOn)
                 {
-                    DanmuControl.HideDanmaku(DanmakuLocation.Bottom);
+                    m_danmakuController.HideBottom();
                 }
                 else
                 {
-                    DanmuControl.ShowDanmaku(DanmakuLocation.Bottom);
+                    m_danmakuController.ShowBottom();
                 }
             });
             //滚动
             DanmuSettingHideRoll.IsOn = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.HIDE_ROLL, false);
             if (DanmuSettingHideRoll.IsOn)
             {
-                DanmuControl.HideDanmaku(DanmakuLocation.Scroll);
+                m_danmakuController.HideScroll();
             }
             DanmuSettingHideRoll.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingService.SetValue<bool>(SettingConstants.VideoDanmaku.HIDE_ROLL, DanmuSettingHideRoll.IsOn);
                 if (DanmuSettingHideRoll.IsOn)
                 {
-                    DanmuControl.HideDanmaku(DanmakuLocation.Scroll);
+                    m_danmakuController.HideScroll();
                 }
                 else
                 {
-                    DanmuControl.ShowDanmaku(DanmakuLocation.Scroll);
+                    m_danmakuController.ShowScroll();
                 }
             });
             //弹幕大小
-            DanmuControl.DanmakuSizeZoom = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.FONT_ZOOM, 1);
+            m_danmakuController.SetFontZoom(SettingService.GetValue<double>(SettingConstants.VideoDanmaku.FONT_ZOOM, 1));
             DanmuSettingFontZoom.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
                 SettingService.SetValue<double>(SettingConstants.VideoDanmaku.FONT_ZOOM, DanmuSettingFontZoom.Value);
+                m_danmakuController.SetFontZoom(DanmuSettingFontZoom.Value);
             });
             //弹幕显示区域
-            DanmuControl.DanmakuArea = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.AREA, 1);
+            m_danmakuController.SetArea(SettingService.GetValue<double>(SettingConstants.VideoDanmaku.AREA, 1));
             DanmuSettingArea.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
@@ -515,48 +533,60 @@ namespace BiliLite.Controls
             });
 
             //弹幕速度
-            DanmuControl.DanmakuDuration = SettingService.GetValue<int>(SettingConstants.VideoDanmaku.SPEED, 10);
+            m_danmakuController.SetSpeed(SettingService.GetValue<int>(SettingConstants.VideoDanmaku.SPEED, 10));
             DanmuSettingSpeed.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 if (miniWin) return;
-                SettingService.SetValue<double>(SettingConstants.VideoDanmaku.SPEED, DanmuSettingSpeed.Value);
+                SettingService.SetValue<int>(SettingConstants.VideoDanmaku.SPEED, (int)DanmuSettingSpeed.Value);
+                m_danmakuController.SetSpeed((int)DanmuSettingSpeed.Value);
             });
             //弹幕顶部距离
-            DanmuControl.Margin = new Thickness(0, SettingService.GetValue<int>(SettingConstants.VideoDanmaku.TOP_MARGIN, 0), 0, 0);
-            DanmuTopMargin.Value = DanmuControl.Margin.Top;
+            var marginTop = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.TOP_MARGIN, 0);
+            m_danmakuController.SetTopMargin(marginTop);
+            DanmuTopMargin.Value = marginTop;
             DanmuTopMargin.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 SettingService.SetValue<double>(SettingConstants.VideoDanmaku.TOP_MARGIN, DanmuTopMargin.Value);
-                DanmuControl.Margin = new Thickness(0, DanmuTopMargin.Value, 0, 0);
+                m_danmakuController.SetTopMargin(DanmuTopMargin.Value);
             });
             //弹幕透明度
-            DanmuControl.Opacity = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.OPACITY, 1.0);
+            m_danmakuController.SetOpacity(SettingService.GetValue<double>(SettingConstants.VideoDanmaku.OPACITY, 1.0));
             DanmuSettingOpacity.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 SettingService.SetValue<double>(SettingConstants.VideoDanmaku.OPACITY, DanmuSettingOpacity.Value);
+                m_danmakuController.SetOpacity(DanmuSettingOpacity.Value);
             });
             //弹幕最大值
             DanmuSettingMaxNum.Value = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.MAX_NUM, 0);
+            m_danmakuController.SetDensity((int)DanmuSettingMaxNum.Value);
             DanmuSettingMaxNum.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
             {
                 SettingService.SetValue<double>(SettingConstants.VideoDanmaku.MAX_NUM, DanmuSettingMaxNum.Value);
+                m_danmakuController.SetDensity((int)DanmuSettingMaxNum.Value);
             });
 
             //弹幕云屏蔽等级
             DanmuSettingShieldLevel.Value = SettingService.GetValue<int>(SettingConstants.VideoDanmaku.SHIELD_LEVEL, 0);
-            DanmuSettingShieldLevel.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
+            DanmuSettingShieldLevel.ValueChanged += async (e, args) =>
             {
                 SettingService.SetValue<int>(SettingConstants.VideoDanmaku.SHIELD_LEVEL, Convert.ToInt32(DanmuSettingShieldLevel.Value));
-            });
+                if (!m_useNsDanmaku)
+                {
+                    var segIndex = Convert.ToInt32(Math.Ceiling(Player.Position / (60 * 6d)));
+                    if (segIndex <= 0) segIndex = 1;
+                    await LoadDanmaku(segIndex);
+                }
+            };
 
             //弹幕加粗
-            DanmuControl.DanmakuBold = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.BOLD, false);
+            m_danmakuController.SetBold(SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.BOLD, false));
             DanmuSettingBold.Toggled += new RoutedEventHandler((e, args) =>
             {
                 SettingService.SetValue<bool>(SettingConstants.VideoDanmaku.BOLD, DanmuSettingBold.IsOn);
+                m_danmakuController.SetBold(DanmuSettingBold.IsOn);
             });
             //弹幕样式
-            DanmuControl.DanmakuStyle = (DanmakuBorderStyle)SettingService.GetValue<int>(SettingConstants.VideoDanmaku.BORDER_STYLE, 2);
+            m_danmakuController.SetBolderStyle(SettingService.GetValue<int>(SettingConstants.VideoDanmaku.BORDER_STYLE, 2));
             DanmuSettingStyle.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
             {
                 if (DanmuSettingStyle.SelectedIndex != -1)
@@ -566,10 +596,16 @@ namespace BiliLite.Controls
             });
             //合并弹幕
             DanmuSettingMerge.IsOn = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.MERGE, false);
-            DanmuSettingMerge.Toggled += new RoutedEventHandler((e, args) =>
+            DanmuSettingMerge.Toggled += async (e, args) =>
             {
                 SettingService.SetValue<bool>(SettingConstants.VideoDanmaku.MERGE, DanmuSettingMerge.IsOn);
-            });
+                if (!m_useNsDanmaku)
+                {
+                    var segIndex = Convert.ToInt32(Math.Ceiling(Player.Position / (60 * 6d)));
+                    if (segIndex <= 0) segIndex = 1;
+                    await LoadDanmaku(segIndex);
+                }
+            };
             //半屏显示
             //DanmuControl.DanmakuArea = SettingService.GetValue<bool>(SettingConstants.VideoDanmaku.DOTNET_HIDE_SUBTITLE, false)?1:.5;
             //DanmuSettingDotHideSubtitle.Toggled += new RoutedEventHandler((e, args) =>
@@ -578,7 +614,14 @@ namespace BiliLite.Controls
             //});
 
             //弹幕开关
-            DanmuControl.Visibility = SettingService.GetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Visible);
+            if (SettingService.GetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Visible) == Visibility.Visible)
+            {
+                m_danmakuController.Show();
+            }
+            else
+            {
+                m_danmakuController.Hide();
+            }
             DanmuSettingWords.ItemsSource = settingVM.ShieldWords;
         }
         private void LoadPlayerSetting()
@@ -595,11 +638,12 @@ namespace BiliLite.Controls
             //BrightnessShield.Opacity = _brightness;
 
             //播放模式
-            PlayerSettingMode.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_VIDEO_TYPE, 1);
-            PlayerSettingMode.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
+            var selectedValue = (PlayUrlCodecMode)SettingService.GetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
+            PlayerSettingMode.SelectedItem = DefaultVideoTypeOptions.GetOption(selectedValue);
+            PlayerSettingMode.SelectionChanged += (e, args) =>
             {
-                SettingService.SetValue<int>(SettingConstants.Player.DEFAULT_VIDEO_TYPE, PlayerSettingMode.SelectedIndex);
-            });
+                SettingService.SetValue(SettingConstants.Player.DEFAULT_VIDEO_TYPE, (int)PlayerSettingMode.SelectedValue);
+            };
             //播放列表
             PlayerSettingPlayMode.SelectedIndex = SettingService.GetValue<int>(SettingConstants.Player.DEFAULT_PLAY_MODE, 0);
             PlayerSettingPlayMode.SelectionChanged += new SelectionChangedEventHandler((e, args) =>
@@ -748,8 +792,81 @@ namespace BiliLite.Controls
                 ShowPlaylistButton = false;
             }
             EpisodeList.SelectedIndex = index;
+        }
 
+        private List<DanmakuItem> FilterFrostDanmaku(IEnumerable<DanmakuItem> danmakus)
+        {
+            var needDistinct = DanmuSettingMerge.IsOn;
+            var level = DanmuSettingShieldLevel.Value;
+            var max = Convert.ToInt32(DanmuSettingMaxNum.Value);
+            //云屏蔽
+            danmakus = danmakus.Where(x => x.Weight >= level);
+            //去重
+            danmakus = danmakus.DistinctIf(needDistinct, new CompareDanmakuItem());
 
+            //关键词
+            foreach (var item in settingVM.ShieldWords)
+            {
+                danmakus = danmakus.Where(x => !x.Text.Contains(item));
+            }
+            //用户
+            foreach (var item in settingVM.ShieldUsers)
+            {
+                danmakus = danmakus.Where(x => !x.MidHash.Equals(item));
+            }
+            //正则
+            foreach (var item in settingVM.ShieldRegulars)
+            {
+                danmakus = danmakus.Where(x => !Regex.IsMatch(x.Text, item));
+            }
+
+            //danmakus = danmakus.GroupBy(x => x.StartMs).ToDictionary(x => (int)x.Key, x => x.ToList())
+            //    .TakeIf(max > 0, max).SelectMany(x=>x.Value);
+            return danmakus.ToList();
+        }
+
+        private async Task SelectNsDanmakuAndLoad(int position, double level, bool needDistinct, int max)
+        {
+            try
+            {
+                if (danmakuPool != null && danmakuPool.ContainsKey(position))
+                {
+                    var data = danmakuPool[position] as IEnumerable<DanmakuModel>;
+                    data = data.Where(x => true);
+                    //云屏蔽
+                    data = data.Where(x => x.weight >= level);
+                    //去重
+                    if (needDistinct)
+                    {
+                        data = data.Distinct(new CompareDanmakuModel());
+                    }
+                    //关键词
+                    foreach (var item in settingVM.ShieldWords)
+                    {
+                        data = data.Where(x => !x.text.Contains(item));
+                    }
+                    //用户
+                    foreach (var item in settingVM.ShieldUsers)
+                    {
+                        data = data.Where(x => !x.sendID.Equals(item));
+                    }
+                    //正则
+                    foreach (var item in settingVM.ShieldRegulars)
+                    {
+                        data = data.Where(x => !Regex.IsMatch(x.text, item));
+                    }
+                    if (max > 0)
+                    {
+                        data = data.Take(max);
+                    }
+                    //加载弹幕
+                    m_danmakuController.Load(data);
+                    data = null;
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private async void DanmuTimer_Tick(object sender, object e)
@@ -773,7 +890,7 @@ namespace BiliLite.Controls
                     showControlsFlag++;
                 }
             }
-            var p = Convert.ToInt32(Player.Position);
+            var position = Convert.ToInt32(Player.Position);
             var segIndex = Convert.ToInt32(Math.Ceiling(Player.Position / (60 * 6d)));
             if (segIndex <= 0) segIndex = 1;
             if (danmakuLoadedSegment != null && !danmakuLoadedSegment.Contains(segIndex))
@@ -789,64 +906,24 @@ namespace BiliLite.Controls
                 return;
             }
 
-            if (DanmuControl.Visibility == Visibility.Collapsed)
+            if (m_danmakuController.DanmakuViewModel.IsHide)
             {
                 return;
             }
+            m_danmakuController.UpdateTime(position);
+
             var needDistinct = DanmuSettingMerge.IsOn;
             var level = DanmuSettingShieldLevel.Value;
             var max = Convert.ToInt32(DanmuSettingMaxNum.Value);
-            await Task.Run(async () =>
+
+            if (m_useNsDanmaku)
             {
-                try
-                {
-                    if (danmakuPool != null && danmakuPool.ContainsKey(p))
-                    {
-                        var data = danmakuPool[p].Where(x => true);
-                        //云屏蔽
-                        data = data.Where(x => x.weight >= level);
-                        //去重
-                        if (needDistinct)
-                        {
-                            data = data.Distinct(new CompareDanmakuModel());
-                        }
-                        //关键词
-                        foreach (var item in settingVM.ShieldWords)
-                        {
-                            data = data.Where(x => !x.text.Contains(item));
-                        }
-                        //用户
-                        foreach (var item in settingVM.ShieldUsers)
-                        {
-                            data = data.Where(x => !x.sendID.Equals(item));
-                        }
-                        //正则
-                        foreach (var item in settingVM.ShieldRegulars)
-                        {
-                            data = data.Where(x => !Regex.IsMatch(x.text, item));
-                        }
-                        if (max > 0)
-                        {
-                            data = data.Take(max);
-                        }
-                        //加载弹幕
-                        foreach (var item in data)
-                        {
-                            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
-                            {
-                                DanmuControl.AddDanmu(item, false);
-                            });
-                        }
-                        data = null;
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            });
+                await SelectNsDanmakuAndLoad(position, level, needDistinct, max);
+            }
+
             if (Player.PlayState == PlayState.Pause)
             {
-                DanmuControl.PauseDanmaku();
+                m_danmakuController.Pause();
             }
         }
 
@@ -909,6 +986,7 @@ namespace BiliLite.Controls
             {
                 _postion = 0;
             }
+            _logger.Trace("SetPlayItem,上报进度");
             await playerHelper.ReportHistory(CurrentPlayItem, 0);
             await SetDanmaku();
 
@@ -1017,29 +1095,25 @@ namespace BiliLite.Controls
 
         private async void SubtitleTimer_Tick(object sender, object e)
         {
-            if (Player.PlayState == PlayState.Playing)
+            if (Player.PlayState != PlayState.Playing) return;
+            if (subtitles == null)
             {
-                if (subtitles == null)
-                {
-                    return;
-                }
-                var time = Player.Position;
-                var first = subtitles.body.FirstOrDefault(x => x.from <= time && x.to >= time);
-                if (first != null)
-                {
-                    if (first.content != currentSubtitleText)
-                    {
-                        BorderSubtitle.Visibility = Visibility.Visible;
-                        BorderSubtitle.Child = await GenerateSubtitleItem(first.content);
-                        currentSubtitleText = first.content;
-
-                    }
-                }
-                else
-                {
-                    BorderSubtitle.Visibility = Visibility.Collapsed;
-                    currentSubtitleText = "";
-                }
+                return;
+            }
+            var time = Player.Position;
+            if (subtitles.body == null) return;
+            var first = subtitles.body.FirstOrDefault(x => x.from <= time && x.to >= time);
+            if (first != null)
+            {
+                if (first.content == currentSubtitleText) return;
+                BorderSubtitle.Visibility = Visibility.Visible;
+                BorderSubtitle.Child = await GenerateSubtitleItem(first.content);
+                currentSubtitleText = first.content;
+            }
+            else
+            {
+                BorderSubtitle.Visibility = Visibility.Collapsed;
+                currentSubtitleText = "";
             }
         }
 
@@ -1141,7 +1215,7 @@ namespace BiliLite.Controls
         public void ChangePlayIndex(int index)
         {
             ClearSubTitle();
-            DanmuControl.ClearAll();
+            m_danmakuController.Clear();
             EpisodeList.SelectedIndex = index;
         }
         private async void EpisodeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1150,7 +1224,7 @@ namespace BiliLite.Controls
             {
                 return;
             }
-            DanmuControl.ClearAll();
+            m_danmakuController.Clear();
             await SetPlayItem(EpisodeList.SelectedIndex);
         }
         private async void NodeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1183,7 +1257,7 @@ namespace BiliLite.Controls
             //}
             _postion = 0;
             _autoPlay = true;
-            DanmuControl.ClearAll();
+            m_danmakuController.Clear();
             await SetDanmaku();
 
 
@@ -1214,11 +1288,25 @@ namespace BiliLite.Controls
                 if (CurrentPlayItem.play_mode == VideoPlayType.Download && !update)
                 {
                     var danmakuFile = await StorageFile.GetFileFromPathAsync(CurrentPlayItem.LocalPlayInfo.DanmakuPath);
-                    var danmuList = danmakuParse.ParseBiliBili(await FileIO.ReadTextAsync(danmakuFile));
-                    danmakuPool = danmuList.GroupBy(x => x.time_s).ToDictionary(x => x.Key, x => x.ToList());
-                    TxtDanmuCount.Text = danmuList.Count.ToString();
-                    danmuList.Clear();
-                    danmuList = null;
+                    if (m_useNsDanmaku)
+                    {
+                        var danmuList = danmakuParse.ParseBiliBili(await FileIO.ReadTextAsync(danmakuFile));
+                        danmakuPool = danmuList.GroupBy(x => x.time_s).ToDictionary(x => x.Key, x => x.ToList());
+                        TxtDanmuCount.Text = danmuList.Count.ToString();
+                        danmuList.Clear();
+                        danmuList = null;
+                    }
+                    else
+                    {
+                        var file = await FileIO.ReadTextAsync(danmakuFile);
+                        var danmuList = BilibiliDanmakuXmlParser.GetDanmakuList(file, null, false, out _, out _, out _);
+                        //danmakuPool = danmuList.GroupBy(x => x.StartMs).ToDictionary(x => (int)x.Key, x => (object)x.ToList());
+
+                        m_danmakuController.Load(danmuList);
+                        TxtDanmuCount.Text = danmuList.Count.ToString();
+                        danmuList.Clear();
+                        danmuList = null;
+                    }
                 }
                 else
                 {
@@ -1240,12 +1328,41 @@ namespace BiliLite.Controls
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Notify.ShowMessageToast("弹幕加载失败");
+                _logger.Error("弹幕加载失败", ex);
             }
         }
         bool loadingDanmaku = false;
+
+        private async Task LoadNSDanmaku(int segmentIndex)
+        {
+            var danmuList = await playerHelper.GetDanmaku(CurrentPlayItem.cid, segmentIndex);
+            foreach (var item in danmuList.GroupBy(x => x.time_s).ToDictionary(x => x.Key, x => x.ToList()))
+            {
+                if (danmakuPool.ContainsKey(item.Key))
+                {
+                    danmakuPool[item.Key] = item.Value;
+                }
+                else
+                {
+                    danmakuPool.Add(item.Key, item.Value);
+                }
+            }
+            TxtDanmuCount.Text = danmuList.Count.ToString();
+            danmuList.Clear();
+        }
+
+        private async Task LoadFrostMasterDanmaku(int segmentIndex)
+        {
+            var danmuList = await playerHelper.GetDanmakuForDanmakuFrostMaster(CurrentPlayItem.cid, segmentIndex);
+            danmuList = FilterFrostDanmaku(danmuList);
+            m_danmakuController.Clear();
+            m_danmakuController.Load(danmuList);
+            TxtDanmuCount.Text = danmuList.Count.ToString();
+        }
+
         private async Task LoadDanmaku(int segmentIndex)
         {
 
@@ -1258,20 +1375,16 @@ namespace BiliLite.Controls
                     danmakuPool.Clear();
                     segmentIndex = 1;
                 }
-                var danmuList = await playerHelper.GetDanmaku(CurrentPlayItem.cid, segmentIndex);
-                foreach (var item in danmuList.GroupBy(x => x.time_s).ToDictionary(x => x.Key, x => x.ToList()))
+
+                if (m_useNsDanmaku)
                 {
-                    if (danmakuPool.ContainsKey(item.Key))
-                    {
-                        danmakuPool[item.Key] = item.Value;
-                    }
-                    else
-                    {
-                        danmakuPool.Add(item.Key, item.Value);
-                    }
+                    await LoadNSDanmaku(segmentIndex);
                 }
-                TxtDanmuCount.Text = danmuList.Count.ToString();
-                danmuList.Clear();
+                else
+                {
+                    await LoadFrostMasterDanmaku(segmentIndex);
+                }
+
                 if (segmentIndex == 1)
                 {
                     danmakuLoadedSegment = new List<int>() { 1 };
@@ -1470,6 +1583,11 @@ namespace BiliLite.Controls
 
             TopOnline.Text = await playerHelper.GetOnline(CurrentPlayItem.avid, CurrentPlayItem.cid);
 
+        }
+
+        public async Task ReportHistory()
+        {
+            await playerHelper.ReportHistory(CurrentPlayItem, Player.Position);
         }
 
         BiliPlayUrlInfo current_quality_info = null;
@@ -1731,14 +1849,14 @@ namespace BiliLite.Controls
 
         private void TopBtnOpenDanmaku_Click(object sender, RoutedEventArgs e)
         {
-            DanmuControl.Visibility = Visibility.Visible;
-            SettingService.SetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, DanmuControl.Visibility);
+            m_danmakuController.Show();
+            SettingService.SetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Visible);
         }
 
         private void TopBtnCloseDanmaku_Click(object sender, RoutedEventArgs e)
         {
-            DanmuControl.Visibility = Visibility.Collapsed;
-            SettingService.SetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, DanmuControl.Visibility);
+            m_danmakuController.Hide();
+            SettingService.SetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Collapsed);
         }
         #region 播放器手势
         int showControlsFlag = 0;
@@ -2148,7 +2266,7 @@ namespace BiliLite.Controls
             if (Player.PlayState == PlayState.Pause || Player.PlayState == PlayState.End)
             {
                 Player.Play();
-                DanmuControl.ResumeDanmaku();
+                m_danmakuController.Resume();
             }
         }
 
@@ -2207,7 +2325,7 @@ namespace BiliLite.Controls
                     BottomBtnLoading.Visibility = Visibility.Collapsed;
                     BottomBtnPlay.Visibility = Visibility.Collapsed;
                     BottomBtnPause.Visibility = Visibility.Visible;
-                    DanmuControl.ResumeDanmaku();
+                    m_danmakuController.Resume();
                     break;
                 case PlayState.Pause:
                     KeepScreenOn(false);
@@ -2219,7 +2337,7 @@ namespace BiliLite.Controls
                     BottomBtnLoading.Visibility = Visibility.Collapsed;
                     BottomBtnPlay.Visibility = Visibility.Visible;
                     BottomBtnPause.Visibility = Visibility.Collapsed;
-                    DanmuControl.PauseDanmaku();
+                    m_danmakuController.Pause();
                     break;
                 case PlayState.End:
                     KeepScreenOn(false);
@@ -2252,7 +2370,7 @@ namespace BiliLite.Controls
             GridBuffering.Visibility = Visibility.Visible;
             TxtBuffering.Text = "正在缓冲...";
             BufferingProgress = 0;
-            DanmuControl.PauseDanmaku();
+            m_danmakuController.Pause();
         }
 
         private void Player_PlayBuffering(object sender, double e)
@@ -2267,7 +2385,7 @@ namespace BiliLite.Controls
         {
             GridBuffering.Visibility = Visibility.Collapsed;
             Buffering = false;
-            DanmuControl.ResumeDanmaku();
+            m_danmakuController.Resume();
         }
 
         private void Player_PlayMediaEnded(object sender, EventArgs e)
@@ -2279,10 +2397,12 @@ namespace BiliLite.Controls
                     Notify.ShowMessageToast("播放完毕，请点击右下角节点，重新开始");
                     return;
                 }
-                DanmuControl.PauseDanmaku();
+                m_danmakuController.Pause();
                 InteractionChoices.Visibility = Visibility.Visible;
                 return;
             }
+            _logger.Debug("视频结束，上报进度");
+
             playerHelper.ReportHistory(CurrentPlayItem, Player.Duration).RunWithoutAwait();
             //列表顺序播放
             if (PlayerSettingPlayMode.SelectedIndex == 0)
@@ -2318,7 +2438,7 @@ namespace BiliLite.Controls
             if (PlayerSettingPlayMode.SelectedIndex == 1)
             {
                 ClearSubTitle();
-                DanmuControl.ClearAll();
+                m_danmakuController.Clear();
                 Player.Play();
                 return;
             }
@@ -2334,7 +2454,7 @@ namespace BiliLite.Controls
                 if (PlayInfos.Count == 1)
                 {
                     ClearSubTitle();
-                    DanmuControl.ClearAll();
+                    m_danmakuController.Clear();
                     Player.Play();
                     return;
                 }
@@ -2403,7 +2523,7 @@ namespace BiliLite.Controls
         {
             if (!e.need_change)
             {
-                ShowErrorDialog(e.message + "[ChangeEngine]");
+                _logger.Warn($"[ChangeEngine] {e.message}");
                 return;
             }
             VideoLoading.Visibility = Visibility.Visible;
@@ -2449,7 +2569,7 @@ namespace BiliLite.Controls
             SendDanmakuDialog sendDanmakuDialog = new SendDanmakuDialog(CurrentPlayItem.avid, CurrentPlayItem.cid, Player.Position);
             sendDanmakuDialog.DanmakuSended += new EventHandler<SendDanmakuModel>((obj, arg) =>
             {
-                DanmuControl.AddDanmu(new DanmakuModel()
+                m_danmakuController.Add(new DanmakuModel()
                 {
                     color = NSDanmaku.Utils.ToColor(arg.color),
                     text = arg.text,
@@ -2486,6 +2606,7 @@ namespace BiliLite.Controls
 
         public async void Dispose()
         {
+            _logger.Trace("Dispose PlayerControl");
             if (CurrentPlayItem != null)
             {
                 SettingService.SetValue<double>(CurrentPlayItem.season_id != 0 ? "ep" + CurrentPlayItem.ep_id : CurrentPlayItem.cid, Player.Position);
@@ -2555,14 +2676,14 @@ namespace BiliLite.Controls
             var result = await playerHelper.SendDanmaku(CurrentPlayItem.avid, CurrentPlayItem.cid, SendDanmakuTextBox.Text, Convert.ToInt32(Player.Position), modeInt, color);
             if (result)
             {
-                DanmuControl.AddDanmu(new DanmakuModel()
+                m_danmakuController.Add(new DanmakuModel()
                 {
                     color = NSDanmaku.Utils.ToColor(color),
                     text = SendDanmakuTextBox.Text,
                     location = location,
                     size = 25,
                     time = Player.Position
-                }, true).RunWithoutAwait();
+                }, true);
                 SendDanmakuTextBox.Text = "";
             }
 
@@ -2597,9 +2718,9 @@ namespace BiliLite.Controls
                     await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
                     SubtitleSettingSize.Value = 14;
 
-                    DanmuControl.DanmakuSizeZoom = 0.5;
-                    DanmuControl.DanmakuDuration = 6;
-                    DanmuControl.ClearAll();
+                    m_danmakuController.SetFontZoom(0.5);
+                    m_danmakuController.SetSpeed(6);
+                    m_danmakuController.Clear();
                 }
             }
             else
@@ -2608,10 +2729,19 @@ namespace BiliLite.Controls
                 StandardControl.Visibility = Visibility.Visible;
                 MiniControl.Visibility = Visibility.Collapsed;
                 await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
-                DanmuControl.DanmakuSizeZoom = SettingService.GetValue<double>(SettingConstants.VideoDanmaku.FONT_ZOOM, 1);
-                DanmuControl.DanmakuDuration = SettingService.GetValue<int>(SettingConstants.VideoDanmaku.SPEED, 10);
-                DanmuControl.ClearAll();
-                DanmuControl.Visibility = SettingService.GetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Visible);
+
+                m_danmakuController.SetFontZoom(SettingService.GetValue<double>(SettingConstants.VideoDanmaku.FONT_ZOOM, 1));
+                m_danmakuController.SetSpeed(SettingService.GetValue<int>(SettingConstants.VideoDanmaku.SPEED, 10));
+                m_danmakuController.Clear();
+                if (SettingService.GetValue<Visibility>(SettingConstants.VideoDanmaku.SHOW, Visibility.Visible) == Visibility.Visible)
+                {
+                    m_danmakuController.Show();
+                }
+                else
+                {
+                    m_danmakuController.Hide();
+                }
+
                 SubtitleSettingSize.Value = SettingService.GetValue<double>(SettingConstants.Player.SUBTITLE_SIZE, 40);
             }
             BtnFoucs.Focus(FocusState.Programmatic);
@@ -2620,7 +2750,7 @@ namespace BiliLite.Controls
 
         public void Pause()
         {
-            DanmuControl.PauseDanmaku();
+            m_danmakuController.Pause();
             Player.Pause();
 
         }
@@ -2678,9 +2808,7 @@ namespace BiliLite.Controls
 
         private void Player_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var rectangle = new RectangleGeometry();
-            rectangle.Rect = new Rect(0, 0, SplitView.ActualWidth, SplitView.ActualHeight);
-            DanmuControl.Clip = rectangle;
+            m_danmakuController.UpdateSize(SplitView.ActualWidth, SplitView.ActualHeight);
         }
     }
 }

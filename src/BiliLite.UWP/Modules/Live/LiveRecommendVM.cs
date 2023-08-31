@@ -115,7 +115,7 @@ namespace BiliLite.Modules.Live
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<LiveRecommendVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally
@@ -186,7 +186,7 @@ namespace BiliLite.Modules.Live
             }
             catch (Exception ex)
             {
-                logger.Log("加载直播推荐信息失败", LogType.ERROR, ex);
+                logger.Log("加载直播推荐信息失败", LogType.Error, ex);
                 Notify.ShowMessageToast("加载直播推荐信息失败");
                 return new List<LiveRecommendItemModel>();
             }

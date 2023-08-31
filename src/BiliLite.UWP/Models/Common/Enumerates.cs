@@ -2,10 +2,13 @@
 {
     public enum LogType
     {
-        INFO,
-        DEBUG,
-        ERROR,
-        FATAL
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Fatal,
+        Necessary,
     }
 
     public enum LoginStatus
@@ -60,17 +63,17 @@
         /// <summary>
         /// 返回或关闭页面
         /// </summary>
-        Back=0,
+        Back = 0,
 
         /// <summary>
         /// 打开新标签页但不跳转 
         /// </summary>
-        NewTap=1,
+        NewTap = 1,
 
         /// <summary>
         /// 无操作
         /// </summary>
-        None=2,
+        None = 2,
     }
 
     public enum DownloadType
@@ -167,5 +170,49 @@
         Single,
         MultiFlv,
         Dash
+    }
+
+    public enum DynamicType
+    {
+        /// <summary>
+        /// 用户关注动态
+        /// </summary>
+        UserDynamic,
+        /// <summary>
+        /// 话题动态
+        /// </summary>
+        Topic,
+        /// <summary>
+        /// 个人空间动态
+        /// </summary>
+        Space
+    }
+
+    public enum AnimeType
+    {
+        /// <summary>
+        /// 番剧
+        /// </summary>
+        Bangumi = 1,
+
+        /// <summary>
+        /// 国创
+        /// </summary>
+        GuoChuang = 4
+    }
+
+    public enum DanmakuEngineType
+    {
+        NSDanmaku = 0,
+        FrostDanmakuMaster = 1,
+    }
+
+    public enum PlayUrlCodecMode
+    {
+        // int flv=0, dash=1,dash_hevc=2
+        FLV = 0,
+        DASH_H264 = 1,
+        DASH_H265 = 2,
+        DASH_AV1 = 3
     }
 }

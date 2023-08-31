@@ -5,21 +5,12 @@ using BiliLite.Modules.User;
 using BiliLite.Modules.User.UserDetail;
 using BiliLite.Pages.User;
 using BiliLite.Services;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BiliLite.Models.Common.User;
+using BiliLite.ViewModels.User;
+using Microsoft.Extensions.DependencyInjection;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -46,7 +37,7 @@ namespace BiliLite.Pages
     {
         readonly DynamicVM dynamicVM;
         UserDetailVM userDetailVM;
-        UserSubmitVideoVM userSubmitVideoVM;
+        UserSubmitVideoViewModel m_userSubmitVideoViewModel;
         UserSubmitArticleVM userSubmitArticleVM;
         UserFavlistVM userFavlistVM;
         UserFollowVM fansVM;
@@ -58,7 +49,7 @@ namespace BiliLite.Pages
             this.InitializeComponent();
             Title = "用户中心";
             userDetailVM = new Modules.User.UserDetailVM();
-            userSubmitVideoVM = new UserSubmitVideoVM();
+            m_userSubmitVideoViewModel = App.ServiceProvider.GetService<UserSubmitVideoViewModel>();
             userSubmitArticleVM = new UserSubmitArticleVM();
             userFavlistVM = new UserFavlistVM();
             dynamicVM = new DynamicVM();
@@ -140,7 +131,7 @@ namespace BiliLite.Pages
                     mid = e.Parameter.ToString();
                 }
                 userDetailVM.mid = mid;
-                userSubmitVideoVM.mid = mid;
+                m_userSubmitVideoViewModel.Mid = mid;
                 userSubmitArticleVM.mid = mid;
                 userFavlistVM.mid = mid;
                 fansVM.mid = mid;
@@ -168,15 +159,27 @@ namespace BiliLite.Pages
             }
         }
 
-        private void SubmitVideo_ItemClick(object sender, ItemClickEventArgs e)
+        private async void SubmitVideo_ItemClick(object sender, ItemClickEventArgs e)
         {
             var data = e.ClickedItem as SubmitVideoItemModel;
+            if (!string.IsNullOrEmpty(data.RedirectUrl))
+            {
+                var seasonId = await MessageCenter.HandelSeasonID(data.RedirectUrl);
+                MessageCenter.NavigateToPage(this, new NavigationInfo()
+                {
+                    icon = Symbol.Play,
+                    page = typeof(SeasonDetailPage),
+                    title = data.Title,
+                    parameters = seasonId
+                });
+                return;
+            }
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
                 icon = Symbol.Play,
                 page = typeof(VideoDetailPage),
-                title = data.title,
-                parameters = data.aid
+                title = data.Title,
+                parameters = data.Aid
             });
         }
 
@@ -205,21 +208,21 @@ namespace BiliLite.Pages
 
         private void searchVideo_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            userSubmitVideoVM.Refresh();
+            m_userSubmitVideoViewModel.Refresh();
         }
 
         private void comVideoOrder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            userSubmitVideoVM?.Refresh();
+            m_userSubmitVideoViewModel.Keyword = "";
+            m_userSubmitVideoViewModel?.Refresh();
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (userSubmitVideoVM != null && userSubmitVideoVM.CurrentTid != userSubmitVideoVM.SelectTid.tid)
-            {
-
-                userSubmitVideoVM?.Refresh();
-            }
+            if (m_userSubmitVideoViewModel == null ||
+                m_userSubmitVideoViewModel.CurrentTid == m_userSubmitVideoViewModel.SelectTid.Tid) return;
+            m_userSubmitVideoViewModel.Keyword = "";
+            m_userSubmitVideoViewModel?.Refresh();
 
         }
 
@@ -277,9 +280,9 @@ namespace BiliLite.Pages
 
         private async void pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (pivot.SelectedIndex == 0 && userSubmitVideoVM.SubmitVideoItems == null)
+            if (pivot.SelectedIndex == 0 && m_userSubmitVideoViewModel.SubmitVideoItems == null)
             {
-                await userSubmitVideoVM.GetSubmitVideo();
+                await m_userSubmitVideoViewModel.GetSubmitVideo();
             }
             if (pivot.SelectedIndex == 1 && dynamicVM.Items == null)
             {
@@ -355,7 +358,7 @@ namespace BiliLite.Pages
         private void AddToWatchLater_Click(object sender, RoutedEventArgs e)
         {
             var data = (sender as MenuFlyoutItem).DataContext as SubmitVideoItemModel;
-            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.aid);
+            Modules.User.WatchLaterVM.Instance.AddToWatchlater(data.Aid);
         }
 
         private void comFollowOrder_SelectionChanged(object sender, SelectionChangedEventArgs e)

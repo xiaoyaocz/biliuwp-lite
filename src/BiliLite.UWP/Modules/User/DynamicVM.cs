@@ -1,9 +1,7 @@
-﻿using BiliLite.Controls;
-using BiliLite.Controls.Dynamic;
+﻿using BiliLite.Controls.Dynamic;
 using BiliLite.Models;
 using BiliLite.Models.Dynamic;
 using BiliLite.Pages;
-using BiliLite.Pages.Other;
 using BiliLite.Pages.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,47 +9,39 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Store.Preview.InstallControl;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using static BiliLite.Models.Requests.Api.User.DynamicAPI;
 using BiliLite.Dialogs;
-using Windows.UI.Xaml.Documents;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Services;
+using BiliLite.ViewModels.Common;
+using DynamicItemDataTemplateSelector = BiliLite.Controls.DataTemplateSelectors.DynamicItemDataTemplateSelector;
 
 namespace BiliLite.Modules.User
 {
-    public enum DynamicType
+    public class DynamicVM : BaseViewModel
     {
-        /// <summary>
-        /// 用户关注动态
-        /// </summary>
-        UserDynamic,
-        /// <summary>
-        /// 话题动态
-        /// </summary>
-        Topic,
-        /// <summary>
-        /// 个人空间动态
-        /// </summary>
-        Space
-    }
-    public class DynamicVM : IModules
-    {
-        readonly WatchLaterVM watchLaterVM;
-        readonly DynamicAPI dynamicAPI;
+        #region Fields
+
+        private readonly WatchLaterVM m_watchLaterVm;
+        private readonly DynamicAPI m_dynamicApi;
+        private DynamicItemDataTemplateSelector m_dynamicItemDataTemplateSelector;
+
+        #endregion
+
+        #region Constructors
+
         public DynamicVM()
         {
-            dynamicAPI = new DynamicAPI();
-            watchLaterVM = new WatchLaterVM();
-            dynamicItemDataTemplateSelector = new DynamicItemDataTemplateSelector();
+            m_dynamicApi = new DynamicAPI();
+            m_watchLaterVm = new WatchLaterVM();
+            m_dynamicItemDataTemplateSelector = new DynamicItemDataTemplateSelector();
             RefreshCommand = new RelayCommand(Refresh);
             LoadMoreCommand = new RelayCommand(LoadMore);
 
@@ -68,7 +58,11 @@ namespace BiliLite.Modules.User
             RepostCommand = new RelayCommand<DynamicItemDisplayModel>(OpenSendDynamicDialog);
             DetailCommand = new RelayCommand<DynamicItemDisplayModel>(OpenDetail);
         }
-        public event EventHandler<DynamicItemDisplayModel> OpenCommentEvent;
+
+        #endregion
+
+        #region Properties
+
         public ICommand VoteCommand { get; set; }
         public ICommand UserCommand { get; set; }
         public ICommand LotteryCommand { get; set; }
@@ -81,45 +75,27 @@ namespace BiliLite.Modules.User
         public ICommand LikeCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
         public ICommand DetailCommand { get; set; }
-        public DynamicItemDataTemplateSelector dynamicItemDataTemplateSelector { get; set; }
-        private bool _loading = true;
-        public bool Loading
-        {
-            get { return _loading; }
-            set { _loading = value; DoPropertyChanged("Loading"); }
-        }
-        private bool _loadMore = false;
-        public bool CanLoadMore
-        {
-            get { return _loadMore; }
-            set { _loadMore = value; DoPropertyChanged("CanLoadMore"); }
-        }
         public ICommand RefreshCommand { get; private set; }
         public ICommand LoadMoreCommand { get; private set; }
+        public bool Loading { get; set; } = true;
+        public bool CanLoadMore { get; set; }
         public DynamicType DynamicType { get; set; } = DynamicType.UserDynamic;
         public string Uid { get; set; }
         public UserDynamicType UserDynamicType { get; set; } = UserDynamicType.All;
 
+        public ObservableCollection<DynamicItemDisplayModel> Items { get; set; }
 
+        #endregion
 
-        private ObservableCollection<DynamicItemDisplayModel> _Items;
+        #region Events
 
-        public ObservableCollection<DynamicItemDisplayModel> Items
-        {
-            get { return _Items; }
-            set { _Items = value; DoPropertyChanged("Items"); }
-        }
+        public event EventHandler<DynamicItemDisplayModel> OpenCommentEvent;
 
-        public async void Refresh()
-        {
-            if (Loading)
-            {
-                return;
-            }
-            Items = null;
-            await GetDynamicItems();
-        }
-        public async void LoadMore()
+        #endregion
+
+        #region Private Methods
+
+        private async void LoadMore()
         {
             if (Loading)
             {
@@ -132,7 +108,7 @@ namespace BiliLite.Modules.User
             var last = Items.LastOrDefault();
             await GetDynamicItems(last.DynamicID);
         }
-        public void OpenUser(object id)
+        private void OpenUser(object id)
         {
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
@@ -142,7 +118,7 @@ namespace BiliLite.Modules.User
                 parameters = id
             });
         }
-        public async void LaunchUrl(object url)
+        private async void LaunchUrl(object url)
         {
             var result = await MessageCenter.HandelUrl(url.ToString());
             if (!result)
@@ -150,7 +126,7 @@ namespace BiliLite.Modules.User
                 Notify.ShowMessageToast("无法打开Url");
             }
         }
-        public void OpenWeb(object url)
+        private void OpenWeb(object url)
         {
             MessageCenter.NavigateToPage(null, new NavigationInfo()
             {
@@ -161,12 +137,12 @@ namespace BiliLite.Modules.User
             });
         }
 
-        public void OpenImage(object data)
+        private void OpenImage(object data)
         {
             DyanmicItemDisplayImageInfo info = data as DyanmicItemDisplayImageInfo;
             MessageCenter.OpenImageViewer(info.AllImages, info.Index);
         }
-        public void OpenTag(object name)
+        private void OpenTag(object name)
         {
             //TODO 打开话题
             MessageCenter.NavigateToPage(this, new NavigationInfo()
@@ -177,7 +153,7 @@ namespace BiliLite.Modules.User
                 parameters = "https://t.bilibili.com/topic/name/" + Uri.EscapeDataString(name.ToString())
             });
         }
-        public async void OpenLottery(object id)
+        private async void OpenLottery(object id)
         {
             ContentDialog contentDialog = new ContentDialog()
             {
@@ -197,7 +173,7 @@ namespace BiliLite.Modules.User
             };
             await contentDialog.ShowAsync();
         }
-        public void OpenVote(object id)
+        private void OpenVote(object id)
         {
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
@@ -224,11 +200,11 @@ namespace BiliLite.Modules.User
             //};
             //await contentDialog.ShowAsync();
         }
-        public void OpenComment(DynamicItemDisplayModel data)
+        private void OpenComment(DynamicItemDisplayModel data)
         {
             OpenCommentEvent?.Invoke(this, data);
         }
-        public void OpenDetail(DynamicItemDisplayModel data)
+        private void OpenDetail(DynamicItemDisplayModel data)
         {
             MessageCenter.NavigateToPage(this, new NavigationInfo()
             {
@@ -238,7 +214,7 @@ namespace BiliLite.Modules.User
                 parameters = data.DynamicID
             });
         }
-        public async void Delete(DynamicItemDisplayModel item)
+        private async void Delete(DynamicItemDisplayModel item)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
@@ -252,7 +228,7 @@ namespace BiliLite.Modules.User
             if (result.Id.ToInt32() == 1) return;
             try
             {
-                var results = await dynamicAPI.Delete(item.DynamicID).Request();
+                var results = await m_dynamicApi.Delete(item.DynamicID).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<object>>();
@@ -277,7 +253,7 @@ namespace BiliLite.Modules.User
             }
 
         }
-        public async void DoLike(DynamicItemDisplayModel item)
+        private async void DoLike(DynamicItemDisplayModel item)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
@@ -287,7 +263,7 @@ namespace BiliLite.Modules.User
 
             try
             {
-                var results = await dynamicAPI.Like(item.DynamicID, item.Liked ? 2 : 1).Request();
+                var results = await m_dynamicApi.Like(item.DynamicID, item.Liked ? 2 : 1).Request();
                 if (results.status)
                 {
                     var data = await results.GetJson<ApiDataModel<object>>();
@@ -319,12 +295,8 @@ namespace BiliLite.Modules.User
                 var handel = HandelError<object>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
-
-
-
-
         }
-        public async void OpenSendDynamicDialog(DynamicItemDisplayModel data)
+        private async void OpenSendDynamicDialog(DynamicItemDisplayModel data)
         {
             if (!SettingService.Account.Logined && !await Notify.ShowLoginDialog())
             {
@@ -339,128 +311,11 @@ namespace BiliLite.Modules.User
             }
             await sendDynamicDialog.ShowAsync();
         }
-        public async Task GetDynamicItems(string idx = "")
-        {
-            try
-            {
-                CanLoadMore = false;
-                Loading = true;
 
-                var api = dynamicAPI.DyanmicNew(UserDynamicType);
-                switch (DynamicType)
-                {
-                    case DynamicType.UserDynamic:
-                        if (idx != "")
-                        {
-                            api = dynamicAPI.HistoryDynamic(idx, UserDynamicType);
-                        }
-                        break;
-                    case DynamicType.Topic:
-                        break;
-                    case DynamicType.Space:
-                        api = dynamicAPI.SpaceHistory(Uid, idx);
-                        break;
-                    default:
-                        break;
-                }
-
-                var results = await api.Request();
-                if (results.status)
-                {
-                    var data = results.GetJObject();
-                    if (data["code"].ToInt32() == 0)
-                    {
-                        var items = JsonConvert.DeserializeObject<List<DynamicCardModel>>(data["data"]?["cards"]?.ToString() ?? "[]");
-                        if (items.Count > 0)
-                        {
-                            CanLoadMore = true;
-                        }
-                        ObservableCollection<DynamicItemDisplayModel> _ls = new ObservableCollection<DynamicItemDisplayModel>();
-                        foreach (var item in items)
-                        {
-                            _ls.Add(ConvertToDisplay(item));
-                        }
-                        if (Items == null)
-                        {
-
-                            Items = _ls;
-                        }
-                        else
-                        {
-                            foreach (var item in _ls)
-                            {
-                                Items.Add(item);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Notify.ShowMessageToast(data["message"].ToString());
-                    }
-                }
-                else
-                {
-                    Notify.ShowMessageToast(results.message);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                var handel = HandelError<AnimeHomeModel>(ex);
-                Notify.ShowMessageToast(handel.message);
-            }
-            finally
-            {
-                Loading = false;
-
-            }
-        }
-        public async Task GetDynamicDetail(string id)
-        {
-            try
-            {
-                CanLoadMore = false;
-                Loading = true;
-                var api = dynamicAPI.DynamicDetail(id);
-
-                var results = await api.Request();
-                if (results.status)
-                {
-                    var data = results.GetJObject();
-                    if (data["code"].ToInt32() == 0)
-                    {
-                        var items = JsonConvert.DeserializeObject<DynamicCardModel>(data["data"]["card"].ToString());
-                        ObservableCollection<DynamicItemDisplayModel> _ls = new ObservableCollection<DynamicItemDisplayModel>();
-                        _ls.Add(ConvertToDisplay(items));
-                        Items = _ls;
-                    }
-                    else
-                    {
-                        Notify.ShowMessageToast(data["message"].ToString());
-                    }
-                }
-                else
-                {
-                    Notify.ShowMessageToast(results.message);
-
-                }
-            }
-            catch (Exception ex)
-            {
-                var handel = HandelError<AnimeHomeModel>(ex);
-                Notify.ShowMessageToast(handel.message);
-            }
-            finally
-            {
-                Loading = false;
-
-            }
-        }
         private DynamicItemDisplayModel ConvertToDisplay(DynamicCardModel item)
         {
             try
             {
-
                 var card = JObject.Parse(item.card);
                 var extend_json = JObject.Parse(item.extend_json);
                 var data = new DynamicItemDisplayModel()
@@ -471,7 +326,7 @@ namespace BiliLite.Modules.User
                     LikeCount = item.desc.like,
                     Mid = item.desc.uid,
                     ShareCount = item.desc.repost,
-                    Time = item.desc.timestamp.ToString().HandelTimestamp(),
+                    Time = item.desc.timestamp.HandelTimestamp(),
                     IntType = item.desc.type,
                     ReplyID = item.desc.rid_str,
                     ReplyType = item.desc.r_type,
@@ -489,7 +344,7 @@ namespace BiliLite.Modules.User
                     DeleteCommand = DeleteCommand,
                     RepostCommand = RepostCommand,
                     DetailCommand = DetailCommand,
-                    WatchLaterCommand = watchLaterVM.AddCommand,
+                    WatchLaterCommand = m_watchLaterVm.AddCommand,
                     Liked = item.desc.is_liked == 1
                 };
                 if (data.Type == DynamicDisplayType.Other)
@@ -675,6 +530,141 @@ namespace BiliLite.Modules.User
             }
 
         }
+        #endregion
+
+        #region Public Methods
+
+        public async void Refresh()
+        {
+            if (Loading)
+            {
+                return;
+            }
+            Items = null;
+            await GetDynamicItems();
+        }
+
+        public async Task GetDynamicItems(string idx = "")
+        {
+            try
+            {
+                CanLoadMore = false;
+                Loading = true;
+
+                var api = m_dynamicApi.DyanmicNew(UserDynamicType);
+                switch (DynamicType)
+                {
+                    case DynamicType.UserDynamic:
+                        if (idx != "")
+                        {
+                            api = m_dynamicApi.HistoryDynamic(idx, UserDynamicType);
+                        }
+                        break;
+                    case DynamicType.Topic:
+                        break;
+                    case DynamicType.Space:
+                        api = m_dynamicApi.SpaceHistory(Uid, idx);
+                        break;
+                    default:
+                        break;
+                }
+
+                var results = await api.Request();
+                if (results.status)
+                {
+                    var data = results.GetJObject();
+                    if (data["code"].ToInt32() == 0)
+                    {
+                        var items = JsonConvert.DeserializeObject<List<DynamicCardModel>>(data["data"]?["cards"]?.ToString() ?? "[]");
+                        if (items.Count > 0)
+                        {
+                            CanLoadMore = true;
+                        }
+                        ObservableCollection<DynamicItemDisplayModel> _ls = new ObservableCollection<DynamicItemDisplayModel>();
+                        foreach (var item in items)
+                        {
+                            _ls.Add(ConvertToDisplay(item));
+                        }
+                        if (Items == null)
+                        {
+
+                            Items = _ls;
+                        }
+                        else
+                        {
+                            foreach (var item in _ls)
+                            {
+                                Items.Add(item);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Notify.ShowMessageToast(data["message"].ToString());
+                    }
+                }
+                else
+                {
+                    Notify.ShowMessageToast(results.message);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var handel = HandelError<DynamicVM>(ex);
+                Notify.ShowMessageToast(handel.message);
+            }
+            finally
+            {
+                Loading = false;
+
+            }
+        }
+        public async Task GetDynamicDetail(string id)
+        {
+            try
+            {
+                CanLoadMore = false;
+                Loading = true;
+                var api = m_dynamicApi.DynamicDetail(id);
+
+                var results = await api.Request();
+                if (results.status)
+                {
+                    var data = results.GetJObject();
+                    if (data["code"].ToInt32() == 0)
+                    {
+                        var items = JsonConvert.DeserializeObject<DynamicCardModel>(data["data"]["card"].ToString());
+                        ObservableCollection<DynamicItemDisplayModel> _ls = new ObservableCollection<DynamicItemDisplayModel>();
+                        _ls.Add(ConvertToDisplay(items));
+                        Items = _ls;
+                    }
+                    else
+                    {
+                        Notify.ShowMessageToast(data["message"].ToString());
+                    }
+                }
+                else
+                {
+                    Notify.ShowMessageToast(results.message);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                var handel = HandelError<DynamicVM>(ex);
+                Notify.ShowMessageToast(handel.message);
+            }
+            finally
+            {
+                Loading = false;
+
+            }
+        }
+
+        #endregion
+
+
 
     }
 

@@ -18,6 +18,7 @@ using BiliLite.Models.Requests.Api;
 using BiliLite.Services;
 using BiliLite.Models.Common.Account;
 using HtmlAgilityPack;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BiliLite.Modules
 {
@@ -25,11 +26,13 @@ namespace BiliLite.Modules
     {
         private static readonly ILogger _logger = GlobalLogger.FromCurrentType();
 
+        private readonly CookieService m_cookieService;
         private SettingVM settingVM;
         public AccountApi accountApi;
         string guid = "";
         public Account()
         {
+            m_cookieService = App.ServiceProvider.GetRequiredService<CookieService>();
             accountApi = new AccountApi();
             settingVM = new SettingVM();
             guid = Guid.NewGuid().ToString();
@@ -100,27 +103,24 @@ namespace BiliLite.Modules
                     //设置Cookie
                     if (cookie != null)
                     {
-                        HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
-                        foreach (var item in cookie.domains)
+                        var cookies = new List<HttpCookieItem>();
+                        cookies.AddRange(cookie.cookies.Select(cookieItem => new HttpCookieItem()
                         {
-                            foreach (var cookieItem in cookie.cookies)
-                            {
-                                filter.CookieManager.SetCookie(new Windows.Web.Http.HttpCookie(cookieItem.name, item, "/")
-                                {
-                                    HttpOnly = cookieItem.http_only == 1,
-                                    Secure = cookieItem.secure == 1,
-                                    Expires = TimeExtensions.TimestampToDatetime(cookieItem.expires),
-                                    Value = cookieItem.value,
-                                });
-                            }
-                        }
+                            Domain = Constants.BILIBILI_DOMAIN,
+                            Expires = TimeExtensions.TimestampToDatetime(cookieItem.expires),
+                            HttpOnly = cookieItem.http_only == 1,
+                            Name = cookieItem.name,
+                            Secure = cookieItem.secure == 1,
+                            Value = cookieItem.value,
+                        }));
+                        m_cookieService.Cookies = cookies;
                     }
                     //执行SSO
                     //await accountApi.SSO(access_key).Request();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"SSO失败", LogType.ERROR, ex);
+                    _logger.Log($"SSO失败", LogType.Error, ex);
                 }
 
                 //读取个人资料
@@ -131,7 +131,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("安全验证后设置保存信息失败", LogType.ERROR, ex);
+                _logger.Log("安全验证后设置保存信息失败", LogType.Error, ex);
                 return false;
             }
         }
@@ -155,7 +155,7 @@ namespace BiliLite.Modules
             }
             catch (Exception ex)
             {
-                _logger.Log("读取个人资料失败", LogType.ERROR, ex);
+                _logger.Log("读取个人资料失败", LogType.Error, ex);
                 return null;
             }
         }
@@ -240,7 +240,7 @@ namespace BiliLite.Modules
 
         public async void LoginByCookie(List<HttpCookieItem> cookies, string refresh_token)
         {
-            cookies.SaveCookie();
+            m_cookieService.Cookies = cookies;
             var cookieToAccessKeyConfirmUrl = await GetCookieToAccessKeyConfirmUrl();
             var accessKey = await GetAccessKey(cookieToAccessKeyConfirmUrl);
             // var expires = result.cookies[0].Expires;
@@ -512,7 +512,7 @@ namespace BiliLite.Modules
                 await RefreshCookies(newCsrf, refreshToken);
                 await ConfirmRefreshCookies(refreshToken);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error("刷新Cookie失败", ex);
                 Notify.ShowMessageToast("刷新Cookie失败，建议手动重新登录");

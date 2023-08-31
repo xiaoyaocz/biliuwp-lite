@@ -44,15 +44,16 @@ namespace BiliLite.Dialogs
 
             this.downloadItem = downloadItemViewModel;
 
-            m_viewModel.VideoTypeSelectedIndex = SettingService.GetValue<int>(SettingConstants.Download.DEFAULT_VIDEO_TYPE, 1);
-            cbVideoType.Loaded += new RoutedEventHandler((sender, e) =>
+            var selectedValue = (PlayUrlCodecMode)SettingService.GetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, (int)DefaultVideoTypeOptions.DEFAULT_VIDEO_TYPE);
+            m_viewModel.SelectedVideoType = DefaultVideoTypeOptions.GetOption(selectedValue);
+            cbVideoType.Loaded += (sender, e) =>
             {
-                cbVideoType.SelectionChanged += new SelectionChangedEventHandler((obj, args) =>
+                cbVideoType.SelectionChanged += (obj, args) =>
                 {
-                    SettingService.SetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, cbVideoType.SelectedIndex);
+                    SettingService.SetValue(SettingConstants.Download.DEFAULT_VIDEO_TYPE, (int)cbVideoType.SelectedValue);
                     LoadQuality();
-                });
-            });
+                };
+            };
 
             LoadQuality();
 

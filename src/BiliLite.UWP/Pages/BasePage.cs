@@ -1,4 +1,5 @@
-﻿using BiliLite.Controls;
+﻿using System.Threading.Tasks;
+using BiliLite.Controls;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using Windows.UI.Xaml.Controls;
@@ -35,6 +36,18 @@ namespace BiliLite.Pages
         {
             Player.PlayerInstance.Play();
         }
+
+        public void DisposePlayer()
+        {
+            Player?.Dispose();
+        }
+
+        public async Task ReportHistory()
+        {
+            if (Player == null) return;
+            await Player.ReportHistory();
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             if (e.NavigationMode == NavigationMode.Back || e.SourcePageType == typeof(BlankPage))

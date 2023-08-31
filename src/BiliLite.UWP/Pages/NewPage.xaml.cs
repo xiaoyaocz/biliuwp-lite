@@ -80,7 +80,7 @@ namespace BiliLite.Pages
         {
             ((this.Parent as Frame).Parent as TabViewItem).Header = "番剧时间表";
             ((this.Parent as Frame).Parent as TabViewItem).IconSource = new Microsoft.UI.Xaml.Controls.SymbolIconSource() { Symbol = Symbol.Clock };
-            this.Frame.Navigate(typeof(TimelinePage), Modules.AnimeType.bangumi);
+            this.Frame.Navigate(typeof(TimelinePage), AnimeType.Bangumi);
         }
 
         private async void BtnOpenMyFollow_Click(object sender, RoutedEventArgs e)

@@ -135,10 +135,23 @@ namespace BiliLite.Models.Common
             /// 是否web登录
             /// </summary>
             public const string IS_WEB_LOGIN = "isWebLogin";
+
+            /// <summary>
+            /// Cookies
+            /// </summary>
+            public const string BILIBILI_COOKIES = "BiliBiliCookies";
         }
 
         public class VideoDanmaku
         {
+            /// <summary>
+            /// 默认弹幕引擎
+            /// </summary>
+            public const DanmakuEngineType DEFAULT_DANMAKU_ENGINE = DanmakuEngineType.NSDanmaku;
+            /// <summary>
+            /// 弹幕引擎
+            /// </summary>
+            public const string DANMAKU_ENGINE = "DanmakuEngine";
             /// <summary>
             /// 显示弹幕 Visibility
             /// </summary>
@@ -545,6 +558,11 @@ namespace BiliLite.Models.Common
             public const string PROTECT_LOG_INFO = "protectLogInfo";
 
             /// <summary>
+            /// 日志级别
+            /// </summary>
+            public const string LOG_LEVEL = "LogLevel";
+
+            /// <summary>
             /// 忽略版本
             /// </summary>
             public const string IGNORE_VERSION = "ignoreVersion";
@@ -553,6 +571,11 @@ namespace BiliLite.Models.Common
             /// WebApi地址
             /// </summary>
             public const string BILI_LITE_WEB_API_BASE_URL = "BiliLiteWebApiBaseUrl";
+
+            /// <summary>
+            /// 优先使用Grpc请求动态
+            /// </summary>
+            public const string FIRST_GRPC_REQUEST_DYNAMIC = "FirstGrpcRequestDynamic";
         }
     }
 }

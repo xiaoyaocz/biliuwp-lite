@@ -68,7 +68,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log("封面下载失败:" + url, LogType.ERROR, ex);
+                logger.Log("封面下载失败:" + url, LogType.Error, ex);
             }
         }
         private static async Task DownloadDanmaku(string url, StorageFolder episodeFolder)
@@ -83,7 +83,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log("弹幕下载失败:" + url, LogType.ERROR, ex);
+                logger.Log("弹幕下载失败:" + url, LogType.Error, ex);
             }
         }
         private static async Task SaveInfo(DownloadInfo info, StorageFolder folder, StorageFolder episodeFolder)
@@ -135,7 +135,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log("文件保存失败:" + episodeFolder.Path, LogType.ERROR, ex);
+                logger.Log("文件保存失败:" + episodeFolder.Path, LogType.Error, ex);
             }
         }
         private static async Task DownloadSubtitle(DownloadSubtitleInfo subtitleInfo, StorageFolder episodeFolder)
@@ -155,7 +155,7 @@ namespace BiliLite.Services
             }
             catch (Exception ex)
             {
-                logger.Log($"字幕下载失败:{subtitleInfo.Name}={subtitleInfo.Url}", LogType.ERROR, ex);
+                logger.Log($"字幕下载失败:{subtitleInfo.Name}={subtitleInfo.Url}", LogType.Error, ex);
             }
         }
         private static async void DownloadVideo(DownloadInfo downloadInfo, DownloadUrlInfo url, StorageFolder episodeFolder)

@@ -150,7 +150,7 @@ namespace BiliLite.Models.Requests
             var body = "";
             if (m_body != null)
                 body = await m_body?.ReadAsStringAsync();
-            logger.Log($"网络请求: [{m_method}]{m_url} {body}", LogType.INFO);
+            logger.Log($"网络请求: [{m_method}]{m_url} {body}", LogType.Info);
         }
 
         public async Task<HttpResults> Send()
@@ -185,7 +185,7 @@ namespace BiliLite.Models.Requests
             }
             catch (Exception ex)
             {
-                logger.Log($"{m_method.Method}请求失败" + m_url, LogType.ERROR, ex);
+                logger.Log($"{m_method.Method}请求失败" + m_url, LogType.Error, ex);
                 httpResults = await ConstructExResults(ex);
             }
 

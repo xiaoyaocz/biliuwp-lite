@@ -84,7 +84,7 @@ namespace BiliLite.Modules.Season
             }
             catch (Exception ex)
             {
-                var handel = HandelError<AnimeHomeModel>(ex);
+                var handel = HandelError<SeasonReviewVM>(ex);
                 Notify.ShowMessageToast(handel.message);
             }
             finally

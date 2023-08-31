@@ -2,6 +2,7 @@
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using System;
+using System.Threading.Tasks;
 
 namespace BiliLite.Models.Requests.Api
 {
@@ -22,10 +23,8 @@ namespace BiliLite.Models.Requests.Api
                 parameter = $"avid={aid}&cid={cid}&qn={qn}&type=&otype=json&mid={(SettingService.Account.Logined ? SettingService.Account.Profile.mid.ToString() : "")}",
                 need_cookie = true,
             };
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             if (proxy)
             {
                 api.parameter += $"&area={area}";
@@ -50,11 +49,8 @@ namespace BiliLite.Models.Requests.Api
             {
                 api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
-
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             if (proxy)
             {
@@ -75,10 +71,8 @@ namespace BiliLite.Models.Requests.Api
             {
                 api.parameter += $"&access_key={SettingService.Account.AccessKey}&mid={SettingService.Account.Profile.mid}";
             }
-            if (dash)
-            {
-                api.parameter += "&fourk=1&fnver=0&fnval=4048";
-            }
+            api.parameter += "&fourk=1&fnver=0&fnval=4048";
+            
             api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.WebVideoKey);
             return api;
         }
@@ -166,14 +160,16 @@ namespace BiliLite.Models.Requests.Api
         /// <param name="aid">AV</param>
         /// <param name="cid">CID</param>
         /// <returns></returns>
-        public ApiModel GetPlayerInfo(string aid, string cid, string bvid)
+        public async Task<ApiModel> GetPlayerInfo(string aid, string cid, string bvid)
         {
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/v2",
+                baseUrl = $"{ApiHelper.API_BASE_URL}/x/player/wbi/v2",
                 parameter = $"cid={cid}&aid={aid}&bvid={bvid}",
+                need_cookie = true,
             };
+            api.parameter = await ApiHelper.GetWbiSign(api.parameter);
             return api;
         }
 
