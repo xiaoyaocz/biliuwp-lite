@@ -2808,7 +2808,10 @@ namespace BiliLite.Controls
 
         private void Player_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            // 更新弹幕
             m_danmakuController.UpdateSize(SplitView.ActualWidth, SplitView.ActualHeight);
+            // 更新画面比例
+            Player.SetRatioMode(PlayerSettingRatio.SelectedIndex);
         }
     }
 }

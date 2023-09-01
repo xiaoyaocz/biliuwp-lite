@@ -1064,7 +1064,6 @@ namespace BiliLite.Controls
 
         public void SetRatioMode(int mode)
         {
-
             switch (mode)
             {
                 case 0:
