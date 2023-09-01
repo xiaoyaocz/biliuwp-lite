@@ -29,6 +29,17 @@ namespace BiliLite.Models.Requests.Api
             return api;
         }
 
+        public ApiModel RelatesWebInterface(string id, bool isBvId)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://api.bilibili.com/x/web-interface/archive/related",
+                parameter = $"&{(isBvId ? "bvid=" : "aid=")}{id}"
+            };
+            return api;
+        }
+
         public ApiModel DetailProxy(string id, bool isbvid)
         {
             ApiModel api = new ApiModel()
