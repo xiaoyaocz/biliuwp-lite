@@ -12,7 +12,14 @@ namespace BiliLite.Services
         {
             if (storageHelper.KeyExists(key))
             {
-                return storageHelper.Read<T>(key);
+                var value = storageHelper.Read<T>(key);
+                if (value is string)
+                {
+                    var stringValue = value as string;
+                    stringValue = stringValue.Replace("\"", "");
+                    value = (T)(object)stringValue;
+                }
+                return value;
             }
             else
             {
