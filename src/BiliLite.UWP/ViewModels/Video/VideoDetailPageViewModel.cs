@@ -227,9 +227,21 @@ namespace BiliLite.Modules
                 {
                     // 通过web获取视频详情
                     var webResult = await videoAPI.DetailWebInterface(id, isbvid).Request();
-                    if (webResult.status)
+                    // 通过web获取推荐视频
+                    var webRelatesResult = await videoAPI.RelatesWebInterface(id, isbvid).Request();
+                    if (webResult.status && webRelatesResult.status)
                     {
                         data = await webResult.GetJson<ApiDataModel<VideoDetailModel>>();
+                        data.data.ShortLink = "https://b23.tv/" + data.data.Bvid;
+
+                        // 解析推荐视频
+                        var relatesData = await webRelatesResult.GetJson<ApiDataModel<List<VideoDetailRelatesModel>>>();
+                        if (!relatesData.success)
+                        {
+                            throw new CustomizedErrorException(relatesData.message);
+                        }
+                        data.data.Relates = relatesData.data;
+
                         needGetUserReq = true;
                     }
                 }
