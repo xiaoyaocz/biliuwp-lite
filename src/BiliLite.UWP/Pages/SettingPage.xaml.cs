@@ -787,6 +787,7 @@ namespace BiliLite.Pages
 
             // 更新json来源
             var selectedValue = SettingService.GetValue(SettingConstants.Other.DEFAULT_UPDATE_JSON_ADDRESS, DefaultUpdateJsonAddressOptions.DEFAULT_UPDATE_JSON_ADDRESS);
+            selectedValue = selectedValue.Replace("\"", ""); // 解决取出的值有奇怪的转义符
             updateJsonAddress.SelectedItem = DefaultUpdateJsonAddressOptions.GetOption(selectedValue);
             mirrorComboboxSelectAction(selectedValue);
             updateJsonAddress.Loaded += (sender, e) =>

@@ -14,6 +14,7 @@ namespace BiliLite.Models.Requests.Api
         {
             var m_updateJsonAddress = SettingService.GetValue(SettingConstants.Other.DEFAULT_UPDATE_JSON_ADDRESS, 
                                                               DefaultUpdateJsonAddressOptions.DEFAULT_UPDATE_JSON_ADDRESS);
+            m_updateJsonAddress = m_updateJsonAddress.Replace("\"", ""); // 解决取出的值有奇怪的转义符
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
