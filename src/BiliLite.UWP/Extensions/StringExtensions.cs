@@ -138,14 +138,14 @@ namespace BiliLite.Extensions
 
         public static int CalculateCommentTextLength(this string input)
         {
-            var regex = new Regex(@"\[(.*?)\]|https?:\/\/\S+|http?:\/\/\S+");
+            var regex = new Regex(Constants.COMMENT_SPECIAL_TEXT_REGULAR);
             var newInput = regex.Replace(input, "");
             return newInput.Length;
         }
 
         public static string SubstringCommentText(this string input,int length)
         {
-            var regex = new Regex(@"\[(.*?)\]|https?:\/\/\S+|http?:\/\/\S+");
+            var regex = new Regex(Constants.COMMENT_SPECIAL_TEXT_REGULAR);
             var matches = new Dictionary<int, string>();
             foreach (Match match in regex.Matches(input))
             {

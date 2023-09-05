@@ -11,7 +11,12 @@
         /// b站官网域名
         /// </summary>
         public const string BILIBILI_DOMAIN = "https://www.bilibili.com";
-        
+
+        /// <summary>
+        /// 评论中匹配特殊文本正则表达式
+        /// </summary>
+        public const string COMMENT_SPECIAL_TEXT_REGULAR = @"\[(.*?)\]|https?:\/\/\S+|http?:\/\/\S+|\p{Cs}";
+
         public static class App
         {
             /// <summary>

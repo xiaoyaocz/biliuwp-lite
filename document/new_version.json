@@ -1,7 +1,7 @@
 {
-    "version": "4.6.12",
-    "version_num": 40612,
-    "version_desc": "更新内容:\r\n\r\n* 新增可选弹幕引擎寒霜弹幕使\r\n\r\n* 移除FLV选项\r\n\r\n* 修复切到后台一段时间会导致播放错误\r\n\r\n* 修复长评论折叠错误导致程序崩溃\r\n\r\n* 修复无法查看置顶评论\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
+    "version": "4.6.13",
+    "version_num": 40613,
+    "version_desc": "更新内容:\r\n\r\n* 修复无损音质获取失败时视频无法播放\r\n\r\n* 修复使用寒霜弹幕使播放6分钟后无弹幕\r\n\r\n* 修复视频动态页视频时长显示错误\r\n\r\n* 修复下载视频切换剧集时弹窗报错\r\n\r\n* 修复设置画面比例后画面大小不随窗口大小变化\r\n\r\n* 修复直播间醒目留言无法显示发送者名字\r\n\r\n* 修复部分up主的视频详情页无推荐视频和无法分享\r\n\r\n\r\n 如果无法打开下载地址，请访问:https://github.com/ywmoyue/biliuwp-lite/releases",
     "url": "https://github.com/ywmoyue/biliuwp-lite/releases",
     "download_url": "https://github.com/ywmoyue/biliuwp-lite/releases"
 }

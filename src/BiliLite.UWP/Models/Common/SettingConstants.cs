@@ -580,7 +580,7 @@ namespace BiliLite.Models.Common
             /// <summary>
             /// 更新json请求地址
             /// </summary>
-            public const string DEFAULT_UPDATE_JSON_ADDRESS = "UpdateJsonAddress";
+            public const string UPDATE_JSON_ADDRESS = "RawRepositoryAddress";
         }
     }
 }
