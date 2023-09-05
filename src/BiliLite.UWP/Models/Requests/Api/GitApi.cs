@@ -12,13 +12,13 @@ namespace BiliLite.Models.Requests.Api
         /// <returns></returns>
         public ApiModel CheckUpdate()
         {
-            var m_updateJsonAddress = SettingService.GetValue(SettingConstants.Other.DEFAULT_UPDATE_JSON_ADDRESS, 
-                                                              DefaultUpdateJsonAddressOptions.DEFAULT_UPDATE_JSON_ADDRESS);
-            m_updateJsonAddress = m_updateJsonAddress.Replace("\"", ""); // 解决取出的值有奇怪的转义符
+            var updateJsonAddress = SettingService.GetValue(SettingConstants.Other.UPDATE_JSON_ADDRESS, 
+                                                              UpdateJsonAddressOptions.DEFAULT_UPDATE_JSON_ADDRESS);
+            updateJsonAddress = updateJsonAddress.Replace("\"", ""); // 解决取出的值有奇怪的转义符
             ApiModel api = new ApiModel()
             {
                 method = RestSharp.Method.Get,
-                baseUrl = $"{m_updateJsonAddress}/document/new_version.json",
+                baseUrl = $"{updateJsonAddress}/document/new_version.json",
                 parameter = $"ts={TimeExtensions.GetTimestampS()}"
             };
             return api;

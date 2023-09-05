@@ -591,7 +591,7 @@
                         <TextBlock Margin="0 8 0 0" FontSize="16">更新json请求地址（用于解决github在国内访问不佳的问题）</TextBlock>
                         <StackPanel Orientation="Horizontal">
                             <ComboBox x:Name="updateJsonAddress" Margin="0 8"  MinWidth="200"
-                            ItemsSource="{x:Bind common:DefaultUpdateJsonAddressOptions.Options}" 
+                            ItemsSource="{x:Bind common:UpdateJsonAddressOptions.Options}" 
                             SelectedValuePath="Value"
                             DisplayMemberPath="Name">
                             </ComboBox>
