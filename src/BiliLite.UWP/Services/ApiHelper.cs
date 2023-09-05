@@ -20,6 +20,10 @@ namespace BiliLite.Services
         // GIT RAW路径
         public const string GIT_RAW_URL = "https://raw.githubusercontent.com/ywmoyue/biliuwp-lite/master";
 
+        // 镜像 GIT RAW路径
+        public const string GHPROXY_GIT_RAW_URL = "https://ghproxy.com/https://raw.githubusercontent.com/ywmoyue/biliuwp-lite/master";
+        public const string KGITHUB_GIT_RAW_URL = "https://raw.kgithub.com/ywmoyue/biliuwp-lite/master";
+
         // 哔哩哔哩API
         public const string API_BASE_URL = "https://api.bilibili.com";
 

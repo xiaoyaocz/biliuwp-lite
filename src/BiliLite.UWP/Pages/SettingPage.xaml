@@ -586,8 +586,17 @@
                         <ToggleSwitch x:Name="swFirstGrpcRequestDynamic"></ToggleSwitch>
                         <TextBlock  Margin="0 8 0 0"  FontSize="16">BiliLite-WebApi（用于处理UWP无法完成的事项）</TextBlock>
                         <StackPanel Orientation="Horizontal">
-                            <AutoSuggestBox x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept"  Width="260" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
+                            <AutoSuggestBox Margin="0 8" x:Name="BiliLiteWebApiTextBox" QueryIcon="Accept" HorizontalAlignment="Left" PlaceholderText="https://example.com/"></AutoSuggestBox>
                         </StackPanel>
+                        <TextBlock Margin="0 8 0 0" FontSize="16">更新json请求地址（用于解决github在国内访问不佳的问题）</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox x:Name="updateJsonAddress" Margin="0 8"  MinWidth="200"
+                            ItemsSource="{x:Bind common:UpdateJsonAddressOptions.Options}" 
+                            SelectedValuePath="Value"
+                            DisplayMemberPath="Name">
+                            </ComboBox>
+                        </StackPanel>
+                        <TextBlock x:Name="mirrorDonateText"><Hyperlink x:Name="mirrorDonateUrl">第三方公益镜像捐赠地址-赠人玫瑰, 手有余香.</Hyperlink></TextBlock>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -607,12 +616,14 @@
                     <StackPanel >
                         <TextBlock  Margin="0 8"  FontSize="16">哔哩哔哩 Lite</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" x:Name="version">版本 1.0.0</TextBlock>
+                        <Button x:Name="btnCheckUpdate" Click="btnCheckUpdate_Click" Margin="0 0 0 8">检查更新</Button>
+                        <Button x:Name="btnCleanUpdateIgnore" Click="btnCleanUpdateIgnore_Click" Margin="0 0 0 8" Visibility="Collapsed">清除忽略的版本缓存</Button>
                         <TextBlock  Margin="0 8"  FontSize="16">开发</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14">开发者 : xiaoyaocz</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14">维护者 : ywmoyue</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14">Logo绘制 : xiaoyaomengo</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">反馈</TextBlock>
-                        <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">Github Discussions : https://github.com/ywmoyue/biliuwp-lite/discussions</TextBlock>
+                        <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">Github Discussions : <Hyperlink NavigateUri="https://github.com/ywmoyue/biliuwp-lite/discussions">https://github.com/ywmoyue/biliuwp-lite/discussions</Hyperlink></TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" IsTextSelectionEnabled="True">邮箱(请在发邮件时附带Github Discussion贴子链接) : ruamuyan@outlook.com</TextBlock>
                         <TextBlock  Margin="0 8"  FontSize="16">说明</TextBlock>
                         <TextBlock  Margin="0 0 0 8"  FontSize="14" TextWrapping="Wrap">这是一个第三方客户端，应用所有数据来源均来自哔哩哔哩。</TextBlock>

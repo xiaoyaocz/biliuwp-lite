@@ -784,6 +784,20 @@ namespace BiliLite.Pages
                     Notify.ShowMessageToast("保存成功");
                 };
             };
+
+            // 更新json来源
+            var selectedValue = SettingService.GetValue(SettingConstants.Other.UPDATE_JSON_ADDRESS, UpdateJsonAddressOptions.DEFAULT_UPDATE_JSON_ADDRESS);
+            selectedValue = selectedValue.Replace("\"", ""); // 解决取出的值有奇怪的转义符
+            updateJsonAddress.SelectedItem = UpdateJsonAddressOptions.GetOption(selectedValue);
+            mirrorComboboxSelectAction(selectedValue);
+            updateJsonAddress.Loaded += (sender, e) =>
+            {
+                updateJsonAddress.SelectionChanged += (obj, args) =>
+                {
+                    SettingService.SetValue(SettingConstants.Other.UPDATE_JSON_ADDRESS, updateJsonAddress.SelectedValue);
+                    mirrorComboboxSelectAction(updateJsonAddress.SelectedValue);
+                };
+            };
         }
 
         private void ExceptHomeNavItems()
@@ -969,6 +983,43 @@ namespace BiliLite.Pages
         private void RoamingSettingTestCDN_Click(object sender, RoutedEventArgs e)
         {
             settingVM.CDNServerDelayTest();
+        }
+
+        private async void btnCheckUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            await BiliExtensions.CheckVersion();
+        }
+
+        private void btnCleanUpdateIgnore_Click(object sender, RoutedEventArgs e)
+        {
+            SettingService.SetValue(SettingConstants.Other.IGNORE_VERSION, "");
+        }
+
+        private void mirrorComboboxSelectAction(object selectedValue)
+        {
+            switch (selectedValue)
+            {
+                case ApiHelper.GHPROXY_GIT_RAW_URL:
+                    {
+                        mirrorDonateText.Visibility = Visibility.Visible;
+                        mirrorDonateUrl.NavigateUri = new Uri("https://ghproxy.com/donate");
+                        break;
+                    }
+                case ApiHelper.KGITHUB_GIT_RAW_URL:
+                    {
+                        mirrorDonateText.Visibility = Visibility.Visible;
+                        mirrorDonateUrl.NavigateUri = new Uri("https://help.kgithub.com/donate");
+                        break;
+                    }
+                case ApiHelper.GIT_RAW_URL:
+                    {
+                        mirrorDonateText.Visibility = Visibility.Collapsed; break;
+                    }
+                default:
+                    {
+                        mirrorDonateText.Visibility = Visibility.Collapsed; break;
+                    }
+            }
         }
     }
 }

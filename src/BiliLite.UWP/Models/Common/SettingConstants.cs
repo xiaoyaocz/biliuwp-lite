@@ -576,6 +576,11 @@ namespace BiliLite.Models.Common
             /// 优先使用Grpc请求动态
             /// </summary>
             public const string FIRST_GRPC_REQUEST_DYNAMIC = "FirstGrpcRequestDynamic";
+
+            /// <summary>
+            /// 更新json请求地址
+            /// </summary>
+            public const string UPDATE_JSON_ADDRESS = "RawRepositoryAddress";
         }
     }
 }

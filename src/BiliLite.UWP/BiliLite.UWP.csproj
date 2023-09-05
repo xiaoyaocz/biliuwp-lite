@@ -155,6 +155,7 @@
     <Compile Include="Models\Common\Comment\DataCommentModel.cs" />
     <Compile Include="Models\Common\Comment\LoadCommentInfo.cs" />
     <Compile Include="Models\Common\Danmaku\CompareDanmakuItem.cs" />
+    <Compile Include="Models\Common\UpdateJsonAddressOptions.cs" />
     <Compile Include="Models\Common\Player\ChangePlayerEngine.cs" />
     <Compile Include="Models\Common\Player\PlayerOpenResult.cs" />
     <Compile Include="Extensions\MapperExtensions.cs" />
