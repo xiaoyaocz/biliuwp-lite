@@ -22,10 +22,21 @@ namespace BiliLite.Services
                 m_cookies = GetOldVersionCookies();
                 return;
             }
-            var cookies = JsonConvert.DeserializeObject<List<HttpCookieItem>>(cookiesStr);
-            if (cookies.FirstOrDefault()?.Expires > DateTimeOffset.Now)
+            try
             {
-                m_cookies = cookies;
+                var cookies = JsonConvert.DeserializeObject<List<HttpCookieItem>>(cookiesStr);
+                if (cookies.FirstOrDefault()?.Expires > DateTimeOffset.Now)
+                {
+                    m_cookies = cookies;
+                }
+            }
+            catch (JsonSerializationException) 
+            {
+                var cookie = JsonConvert.DeserializeObject<HttpCookieItem>(cookiesStr);
+                if (cookie?.Expires > DateTimeOffset.Now)
+                {
+                    m_cookies = new List<HttpCookieItem>() { cookie };
+                }
             }
         }
 
@@ -88,6 +99,8 @@ namespace BiliLite.Services
             SettingService.SetValue(SettingConstants.Account.BILIBILI_COOKIES, cookiesStr);
         }
 
+        public void SaveCookies() { SettingService.SetValue(SettingConstants.Account.BILIBILI_COOKIES, Cookies); }
+
         public string GetCSRFToken()
         {
             //没有Cookie
@@ -104,6 +117,23 @@ namespace BiliLite.Services
             }
 
             return csrf;
+        }
+
+        public string GetBuvid3()
+        {
+            if (Cookies == null || Cookies.Count == 0)
+            {
+                throw new Exception("未登录");
+            }
+
+            var buvid3 = Cookies.FirstOrDefault(x => x.Name == "buvid3")?.Value;
+
+            if (string.IsNullOrEmpty(buvid3))
+            {
+                throw new Exception("未获取到buvid3");
+            }
+
+            return buvid3;
         }
 
         public void ClearCookies()

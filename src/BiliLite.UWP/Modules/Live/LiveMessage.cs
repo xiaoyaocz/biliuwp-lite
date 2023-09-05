@@ -87,18 +87,19 @@ namespace BiliLite.Modules.Live
         public delegate void MessageHandler(MessageType type, object message);
         public event MessageHandler NewMessage;
         ClientWebSocket ws;
-        public string ServerUrl { get; set; } = "wss://broadcastlv.chat.bilibili.com/sub";
+        // public string ServerUrl { get; set; } = "wss://broadcastlv.chat.bilibili.com/sub";
         public LiveMessage()
         {
             ws = new ClientWebSocket();
         }
         private static System.Timers.Timer heartBeatTimer;
-        public async Task Connect(int roomID, int uid, CancellationToken cancellationToken)
+        public async Task Connect(int roomID, int uid, string token, string buvid, string host, CancellationToken cancellationToken)
         {
+            ws.Options.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69");
             //连接
-            await ws.ConnectAsync(new Uri(ServerUrl), cancellationToken);
+            await ws.ConnectAsync(new Uri("wss://"+ host + "/sub"), cancellationToken);
             //进房
-            await JoinRoomAsync(roomID, uid);
+            await JoinRoomAsync(roomID, buvid, token, uid);
             //发送心跳
             await SendHeartBeatAsync();
             heartBeatTimer = new System.Timers.Timer(1000 * 30);
@@ -132,14 +133,16 @@ namespace BiliLite.Modules.Live
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
-        private async Task JoinRoomAsync(int roomId, int uid = 0)
+        private async Task JoinRoomAsync(int roomId, string buvid, string token, int uid = 0)
         {
             if (ws.State == WebSocketState.Open)
             {
                 await ws.SendAsync(EncodeData(JsonConvert.SerializeObject(new
                 {
                     roomid = roomId,
-                    uid = uid
+                    uid = uid,
+                    buvid = buvid,
+                    key = token,
                 }), 7), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }

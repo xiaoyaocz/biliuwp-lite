@@ -609,7 +609,23 @@ namespace BiliLite.Modules
                 {
                     liveMessage = new LiveMessage();
                 }
-                await liveMessage.Connect(roomId, uid, cancelSource.Token);
+                var m_cookieService = new CookieService();
+                var m_cookies = m_cookieService.Cookies.ToDictionary(x => x.Name, x => x.Value);
+                if (!m_cookies.Keys.Contains("buvid3"))
+                {
+                    var result = await Constants.GET_COOKIE_DOMAIN.GetHttpResultsAsync(cookies: m_cookies);
+                    var cookies = result.cookies;
+                    m_cookieService.Cookies.Add(cookies.FirstOrDefault(x => x.Name == "buvid3"));
+                    //m_cookieService.SaveCookies();
+                }
+                var buvid = m_cookieService.GetBuvid3();
+
+                var results = await liveRoomAPI.GetDanmukuInfo(roomId).Request();
+                var data = await results.GetJson<ApiDataModel<LiveDanmukuInfoModel>>();
+                var token = data.data.token;
+                var host = data.data.host_list[0].host;
+
+                await liveMessage.Connect(roomId, uid, token, buvid, host, cancelSource.Token);
             }
             catch (TaskCanceledException)
             {
@@ -1885,6 +1901,18 @@ namespace BiliLite.Modules
             public int ts { get; set; }
             public string token { get; set; }
             public LiveRoomSuperChatUserInfoModel user_info { get; set; }
+        }
+
+        public class LiveDanmukuInfoModel
+        {
+            public string token { get; set; }
+
+            public List<LiveDanmukuHostModel> host_list { get; set; }
+        }
+
+        public class LiveDanmukuHostModel
+        {
+            public string host {  get; set; }
         }
     }
 
