@@ -609,21 +609,15 @@ namespace BiliLite.Modules
                 {
                     liveMessage = new LiveMessage();
                 }
-                var m_cookieService = new CookieService();
-                var m_cookies = m_cookieService.Cookies.ToDictionary(x => x.Name, x => x.Value);
-                if (!m_cookies.Keys.Contains("buvid3"))
-                {
-                    var result = await Constants.GET_COOKIE_DOMAIN.GetHttpResultsAsync(cookies: m_cookies);
-                    var cookies = result.cookies;
-                    m_cookieService.Cookies.Add(cookies.FirstOrDefault(x => x.Name == "buvid3"));
-                    //m_cookieService.SaveCookies();
-                }
-                var buvid = m_cookieService.GetBuvid3();
 
-                var results = await liveRoomAPI.GetDanmukuInfo(roomId).Request();
-                var data = await results.GetJson<ApiDataModel<LiveDanmukuInfoModel>>();
-                var token = data.data.token;
-                var host = data.data.host_list[0].host;
+                var buvid_results = await liveRoomAPI.GetBuvid().Request();
+                var buvid_data = await buvid_results.GetJson<ApiDataModel<LiveBuvidModel>>();
+                var buvid = buvid_data.data.b_3;
+
+                var danmuku_results = await liveRoomAPI.GetDanmukuInfo(roomId).Request();
+                var danmuku_data = await danmuku_results.GetJson<ApiDataModel<LiveDanmukuInfoModel>>();
+                var token = danmuku_data.data.token;
+                var host = danmuku_data.data.host_list[0].host;
 
                 await liveMessage.Connect(roomId, uid, token, buvid, host, cancelSource.Token);
             }
@@ -1913,6 +1907,12 @@ namespace BiliLite.Modules
         public class LiveDanmukuHostModel
         {
             public string host {  get; set; }
+        }
+
+        public class LiveBuvidModel
+        {
+            public string b_3 { get; set; }
+            public string b_4 { get; set; }
         }
     }
 

@@ -322,5 +322,16 @@ namespace BiliLite.Models.Requests.Api.Live
             };
             return api;
         }
+
+        public ApiModel GetBuvid()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://api.bilibili.com/x/frontend/finger/spi",
+                need_cookie = true
+            };
+            return api;
+        }
     }
 }
