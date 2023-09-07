@@ -14,6 +14,8 @@ using System.ComponentModel;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Extensions;
+using BrotliSharpLib;
+using System.IO.Compression;
 /*
 * 参考文档:
 * https://github.com/lovelyyoshino/Bilibili-Live-API/blob/master/API.WebSocket.md
@@ -143,6 +145,8 @@ namespace BiliLite.Modules.Live
                     uid = uid,
                     buvid = buvid,
                     key = token,
+                    protover = 3,
+                    platform = "web"
                 }), 7), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }
@@ -179,26 +183,24 @@ namespace BiliLite.Modules.Live
             {
                 NewMessage?.Invoke(MessageType.ConnectSuccess, "弹幕连接成功");
             }
-            else if (operation == 3)
-            {
-                var online = BitConverter.ToInt32(body.Reverse().ToArray(), 0);
-                NewMessage?.Invoke(MessageType.Online, online);
-            }
             else if (operation == 5)
             {
 
                 if (protocolVersion == 2)
                 {
-                    body = DecompressData(body);
-
+                    body = DecompressDataWithDeflate(body);
                 }
+                else if (protocolVersion == 3)
+                {
+                    body = DecompressDataWithBrotli(body);
+                }
+
                 var text = Encoding.UTF8.GetString(body);
                 //可能有多条数据，做个分割
                 var textLines = Regex.Split(text, "[\x00-\x1f]+").Where(x => x.Length > 2 && x[0] == '{').ToArray();
                 foreach (var item in textLines)
                 {
                     ParseMessage(item);
-
                 }
             }
         }
@@ -218,19 +220,6 @@ namespace BiliLite.Modules.Live
                         if (obj["info"][2] != null && obj["info"][2].ToArray().Length != 0)
                         {
                             msg.username = obj["info"][2][1].ToString() + ":";
-
-                            //msg.usernameColor = GetColor(obj["info"][2][0].ToString());
-                            if (obj["info"][2][3] != null && Convert.ToInt32(obj["info"][2][3].ToString()) == 1)
-                            {
-                                msg.vip = "老爷";
-                                msg.isVip = Visibility.Visible;
-                            }
-                            if (obj["info"][2][4] != null && Convert.ToInt32(obj["info"][2][4].ToString()) == 1)
-                            {
-                                msg.vip = "年费老爷";
-                                msg.isVip = Visibility.Collapsed;
-                                msg.isBigVip = Visibility.Visible;
-                            }
                             if (obj["info"][2][2] != null && Convert.ToInt32(obj["info"][2][2].ToString()) == 1)
                             {
                                 msg.vip = "房管";
@@ -392,11 +381,11 @@ namespace BiliLite.Modules.Live
 
 
         /// <summary>
-        /// 解压数据
+        /// 解压数据 (使用Deflate)
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private byte[] DecompressData(byte[] data)
+        private byte[] DecompressDataWithDeflate(byte[] data)
         {
             using (MemoryStream outBuffer = new MemoryStream())
             {
@@ -413,12 +402,33 @@ namespace BiliLite.Modules.Live
                     }
                     compressedzipStream.Close();
                     return outBuffer.ToArray();
-
                 }
-
             }
+        }
 
-
+        /// <summary>
+        /// 解压数据 (使用 Brotli)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private byte[] DecompressDataWithBrotli(byte[] data)
+        {
+            using (BrotliStream decompressedStream = new BrotliStream(new MemoryStream(data), CompressionMode.Decompress))
+            {
+                using (MemoryStream outBuffer = new MemoryStream())
+                {
+                    byte[] block = new byte[1024];
+                    while (true)
+                    {
+                        int bytesRead = decompressedStream.Read(block, 0, block.Length);
+                        if (bytesRead <= 0)
+                            break;
+                        else
+                            outBuffer.Write(block, 0, bytesRead);
+                    }
+                    return outBuffer.ToArray();
+                }
+            }
         }
 
         public void Dispose()
