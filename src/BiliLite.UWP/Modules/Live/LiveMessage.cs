@@ -111,9 +111,23 @@ namespace BiliLite.Modules.Live
             {
                 try
                 {
-                    var buffer = new byte[4096];
-                    WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, cancellationToken);
-                    ParseData(buffer.Take(result.Count).ToArray());
+                    WebSocketReceiveResult result;
+                    using (var ms = new MemoryStream())
+                    {
+                        var buffer = new byte[4096];
+                        do
+                        {
+                            result = await ws.ReceiveAsync(buffer, cancellationToken);
+                            ms.Write(buffer, 0, result.Count);
+                        }
+                        while (!result.EndOfMessage);
+
+                        ms.Seek(0, SeekOrigin.Begin);
+                        var receivedData = new byte[ms.Length];
+                        ms.Read(receivedData, 0, receivedData.Length);
+
+                        ParseData(receivedData);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -185,7 +199,6 @@ namespace BiliLite.Modules.Live
             }
             else if (operation == 5)
             {
-
                 if (protocolVersion == 2)
                 {
                     body = DecompressDataWithDeflate(body);
@@ -335,8 +348,12 @@ namespace BiliLite.Modules.Live
                     return;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (ex is JsonReaderException)
+                {
+                    logger.Log("直播解析JSON包出错", LogType.Error, ex);
+                }
             }
 
         }
@@ -389,7 +406,7 @@ namespace BiliLite.Modules.Live
         {
             using (MemoryStream outBuffer = new MemoryStream())
             {
-                using (System.IO.Compression.DeflateStream compressedzipStream = new System.IO.Compression.DeflateStream(new MemoryStream(data, 2, data.Length - 2), System.IO.Compression.CompressionMode.Decompress))
+                using (DeflateStream compressedzipStream = new DeflateStream(new MemoryStream(data, 2, data.Length - 2), CompressionMode.Decompress))
                 {
                     byte[] block = new byte[1024];
                     while (true)
