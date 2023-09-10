@@ -14,6 +14,8 @@ using System.ComponentModel;
 using BiliLite.Models.Common;
 using BiliLite.Services;
 using BiliLite.Extensions;
+using BrotliSharpLib;
+using System.IO.Compression;
 /*
 * 参考文档:
 * https://github.com/lovelyyoshino/Bilibili-Live-API/blob/master/API.WebSocket.md
@@ -87,18 +89,19 @@ namespace BiliLite.Modules.Live
         public delegate void MessageHandler(MessageType type, object message);
         public event MessageHandler NewMessage;
         ClientWebSocket ws;
-        public string ServerUrl { get; set; } = "wss://broadcastlv.chat.bilibili.com/sub";
+
         public LiveMessage()
         {
             ws = new ClientWebSocket();
         }
         private static System.Timers.Timer heartBeatTimer;
-        public async Task Connect(int roomID, int uid, CancellationToken cancellationToken)
+        public async Task Connect(int roomID, int uid, string token, string buvid, string host, CancellationToken cancellationToken)
         {
+            ws.Options.SetRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69");
             //连接
-            await ws.ConnectAsync(new Uri(ServerUrl), cancellationToken);
+            await ws.ConnectAsync(new Uri("wss://" + host + "/sub"), cancellationToken);
             //进房
-            await JoinRoomAsync(roomID, uid);
+            await JoinRoomAsync(roomID, buvid, token, uid);
             //发送心跳
             await SendHeartBeatAsync();
             heartBeatTimer = new System.Timers.Timer(1000 * 30);
@@ -108,9 +111,21 @@ namespace BiliLite.Modules.Live
             {
                 try
                 {
+                    WebSocketReceiveResult result;
+                    using var ms = new MemoryStream();
                     var buffer = new byte[4096];
-                    WebSocketReceiveResult result = await ws.ReceiveAsync(buffer, cancellationToken);
-                    ParseData(buffer.Take(result.Count).ToArray());
+                    do
+                    {
+                        result = await ws.ReceiveAsync(buffer, cancellationToken);
+                        ms.Write(buffer, 0, result.Count);
+                    }
+                    while (!result.EndOfMessage);
+
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var receivedData = new byte[ms.Length];
+                    ms.Read(receivedData, 0, receivedData.Length);
+
+                    ParseData(receivedData);
                 }
                 catch (Exception ex)
                 {
@@ -132,14 +147,18 @@ namespace BiliLite.Modules.Live
         /// </summary>
         /// <param name="roomId"></param>
         /// <returns></returns>
-        private async Task JoinRoomAsync(int roomId, int uid = 0)
+        private async Task JoinRoomAsync(int roomId, string buvid, string token, int uid = 0)
         {
             if (ws.State == WebSocketState.Open)
             {
                 await ws.SendAsync(EncodeData(JsonConvert.SerializeObject(new
                 {
                     roomid = roomId,
-                    uid = uid
+                    uid = uid,
+                    buvid = buvid,
+                    key = token,
+                    protover = 3,
+                    platform = "web"
                 }), 7), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }
@@ -154,6 +173,7 @@ namespace BiliLite.Modules.Live
                 await ws.SendAsync(EncodeData("", 2), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }
+
         /// <summary>
         /// 解析内容
         /// </summary>
@@ -176,26 +196,16 @@ namespace BiliLite.Modules.Live
             {
                 NewMessage?.Invoke(MessageType.ConnectSuccess, "弹幕连接成功");
             }
-            else if (operation == 3)
-            {
-                var online = BitConverter.ToInt32(body.Reverse().ToArray(), 0);
-                NewMessage?.Invoke(MessageType.Online, online);
-            }
             else if (operation == 5)
             {
+                body = DecompressData(protocolVersion, body);
 
-                if (protocolVersion == 2)
-                {
-                    body = DecompressData(body);
-
-                }
                 var text = Encoding.UTF8.GetString(body);
                 //可能有多条数据，做个分割
                 var textLines = Regex.Split(text, "[\x00-\x1f]+").Where(x => x.Length > 2 && x[0] == '{').ToArray();
                 foreach (var item in textLines)
                 {
                     ParseMessage(item);
-
                 }
             }
         }
@@ -215,19 +225,6 @@ namespace BiliLite.Modules.Live
                         if (obj["info"][2] != null && obj["info"][2].ToArray().Length != 0)
                         {
                             msg.username = obj["info"][2][1].ToString() + ":";
-
-                            //msg.usernameColor = GetColor(obj["info"][2][0].ToString());
-                            if (obj["info"][2][3] != null && Convert.ToInt32(obj["info"][2][3].ToString()) == 1)
-                            {
-                                msg.vip = "老爷";
-                                msg.isVip = Visibility.Visible;
-                            }
-                            if (obj["info"][2][4] != null && Convert.ToInt32(obj["info"][2][4].ToString()) == 1)
-                            {
-                                msg.vip = "年费老爷";
-                                msg.isVip = Visibility.Collapsed;
-                                msg.isBigVip = Visibility.Visible;
-                            }
                             if (obj["info"][2][2] != null && Convert.ToInt32(obj["info"][2][2].ToString()) == 1)
                             {
                                 msg.vip = "房管";
@@ -343,8 +340,12 @@ namespace BiliLite.Modules.Live
                     return;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (ex is JsonReaderException)
+                {
+                    logger.Error("直播解析JSON包出错", ex);
+                }
             }
 
         }
@@ -361,61 +362,85 @@ namespace BiliLite.Modules.Live
             //头部长度固定16
             var length = data.Length + 16;
             var buffer = new byte[length];
-            using (var ms = new MemoryStream(buffer))
-            {
-                //数据包长度
-                var b = BitConverter.GetBytes(buffer.Length).ToArray().Reverse().ToArray();
-                ms.Write(b, 0, 4);
-                //数据包头部长度,固定16
-                b = BitConverter.GetBytes(16).Reverse().ToArray();
-                ms.Write(b, 2, 2);
-                //协议版本，0=JSON,1=Int32,2=Buffer
-                b = BitConverter.GetBytes(0).Reverse().ToArray(); ;
-                ms.Write(b, 0, 2);
-                //操作类型
-                b = BitConverter.GetBytes(action).Reverse().ToArray(); ;
-                ms.Write(b, 0, 4);
-                //数据包头部长度,固定1
-                b = BitConverter.GetBytes(1).Reverse().ToArray(); ;
-                ms.Write(b, 0, 4);
-                //数据
-                ms.Write(data, 0, data.Length);
-                ArraySegment<byte> _bytes = new ArraySegment<byte>(ms.ToArray());
-                ms.Flush();
-                return _bytes;
-            }
-
+            using var ms = new MemoryStream(buffer);
+            //数据包长度
+            var b = BitConverter.GetBytes(buffer.Length).ToArray().Reverse().ToArray();
+            ms.Write(b, 0, 4);
+            //数据包头部长度,固定16
+            b = BitConverter.GetBytes(16).Reverse().ToArray();
+            ms.Write(b, 2, 2);
+            //协议版本，0=JSON,1=Int32,2=Buffer
+            b = BitConverter.GetBytes(0).Reverse().ToArray(); ;
+            ms.Write(b, 0, 2);
+            //操作类型
+            b = BitConverter.GetBytes(action).Reverse().ToArray(); ;
+            ms.Write(b, 0, 4);
+            //数据包头部长度,固定1
+            b = BitConverter.GetBytes(1).Reverse().ToArray(); ;
+            ms.Write(b, 0, 4);
+            //数据
+            ms.Write(data, 0, data.Length);
+            ArraySegment<byte> _bytes = new ArraySegment<byte>(ms.ToArray());
+            ms.Flush();
+            return _bytes;
         }
-
 
         /// <summary>
         /// 解压数据
         /// </summary>
+        /// <param name="protocolVersion"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        private byte[] DecompressData(int protocolVersion, byte[] body)
+        {
+            body = protocolVersion switch
+            {
+                2 => DecompressDataWithDeflate(body),
+                3 => DecompressDataWithBrotli(body),
+                _ => body
+            };
+            return body;
+        }
+
+        /// <summary>
+        /// 解压数据 (使用Deflate)
+        /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private byte[] DecompressData(byte[] data)
+        private byte[] DecompressDataWithDeflate(byte[] data)
         {
-            using (MemoryStream outBuffer = new MemoryStream())
+            using var outBuffer = new MemoryStream();
+            using var compressedzipStream = new DeflateStream(new MemoryStream(data, 2, data.Length - 2), CompressionMode.Decompress);
+            var block = new byte[1024];
+            while (true)
             {
-                using (System.IO.Compression.DeflateStream compressedzipStream = new System.IO.Compression.DeflateStream(new MemoryStream(data, 2, data.Length - 2), System.IO.Compression.CompressionMode.Decompress))
-                {
-                    byte[] block = new byte[1024];
-                    while (true)
-                    {
-                        int bytesRead = compressedzipStream.Read(block, 0, block.Length);
-                        if (bytesRead <= 0)
-                            break;
-                        else
-                            outBuffer.Write(block, 0, bytesRead);
-                    }
-                    compressedzipStream.Close();
-                    return outBuffer.ToArray();
-
-                }
-
+                var bytesRead = compressedzipStream.Read(block, 0, block.Length);
+                if (bytesRead <= 0)
+                    break;
+                outBuffer.Write(block, 0, bytesRead);
             }
+            compressedzipStream.Close();
+            return outBuffer.ToArray();
+        }
 
-
+        /// <summary>
+        /// 解压数据 (使用 Brotli)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private byte[] DecompressDataWithBrotli(byte[] data)
+        {
+            using var decompressedStream = new BrotliStream(new MemoryStream(data), CompressionMode.Decompress);
+            using var outBuffer = new MemoryStream();
+            var block = new byte[1024];
+            while (true)
+            {
+                var bytesRead = decompressedStream.Read(block, 0, block.Length);
+                if (bytesRead <= 0)
+                    break;
+                outBuffer.Write(block, 0, bytesRead);
+            }
+            return outBuffer.ToArray();
         }
 
         public void Dispose()

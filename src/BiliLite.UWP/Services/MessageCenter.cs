@@ -71,11 +71,11 @@ namespace BiliLite.Services
             SettingService.SetValue(SettingConstants.Account.ACCESS_KEY_EXPIRE_DATE, DateTime.Now);
             SettingService.SetValue<string>(SettingConstants.Account.REFRESH_KEY, null);
             SettingService.SetValue<MyProfileModel>(SettingConstants.Account.USER_PROFILE, null);
-            ClaerCookie();
+            ClearCookie();
             LogoutedEvent?.Invoke(null, null);
         }
 
-        private static void ClaerCookie()
+        private static void ClearCookie()
         {
             try
             {

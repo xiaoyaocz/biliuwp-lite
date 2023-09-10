@@ -310,5 +310,28 @@ namespace BiliLite.Models.Requests.Api.Live
             api.body += ApiHelper.GetSign(api.body, ApiHelper.AndroidKey);
             return api;
         }
+
+        public ApiModel GetDanmukuInfo(int roomId)
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = $"https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo",
+                parameter = $"?id={roomId}",
+                need_cookie = true
+            };
+            return api;
+        }
+
+        public ApiModel GetBuvid()
+        {
+            ApiModel api = new ApiModel()
+            {
+                method = RestSharp.Method.Get,
+                baseUrl = "https://api.bilibili.com/x/frontend/finger/spi",
+                need_cookie = true
+            };
+            return api;
+        }
     }
 }

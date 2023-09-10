@@ -489,7 +489,7 @@ namespace BiliLite.Modules
                 var acceptQnList = codec.accept_qn;
                 qualites ??= data.data.playurl_info.playurl.g_qn_desc.Where(item => acceptQnList.Contains(item.qn)).ToList();
                 current_qn = data.data.playurl_info.playurl.g_qn_desc.FirstOrDefault(x => x.qn == codec.current_qn);
-                
+
                 var urlList = codec.url_info.Select(urlInfo => new LiveRoomRealPlayUrlsModel { url = urlInfo.host + codec.base_url + urlInfo.extra, name = urlInfo.name }).ToList();
 
                 urls = urlList;
@@ -606,11 +606,18 @@ namespace BiliLite.Modules
                 {
                     uid = SettingService.Account.UserID;
                 }
-                if (liveMessage == null)
-                {
-                    liveMessage = new LiveMessage();
-                }
-                await liveMessage.Connect(roomId, uid, cancelSource.Token);
+                liveMessage ??= new LiveMessage();
+
+                var buvidResults = await liveRoomAPI.GetBuvid().Request();
+                var buvidData = await buvidResults.GetJson<ApiDataModel<LiveBuvidModel>>();
+                var buvid = buvidData.data.b_3;
+
+                var danmukuResults = await liveRoomAPI.GetDanmukuInfo(roomId).Request();
+                var danmukuData = await danmukuResults.GetJson<ApiDataModel<LiveDanmukuInfoModel>>();
+                var token = danmukuData.data.token;
+                var host = danmukuData.data.host_list[0].host;
+
+                await liveMessage.Connect(roomId, uid, token, buvid, host, cancelSource.Token);
             }
             catch (TaskCanceledException)
             {
@@ -1886,6 +1893,24 @@ namespace BiliLite.Modules
             public int ts { get; set; }
             public string token { get; set; }
             public LiveRoomSuperChatUserInfoModel user_info { get; set; }
+        }
+
+        public class LiveDanmukuInfoModel
+        {
+            public string token { get; set; }
+
+            public List<LiveDanmukuHostModel> host_list { get; set; }
+        }
+
+        public class LiveDanmukuHostModel
+        {
+            public string host { get; set; }
+        }
+
+        public class LiveBuvidModel
+        {
+            public string b_3 { get; set; }
+            public string b_4 { get; set; }
         }
     }
 
