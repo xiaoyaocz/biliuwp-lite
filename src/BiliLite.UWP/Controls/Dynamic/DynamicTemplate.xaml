@@ -4,8 +4,9 @@
     xmlns:fa="using:FontAwesome5" 
     xmlns:converters="using:BiliLite.Converters"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:local="using:BiliLite.Controls.Dynamic">
-    <local:DynamicItemDataTemplateSelector x:Key="select" 
+    xmlns:local="using:BiliLite.Controls.Dynamic"
+    xmlns:dataTemplateSelectors="using:BiliLite.Controls.DataTemplateSelectors">
+    <dataTemplateSelectors:UserDynamicItemDataTemplateSelector x:Key="select" 
         TextTemplate="{StaticResource Text}"
         MissTemplate="{StaticResource Miss}"
         RepostTemplate="{StaticResource Repost}"
@@ -15,15 +16,15 @@
         ShortVideoTemplate="{StaticResource ShortVideo}"
         OneRowTemplate="{StaticResource OneRow}"
         OtherTemplate="{StaticResource Other}">
-    </local:DynamicItemDataTemplateSelector>
+    </dataTemplateSelectors:UserDynamicItemDataTemplateSelector>
     
     <DataTemplate x:Key="OneRow" >
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
-                    <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0" Background="Transparent"  Command="{Binding Path=LaunchUrlCommand}" CommandParameter="{Binding Path=OneRowInfo.Url}">
+                <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="0" Background="Transparent"  Command="{Binding Path=UserDynamicItemDisplayCommands.LaunchUrlCommand}" CommandParameter="{Binding Path=OneRowInfo.Url}">
                         <Button.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Visibility="{Binding Path=ShowWatchLater}" Icon="Add" Text="添加到稍后再看" Command="{Binding Path=WatchLaterCommand}" CommandParameter="{Binding Path=OneRowInfo.ID}"></MenuFlyoutItem>
+                            <MenuFlyoutItem Visibility="{Binding Path=ShowWatchLater}" Icon="Add" Text="添加到稍后再看" Command="{Binding Path=UserDynamicItemDisplayCommands.WatchLaterCommand}" CommandParameter="{Binding Path=OneRowInfo.ID}"></MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.ContextFlyout>
                         <Grid>
@@ -54,7 +55,7 @@
         </local:DynamicItemControl>
     </DataTemplate>
     <DataTemplate x:Key="ShortVideo">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
                 <Grid >
                     <MediaElement AreTransportControlsEnabled="True" 
@@ -68,16 +69,16 @@
         </local:DynamicItemControl>
     </DataTemplate>
     <DataTemplate x:Key="Text">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
            
         </local:DynamicItemControl>
     </DataTemplate>
     <DataTemplate x:Key="Photo1x1">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
                 <Border HorizontalAlignment="Left" CornerRadius="4" MaxWidth="240">
                     <Grid>
-                        <HyperlinkButton Padding="0" Command="{Binding Path=ImageCommand}" CommandParameter="{Binding Path=ImagesInfo[0]}">
+                        <HyperlinkButton Padding="0" Command="{Binding Path= UserDynamicItemDisplayCommands.ImageCommand}" CommandParameter="{Binding Path=ImagesInfo[0]}">
                             <controls:ImageEx  
                         IsCacheEnabled="True" 
                        
@@ -93,7 +94,7 @@
         </local:DynamicItemControl>
     </DataTemplate>
     <DataTemplate x:Key="Photo3x3">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
                 <GridView MaxWidth="400" SelectionMode="None"
                           HorizontalAlignment="Left" ItemsSource="{Binding Path=ImagesInfo}" >
@@ -114,13 +115,13 @@
         </local:DynamicItemControl>
     </DataTemplate>
     <DataTemplate x:Key="Photo2x2">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
                 <GridView MaxWidth="300" SelectionMode="None"
                           HorizontalAlignment="Left" ItemsSource="{Binding Path=ImagesInfo}">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <HyperlinkButton Padding="0" Command="{Binding Path=ImageCommand}" CommandParameter="{Binding}">
+                            <HyperlinkButton Padding="0" Command="{Binding Path=UserDynamicItemDisplayCommands.ImageCommand}" CommandParameter="{Binding}">
                                 <Border  CornerRadius="4" >
                                     <controls:ImageEx  
                         IsCacheEnabled="True" 
@@ -150,7 +151,7 @@
         </Border>
     </DataTemplate>
     <DataTemplate x:Key="Repost">
-        <local:DynamicItemControl Model="{Binding}">
+        <local:DynamicItemControl ViewModel="{Binding}">
             <local:DynamicItemControl.CardContent>
                 <Border BorderThickness="1"  BorderBrush="#C8E5E9EF"  CornerRadius="4" Background="{ThemeResource TopPaneBackground}">
                     <ListView 

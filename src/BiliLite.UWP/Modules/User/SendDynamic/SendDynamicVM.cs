@@ -7,9 +7,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -30,7 +28,7 @@ namespace BiliLite.Modules.User
             dynamicAPI = new DynamicAPI();
             Images = new ObservableCollection<UploadImagesModel>();
         }
-        public SendDynamicVM(DynamicItemDisplayModel repostInfo)
+        public SendDynamicVM(UserDynamicItemDisplayViewModel repostInfo)
         {
             dynamicAPI = new DynamicAPI();
             RepostInfo = repostInfo;
@@ -43,7 +41,7 @@ namespace BiliLite.Modules.User
             set { _IsRepost = value; DoPropertyChanged("IsRepost"); }
         }
 
-        public DynamicItemDisplayModel RepostInfo { get; set; }
+        public UserDynamicItemDisplayViewModel RepostInfo { get; set; }
 
         private string _Content = "";
         public string Content

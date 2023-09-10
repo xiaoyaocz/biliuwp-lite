@@ -215,4 +215,82 @@
         DASH_H265 = 2,
         DASH_AV1 = 3
     }
+
+    public enum UserDynamicDisplayType
+    {
+        /// <summary>
+        /// 转发
+        /// </summary>
+        Repost,
+
+        /// <summary>
+        /// 文本
+        /// </summary>
+        Text,
+
+        /// <summary>
+        /// 图片
+        /// </summary>
+        Photo,
+
+        /// <summary>
+        /// 视频
+        /// </summary>
+        Video,
+
+        /// <summary>
+        /// 短视频
+        /// </summary>
+        ShortVideo,
+
+        /// <summary>
+        /// 番剧/影视
+        /// </summary>
+        Season,
+
+        /// <summary>
+        /// 音乐
+        /// </summary>
+        Music,
+
+        /// <summary>
+        /// 网页、活动
+        /// </summary>
+        Web,
+
+        /// <summary>
+        /// 文章
+        /// </summary>
+        Article,
+
+        /// <summary>
+        /// 直播
+        /// </summary>
+        Live,
+
+        /// <summary>
+        /// 分享直播
+        /// </summary>
+        LiveShare,
+
+        /// <summary>
+        /// 付费课程
+        /// </summary>
+        Cheese,
+
+        /// <summary>
+        /// 播放列表(公开的收藏夹)
+        /// </summary>
+        MediaList,
+
+        /// <summary>
+        /// 缺失的，动态可能被删除
+        /// </summary>
+        Miss,
+
+        /// <summary>
+        /// 其他
+        /// </summary>
+        Other
+    }
 }

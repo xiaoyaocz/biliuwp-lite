@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using BiliLite.Models.Common.User;
 using BiliLite.ViewModels.User;
+using BiliLite.ViewModels.UserDynamic;
 using Microsoft.Extensions.DependencyInjection;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
@@ -35,7 +36,7 @@ namespace BiliLite.Pages
     /// </summary>
     public sealed partial class UserInfoPage : BasePage
     {
-        readonly DynamicVM dynamicVM;
+        readonly UserDynamicViewModel m_userDynamicViewModel;
         UserDetailVM userDetailVM;
         UserSubmitVideoViewModel m_userSubmitVideoViewModel;
         UserSubmitArticleVM userSubmitArticleVM;
@@ -52,19 +53,19 @@ namespace BiliLite.Pages
             m_userSubmitVideoViewModel = App.ServiceProvider.GetService<UserSubmitVideoViewModel>();
             userSubmitArticleVM = new UserSubmitArticleVM();
             userFavlistVM = new UserFavlistVM();
-            dynamicVM = new DynamicVM();
+            m_userDynamicViewModel = new UserDynamicViewModel();
             fansVM = new UserFollowVM(true);
             followVM = new UserFollowVM(false);
-            dynamicVM.OpenCommentEvent += DynamicVM_OpenCommentEvent;
+            m_userDynamicViewModel.OpenCommentEvent += UserDynamicViewModelOpenCommentEvent;
             splitView.PaneClosed += SplitView_PaneClosed;
         }
         private void SplitView_PaneClosed(SplitView sender, object args)
         {
             comment.ClearComment();
-            repost.dynamicRepostVM.Clear();
+            repost.UserDynamicRepostViewModel.Clear();
         }
         string dynamic_id;
-        private void DynamicVM_OpenCommentEvent(object sender, Controls.Dynamic.DynamicItemDisplayModel e)
+        private void UserDynamicViewModelOpenCommentEvent(object sender, Controls.Dynamic.UserDynamicItemDisplayViewModel e)
         {
             //splitView.IsPaneOpen = true;
             dynamic_id = e.DynamicID;
@@ -76,27 +77,27 @@ namespace BiliLite.Pages
             switch (e.Type)
             {
 
-                case Controls.Dynamic.DynamicDisplayType.Photo:
+                case UserDynamicDisplayType.Photo:
                     commentType = CommentApi.CommentType.Photo;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.Video:
+                case UserDynamicDisplayType.Video:
 
                     commentType = CommentApi.CommentType.Video;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.Season:
+                case UserDynamicDisplayType.Season:
                     id = e.OneRowInfo.AID;
                     commentType = CommentApi.CommentType.Video;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.ShortVideo:
+                case UserDynamicDisplayType.ShortVideo:
                     commentType = CommentApi.CommentType.MiniVideo;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.Music:
+                case UserDynamicDisplayType.Music:
                     commentType = CommentApi.CommentType.Song;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.Article:
+                case UserDynamicDisplayType.Article:
                     commentType = CommentApi.CommentType.Article;
                     break;
-                case Controls.Dynamic.DynamicDisplayType.MediaList:
+                case UserDynamicDisplayType.MediaList:
                     if (e.OneRowInfo.Tag != "收藏夹")
                         commentType = CommentApi.CommentType.Video;
                     break;
@@ -147,8 +148,8 @@ namespace BiliLite.Pages
                     isSelf = false;
                     followHeader.Visibility = Visibility.Collapsed;
                 }
-                dynamicVM.DynamicType = DynamicType.Space;
-                dynamicVM.Uid = mid;
+                m_userDynamicViewModel.DynamicType = DynamicType.Space;
+                m_userDynamicViewModel.Uid = mid;
                 userDetailVM.GetUserInfo();
 
                 if (tabIndex != 0)
@@ -228,7 +229,7 @@ namespace BiliLite.Pages
 
         private void pivotRight_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (pivotRight.SelectedIndex == 0 && splitView.IsPaneOpen && (repost.dynamicRepostVM.Items == null || repost.dynamicRepostVM.Items.Count == 0))
+            if (pivotRight.SelectedIndex == 0 && splitView.IsPaneOpen && (repost.UserDynamicRepostViewModel.Items == null || repost.UserDynamicRepostViewModel.Items.Count == 0))
             {
                 repost.LoadData(dynamic_id);
             }
@@ -284,9 +285,9 @@ namespace BiliLite.Pages
             {
                 await m_userSubmitVideoViewModel.GetSubmitVideo();
             }
-            if (pivot.SelectedIndex == 1 && dynamicVM.Items == null)
+            if (pivot.SelectedIndex == 1 && m_userDynamicViewModel.Items == null)
             {
-                await dynamicVM.GetDynamicItems();
+                await m_userDynamicViewModel.GetDynamicItems();
             }
             if (pivot.SelectedIndex == 2 && userSubmitArticleVM.SubmitArticleItems == null)
             {

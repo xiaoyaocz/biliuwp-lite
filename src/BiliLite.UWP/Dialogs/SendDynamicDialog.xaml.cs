@@ -5,7 +5,6 @@ using BiliLite.Modules;
 using BiliLite.Modules.User;
 using BiliLite.Modules.User.SendDynamic;
 using System;
-using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -28,13 +27,13 @@ namespace BiliLite.Dialogs
             sendDynamicVM = new SendDynamicVM();
             topicVM = new TopicVM();
         }
-        public SendDynamicDialog(DynamicItemDisplayModel dynamicItem)
+        public SendDynamicDialog(UserDynamicItemDisplayViewModel userDynamicItem)
         {
             this.InitializeComponent();
             emoteVM = new EmoteVM();
             atVM = new AtVM();
             topicVM = new TopicVM();
-            sendDynamicVM = new SendDynamicVM(dynamicItem);
+            sendDynamicVM = new SendDynamicVM(userDynamicItem);
         }
 
         private void btn_Close_Click(object sender, RoutedEventArgs e)

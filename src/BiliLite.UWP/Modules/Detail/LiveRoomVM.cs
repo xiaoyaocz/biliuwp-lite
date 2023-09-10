@@ -17,6 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Exceptions;
 using BiliLite.Services;
 
 namespace BiliLite.Modules

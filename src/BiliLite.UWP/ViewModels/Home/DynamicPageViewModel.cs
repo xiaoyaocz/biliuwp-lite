@@ -8,6 +8,7 @@ using BiliLite.Controls.DataTemplateSelectors;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Models.Common.Dynamic;
+using BiliLite.Models.Exceptions;
 using BiliLite.Models.Requests.Api.User;
 using BiliLite.Models.Responses;
 using BiliLite.Modules;

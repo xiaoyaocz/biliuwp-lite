@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
+using BiliLite.Models.Exceptions;
 using Newtonsoft.Json;
 using BiliLite.Pages;
 using BiliLite.Models.Requests.Api;

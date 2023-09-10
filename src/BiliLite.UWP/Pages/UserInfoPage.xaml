@@ -277,10 +277,10 @@
                                 <control:MyListView SelectionMode="None" 
                   IsItemClickEnabled="false" 
                           x:Name="list"
-                  ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}" 
-                                         CanLoadMore="{x:Bind Path=dynamicVM.CanLoadMore,Mode=OneWay}"
+                  ItemsSource="{x:Bind Path=m_userDynamicViewModel.Items,Mode=OneWay}" 
+                                         CanLoadMore="{x:Bind Path=m_userDynamicViewModel.CanLoadMore,Mode=OneWay}"
                                          LoadMoreBottomOffset="0"
-                                         LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand}"
+                                         LoadMoreCommand="{x:Bind Path=m_userDynamicViewModel.LoadMoreCommand}"
                   Padding="4" 
                   Grid.Row="1"
                  ItemTemplateSelector="{StaticResource select}"
@@ -294,7 +294,7 @@
                                         </Style>
                                     </control:MyListView.ItemContainerStyle>
                                 </control:MyListView>
-                                <ProgressRing Grid.Row="1" VerticalAlignment="Bottom" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                                <ProgressRing Grid.Row="1" VerticalAlignment="Bottom" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_userDynamicViewModel.Loading,Mode=OneWay}"></ProgressRing>
                                 <StackPanel Orientation="Vertical"  Grid.Row="1" VerticalAlignment="Bottom" Margin="20 12" HorizontalAlignment="Right">
                                     <control:RoundButton x:Name="btnGrid"  ToolTipService.ToolTip="切换为瀑布流" Click="btnGrid_Click" Margin="0 0 0 8"  Padding="12">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80A;"  Foreground="White"/>
@@ -305,7 +305,7 @@
                                     <control:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
                                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
                                     </control:RoundButton>
-                                    <control:RoundButton x:Name="btnRefreshDynamic"  Command="{x:Bind Path=dynamicVM.RefreshCommand}"   Padding="12">
+                                    <control:RoundButton x:Name="btnRefreshDynamic"  Command="{x:Bind Path=m_userDynamicViewModel.RefreshCommand}"   Padding="12">
                                         <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
                                     </control:RoundButton>
                                 </StackPanel>

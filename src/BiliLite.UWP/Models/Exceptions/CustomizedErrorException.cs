@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BiliLite.Models.Common
+namespace BiliLite.Models.Exceptions
 {
     public class CustomizedErrorException : Exception
     {

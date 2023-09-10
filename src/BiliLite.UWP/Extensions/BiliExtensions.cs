@@ -75,6 +75,13 @@ namespace BiliLite.Extensions
             return headers;
         }
 
+        public static async Task<bool> ActionCheckLogin()
+        {
+            if (SettingService.Account.Logined || await Notify.ShowLoginDialog()) return true;
+            Notify.ShowMessageToast("请先登录后再操作");
+            return false;
+        }
+
         public static async Task CheckVersion()
         {
             try

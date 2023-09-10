@@ -12,10 +12,10 @@
 
     <Grid>
         <local:MyListView  SelectionMode="None"
-                           ItemsSource="{x:Bind Path=dynamicRepostVM.Items,Mode=OneWay}"
-                           CanLoadMore="{x:Bind Path=dynamicRepostVM.CanLoadMore,Mode=OneWay}"
+                           ItemsSource="{x:Bind Path=UserDynamicRepostViewModel.Items,Mode=OneWay}"
+                           CanLoadMore="{x:Bind Path=UserDynamicRepostViewModel.CanLoadMore,Mode=OneWay}"
                            LoadMoreBottomOffset="0"
-                           LoadMoreCommand="{x:Bind Path=dynamicRepostVM.LoadMoreCommand}"
+                           LoadMoreCommand="{x:Bind Path=UserDynamicRepostViewModel.LoadMoreCommand}"
                            IsItemClickEnabled="False">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -24,9 +24,9 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="dynamic:DynamicItemDisplayModel">
+                <DataTemplate x:DataType="dynamic:UserDynamicItemDisplayViewModel">
                     <StackPanel>
-                        <HyperlinkButton Command="{x:Bind Path=UserCommand,Mode=OneWay}" CommandParameter="{x:Bind Path=Mid,Mode=OneWay}" Padding="0" VerticalAlignment="Top" >
+                        <HyperlinkButton Command="{x:Bind Path=UserDynamicItemDisplayCommands.UserCommand,Mode=OneWay}" CommandParameter="{x:Bind Path=Mid,Mode=OneWay}" Padding="0" VerticalAlignment="Top" >
                             <StackPanel Orientation="Horizontal" >
                                 <Ellipse Width="36" Height="36" Margin="0 0 8 0">
                                     <Ellipse.Fill>
@@ -48,10 +48,10 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <Grid>
-                    <HyperlinkButton Visibility="{x:Bind Path=dynamicRepostVM.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center"  Command="{x:Bind Path=dynamicRepostVM.LoadMoreCommand}">
+                    <HyperlinkButton Visibility="{x:Bind Path=UserDynamicRepostViewModel.Loading,Mode=OneWay,Converter={StaticResource display}}" Foreground="Gray" HorizontalAlignment="Center"  Command="{x:Bind Path=UserDynamicRepostViewModel.LoadMoreCommand}">
                         <TextBlock>加载更多</TextBlock>
                     </HyperlinkButton>
-                    <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicRepostVM.Loading,Mode=OneWay}"></ProgressRing>
+                    <ProgressRing IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=UserDynamicRepostViewModel.Loading,Mode=OneWay}"></ProgressRing>
                 </Grid>
             </ListView.Footer>
         </local:MyListView>

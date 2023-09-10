@@ -67,10 +67,10 @@
                     <controls:MyListView SelectionMode="None" 
                   IsItemClickEnabled="false" 
                           x:Name="list"
-                  ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}" 
-                                         CanLoadMore="{x:Bind Path=dynamicVM.CanLoadMore,Mode=OneWay}"
+                  ItemsSource="{x:Bind Path=m_userDynamicViewModel.Items,Mode=OneWay}" 
+                                         CanLoadMore="{x:Bind Path=m_userDynamicViewModel.CanLoadMore,Mode=OneWay}"
                                          LoadMoreBottomOffset="0"
-                                         LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand}"
+                                         LoadMoreCommand="{x:Bind Path=m_userDynamicViewModel.LoadMoreCommand}"
                   Padding="4" 
                   Grid.Row="1"
                  ItemTemplateSelector="{StaticResource select}"
@@ -95,7 +95,7 @@
                         <!--</ListView.ItemsPanel>-->
 
                     </controls:MyListView>
-                    <ProgressRing Grid.Row="1" VerticalAlignment="Center" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                    <ProgressRing Grid.Row="1" VerticalAlignment="Center" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_userDynamicViewModel.Loading,Mode=OneWay}"></ProgressRing>
                 </Grid>
             </SplitView.Content>
         </SplitView>

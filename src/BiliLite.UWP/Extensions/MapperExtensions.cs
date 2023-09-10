@@ -5,6 +5,7 @@ using AutoMapper;
 using Bilibili.App.Dynamic.V2;
 using Bilibili.App.Interface.V1;
 using Bilibili.Tv.Interfaces.Dm.V1;
+using BiliLite.Controls.Dynamic;
 using BiliLite.Models.Common.Anime;
 using BiliLite.Models.Common.Comment;
 using BiliLite.Models.Common.Dynamic;
@@ -12,6 +13,8 @@ using BiliLite.Models.Common.Season;
 using BiliLite.Models.Common.User;
 using BiliLite.Models.Common.Video.Detail;
 using BiliLite.Models.Download;
+using BiliLite.Models.Dynamic;
+using BiliLite.Services;
 using BiliLite.ViewModels.Comment;
 using BiliLite.ViewModels.Download;
 using BiliLite.ViewModels.Home;
@@ -57,6 +60,21 @@ namespace BiliLite.Extensions
                     .ForMember(dest => dest.Aid, opt => opt.MapFrom(src => src.Aid))
                     .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.CTime))
                     .ForMember(dest => dest.VideoReview, opt => opt.MapFrom(src => src.Danmaku));
+
+                expression.CreateMap<DynamicCardDescModel, UserDynamicItemDisplayViewModel>()
+                    .ForMember(dest => dest.CommentCount, opt => opt.MapFrom(src => src.comment))
+                    .ForMember(dest => dest.Datetime, opt => opt.MapFrom(src => TimeExtensions.TimestampToDatetime(src.timestamp).ToString()))
+                    .ForMember(dest => dest.DynamicID, opt => opt.MapFrom(src => src.dynamic_id))
+                    .ForMember(dest => dest.LikeCount, opt => opt.MapFrom(src => src.like))
+                    .ForMember(dest => dest.Mid, opt => opt.MapFrom(src => src.uid))
+                    .ForMember(dest => dest.ShareCount, opt => opt.MapFrom(src => src.repost))
+                    .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.timestamp.HandelTimestamp()))
+                    .ForMember(dest => dest.IntType, opt => opt.MapFrom(src => src.type))
+                    .ForMember(dest => dest.ReplyID, opt => opt.MapFrom(src => src.rid_str))
+                    .ForMember(dest => dest.ReplyType, opt => opt.MapFrom(src => src.r_type))
+                    .ForMember(dest => dest.Type, opt => opt.MapFrom(src => DynamicParseExtensions.ParseType(src.type)))
+                    .ForMember(dest => dest.IsSelf, opt => opt.MapFrom(src => src.uid == SettingService.Account.UserID))
+                    .ForMember(dest => dest.Liked, opt => opt.MapFrom(src => src.is_liked == 1));
             }));
             services.AddSingleton<IMapper>(mapper);
             return services;

@@ -82,7 +82,7 @@
                                 <Pivot.RightHeader>
                                     <StackPanel Orientation="Horizontal">
 
-                                        <Button Command="{x:Bind Path=dynamicVM.RepostCommand,Mode=OneWay}" Background="Transparent" Margin="8 0">
+                                        <Button Command="{x:Bind Path=m_userDynamicViewModel.RepostCommand,Mode=OneWay}" Background="Transparent" Margin="8 0">
                                             <StackPanel Orientation="Horizontal">
                                                 <FontIcon FontSize="14" FontFamily="Segoe MDL2 Assets" Glyph="&#xE104;" />
                                                 <TextBlock Margin="8 0 0 0">发表动态</TextBlock>
@@ -117,10 +117,10 @@
                     <controls:MyListView SelectionMode="None" 
                   IsItemClickEnabled="false" 
                           x:Name="list"
-                  ItemsSource="{x:Bind Path=dynamicVM.Items,Mode=OneWay}" 
-                                         CanLoadMore="{x:Bind Path=dynamicVM.CanLoadMore,Mode=OneWay}"
+                  ItemsSource="{x:Bind Path=m_userDynamicViewModel.Items,Mode=OneWay}" 
+                                         CanLoadMore="{x:Bind Path=m_userDynamicViewModel.CanLoadMore,Mode=OneWay}"
                                          LoadMoreBottomOffset="0"
-                                         LoadMoreCommand="{x:Bind Path=dynamicVM.LoadMoreCommand}"
+                                         LoadMoreCommand="{x:Bind Path=m_userDynamicViewModel.LoadMoreCommand}"
                   Padding="4" 
                   Grid.Row="1"
                  ItemTemplateSelector="{StaticResource select}"
@@ -145,7 +145,7 @@
                         <!--</ListView.ItemsPanel>-->
                         
                     </controls:MyListView>
-                    <ProgressRing Grid.Row="1" VerticalAlignment="Bottom" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=dynamicVM.Loading,Mode=OneWay}"></ProgressRing>
+                    <ProgressRing Grid.Row="1" VerticalAlignment="Bottom" Margin="8" IsActive="True" HorizontalAlignment="Center" Visibility="{x:Bind Path=m_userDynamicViewModel.Loading,Mode=OneWay}"></ProgressRing>
                     <StackPanel Orientation="Vertical"  Grid.Row="1" VerticalAlignment="Bottom" Margin="20 12" HorizontalAlignment="Right">
                         <controls:RoundButton x:Name="btnGrid"  ToolTipService.ToolTip="切换为瀑布流" Click="btnGrid_Click" Margin="0 0 0 8"  Padding="12">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE80A;"  Foreground="White"/>
@@ -156,7 +156,7 @@
                         <controls:RoundButton x:Name="btnTop" Click="btnTop_Click" ToolTipService.ToolTip="返回顶部"  Margin="0 0 0 8"  Padding="12">
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE110;" Foreground="White"/>
                         </controls:RoundButton>
-                        <controls:RoundButton x:Name="btnRefresh"  Command="{x:Bind Path=dynamicVM.RefreshCommand}"   Padding="12">
+                        <controls:RoundButton x:Name="btnRefresh"  Command="{x:Bind Path=m_userDynamicViewModel.RefreshCommand}"   Padding="12">
                             <SymbolIcon Symbol="Refresh" Foreground="White"></SymbolIcon>
                         </controls:RoundButton>
                     </StackPanel>
