@@ -52,3 +52,7 @@ git clone -b dev https://github.com/ywmoyue/biliuwp-lite.git
 2. 双击项目中的BiliLite.sln文件使用VisualStudio2019以上的版本打开
 3. 右键点击BiliLite.Packages项目，选择设为启动项目
 4. 按ctrl+f5开始构建并执行，成功后关闭VS即可
+
+### 鸣谢
+
+[![contributors](./document/_img/contributors.png)](https://github.com/ywmoyue/biliuwp-lite/graphs/contributors)
