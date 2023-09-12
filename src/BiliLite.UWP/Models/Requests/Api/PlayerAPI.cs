@@ -236,8 +236,9 @@ namespace BiliLite.Models.Requests.Api
             {
                 method = RestSharp.Method.Get,
                 baseUrl = $"http://api.bilibili.com/x/v2/dm/list/seg.so",
-                parameter = $"type=1&oid={oid}&segment_index={segment_index}"
+                parameter = $"type=1&oid={oid}&segment_index={segment_index}&{ApiHelper.MustParameter(ApiHelper.AndroidKey, true)}",
             };
+            api.parameter += ApiHelper.GetSign(api.parameter, ApiHelper.AndroidKey);
             return api;
         }
 
