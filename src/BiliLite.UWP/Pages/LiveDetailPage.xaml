@@ -281,43 +281,37 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <DataTemplate x:Key="chat" x:Name="chat">
+        <DataTemplate x:Key="chat" x:Name="chat" x:DataType="model_live:DanmuMsgModel">
             <RichTextBlock TextWrapping="Wrap" Margin="4 0" LineHeight="24">
                 <Paragraph>
                     <InlineUIContainer >
                         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" Padding="0 0 0 -4">
-                            <Border Visibility="{Binding isAdmin}" BorderThickness="1" BorderBrush="DarkOrange" Background="DarkOrange" Margin="0 0 4 0" CornerRadius="2" Padding="2">
+                            <Border Visibility="{x:Bind ShowAdmin}" BorderThickness="1" BorderBrush="DarkOrange" Background="DarkOrange" Margin="0 0 4 0" CornerRadius="2" Padding="2">
                                 <TextBlock FontSize="12" Foreground="White">房管</TextBlock>
                             </Border>
-                            <Border Visibility="{Binding isVip}" BorderThickness="1" BorderBrush="DarkOrange" Background="DarkOrange" Margin="0 0 4 0" CornerRadius="2" Padding="2">
-                                <TextBlock FontSize="12" Foreground="White">爷</TextBlock>
-                            </Border>
-                            <Border Visibility="{Binding isBigVip}" BorderThickness="1" BorderBrush="HotPink" Background="HotPink" Margin="0 0 4 0" CornerRadius="2" Padding="2">
-                                <TextBlock FontSize="12" Foreground="White">爷</TextBlock>
-                            </Border>
-                            <Border Visibility="{Binding hasMedal}" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{Binding medal_color}" CornerRadius="2" Margin="0 0 4 0">
+                            <Border Visibility="{x:Bind ShowMedal}" VerticalAlignment="Center" BorderThickness="1" BorderBrush="{x:Bind Path=MedalColor,Converter={StaticResource colorConvert}}" CornerRadius="2" Margin="0 0 4 0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <Grid Background="{Binding medal_color}" Padding="2 0">
-                                        <TextBlock FontSize="12" Foreground="White" Text="{Binding medal_name}"></TextBlock>
+                                    <Grid Background="{x:Bind Path=MedalColor,Converter={StaticResource colorConvert}}" Padding="2 0">
+                                        <TextBlock FontSize="12" Foreground="White" Text="{x:Bind MedalName}"></TextBlock>
                                     </Grid>
                                     <Grid Grid.Column="1" Background="White" Padding="4 0">
-                                        <TextBlock FontSize="12" Foreground="{Binding medal_color}" Text="{Binding medal_lv}"></TextBlock>
+                                        <TextBlock FontSize="12" Foreground="{x:Bind Path=MedalColor,Converter={StaticResource colorConvert}}" Text="{x:Bind MedalLevel}"></TextBlock>
                                     </Grid>
                                 </Grid>
                             </Border>
-                            <Image Visibility="{Binding hasTitle}" Height="20" VerticalAlignment="Center" Margin="0 0 4 0" Source="{Binding titleImg}"></Image>
-                            <Border  Visibility="{Binding hasUL}" BorderThickness="1" VerticalAlignment="Center" BorderBrush="{Binding ul_color}" Margin="0 0 4 0" CornerRadius="2" Padding="2 0">
-                                <TextBlock FontSize="12" Foreground="{Binding ul_color}" Text="{Binding ul}"></TextBlock>
+                            <Image Visibility="{x:Bind ShowTitle}" Height="20" VerticalAlignment="Center" Margin="0 0 4 0" Source="{Binding UserTitleImage}"></Image>
+                            <Border  Visibility="{x:Bind ShowUserLevel}" BorderThickness="1" VerticalAlignment="Center" BorderBrush="{x:Bind Path=UserLevelColor,Converter={StaticResource colorConvert}}" Margin="0 0 4 0" CornerRadius="2" Padding="2 0">
+                                <TextBlock FontSize="12" Foreground="{x:Bind Path=UserLevelColor,Converter={StaticResource colorConvert}}" Text="{x:Bind UserLevel}"></TextBlock>
                             </Border>
                             <!--<TextBlock TextWrapping="WrapWholeWords"><Run  Foreground="Gray"  Text="{Binding username}"></Run></TextBlock>-->
                         </StackPanel>
                     </InlineUIContainer>
-                    <Run Foreground="{Binding uname_color}" Text="{Binding username}"></Run>
-                    <Run Text="{Binding text}"></Run>
+                    <Run Foreground="{x:Bind Path=UserNameColor,Converter={StaticResource colorConvert}}" Text="{x:Bind UserName}"></Run>
+                    <Run Text="{x:Bind Text}"></Run>
                 </Paragraph>
             </RichTextBlock>
         </DataTemplate>
@@ -383,7 +377,7 @@
                                     <ColumnDefinition/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=liveRoomVM.LiveInfo.room_info.title,Mode=OneWay}"></TextBlock>
+                                <TextBlock x:Name="TopTitle" VerticalAlignment="Center" Foreground="White" FontSize="18" Margin="12 0" TextTrimming="CharacterEllipsis" Text="{x:Bind Path=liveRoomVM.RoomTitle,Mode=OneWay}"></TextBlock>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
 
                                     <Button x:Name="TopBtnShare" Foreground="White" Background="Transparent" Padding="0" Width="48" Height="48">
@@ -936,11 +930,11 @@
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="model_live:GiftMsgModel">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Foreground="HotPink" VerticalAlignment="Center" Text="{x:Bind Path=uname}"></TextBlock>
+                                            <TextBlock Foreground="HotPink" VerticalAlignment="Center" Text="{x:Bind Path=UserName}"></TextBlock>
                                             <TextBlock  VerticalAlignment="Center" Margin="4 0">赠送</TextBlock>
-                                            <TextBlock  VerticalAlignment="Center" Text="{x:Bind Path=giftName}"></TextBlock>
-                                            <Image Width="24" Source="{x:Bind Path=gif}"></Image>
-                                            <TextBlock  VerticalAlignment="Center" Margin="4 0">x<Run Text="{x:Bind num}"></Run></TextBlock>
+                                            <TextBlock  VerticalAlignment="Center" Text="{x:Bind Path=GiftName}"></TextBlock>
+                                            <Image Width="24" Source="{x:Bind Path=Gif}"></Image>
+                                            <TextBlock  VerticalAlignment="Center" Margin="4 0">x<Run Text="{x:Bind Number}"></Run></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

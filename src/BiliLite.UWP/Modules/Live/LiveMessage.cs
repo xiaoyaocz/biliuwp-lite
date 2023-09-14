@@ -16,6 +16,7 @@ using BiliLite.Services;
 using BiliLite.Extensions;
 using BrotliSharpLib;
 using System.IO.Compression;
+using Google.Protobuf.WellKnownTypes;
 /*
 * 参考文档:
 * https://github.com/lovelyyoshino/Bilibili-Live-API/blob/master/API.WebSocket.md
@@ -81,6 +82,10 @@ namespace BiliLite.Modules.Live
         /// 上舰
         /// </summary>
         GuardBuy,
+        /// <summary>
+        /// 房间信息更新
+        /// </summary>
+        RoomChange,
     }
     public class LiveMessage : IDisposable
     {
@@ -158,7 +163,8 @@ namespace BiliLite.Modules.Live
                     buvid = buvid,
                     key = token,
                     protover = 3,
-                    platform = "web"
+                    //暂时不要加上platform，否则未登录时会隐藏用户名
+                    //platform = "web"
                 }), 7), WebSocketMessageType.Binary, true, CancellationToken.None);
             }
         }
@@ -183,7 +189,8 @@ namespace BiliLite.Modules.Live
             //协议版本。
             //0为JSON，可以直接解析；
             //1为房间人气值,Body为Int32；
-            //2为压缩过Buffer，需要解压再处理
+            //2为zlib压缩过Buffer，需要解压再处理
+            //3为brotli压缩过Buffer，需要解压再处理
             int protocolVersion = BitConverter.ToInt32(new byte[4] { data[7], data[6], 0, 0 }, 0);
             //操作类型。
             //3=心跳回应，内容为房间人气值；
@@ -221,32 +228,38 @@ namespace BiliLite.Modules.Live
                     var msg = new DanmuMsgModel();
                     if (obj["info"] != null && obj["info"].ToArray().Length != 0)
                     {
-                        msg.text = obj["info"][1].ToString();
+                        msg.Text = obj["info"][1].ToString();
+                        var color = obj["info"][0][3].ToInt32();
+                        if (color != 0)
+                        {
+                            msg.DanmuColor = color.ToString();
+                        }
+                       
                         if (obj["info"][2] != null && obj["info"][2].ToArray().Length != 0)
                         {
-                            msg.username = obj["info"][2][1].ToString() + ":";
+                            msg.UserName = obj["info"][2][1].ToString() + ":";
                             if (obj["info"][2][2] != null && Convert.ToInt32(obj["info"][2][2].ToString()) == 1)
                             {
-                                msg.vip = "房管";
-                                msg.isAdmin = Visibility.Visible;
+                                msg.Role = "房管";
+                                msg.ShowAdmin = Visibility.Visible;
                             }
                         }
                         if (obj["info"][3] != null && obj["info"][3].ToArray().Length != 0)
                         {
-                            msg.medal_name = obj["info"][3][1].ToString();
-                            msg.medal_lv = obj["info"][3][0].ToString();
-                            msg.medalColor = obj["info"][3][4].ToString();
-                            msg.hasMedal = Visibility.Visible;
+                            msg.MedalName = obj["info"][3][1].ToString();
+                            msg.MedalLevel = obj["info"][3][0].ToString();
+                            msg.MedalColor = obj["info"][3][4].ToString();
+                            msg.ShowMedal = Visibility.Visible;
                         }
                         if (obj["info"][4] != null && obj["info"][4].ToArray().Length != 0)
                         {
-                            msg.ul = "UL" + obj["info"][4][0].ToString();
-                            msg.ulColor = obj["info"][4][2].ToString();
+                            msg.UserLevel = "UL" + obj["info"][4][0].ToString();
+                            msg.UserLevelColor = obj["info"][4][2].ToString();
                         }
                         if (obj["info"][5] != null && obj["info"][5].ToArray().Length != 0)
                         {
-                            msg.user_title = obj["info"][5][0].ToString();
-                            msg.hasTitle = Visibility.Visible;
+                            msg.UserTitleID = obj["info"][5][0].ToString();
+                            msg.ShowTitle = Visibility.Visible;
                         }
 
                         NewMessage?.Invoke(MessageType.Danmu, msg);
@@ -258,12 +271,12 @@ namespace BiliLite.Modules.Live
                     var msg = new GiftMsgModel();
                     if (obj["data"] != null)
                     {
-                        msg.uname = obj["data"]["uname"].ToString();
-                        msg.action = obj["data"]["action"].ToString();
-                        msg.giftId = Convert.ToInt32(obj["data"]["giftId"].ToString());
-                        msg.giftName = obj["data"]["giftName"].ToString();
-                        msg.num = obj["data"]["num"].ToString();
-                        msg.uid = obj["data"]["uid"].ToString();
+                        msg.UserName = obj["data"]["uname"].ToString();
+                        msg.Action = obj["data"]["action"].ToString();
+                        msg.GiftId = Convert.ToInt32(obj["data"]["giftId"].ToString());
+                        msg.GiftName = obj["data"]["giftName"].ToString();
+                        msg.Number = obj["data"]["num"].ToString();
+                        msg.UserID = obj["data"]["uid"].ToString();
                         NewMessage?.Invoke(MessageType.Gift, msg);
                     }
                     return;
@@ -273,12 +286,12 @@ namespace BiliLite.Modules.Live
                     var msg = new GiftMsgModel();
                     if (obj["data"] != null)
                     {
-                        msg.uname = obj["data"]["uname"].ToString();
-                        msg.action = obj["data"]["action"].ToString();
-                        msg.giftId = Convert.ToInt32(obj["data"]["gift_id"].ToString());
-                        msg.giftName = obj["data"]["gift_name"].ToString();
-                        msg.num = obj["data"]["total_num"].ToString();
-                        msg.uid = obj["data"]["uid"].ToString();
+                        msg.UserName = obj["data"]["uname"].ToString();
+                        msg.Action = obj["data"]["action"].ToString();
+                        msg.GiftId = Convert.ToInt32(obj["data"]["gift_id"].ToString());
+                        msg.GiftName = obj["data"]["gift_name"].ToString();
+                        msg.Number = obj["data"]["total_num"].ToString();
+                        msg.UserID = obj["data"]["uid"].ToString();
                         NewMessage?.Invoke(MessageType.Gift, msg);
                     }
                     return;
@@ -288,9 +301,9 @@ namespace BiliLite.Modules.Live
                     var w = new WelcomeMsgModel();
                     if (obj["data"] != null)
                     {
-                        w.uname = obj["data"]["uname"].ToString();
-                        w.uid = obj["data"]["uid"].ToString();
-                        w.svip = obj["data"]["vip"].ToInt32() != 1;
+                        w.UserName = obj["data"]["uname"].ToString();
+                        w.UserID = obj["data"]["uid"].ToString();
+                       
                         NewMessage?.Invoke(MessageType.Welcome, w);
                     }
 
@@ -336,6 +349,38 @@ namespace BiliLite.Modules.Live
                         msg.price = obj["data"]["price"].ToInt32();
                         msg.username = obj["data"]["user_info"]["uname"].ToString();
                         NewMessage?.Invoke(MessageType.SuperChat, msg);
+                    }
+                    return;
+                }
+                if(cmd== "ROOM_CHANGE")
+                {
+                    if (obj["data"] != null)
+                    {
+                        NewMessage?.Invoke(MessageType.RoomChange,new RoomChangeMsgModel()
+                        {
+                            Title = obj["data"]["title"].ToString(),
+                            AreaID = obj["data"]["area_id"].ToInt32(),
+                            AreaName = obj["data"]["area_name"].ToString(),
+                            ParentAreaName = obj["data"]["parent_area_name"].ToString(),
+                            ParentAreaID = obj["data"]["parent_area_id"].ToInt32(),
+                        });
+                    }
+                    return;
+                }
+                if (cmd == "GUARD_BUY")
+                {
+                    if (obj["data"] != null)
+                    {
+                        NewMessage?.Invoke(MessageType.GuardBuy, new GuardBuyMsgModel()
+                        {
+                            GiftId = obj["data"]["gift_id"].ToInt32(),
+                            GiftName = obj["data"]["gift_name"].ToString(),
+                            Num = obj["data"]["num"].ToInt32(),
+                            Price = obj["data"]["price"].ToInt32(),
+                            UserName = obj["data"]["username"].ToString(),
+                            UserID = obj["data"]["uid"].ToString(),
+                            GuardLevel = obj["data"]["guard_level"].ToInt32(),
+                        });
                     }
                     return;
                 }
@@ -451,68 +496,118 @@ namespace BiliLite.Modules.Live
         }
     }
 
-    public class LiveDanmuModel
-    {
-
-        public LiveDanmuTypes type { get; set; }
-        public int viewer { get; set; }
-        public object value { get; set; }
-
-    }
     public class DanmuMsgModel
     {
-        public string text { get; set; }
-        public string username { get; set; }//昵称
-                                            // public SolidColorBrush usernameColor { get; set; }//昵称颜色
+        /// <summary>
+        /// 内容文本
+        /// </summary>
+        public string Text { get; set; }
+        /// <summary>
+        /// 弹幕颜色，默认白色
+        /// </summary>
+        public string DanmuColor { get; set; }= "#FFFFFFFF";
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string UserName { get; set; }
+        /// <summary>
+        /// 用户名颜色,默认灰色
+        /// </summary>
+        public string UserNameColor { get; set; } = "#FF808080";
+        /// <summary>
+        /// 等级
+        /// </summary>
+        public string UserLevel { get; set; }
 
-        public string ul { get; set; }//等级
-        public string ulColor { get; set; }//等级颜色
-        public SolidColorBrush ul_color { get; set; }//等级颜色
-
-
-        public string user_title { get; set; }//头衔id（对应的是CSS名）
-
-        public string vip { get; set; }
-        public string medal_name { get; set; }//勋章
-
-        public string medal_lv { get; set; }//勋章
-        public string medalColor { get; set; }//勋章颜色
-        public SolidColorBrush medal_color { get; set; }//勋章颜色
-
-        public Visibility isAdmin { get; set; } = Visibility.Collapsed;
-        public Visibility isVip { get; set; } = Visibility.Collapsed;
-        public Visibility isBigVip { get; set; } = Visibility.Collapsed;
-        public Visibility hasMedal { get; set; } = Visibility.Collapsed;
-        public Visibility hasTitle { get; set; } = Visibility.Collapsed;
-        public Visibility hasUL { get; set; } = Visibility.Visible;
-        public string titleImg
+        /// <summary>
+        /// 等级颜色,默认灰色
+        /// </summary>
+        public string UserLevelColor { get; set; } = "#FF808080";
+        /// <summary>
+        /// 用户头衔id（对应的是CSS名）
+        /// </summary>
+        public string UserTitleID { get; set; }
+        /// <summary>
+        /// 用户头衔图片
+        /// </summary>
+        public string UserTitleImage
         {
             get
             {
-                return LiveRoomVM.Titles.FirstOrDefault(x => x.id == user_title)?.img;
+                return LiveRoomVM.Titles.FirstOrDefault(x => x.id == UserTitleID)?.img;
             }
         }
-        public SolidColorBrush uname_color { get; set; }
-        public SolidColorBrush content_color { get; set; }
+        /// <summary>
+        /// 用户角色
+        /// </summary>
+        public string Role { get; set; }
+        /// <summary>
+        /// 勋章名称
+        /// </summary>
+        public string MedalName { get; set; }
+        /// <summary>
+        /// 勋章等级
+        /// </summary>
+        public string MedalLevel { get; set; }
+        /// <summary>
+        /// 勋章颜色
+        /// </summary>
+        public string MedalColor { get; set; }
 
+        /// <summary>
+        /// 是否显示房管
+        /// </summary>
+        public Visibility ShowAdmin { get; set; } = Visibility.Collapsed;
+        /// <summary>
+        /// 是否显示勋章
+        /// </summary>
+        public Visibility ShowMedal { get; set; } = Visibility.Collapsed;
+        /// <summary>
+        /// 是否显示用户等级
+        /// </summary>
+        public Visibility ShowTitle { get; set; } = Visibility.Collapsed;
+        /// <summary>
+        /// 是否显示用户等级
+        /// </summary>
+        public Visibility ShowUserLevel { get; set; } = Visibility.Collapsed;
+        
     }
     public class GiftMsgModel
     {
-        public string uname { get; set; }
-        public string giftName { get; set; }
-        public string action { get; set; }
-        public string num { get; set; }
-        public int giftId { get; set; }
-        public string uid { get; set; }
-        public string gif { get; set; }
+        /// <summary>
+        /// 用户名称
+        /// </summary>
+        public string UserName { get; set; }
+        /// <summary>
+        /// 礼物的名称
+        /// </summary>
+        public string GiftName { get; set; }
+        /// <summary>
+        /// 礼物操作
+        /// </summary>
+        public string Action { get; set; }
+        /// <summary>
+        /// 礼物数量
+        /// </summary>
+        public string Number { get; set; }
+        /// <summary>
+        /// 礼物ID
+        /// </summary>
+        public int GiftId { get; set; }
+        /// <summary>
+        /// 用户ID
+        /// </summary>
+        public string UserID { get; set; }
+        /// <summary>
+        /// GIF图片
+        /// </summary>
+        public string Gif { get; set; }
     }
     public class WelcomeMsgModel
     {
-        public string uname { get; set; }
-        public string isadmin { get; set; }
-        public string uid { get; set; }
-        public bool svip { get; set; }
-
+        public string UserName { get; set; }
+        public string IsAdmin { get; set; }
+        public string UserID { get; set; }
     }
     public class SuperChatMsgModel : INotifyPropertyChanged
     {
@@ -547,5 +642,68 @@ namespace BiliLite.Modules.Live
         public string background_color { get; set; }
         public string background_bottom_color { get; set; }
         public string font_color { get; set; }
+    }
+    public class RoomChangeMsgModel
+    {
+        /// <summary>
+        /// 房间标题
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// 分区ID
+        /// </summary>
+        public int AreaID { get; set; }
+        /// <summary>
+        /// 父分区ID
+        /// </summary>
+        public int ParentAreaID { get; set; }
+        /// <summary>
+        /// 分区名称
+        /// </summary>
+        public string AreaName { get; set; }
+        /// <summary>
+        /// 父分区名称
+        /// </summary>
+        public string ParentAreaName { get; set; }
+        /// <summary>
+        /// 未知
+        /// </summary>
+        public string LiveKey { get; set; }
+        /// <summary>
+        /// 未知
+        /// </summary>
+        public string SubSessionKey { get; set; }
+
+    }
+    public class GuardBuyMsgModel
+    {
+        /// <summary>
+        /// 用户ID
+        /// </summary>
+        public string UserID { get; set; }
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string UserName { get; set; }
+        /// <summary>
+        /// 大航海等级1: 总督 2: 提督 3:舰长
+        /// </summary>
+        public int GuardLevel { get; set; }
+        /// <summary>
+        /// 数量
+        /// </summary>
+        public int Num { get; set; }
+        /// <summary>
+        /// 价格
+        /// </summary>
+        public int Price { get; set; }
+        /// <summary>
+        /// 礼物ID
+        /// </summary>
+        public int GiftId { get; set; }
+        /// <summary>
+        /// 礼物名称
+        /// </summary>
+        public string GiftName { get; set; }
     }
 }

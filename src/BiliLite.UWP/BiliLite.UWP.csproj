@@ -461,7 +461,6 @@
     <Compile Include="Modules\Live\LiveCenter\LiveAttentionVM.cs" />
     <Compile Include="Modules\Live\LiveCenter\LiveCenterHistoryVM.cs" />
     <Compile Include="Modules\Live\LiveCenter\LiveCenterVM.cs" />
-    <Compile Include="Modules\Live\LiveDanmaku.cs" />
     <Compile Include="Modules\Live\LiveMessage.cs" />
     <Compile Include="Modules\Live\LiveRecommendVM.cs" />
     <Compile Include="Modules\Other\FindMoreVM.cs" />

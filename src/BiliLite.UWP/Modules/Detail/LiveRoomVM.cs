@@ -33,7 +33,7 @@ namespace BiliLite.Modules
         Live.LiveMessage liveMessage;
         public event EventHandler<LiveRoomPlayUrlModel> ChangedPlayUrl;
         public event EventHandler<LiveRoomEndAnchorLotteryInfoModel> LotteryEnd;
-        public event EventHandler<string> AddNewDanmu;
+        public event EventHandler<DanmuMsgModel> AddNewDanmu;
 
         readonly Timer timer;
         readonly Timer timer_box;
@@ -72,8 +72,7 @@ namespace BiliLite.Modules
                 case MessageType.ConnectSuccess:
                     Messages.Add(new DanmuMsgModel()
                     {
-                        username = message.ToString(),
-                        uname_color = new SolidColorBrush(Colors.Gray)
+                        UserName = message.ToString(),
                     });
                     break;
                 case MessageType.Online:
@@ -82,26 +81,13 @@ namespace BiliLite.Modules
                 case MessageType.Danmu:
                     {
                         var m = message as DanmuMsgModel;
-                        m.uname_color = new SolidColorBrush(Colors.Gray);
-                        if (m.medalColor != null && m.medalColor != "")
-                        {
-                            m.ul_color = new SolidColorBrush(m.ulColor.StrToColor());
-                        }
-                        else
-                        {
-                            m.ul_color = new SolidColorBrush(Colors.Gray);
-                        }
-                        if (m.medalColor != null && m.medalColor != "")
-                        {
-                            m.medal_color = new SolidColorBrush(m.medalColor.StrToColor());
-                        }
-
+                        m.ShowUserLevel=Visibility.Visible;
                         if (Messages.Count >= CleanCount)
                         {
                             Messages.Clear();
                         }
                         Messages.Add(m);
-                        AddNewDanmu?.Invoke(this, m.text);
+                        AddNewDanmu?.Invoke(this, m);
                     }
                     break;
                 case MessageType.Gift:
@@ -117,7 +103,7 @@ namespace BiliLite.Modules
                         ShowGiftMessage = true;
                         hide_gift_flag = 1;
                         var info = message as GiftMsgModel;
-                        info.gif = _allGifts.FirstOrDefault(x => x.id == info.giftId)?.gif ?? Constants.App.TRANSPARENT_IMAGE;
+                        info.Gif = _allGifts.FirstOrDefault(x => x.id == info.GiftId)?.gif ?? Constants.App.TRANSPARENT_IMAGE;
                         GiftMessage.Add(info);
                         if (!timer_auto_hide_gift.Enabled)
                         {
@@ -133,12 +119,9 @@ namespace BiliLite.Modules
                         {
                             Messages.Add(new DanmuMsgModel()
                             {
-                                isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
-                                isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
-                                hasUL = Visibility.Collapsed,
-                                username = info.uname,
-                                uname_color = new SolidColorBrush(Colors.HotPink),
-                                text = " 进入直播间"
+                                UserName = info.UserName,
+                                UserNameColor = "#FFFF69B4",//Colors.HotPink
+                                Text = " 进入直播间"
                             });
                         }
                     }
@@ -150,12 +133,9 @@ namespace BiliLite.Modules
                         {
                             Messages.Add(new DanmuMsgModel()
                             {
-                                isVip = ((info.svip) ? Visibility.Collapsed : Visibility.Visible),
-                                isBigVip = ((info.svip) ? Visibility.Visible : Visibility.Collapsed),
-                                hasUL = Visibility.Collapsed,
-                                username = info.uname,
-                                uname_color = new SolidColorBrush(Colors.HotPink),
-                                text = " (舰长)进入直播间"
+                                UserName = info.UserName,
+                                UserNameColor = "#FFFF69B4",//Colors.HotPink
+                                Text = " (舰长)进入直播间"
                             });
                         }
                     }
@@ -184,6 +164,23 @@ namespace BiliLite.Modules
                     break;
 
                 case MessageType.GuardBuy:
+                    {
+                        var info = message as GuardBuyMsgModel;
+                        Messages.Add(new DanmuMsgModel()
+                        {
+                            UserName = info.UserName,
+                            UserNameColor = "#FFFF69B4",//Colors.HotPink
+                            Text = $"成为了{info.GiftName}"
+                        });
+                        // 刷新舰队列表
+                        _ = GetGuardList();
+                    }
+                    break;
+                case MessageType.RoomChange:
+                    {
+                        var info = message as RoomChangeMsgModel;
+                        RoomTitle = info.Title;
+                    }
                     break;
                 default:
                     break;
@@ -278,6 +275,17 @@ namespace BiliLite.Modules
         /// 直播ID
         /// </summary>
         public int RoomID { get; set; }
+
+        private string _roomTitle;
+        /// <summary>
+        /// 房间标题
+        /// </summary>
+        public string RoomTitle
+        {
+            get { return _roomTitle; }
+            set { _roomTitle = value; DoPropertyChanged("RoomTitle"); }
+        }
+
 
         public ObservableCollection<DanmuMsgModel> Messages { get; set; }
         public ObservableCollection<GiftMsgModel> GiftMessage { get; set; }
@@ -538,6 +546,7 @@ namespace BiliLite.Modules
                     if (data.success)
                     {
                         RoomID = data.data.room_info.room_id;
+                        RoomTitle = data.data.room_info.title;
                         Online = data.data.room_info.online;
                         Liveing = data.data.room_info.live_status == 1;
                         LiveInfo = data.data;
@@ -623,14 +632,14 @@ namespace BiliLite.Modules
             {
                 Messages.Add(new DanmuMsgModel()
                 {
-                    username = "取消连接"
+                    UserName = "取消连接"
                 });
             }
             catch (Exception ex)
             {
                 Messages?.Add(new DanmuMsgModel()
                 {
-                    username = "连接失败:" + ex.Message
+                    UserName = "连接失败:" + ex.Message
                 });
             }
 

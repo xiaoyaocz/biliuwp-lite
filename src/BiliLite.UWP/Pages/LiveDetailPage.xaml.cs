@@ -2,6 +2,7 @@
 using BiliLite.Extensions;
 using BiliLite.Models.Common;
 using BiliLite.Modules;
+using BiliLite.Modules.Live;
 using BiliLite.Modules.LiveRoomDetailModels;
 using BiliLite.Services;
 using FFmpegInteropX;
@@ -129,17 +130,17 @@ namespace BiliLite.Pages
 
         }
 
-        private void LiveRoomVM_AddNewDanmu(object sender, string e)
+        private void LiveRoomVM_AddNewDanmu(object sender, DanmuMsgModel e)
         {
             if (DanmuControl.Visibility == Visibility.Visible)
             {
                 if (settingVM.LiveWords != null && settingVM.LiveWords.Count > 0)
                 {
-                    if (settingVM.LiveWords.FirstOrDefault(x => e.Contains(x)) != null) return;
+                    if (settingVM.LiveWords.FirstOrDefault(x => e.Text.Contains(x)) != null) return;
                 }
                 try
                 {
-                    DanmuControl.AddLiveDanmu(e, false, Colors.White);
+                    DanmuControl.AddLiveDanmu(e.Text, false, e.DanmuColor.StrToColor());
                 }
                 catch (Exception ex)
                 {
